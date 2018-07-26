@@ -728,6 +728,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                 "thumbnail", thumbnail,
                 "contentDigest", contentDigest
         );
+        MLog.e("updateNote接口返回--tempObj:" + tempObj.toString());
         if (note == null)
             NoteDbHelper.addOrUpdateNote(tempObj);
         else
