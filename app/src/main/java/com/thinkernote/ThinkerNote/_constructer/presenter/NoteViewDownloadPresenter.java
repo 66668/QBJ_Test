@@ -25,8 +25,7 @@ import java.util.List;
 import java.util.Vector;
 
 /**
- * TODO 该类 有问题，下载一直出问题
- * 说明：下载的文件 是TNNote.atts,是list样式，for循环每一个atts的item数据
+ * 说明：无法修改老版本bug，路径报错
  */
 public class NoteViewDownloadPresenter implements OnNoteViewDownloadListener {
     private static final String TAG = "NoteViewDownloadPresenter";
@@ -77,7 +76,7 @@ public class NoteViewDownloadPresenter implements OnNoteViewDownloadListener {
      * 多图下载（自动下载）
      */
     public void start() {
-        MLog.d(TAG, "start()");
+        MLog.e("start（）");
         startPosition(0, null);
     }
 
@@ -106,30 +105,43 @@ public class NoteViewDownloadPresenter implements OnNoteViewDownloadListener {
         }
     }
 
-    //循环下载  替换for
-
     /**
+     * 测试 两个图片
+     * TODO bug
+     *
      * @param position
      * @param onAtt    结束一个position时使用，用于回调
      */
     private void startPosition(int position, TNNoteAtt onAtt) {
-
+        /**
+         * 新版本
+         *
+         *
+         * 老版本
+         * （2）
+         * TNNote{noteLocalId=1, title='2018年7月26日  11:59 图片', syncState=1, creatorUserId=2483045, creatorNick='asdf456', catId=32302287,
+         * content='<p><tn-media hash="4564F31BA492B799BE884563B9D3316E"></tn-media></p><p><tn-media hash="AAB5329272633CAD63A2F53236A87C0C"></tn-media></p>',
+         * shortContent='  ', contentDigest='026180998DF4670605167D7D926D9E05', trash=0, source='android', createTime=1532577592,
+         * lastUpdate=1532577592, thumbnail='', thmDrawable=null, lbsLongitude=0, lbsLatitude=0, lbsRadius=0, lbsAddress='null', tags=null, tagStr='', attCounts=2,
+         * atts=[
+         * TNNoteAtt{attLocalId=1, noteLocalId=1, attId=28519271, attName='1532577582546.jpg', type=10002, path='null', syncState=1, size=138470, digest='4564F31BA492B799BE884563B9D3316E', thumbnail='null', width=0, height=0},
+         * TNNoteAtt{attLocalId=2, noteLocalId=1, attId=28519272, attName='1532577589229.jpg', type=10002, path='null', syncState=1, size=157804, digest='AAB5329272633CAD63A2F53236A87C0C', thumbnail='null', width=0, height=0}],
+         * currentAtt=null, noteId=37840200, revision=0, originalNote=null, richText='null', mapping=null}
+         *
+         */
+        MLog.e(TAG, "startPosition：" + position + "----" + mNote.toString());
         if (downAtts != null && downAtts.size() > 0 && position < downAtts.size()) {
             //获取当前position的TNNoteAtt
             TNNoteAtt att = downAtts.get(position);
             File file = null;
-            //如果downAtts该处position的TNNoteAtt有图片，就执行下个position
+
             if (!TextUtils.isEmpty(att.path)) {
                 file = new File(att.path);
-//                if (file.getParentFile()==null||file.getParentFile().exists()) {
-////                    file.getParentFile().mkdirs();
-////                }
-                MLog.d("startPosition--att.syncState=" + att.syncState + "文件路径：" + att.path + "文件大小：" + att.size);
             }
 
             //如果att已经下载，执行下一个position
             if (file.length() != 0 && att.syncState == 2) {
-                MLog.e("startPosition--文件已下载--回调主界面，执行下一个循环");
+                MLog.e("startPosition--文件已下载--回调主界面，执行下一个att循环");
                 if (downAtts.size() == 1) {
                     endOneAttCallback(att, true);
                 } else {
@@ -144,15 +156,15 @@ public class NoteViewDownloadPresenter implements OnNoteViewDownloadListener {
                 return;
             }
 
-            if (TNUtils.isNetWork() && att.attId != -1 && !TNActionUtils.isDownloadingAtt(att.attId)) {
+            if (TNUtils.isNetWork() && att.attId != -1) {
                 //开始下载回调
                 if (startListener != null) {
                     startListener.onStart(att);
                 }
                 //下载
-                MLog.d(TAG, "startPosition--下载文件");
+                MLog.d(TAG, "下载：position=" + position);
                 listDownload(att, mNote, position);
-            } else {
+            } else {//执行下一个att循环
                 MLog.d(TAG, "startPosition--网络差 无法下载");
                 if (downAtts.size() == 1) {
                     endOneAttCallback(att, false);
@@ -217,28 +229,52 @@ public class NoteViewDownloadPresenter implements OnNoteViewDownloadListener {
 
 
     /**
-     * @param att      已经拿到下载图片的路径
+     * 下载结束后数据变化：
+     * 新版本：
+     * TNNote{noteLocalId=1, title='2018年7月26日  11:59 图片', syncState=1, creatorUserId=2483045, creatorNick='asdf456', catId=32302287,
+     * content='<p><tn-media hash="4564F31BA492B799BE884563B9D3316E"></tn-media></p><p><tn-media hash="AAB5329272633CAD63A2F53236A87C0C"></tn-media></p>',
+     * shortContent='  ', contentDigest='026180998DF4670605167D7D926D9E05', trash=0, source='android', createTime=1532577592,
+     * lastUpdate=1532577592, thumbnail='', thmDrawable=null, lbsLongitude=0, lbsLatitude=0, lbsRadius=0, lbsAddress='null', tags=null, tagStr='', attCounts=2,
+     * atts=[
+     * TNNoteAtt{attLocalId=1, noteLocalId=1, attId=28519271, attName='1532577582546.jpg', type=10002, path='null', syncState=1, size=138470, digest='4564F31BA492B799BE884563B9D3316E', thumbnail='null', width=0, height=0},
+     * TNNoteAtt{attLocalId=2, noteLocalId=1, attId=28519272, attName='1532577589229.jpg', type=10002, path='null', syncState=1, size=157804, digest='AAB5329272633CAD63A2F53236A87C0C', thumbnail='null', width=0, height=0}],
+     * currentAtt=null, noteId=37840200, revision=0, originalNote=null, richText='null', mapping=null}
+     * <p>
+     * 老版本：
+     * 下载第一个图片响应
+     * <p>
+     * TNNote{noteLocalId=1, title='2018年7月26日  11:59 图片', syncState=1, creatorUserId=2483045, creatorNick='asdf456', catId=32302287,
+     * content='<p><tn-media hash="4564F31BA492B799BE884563B9D3316E"></tn-media></p><p><tn-media hash="AAB5329272633CAD63A2F53236A87C0C"></tn-media></p>',
+     * shortContent='  ', contentDigest='026180998DF4670605167D7D926D9E05', trash=0, source='android', createTime=1532577592,
+     * lastUpdate=1532577592, thumbnail='null', thmDrawable=null, lbsLongitude=0, lbsLatitude=0, lbsRadius=0, lbsAddress='null', tags=null, tagStr='', attCounts=2,
+     * atts=[TNNoteAtt{attLocalId=1, noteLocalId=1, attId=28519271, attName='1532577582546.jpg', type=10002,
+     * path='/storage/emulated/0/Android/data/com.thinkernote.ThinkerNote/files/Attachment/28/28519/28519271.jpeg',
+     * syncState=2, size=138470, digest='4564F31BA492B799BE884563B9D3316E',
+     * thumbnail='null', width=432, height=576},
+     * TNNoteAtt{attLocalId=2, noteLocalId=1, attId=28519272, attName='1532577589229.jpg', type=10002, path='null', syncState=1, size=157804, digest='AAB5329272633CAD63A2F53236A87C0C', thumbnail='null', width=0, height=0}],
+     * currentAtt=null, noteId=37840200, revision=0, originalNote=null, richText='null', mapping=null}
+     * <p>
+     * endListener
+     * attr:TNNoteAtt{attLocalId=1, noteLocalId=1, attId=28519271, attName='1532577582546.jpg', type=10002,
+     * path='/storage/emulated/0/Android/data/com.thinkernote.ThinkerNote/files/Attachment/28/28519/28519271.jpeg',
+     * syncState=1, size=138470, digest='4564F31BA492B799BE884563B9D3316E',
+     * thumbnail='/storage/emulated/0/Android/data/com.thinkernote.ThinkerNote/files/Attachment/28/28519/28519271.jpeg.thm',
+     * width=0, height=0}
+     *
+     * @param att      已经拿到下载图片的路径,用于返回act
      * @param position
      */
     @Override
     public void onListDownloadSuccess(TNNote note, TNNoteAtt att, int position) {
         TNNoteAtt newAtt = att;
+
         File file = new File(att.path);
-        if (!TextUtils.isEmpty(att.path)) {
-            MLog.d("onListDownloadSuccess", "list文件下载成功" + "--att.path：" + att.path);
-            MLog.d("list文件下载成功：", "原状态att.syncState=" + att.syncState + "文件路径" + file.toString() + "文件大小" + file.length());
-        }
-        //将图片路径保存到本地数据库
+        //更改att path 和  syncState
         try {
             TNDb.beginTransaction();
-
             if (att.type > 10000 && att.type < 20000) {
-                MLog.e("List--更新数据库");
-                newAtt.syncState = mNote.syncState > 2 ? mNote.syncState : 2;
                 TNDb.getInstance().execSQL(TNSQLString.ATT_UPDATE_ATTLOCALID, att.attName, att.type, att.path, att.noteLocalId, file.length(), mNote.syncState > 2 ? mNote.syncState : 2, att.digest, att.attId, att.width, att.height, att.noteLocalId);
                 TNDb.getInstance().execSQL(TNSQLString.NOTE_UPDATE_THUMBNAIL, att.path, mNote.noteLocalId);
-                TNDb.getInstance().execSQL(TNSQLString.NOTE_UPDATE_SYNCSTATE, mNote.syncState > 2 ? mNote.syncState : 2, mNote.noteLocalId);
-
             }
             TNDb.setTransactionSuccessful();
         } finally {
@@ -247,9 +283,31 @@ public class NoteViewDownloadPresenter implements OnNoteViewDownloadListener {
 
         //更新mNote
         mNote = TNDbUtils.getNoteByNoteLocalId(mNote.noteLocalId);
-        //更新for循环的数据
-        downAtts.clear();
-        downAtts.addAll(mNote.atts);
+        MLog.e("更新mNote:" + mNote.toString());
+
+        //最后一个att处理（所有图片下载完成）
+        if (position == mNote.attCounts - 1) {
+            //数据库操作
+            if (mNote.attCounts > 0) {
+                for (int i = 0; i < mNote.atts.size(); i++) {
+                    TNNoteAtt tempAtt = mNote.atts.get(i);
+                    MLog.e("数据库操作：" + "mNote.syncState=" + mNote.syncState + "position=" + i + "--内容=" + tempAtt.toString());
+                    if (i == 0 && tempAtt.type > 10000 && tempAtt.type < 20000) {
+                        TNDb.getInstance().execSQL(TNSQLString.NOTE_UPDATE_THUMBNAIL, tempAtt.path, mNote.noteLocalId);
+                    }
+                    if (TextUtils.isEmpty(tempAtt.path) || "null".equals(tempAtt.path)) {
+                        mNote.syncState = 1;
+                    }
+                }
+            }
+        } else {
+            //更新for循环的数据
+            downAtts.clear();
+            downAtts.addAll(mNote.atts);
+        }
+        //
+        TNDb.getInstance().execSQL(TNSQLString.NOTE_UPDATE_SYNCSTATE, mNote.syncState, mNote.noteLocalId);
+
         //下载成功的一个position的att展示
         endOneAttCallback(newAtt, true);
         //开始下一个position

@@ -50,3 +50,7 @@
 1.Uri.fromFile(new File(temp))获取Uri的样式在android7.0+后，改成FileProvider.getUriForFile()样式，具体参考本app
 
 2.android4.2以后，任何为JS暴露的接口，都需要加@JavascriptInterface
+
+下载2张图片逻辑顺序：
+ 下载第一个图片响应---》更新att数据库（哪里操作？）-->回调----》下一个循环
+

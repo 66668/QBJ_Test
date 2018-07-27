@@ -67,7 +67,7 @@ import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.Other.PoPuMenuView;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote._constructer.presenter.NoteViewDownloadPresenter;
+import com.thinkernote.ThinkerNote._constructer.presenter.NoteViewDownloadPresenter2;
 import com.thinkernote.ThinkerNote._constructer.presenter.NoteViewPresenterImpl;
 import com.thinkernote.ThinkerNote._interface.p.INoteViewPresenter;
 import com.thinkernote.ThinkerNote._interface.v.OnNoteViewListener;
@@ -84,13 +84,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * TODO 下载图片的方法需要重做 sjy 20180718
  * 笔记详情
  */
 public class TNNoteViewAct extends TNActBase implements OnClickListener,
         SynthesizerPlayerListener,
-        NoteViewDownloadPresenter.OnDownloadEndListener,
-        NoteViewDownloadPresenter.OnDownloadStartListener,
+        NoteViewDownloadPresenter2.OnDownloadEndListener,
+        NoteViewDownloadPresenter2.OnDownloadStartListener,
         PoPuMenuView.OnPoPuMenuItemClickListener,
         OnNoteViewListener {
 
@@ -174,26 +173,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
             case GETNOTEBYNOTEID_SUCCESS:
                 //
                 mNote = TNDbUtils.getNoteByNoteLocalId(mNoteLocalId);
-                /**
-                 *
-                 * (1)
-                 *
-                 * (2-1)老源码
-                 * TNNote{noteLocalId=1, title='2018年7月26日  11:59 图片', syncState=1, creatorUserId=2483045, creatorNick='asdf456', catId=32302287,
-                 * content='<p><tn-media hash="4564F31BA492B799BE884563B9D3316E"></tn-media></p><p><tn-media hash="AAB5329272633CAD63A2F53236A87C0C"></tn-media></p>',
-                 * shortContent='  ', contentDigest='026180998DF4670605167D7D926D9E05', trash=0, source='android', createTime=1532577592, lastUpdate=1532577592,
-                 * thumbnail='', thmDrawable=null, lbsLongitude=0, lbsLatitude=0, lbsRadius=0, lbsAddress='null', tags=null, tagStr='', attCounts=2,
-                 * atts=[TNNoteAtt{attLocalId=1, noteLocalId=1, attId=28519271, attName='1532577582546.jpg', type=10002, path='null', syncState=1, size=138470,
-                 * digest='4564F31BA492B799BE884563B9D3316E', thumbnail='null', width=0, height=0}, TNNoteAtt{attLocalId=2, noteLocalId=1, attId=28519272,
-                 * attName='1532577589229.jpg', type=10002, path='null', syncState=1, size=157804, digest='AAB5329272633CAD63A2F53236A87C0C', thumbnail='null', width=0,
-                 * height=0}], currentAtt=null, noteId=37840200, revision=0, originalNote=null, richText='null', mapping=null}
-                 *
-
-                 *
-                 */
-                MLog.e("respondGetNoteByNoteId-----mNote：" + mNote.toString());
-
-                NoteViewDownloadPresenter.getInstance().init(this, mNote);
+                NoteViewDownloadPresenter2.getInstance().init(this, mNote);
 
                 startAutoDownload();
 
@@ -256,7 +236,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
         registerForContextMenu(findViewById(R.id.noteview_read_menu));
         registerForContextMenu(findViewById(R.id.noteview_share_menu));
 
-        NoteViewDownloadPresenter download = NoteViewDownloadPresenter.getInstance();
+        NoteViewDownloadPresenter2 download = NoteViewDownloadPresenter2.getInstance();
         download.setOnDownloadEndListener(this);
         download.setOnDownloadStartListener(this);
         mGestureDetector = new GestureDetector(this, new TNGestureListener());
@@ -270,6 +250,33 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
         // 添加js交互接口类，并起别名 demo，js代码中要试用 demo参数
         mWebView.addJavascriptInterface(mJSInterface, "demo");
         //自定义WebViewClient 监听卸载configView中
+        //mWebView点击监听
+        mWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                MLog.e("TNNoteViewAct", "WebViewClient--onPageFinished--url" + url);
+                super.onPageFinished(view, url);
+
+                view.loadUrl("javascript:loading()");
+                startAutoDownload();
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                MLog.e("TNNoteViewAct", "WebViewClient--shouldOverrideUrlLoading" + url);
+                super.shouldOverrideUrlLoading(view, url);
+
+                if (url.startsWith("http:") || url.startsWith("https:")) {
+                    return false;
+                }
+                // Otherwise allow the OS to handle it
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                TNUtilsDialog.startIntent(TNNoteViewAct.this, intent,
+                        R.string.alert_NoteView_CantOpenMsg);
+                return true;
+            }
+
+        });
 
         mProgressDialog = TNUtilsUi.progressDialog(this, R.string.in_progress);
     }
@@ -351,19 +358,10 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
     protected void configView() {
         mNote = TNDbUtils.getNoteByNoteLocalId(mNoteLocalId);
         /**
-         * (1-1)
-         * TNNote{noteLocalId=1, title='2018年7月26日  11:59 图片', syncState=1, creatorUserId=2483045, creatorNick='asdf456', catId=32302287,
-         * content='<p><tn-media hash="4564F31BA492B799BE884563B9D3316E"></tn-media></p><p><tn-media hash="AAB5329272633CAD63A2F53236A87C0C"></tn-media></p>',
-         * shortContent='  ', contentDigest='026180998DF4670605167D7D926D9E05', trash=0, source='android', createTime=1532577592, lastUpdate=1532577592,
-         * thumbnail='', thmDrawable=null, lbsLongitude=0, lbsLatitude=0, lbsRadius=0,
-         * lbsAddress='null', tags=null, tagStr='', attCounts=2,
-         * atts=[
-         * TNNoteAtt{attLocalId=1, noteLocalId=1, attId=28519271, attName='1532577582546.jpg', type=10002, path='null', syncState=1, size=138470, digest='4564F31BA492B799BE884563B9D3316E', thumbnail='null', width=0, height=0},
-         * TNNoteAtt{attLocalId=2, noteLocalId=1, attId=28519272, attName='1532577589229.jpg', type=10002, path='null', syncState=1, size=157804, digest='AAB5329272633CAD63A2F53236A87C0C', thumbnail='null', width=0, height=0}],
-         * currentAtt=null, noteId=37840200, revision=0, originalNote=null,
-         * richText='null', mapping=null}
+         * TODO 测试
          *
-         * (1-2)
+         *
+         * (1-2)bug版
          * TNNote{noteLocalId=7, title='2018年7月26日  11:59 图片', syncState=2, creatorUserId=2483045, creatorNick='asdf456', catId=32302287,
          * content='<p><tn-media hash="4564F31BA492B799BE884563B9D3316E"></tn-media></p><p><tn-media hash="AAB5329272633CAD63A2F53236A87C0C"></tn-media></p>',
          * shortContent='  ', contentDigest='026180998DF4670605167D7D926D9E05', trash=0, source='android', createTime=1532577592, lastUpdate=1532577592,
@@ -373,22 +371,11 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
          * TNNoteAtt{attLocalId=7, noteLocalId=7, attId=28519272,attName='1532577589229.jpg', type=10002, path='/storage/emulated/0/Android/data/com.thinkernote.ThinkerNote/files/Attachment/28/28519/28519272.jpeg',syncState=2, size=157804, digest='AAB5329272633CAD63A2F53236A87C0C', thumbnail='null', width=0, height=0},
          * TNNoteAtt{attLocalId=14, noteLocalId=7,attId=28519271, attName='1532577582546.jpg', type=10002, path='null', syncState=1, size=138470, digest='4564F31BA492B799BE884563B9D3316E', thumbnail='null',width=0, height=0},
          * TNNoteAtt{attLocalId=15, noteLocalId=7, attId=28519272, attName='1532577589229.jpg', type=10002, path='null', syncState=1, size=157804,digest='AAB5329272633CAD63A2F53236A87C0C', thumbnail='null', width=0, height=0}],
-         * currentAtt=null, noteId=37840200, revision=0, originalNote=null,
-         * richText='null', mapping=null}
+         * currentAtt=null, noteId=37840200, revision=0, originalNote=null,richText='null', mapping=null}
          *
+         * (1-2)修复版
          *
          * 老版
-         * (2-1)刚安装 打开 值：
-         * TNNote{noteLocalId=1, title='2018年7月26日  11:59 图片', syncState=1, creatorUserId=2483045, creatorNick='asdf456', catId=32302287,
-         * content='<p><tn-media hash="4564F31BA492B799BE884563B9D3316E"></tn-media></p><p><tn-media hash="AAB5329272633CAD63A2F53236A87C0C"></tn-media></p>',
-         * shortContent='  ', contentDigest='026180998DF4670605167D7D926D9E05', trash=0, source='android', createTime=1532577592, lastUpdate=1532577592,
-         * thumbnail='', thmDrawable=null, lbsLongitude=0, lbsLatitude=0, lbsRadius=0,
-         * lbsAddress='null', tags=null, tagStr='', attCounts=0,
-         * atts=[],
-         * currentAtt=null, noteId=37840200, revision=0, originalNote=null,
-         * richText='null', mapping=null}
-         *
-         *
          * (2-2)退出再次进入 值：
          * TNNote{noteLocalId=1, title='2018年7月26日  11:59 图片', syncState=2, creatorUserId=2483045, creatorNick='asdf456', catId=32302287,
          * content='<p><tn-media hash="4564F31BA492B799BE884563B9D3316E"></tn-media></p><p><tn-media hash="AAB5329272633CAD63A2F53236A87C0C"></tn-media></p>',
@@ -398,16 +385,15 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
          * atts=[
          * TNNoteAtt{attLocalId=1, noteLocalId=1, attId=28519271,attName='1532577582546.jpg', type=10002, path='/storage/emulated/0/Android/data/com.thinkernote.ThinkerNote/files/Attachment/28/28519/28519271.jpeg',syncState=2, size=138470, digest='4564F31BA492B799BE884563B9D3316E', thumbnail='null', width=432, height=576},
          * TNNoteAtt{attLocalId=2, noteLocalId=1,attId=28519272, attName='1532577589229.jpg', type=10002, path='/storage/emulated/0/Android/data/com.thinkernote.ThinkerNote/files/Attachment/28/28519/28519272.jpeg',syncState=2, size=157804,digest='AAB5329272633CAD63A2F53236A87C0C', thumbnail='null', width=432, height=576}],
-         * currentAtt=null, noteId=37840200,revision=0, originalNote=null,
-         * richText='null', mapping=null}
+         * currentAtt=null, noteId=37840200,revision=0, originalNote=null,richText='null', mapping=null}
          *
          */
         MLog.e("configView--根据mNoteLocalId获取--mNote:" + mNote.toString());
 
         if (createStatus == 0) {
-            NoteViewDownloadPresenter.getInstance().init(this, mNote);
+            NoteViewDownloadPresenter2.getInstance().init(this, mNote);
         } else {
-            NoteViewDownloadPresenter.getInstance().updateNote(mNote);
+            NoteViewDownloadPresenter2.getInstance().updateNote(mNote);
         }
         //判断是否是回收站的笔记，如果是 顶部显示还原的按钮
         if (mNote.trash == 1) {
@@ -439,34 +425,6 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
             msg.what = WEBBVIEW_LOADING;
             handler.sendMessage(msg);
         }
-
-        //mWebView点击监听
-        mWebView.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                MLog.e("TNNoteViewAct", "WebViewClient--onPageFinished" + url);
-                super.onPageFinished(view, url);
-
-                view.loadUrl("javascript:loading()");
-                startAutoDownload();
-            }
-
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                MLog.e("TNNoteViewAct", "WebViewClient--shouldOverrideUrlLoading" + url);
-                super.shouldOverrideUrlLoading(view, url);
-
-                if (url.startsWith("http:") || url.startsWith("https:")) {
-                    return false;
-                }
-                // Otherwise allow the OS to handle it
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                TNUtilsDialog.startIntent(TNNoteViewAct.this, intent,
-                        R.string.alert_NoteView_CantOpenMsg);
-                return true;
-            }
-
-        });
     }
 
     @Override
@@ -555,14 +513,18 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_VIEW);
                 Uri contentUri = null;
-                if (mCurAtt.path.isEmpty() || mCurAtt.path == null) {
-                    TNUtilsUi.showToast("下载bug,无法获取文件路径");
+                if (mCurAtt.path == null || mCurAtt.path.isEmpty()) {
+                    TNUtilsUi.showToast("文件处理，请稍后查看");
                     break;
                 }
                 //打开文件
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {//7.0+版本安全设置
                     intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    contentUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".FileProvider", new File(mCurAtt.path));
+                    try {
+                        contentUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".FileProvider", new File(mCurAtt.path));
+                    } catch (Exception e) {
+                        TNUtilsUi.showToast("文件处理，请稍后查看");
+                    }
                 } else {//7.0-正常调用
                     contentUri = Uri.fromFile(new File(mCurAtt.path));
                 }
@@ -572,7 +534,6 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
                     MLog.d("笔记详情", "响应--查看");
                     TNUtilsDialog.startIntent(this, intent, R.string.alert_NoteView_CantOpenAttMsg);
                 } else {
-                    TNUtilsUi.showToast("打开失败！");
                     MLog.e("笔记详情", "响应--查看--异常");
                 }
 
@@ -860,6 +821,24 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
 
     @Override
     public void onEnd(TNNoteAtt att, boolean isSucess, String msg) {
+        //再强化一次
+        mNote = TNDbUtils.getNoteByNoteLocalId(mNoteLocalId);
+        //数据库操作
+        if (mNote.attCounts > 0) {
+            for (int i = 0; i < mNote.atts.size(); i++) {
+                TNNoteAtt tempAtt = mNote.atts.get(i);
+
+                if (i == 0 && tempAtt.type > 10000 && tempAtt.type < 20000) {
+                    TNDb.getInstance().execSQL(TNSQLString.NOTE_UPDATE_THUMBNAIL, tempAtt.path, mNote.noteLocalId);
+                }
+                if (TextUtils.isEmpty(tempAtt.path) || "null".equals(tempAtt.path)) {
+                    mNote.syncState = 1;
+                }
+            }
+        }
+        TNDb.getInstance().execSQL(TNSQLString.NOTE_UPDATE_SYNCSTATE, mNote.syncState, mNote.noteLocalId);
+        mNote = TNDbUtils.getNoteByNoteLocalId(mNoteLocalId);
+
         if (isSucess) {
             downloadOver(att, isSucess, msg);
         } else {
@@ -913,13 +892,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
         MLog.i(TAG, "downloadOver: " + att.type + " isInFront: " + isInFront);
         if (isInFront) {
             if (isSucess) {
-                MLog.d(TAG, "download", "下载结束 act显示");
-                //TNNoteAtt{attLocalId=1, noteLocalId=1, attId=28499260, attName='1531292067567.jpg', type=10002, path='null',
-                // syncState=1, size=124599, digest='7DEF553FB5A7E8E28D7654C1AEBC2394', thumbnail='null', width=0, height=0}
-
-                //TNNoteAtt{attLocalId=1, noteLocalId=1, attId=28499260, attName='1531292067567.jpg', type=10002, path='/storage/emulated/0/Android/data/com.thinkernote.ThinkerNote/files/Attachment/28/28499/28499260.jpeg', syncState=1, size=124599, digest='7DEF553FB5A7E8E28D7654C1AEBC2394',
-                // thumbnail='/storage/emulated/0/Android/data/com.thinkernote.ThinkerNote/files/Attachment/28/28499/28499260.jpeg.thm', width=0, height=0}
-                MLog.d(TAG, "download返回--att显示:" + att.toString());
+                MLog.d(TAG, "download返回--act显示--att:" + att.toString());
 
                 MLog.d(TAG, "act---mNoteLocalId=" + mNoteLocalId + "--获取值--att.attLocalId=" + att.attLocalId);
                 mNote = TNDbUtils.getNoteByNoteLocalId(mNoteLocalId);
@@ -1052,12 +1025,11 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
             showRealDeleteDialog(mNote.noteLocalId);
         } else {
             showDeleteDialog(mNote.noteLocalId);
-            //TODO
-//            TNUtilsDialog.deleteNote(this, new TNRunner(this, "dialogCB"), mNote.noteLocalId);
         }
     }
 
     private void editNote() {
+        mNote = TNDbUtils.getNoteByNoteLocalId(mNoteLocalId);
         if (mNote.trash == 1) {
             resetNoteDialog(mNote.noteLocalId);
         } else {
@@ -1076,14 +1048,13 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
      * 下载附件
      */
     private void startAutoDownload() {
-        MLog.d("download", "startAutoDownload 打开界面自动下载");
         if (!TNUtils.isNetWork())
             return;
 
         if (mNote == null)
             return;
-
-        NoteViewDownloadPresenter.getInstance().start();
+        MLog.e("startAutoDownload");
+        NoteViewDownloadPresenter2.getInstance().start();
     }
 
     private void setReadBarVisible(boolean visible) {
@@ -1442,20 +1413,18 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
         @JavascriptInterface
         public void downloadAtt(long id) {
             MLog.d("download", "JSInterface-->downloadAtt:" + id);
-            NoteViewDownloadPresenter.getInstance().start(id);
+            NoteViewDownloadPresenter2.getInstance().start(id);
         }
 
         @JavascriptInterface
         public void openAtt(long attId) {
 
-//            if (mCurAtt.syncState != 1) {
             Message msg = Message.obtain();
             msg.what = WEBBVIEW_OPEN_ATT;
             msg.arg1 = 1;
             msg.obj = attId;
             //等待图片下载完成
             handler.sendMessage(msg);
-//            }
         }
 
         @JavascriptInterface
@@ -1604,7 +1573,14 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
                 "contentDigest", contentDigest
         );
         /**
-         * (2)
+         * TODO ok
+         * (1-1)
+         * tempObj:{"title":"2018年7月26日  11:59 图片","userId":2483045,"trash":"0","source":"android","catId":32302287,
+         * "content":"<p><tn-media hash=\"4564F31BA492B799BE884563B9D3316E\"><\/tn-media><\/p><p><tn-media hash=\"AAB5329272633CAD63A2F53236A87C0C\"><\/tn-media><\/p>",
+         * "createTime":1532577592,"lastUpdate":1532577592,"syncState":1,"noteId":37840200,"shortContent":"  ","tagStr":"","lbsLongitude":0,
+         * "lbsLatitude":0,"lbsRadius":0,"nickName":"asdf456","thumbnail":"","contentDigest":"026180998DF4670605167D7D926D9E05"}
+         *
+         * (2-1)
          * tempObj:{"title":"2018年7月26日  11:59 图片","userId":2483045,"trash":0,"source":"android","catId":32302287,
          * "content":"<p><tn-media hash=\"4564F31BA492B799BE884563B9D3316E\"><\/tn-media><\/p><p><tn-media hash=\"AAB5329272633CAD63A2F53236A87C0C\"><\/tn-media><\/p>",
          * "createTime":1532577592,"lastUpdate":1532577592,"syncState":1,"noteId":37840200,"shortContent":"  ","tagStr":"","lbsLongitude":0,

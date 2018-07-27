@@ -1,8 +1,31 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--android7.0+ 使用应用间共享文件 /共享文件的文件根目录：external_files-->
+<?xml version="1.0" encoding="utf-8"?><!--android7.0+ 使用应用间共享文件 /共享文件的文件根目录：external_files-->
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
-    <external-path
-        name="external_files"
+
+    <!--Context.getFilesDir()-->
+    <files-path
+        name="files-path"
         path="." />
+
+    <!-- getCacheDir()-->
+    <cache-path
+        name="cache-path"
+        path="." />
+
+    <!--Environment.getExternalStorageDirectory()/.目录-->
+    <external-path
+        name="external-path"
+        path="." />
+
+    <!--Context#getExternalFilesDir(String)/ Context.getExternalFilesDir(null) -->
+    <external-files-path
+        name="external-files-path"
+        path="." />
+
+    <!-- Context.getExternalCacheDir() -->
+    <external-cache-path
+        name="external-cache-path"
+        path="." />
+
+    <!--路径自定义设置，和app的存储路径密切相关-->
 </paths>
 
