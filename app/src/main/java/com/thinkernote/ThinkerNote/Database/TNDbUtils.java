@@ -237,8 +237,7 @@ public class TNDbUtils {
 		note.creatorNick = data.get(17);
 		note.thumbnail = data.get(18);
 		note.contentDigest = data.get(19);
-		MLog.d(TAG, "note-------------------------syncState:" + note.syncState);
-		
+
 		Vector<TNNoteAtt> atts = getAttrsByNoteLocalId(note.noteLocalId);
 		
 		note.atts = atts;

@@ -55,7 +55,7 @@ public class TNDb extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase aDB) {
-        MLog.d(TAG, "onCreate");
+//        MLog.d(TAG, "onCreate");
         aDB.execSQL(TNSQLString.USER_CREATE_TABLE);
         aDB.execSQL(TNSQLString.CAT_CREATE_TABLE);
         aDB.execSQL(TNSQLString.TAG_CREATE_TABLE);
@@ -149,7 +149,7 @@ public class TNDb extends SQLiteOpenHelper {
             allData.add(rowData);
         }
         cursor.close();
-        MLog.d("TNDB--select打印：" + allData.size() + "个笔记。", allData.toString());
+//        MLog.d("TNDB--select打印：" + allData.size() + "个笔记。", allData.toString());
 
         return allData;
     }
@@ -184,7 +184,7 @@ public class TNDb extends SQLiteOpenHelper {
 
     //TODO 不用 delete
     public void executeSQL(TNAction aAction) {
-        MLog.d("TNDB--executeSQL", aAction.inputs.toString());
+//        MLog.d("TNDB--executeSQL", aAction.inputs.toString());
         try {
             String sql = (String) aAction.inputs.get(0);
             if (sql.startsWith("SELECT")) {
@@ -277,7 +277,7 @@ public class TNDb extends SQLiteOpenHelper {
             for (Object obj : args) {
                 str.append(obj == null ? "" : obj.toString() + " ");
             }
-            MLog.e("saveNote--insertSQL", "tableName:" + tableName, "start=" + start, "end=" + end, "sql=" + sql + "\nargs=" + str.toString());
+//            MLog.e("saveNote--insertSQL", "tableName:" + tableName, "start=" + start, "end=" + end, "sql=" + sql + "\nargs=" + str.toString());
 
             //取内容
             for (int i = 0; i < args.length; i++) {
@@ -292,7 +292,7 @@ public class TNDb extends SQLiteOpenHelper {
             }
 
             id = db.insertOrThrow(tableName, null, values);
-            MLog.d("saveNote", "TNDb--insertSQL-->noteLocalId=" + id);
+//            MLog.d("saveNote", "TNDb--insertSQL-->noteLocalId=" + id);
         } catch (Exception e) {
             MLog.e("TNDb--insertSQL", "插入数据库失败:" + e.toString());
         }
@@ -334,6 +334,6 @@ public class TNDb extends SQLiteOpenHelper {
             arg = "`" + arg + "` ";
             values = values + arg;
         }
-        MLog.w("TNDb--execSQL--printSql:", sql + "\r\n" + values);
+//        MLog.w("TNDb--execSQL--printSql:", sql + "\r\n" + values);
     }
 }

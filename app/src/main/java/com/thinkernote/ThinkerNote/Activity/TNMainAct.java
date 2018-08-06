@@ -70,7 +70,9 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -617,122 +619,125 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
 
     //2-11-2
     public static void updateNote(GetNoteByNoteIdBean bean) {
+        try {
+            long noteId = bean.getId();
+            String contentDigest = bean.getContent_digest();
+            TNNote note = TNDbUtils.getNoteByNoteId(noteId);//在全部笔记页同步，会走这里，没在首页同步过的返回为null
 
-        long noteId = bean.getId();
-        String contentDigest = bean.getContent_digest();
-        TNNote note = TNDbUtils.getNoteByNoteId(noteId);//在全部笔记页同步，会走这里，没在首页同步过的返回为null
+            int syncState = note == null ? 1 : note.syncState;
+            List<GetNoteByNoteIdBean.TagBean> tags = bean.getTags();
 
-        int syncState = note == null ? 1 : note.syncState;
-        List<GetNoteByNoteIdBean.TagBean> tags = bean.getTags();
-
-        String tagStr = "";
-        for (int k = 0; k < tags.size(); k++) {
-            GetNoteByNoteIdBean.TagBean tempTag = tags.get(k);
-            String tag = tempTag.getName();
-            if ("".equals(tag)) {
-                continue;
-            }
-            if (tags.size() == 1) {
-                tagStr = tag;
-            } else {
-                if (k == (tags.size() - 1)) {
-                    tagStr = tagStr + tag;
+            String tagStr = "";
+            for (int k = 0; k < tags.size(); k++) {
+                GetNoteByNoteIdBean.TagBean tempTag = tags.get(k);
+                String tag = tempTag.getName();
+                if ("".equals(tag)) {
+                    continue;
+                }
+                if (tags.size() == 1) {
+                    tagStr = tag;
                 } else {
-                    tagStr = tagStr + tag + ",";
+                    if (k == (tags.size() - 1)) {
+                        tagStr = tagStr + tag;
+                    } else {
+                        tagStr = tagStr + tag + ",";
+                    }
                 }
             }
-        }
 
-        String thumbnail = "";
-        if (note != null) {
-            thumbnail = note.thumbnail;
-            Vector<TNNoteAtt> localAtts = TNDbUtils.getAttrsByNoteLocalId(note.noteLocalId);
-            List<GetNoteByNoteIdBean.Attachments> atts = bean.getAttachments();
-            if (localAtts.size() != 0) {
-                //循环判断是否与线上同步，线上没有就删除本地
-                for (int k = 0; k < localAtts.size(); k++) {
-                    boolean exit = false;
-                    TNNoteAtt tempLocalAtt = localAtts.get(k);
+            String thumbnail = "";
+            if (note != null) {
+                thumbnail = note.thumbnail;
+                Vector<TNNoteAtt> localAtts = TNDbUtils.getAttrsByNoteLocalId(note.noteLocalId);
+                List<GetNoteByNoteIdBean.Attachments> atts = bean.getAttachments();
+                if (localAtts.size() != 0) {
+                    //循环判断是否与线上同步，线上没有就删除本地
+                    for (int k = 0; k < localAtts.size(); k++) {
+                        boolean exit = false;
+                        TNNoteAtt tempLocalAtt = localAtts.get(k);
+                        for (int i = 0; i < atts.size(); i++) {
+                            GetNoteByNoteIdBean.Attachments tempAtt = atts.get(i);
+                            long attId = tempAtt.getId();
+                            if (tempLocalAtt.attId == attId) {
+                                exit = true;
+                            }
+                        }
+                        if (!exit) {
+                            if (thumbnail.indexOf(String.valueOf(tempLocalAtt.attId)) != 0) {
+                                thumbnail = "";
+                            }
+                            NoteAttrDbHelper.deleteAttById(tempLocalAtt.attId);
+                        }
+                    }
+                    //循环判断是否与线上同步，本地没有就插入数据
+                    for (int k = 0; k < atts.size(); k++) {
+                        GetNoteByNoteIdBean.Attachments tempAtt = atts.get(k);
+                        long attId = tempAtt.getId();
+                        boolean exit = false;
+                        for (int i = 0; i < localAtts.size(); i++) {
+                            TNNoteAtt tempLocalAtt = localAtts.get(i);
+                            if (tempLocalAtt.attId == attId) {
+                                exit = true;
+                            }
+                        }
+                        if (!exit) {
+                            syncState = 1;
+                            insertAttr(tempAtt, note.noteLocalId);
+                        }
+                    }
+                } else {
                     for (int i = 0; i < atts.size(); i++) {
                         GetNoteByNoteIdBean.Attachments tempAtt = atts.get(i);
-                        long attId = tempAtt.getId();
-                        if (tempLocalAtt.attId == attId) {
-                            exit = true;
-                        }
-                    }
-                    if (!exit) {
-                        if (thumbnail.indexOf(String.valueOf(tempLocalAtt.attId)) != 0) {
-                            thumbnail = "";
-                        }
-                        NoteAttrDbHelper.deleteAttById(tempLocalAtt.attId);
-                    }
-                }
-                //循环判断是否与线上同步，本地没有就插入数据
-                for (int k = 0; k < atts.size(); k++) {
-                    GetNoteByNoteIdBean.Attachments tempAtt = atts.get(k);
-                    long attId = tempAtt.getId();
-                    boolean exit = false;
-                    for (int i = 0; i < localAtts.size(); i++) {
-                        TNNoteAtt tempLocalAtt = localAtts.get(i);
-                        if (tempLocalAtt.attId == attId) {
-                            exit = true;
-                        }
-                    }
-                    if (!exit) {
                         syncState = 1;
                         insertAttr(tempAtt, note.noteLocalId);
                     }
                 }
-            } else {
-                for (int i = 0; i < atts.size(); i++) {
-                    GetNoteByNoteIdBean.Attachments tempAtt = atts.get(i);
-                    syncState = 1;
-                    insertAttr(tempAtt, note.noteLocalId);
+
+                //如果本地的更新时间晚就以本地的为准
+                if (note.lastUpdate > (com.thinkernote.ThinkerNote.Utils.TimeUtils.getMillsOfDate(bean.getUpdate_at()) / 1000)) {
+                    return;
+                }
+
+                if (atts.size() == 0) {
+                    syncState = 2;
                 }
             }
 
-            //如果本地的更新时间晚就以本地的为准
-            if (note.lastUpdate > (com.thinkernote.ThinkerNote.Utils.TimeUtils.getMillsOfDate(bean.getUpdate_at()) / 1000)) {
-                return;
+            int catId = -1;
+            // getFolder_id可以为负值么
+            if (bean.getFolder_id() > 0) {
+                catId = bean.getFolder_id();
             }
 
-            if (atts.size() == 0) {
-                syncState = 2;
-            }
+            JSONObject tempObj = TNUtils.makeJSON(
+                    "title", bean.getTitle(),
+                    "userId", TNSettings.getInstance().userId,
+                    "trash", bean.getTrash(),
+                    "source", "android",
+                    "catId", catId,
+                    "content", TNUtilsHtml.codeHtmlContent(bean.getContent(), true),
+                    "createTime", com.thinkernote.ThinkerNote.Utils.TimeUtils.getMillsOfDate(bean.getCreate_at()) / 1000,
+                    "lastUpdate", com.thinkernote.ThinkerNote.Utils.TimeUtils.getMillsOfDate(bean.getUpdate_at()) / 1000,
+                    "syncState", syncState,
+                    "noteId", noteId,
+                    "shortContent", TNUtils.getBriefContent(bean.getContent()),
+                    "tagStr", tagStr,
+                    "lbsLongitude", bean.getLongitude() <= 0 ? 0 : bean.getLongitude(),
+                    "lbsLatitude", bean.getLatitude() <= 0 ? 0 : bean.getLatitude(),
+                    "lbsRadius", bean.getRadius() <= 0 ? 0 : bean.getRadius(),
+                    "lbsAddress", bean.getAddress(),
+                    "nickName", TNSettings.getInstance().username,
+                    "thumbnail", thumbnail,
+                    "contentDigest", contentDigest
+            );
+            MLog.e("updateNote接口返回--tempObj:" + tempObj.toString());
+            if (note == null)
+                NoteDbHelper.addOrUpdateNote(tempObj);
+            else
+                NoteDbHelper.updateNote(tempObj);
+        } catch (Exception e) {
+            MLog.e(e.toString());
         }
-
-        int catId = -1;
-        // getFolder_id可以为负值么
-        if (bean.getFolder_id() > 0) {
-            catId = bean.getFolder_id();
-        }
-
-        JSONObject tempObj = TNUtils.makeJSON(
-                "title", bean.getTitle(),
-                "userId", TNSettings.getInstance().userId,
-                "trash", bean.getTrash(),
-                "source", "android",
-                "catId", catId,
-                "content", TNUtilsHtml.codeHtmlContent(bean.getContent(), true),
-                "createTime", com.thinkernote.ThinkerNote.Utils.TimeUtils.getMillsOfDate(bean.getCreate_at()) / 1000,
-                "lastUpdate", com.thinkernote.ThinkerNote.Utils.TimeUtils.getMillsOfDate(bean.getUpdate_at()) / 1000,
-                "syncState", syncState,
-                "noteId", noteId,
-                "shortContent", TNUtils.getBriefContent(bean.getContent()),
-                "tagStr", tagStr,
-                "lbsLongitude", bean.getLongitude() <= 0 ? 0 : bean.getLongitude(),
-                "lbsLatitude", bean.getLatitude() <= 0 ? 0 : bean.getLatitude(),
-                "lbsRadius", bean.getRadius() <= 0 ? 0 : bean.getRadius(),
-                "lbsAddress", bean.getAddress(),
-                "nickName", TNSettings.getInstance().username,
-                "thumbnail", thumbnail,
-                "contentDigest", contentDigest
-        );
-        MLog.e("updateNote接口返回--tempObj:" + tempObj.toString());
-        if (note == null)
-            NoteDbHelper.addOrUpdateNote(tempObj);
-        else
-            NoteDbHelper.updateNote(tempObj);
     }
 
     public static void insertAttr(GetNoteByNoteIdBean.Attachments tempAtt, long noteLocalId) {
@@ -903,10 +908,16 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      * （一.4） GetFoldersByFolderId
      * list中都要调用接口，串行调用
      * 接口个数= allFolderItemBeans.size的n个连乘（n最大5）
+     * <p>
+     * 说明：此处有个bug，如果mapList的第一层执行到有getFolder_count>=1时，就会调用接口，使mapList增加一层，这没有问题。
+     * 但是，当新增的一层执行完后，还会返回执行mapList的第一层，还是从0开始的，又会触碰getFolder_count>=1这个已经执行完的位置，所以需要标记跳过他,避免重复执行
      *
      * @param isAdd 如果mapList.add之后立即执行该方法，为true
      */
+    Map<String, Integer> flagMap = new HashMap<>();//key值用mapList.size+"A"+position标记
+
     private void syncGetFoldersByFolderId(int startPos, boolean isAdd) {
+        MLog.d("1-4--syncGetFoldersByFolderId--mapList.size()=" + mapList.size());
         if (mapList.size() > 0 && mapList.size() <= 5) {
             //有1---5，for循环层层内嵌,从最内层（mapList.size最大处）开始执行
             List<AllFolderItemBean> allFolderItemBeans = mapList.get(mapList.size() - 1);
@@ -917,7 +928,6 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                     if (isAdd) {
                         syncGetFoldersByFolderId(0, allFolderItemBeans);
                     } else {
-
                         syncGetFoldersByFolderId(startPos, allFolderItemBeans);
                     }
                 } else {
@@ -926,9 +936,22 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                         //执行下一个接口
                         syncTNCat();
                     } else {
-                        //执行上一层的新循环
-                        mapList.remove(mapList.size() - 1);
-                        syncGetFoldersByFolderId(0, false);
+                        //执行上一层的循环
+                        MLog.d("执行上一层的循环");
+                        mapList.remove(mapList.size() - 1);//移除最后一个item
+
+                        //移除最后一层后，暴露上一层，所以需要获取上一层的执行过的位置，从该位置继续执行
+                        List<AllFolderItemBean> allFolderItemBeans2 = mapList.get(mapList.size() - 1);
+                        for (int i = 0; i < allFolderItemBeans2.size(); i++) {
+                            if (flagMap.get(mapList.size() + "A" + i) != null) {//查找出该存储的值
+                                int newPos = flagMap.get(mapList.size() + "A" + i);
+                                //移除
+                                flagMap.remove(mapList.size() + "A" + i);
+                                syncGetFoldersByFolderId(newPos + 1, false);//
+                                break;
+                            }
+                        }
+
                     }
                 }
             } else {
@@ -938,8 +961,19 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                     syncTNCat();
                 } else {
                     //执行上一层的新循环
-                    mapList.remove(mapList.size() - 1);
-                    syncGetFoldersByFolderId(0, false);
+                    MLog.d("执行上一层的循环");
+                    mapList.remove(mapList.size() - 1);//移除最后一个item
+                    //移除最后一层后，暴露上一层，所以需要获取上一层的执行过的位置，从该位置继续执行
+                    List<AllFolderItemBean> allFolderItemBeans2 = mapList.get(mapList.size() - 1);
+                    for (int i = 0; i < allFolderItemBeans2.size(); i++) {
+                        if (flagMap.get(mapList.size() + "A" + i) != null) {//查找出该存储的值
+                            int newPos = flagMap.get(mapList.size() + "A" + i);
+                            //移除
+                            flagMap.remove(mapList.size() + "A" + i);
+                            syncGetFoldersByFolderId(newPos + 1, false);//
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -953,12 +987,12 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      */
 
     private void syncGetFoldersByFolderId(int startPos, List<AllFolderItemBean> beans) {
-        MLog.d("sync---1-4-syncGetFoldersByFolderId--syncGetFoldersByFolderId");
+        MLog.e("sync---1-4-syncGetFoldersByFolderId--startPos=" + startPos + "--Folder_count=" + beans.get(startPos).getFolder_count());
         if (beans.get(startPos).getFolder_count() == 0) {//没有数据就跳过
             MLog.d("sync---1-4-syncGetFoldersByFolderId--下一个position");
             syncGetFoldersByFolderId(startPos + 1, false);
         } else {
-            MLog.d("sync---1-4-syncGetFoldersByFolderId--调用当前position接口");
+            MLog.d("sync---1-4-syncGetFoldersByFolderId--调用当前position接口：");
             presener.pGetFoldersByFolderId(beans.get(startPos).getId(), startPos, beans);
         }
     }
@@ -1459,6 +1493,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
             pUpdataNote(0, false);
         }
     }
+
     /**
      * 对note的content进行处理,供(二.10)-1的pEditNotePic()使用
      *
@@ -1494,6 +1529,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
         }
         return note;
     }
+
     /**
      * editNotes
      * <p>
@@ -1798,6 +1834,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
         AllFolderBean allFolderBean = (AllFolderBean) obj;
         List<AllFolderItemBean> allFolderItemBeans = allFolderBean.getFolders();
         MLog.d("sync----1-3-->Success" + "allFolderBean:" + allFolderBean.toString() + "--allFolderItemBeans:" + allFolderItemBeans.size());
+        //
         mapList.add(allFolderItemBeans);
         //更新数据库
         insertDBCatsSQL(allFolderBean, -1);
@@ -1817,7 +1854,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
         AllFolderBean allFolderBean = (AllFolderBean) obj;
         List<AllFolderItemBean> allFolderItemBeans = allFolderBean.getFolders();
         //
-        MLog.d("sync----1-4-->Success" + "--allFolderItemBeans:" + allFolderItemBeans.size());
+        MLog.d("sync----1-4-->Success--接口返回数据：" + allFolderItemBeans.size());
         //判断是否有返回值
         if (allFolderBean == null || allFolderItemBeans == null || allFolderItemBeans.size() <= 1) {
             if (allFolderItemBeans.size() == 1) {
@@ -1827,6 +1864,9 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                     //执行下个position循环
                     syncGetFoldersByFolderId(startPos + 1, false);
                 } else {
+                    //有多个数据
+                    //新增循环层前添加标记，标记已经执行完的上一层位置
+                    flagMap.put(mapList.size() + "A" + startPos, startPos);
                     //1-4新增循环
                     mapList.add(allFolderItemBeans);
                     //更新数据库
@@ -1834,11 +1874,15 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                     //执行新循环
                     syncGetFoldersByFolderId(0, true);
                 }
-            } else {
+            } else {//没有数据
+
                 //执行下个position循环
                 syncGetFoldersByFolderId(startPos + 1, false);
             }
         } else {
+            //有多个数据
+            //新增循环层前添加标记，标记已经执行完的上一层位置
+            flagMap.put(mapList.size() + "A" + startPos, startPos);
             //1-4新增循环
             mapList.add(allFolderItemBeans);
             //更新数据库
@@ -2406,9 +2450,11 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
         MLog.d("sync----2-11-2-->Success");
         updateNote((GetNoteByNoteIdBean) obj);
         if (is13) {
+            MLog.d("sync----2-11-2-->Success--pUpdataNote13");
             pUpdataNote13(position + 1, is13);
         } else {
             //执行一个position或下一个接口
+            MLog.d("sync----2-11-2-->Success--pUpdataNote");
             pUpdataNote(position + 1, false);
         }
 

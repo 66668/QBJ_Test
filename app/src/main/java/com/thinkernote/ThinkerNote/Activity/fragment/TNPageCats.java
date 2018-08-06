@@ -71,7 +71,9 @@ import com.thinkernote.ThinkerNote.bean.main.TagListBean;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -1241,10 +1243,13 @@ public class TNPageCats extends TNChildViewBase implements
      * （一.4） GetFoldersByFolderId
      * list中都要调用接口，串行调用
      * 接口个数= allFolderItemBeans.size的n个连乘（n最大5）
+     * <p>
+     * 说明：此处有个bug，如果mapList的第一层执行到有getFolder_count>=1时，就会调用接口，使mapList增加一层，这没有问题。
+     * 但是，当新增的一层执行完后，还会返回执行mapList的第一层，还是从0开始的，又会触碰getFolder_count>=1这个已经执行完的位置，所以需要标记跳过他,避免重复执行
      *
      * @param isAdd 如果mapList.add之后立即执行该方法，为true
      */
-
+    Map<String, Integer> flagMap = new HashMap<>();//key值用mapList.size+"A"+position标记
     private void syncGetFoldersByFolderId(int startPos, boolean isAdd) {
         MLog.d("frag同步--syncGetFoldersByFolderId 1-4");
         if (mapList.size() > 0 && mapList.size() <= 5) {
@@ -1265,9 +1270,21 @@ public class TNPageCats extends TNChildViewBase implements
                         //执行下一个接口
                         syncTNCat();
                     } else {
-                        //执行上一层的新循环
-                        mapList.remove(mapList.size() - 1);
-                        syncGetFoldersByFolderId(0, false);
+                        //执行上一层的循环
+                        MLog.d("执行上一层的循环");
+                        mapList.remove(mapList.size() - 1);//移除最后一个item
+
+                        //移除最后一层后，暴露上一层，所以需要获取上一层的执行过的位置，从该位置继续执行
+                        List<AllFolderItemBean> allFolderItemBeans2 = mapList.get(mapList.size() - 1);
+                        for(int i=0;i<allFolderItemBeans2.size();i++){
+                            if(flagMap.get(mapList.size()+"A"+i)!=null){//查找出该存储的值
+                                int newPos  =flagMap.get(mapList.size()+"A"+i);
+                                //移除
+                                flagMap.remove(mapList.size()+"A"+i);
+                                syncGetFoldersByFolderId(newPos+1, false);//
+                                break;
+                            }
+                        }
                     }
                 }
             } else {
@@ -1276,8 +1293,21 @@ public class TNPageCats extends TNChildViewBase implements
                     //执行下一个接口
                     syncTNCat();
                 } else {
-                    mapList.remove(mapList.size() - 1);
-                    syncGetFoldersByFolderId(0, false);
+                    //执行上一层的循环
+                    MLog.d("执行上一层的循环");
+                    mapList.remove(mapList.size() - 1);//移除最后一个item
+
+                    //移除最后一层后，暴露上一层，所以需要获取上一层的执行过的位置，从该位置继续执行
+                    List<AllFolderItemBean> allFolderItemBeans2 = mapList.get(mapList.size() - 1);
+                    for(int i=0;i<allFolderItemBeans2.size();i++){
+                        if(flagMap.get(mapList.size()+"A"+i)!=null){//查找出该存储的值
+                            int newPos  =flagMap.get(mapList.size()+"A"+i);
+                            //移除
+                            flagMap.remove(mapList.size()+"A"+i);
+                            syncGetFoldersByFolderId(newPos+1, false);//
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -2036,6 +2066,9 @@ public class TNPageCats extends TNChildViewBase implements
                         //执行下个position循环
                         syncGetFoldersByFolderId(startPos + 1, false);
                     } else {
+                        //有多个数据
+                        //新增循环层前添加标记，标记已经执行完的上一层位置
+                        flagMap.put(mapList.size()+"A"+startPos,startPos);
                         //1-4新增循环
                         mapList.add(allFolderItemBeans);
                         //更新数据库
@@ -2048,6 +2081,9 @@ public class TNPageCats extends TNChildViewBase implements
                     syncGetFoldersByFolderId(startPos + 1, false);
                 }
             } else {
+                //有多个数据
+                //新增循环层前添加标记，标记已经执行完的上一层位置
+                flagMap.put(mapList.size()+"A"+startPos,startPos);
                 //1-4新增循环
                 mapList.add(allFolderItemBeans);
                 //更新数据库

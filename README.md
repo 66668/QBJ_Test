@@ -53,4 +53,14 @@
 
 下载2张图片逻辑顺序：
  下载第一个图片响应---》更新att数据库（哪里操作？）-->回调----》下一个循环
+ 
+ ##error说明：
+ （1）ANR异常：非按键事件，事件等待队列不为空且头事件分发超时500ms
+ Input dispatching timed out (com.thinkernote.ThinkerNote/com.thinkernote.ThinkerNote.Activity.TNPagerAct, Waiting to send non-key event because the touched window has not finished processing certain input events that were delivered to it over 500.0ms ago.  Wait queue length: 15.  Wait queue head age: 9187.5ms
+ 
+（2）2-11-2异常
+mGetNoteByNoteId 异常onError:java.util.regex.PatternSyntaxException: Incorrectly nested parentheses in regexp pattern near index 0
 
+
+mGetNoteByNoteId 异常onError:java.net.UnknownHostException: Unable to resolve host "s.qingbiji.cn": No address associated with hostname
+权限每丢失的情况下 断网了
