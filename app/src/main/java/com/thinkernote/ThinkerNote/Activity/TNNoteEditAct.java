@@ -9,6 +9,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images.Media;
@@ -93,6 +95,9 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
     public static final int DELETE_REALNOTE = 104;//
     public static final int DELETE_REALNOTE2 = 106;//
     public static final int UPDATA_EDITNOTES = 107;//
+
+    public static final int UI_HANDLER_2_11 = 108;//
+    public static final int CHILD_HANDLER_2_11 = 109;//
 
     private static final int SAVE_OVER = 102;
     private static final int START_SYNC = 103;
@@ -1121,9 +1126,21 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                 //执行下一个position/执行下一个接口
                 pEditNotePic((int) msg.obj + 1);
                 break;
+            case UI_HANDLER_2_11:
+                Bundle bundle = msg.getData();
+                int position = bundle.getInt("int");
+                boolean is13 = bundle.getBoolean("boolean");
+
+                //执行一个position或下一个接口
+                MLog.d("sync----2-11-2-->Success--pUpdataNote");
+                pUpdataNote(position + 1, false);
+
+                break;
         }
         super.handleMessage(msg);
     }
+
+    HandlerThread handlerThread2_11 = new HandlerThread("main_sjy2-11");
 
     private void endSynchronize() {
         mProgressDialog.hide();
@@ -1450,6 +1467,55 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                 handler.sendMessage(msg);
             }
         });
+
+    }
+
+    /**
+     * 处理2-11-2接口数据 使用HandlerThread处理耗时操作
+     *
+     * @param bean
+     * @param position
+     * @param is13
+     */
+    private void handleNote(GetNoteByNoteIdBean bean, final int position, final boolean is13) {
+        //开启handlerThread线程
+        handlerThread2_11.start();
+        //构建异步handler
+        Handler chlidHanlder2_11 = new Handler(handlerThread2_11.getLooper(), new Handler.Callback() {
+
+            @Override
+            public boolean handleMessage(Message msg) {
+                switch (msg.what) {
+                    case CHILD_HANDLER_2_11://处理1-4接口数据
+                        //获取数据
+                        Bundle bundle = msg.getData();
+                        GetNoteByNoteIdBean myBean = (GetNoteByNoteIdBean) bundle.getSerializable("bean");
+                        //耗时操作
+                        updateNote(myBean);
+
+                        //操作完成，返回UI
+                        Bundle UIBundle = new Bundle();
+                        UIBundle.putInt("int", position);
+                        UIBundle.putBoolean("boolean", is13);
+                        Message message = Message.obtain();
+                        message.setData(bundle);
+                        message.what = UI_HANDLER_2_11;
+                        handler.sendMessage(message);
+                        break;
+                }
+
+                return false;
+            }
+        });
+
+        //触发 异步handler,执行耗时操作
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("bean", bean);
+        //向chlidHanlder2_11发送msg
+        Message msg = new Message();
+        msg.setData(bundle);
+        msg.what = CHILD_HANDLER_2_11;//传递给异步handler耗时处理
+        chlidHanlder2_11.sendMessage(msg);
 
     }
 
@@ -1973,7 +2039,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
      * 图片上传
      *
      * @param cloudsPos cloudIds数据的其实操作位置
-     * @param tnnote      EditNotePicBefore(note)方法已经处理了content参数，可以直接用
+     * @param tnnote    EditNotePicBefore(note)方法已经处理了content参数，可以直接用
      */
     private void pEditNotePic(int cloudsPos, int attsPos, TNNote tnnote) {
         TNNote note = tnnote;
@@ -2383,10 +2449,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
     //2-11-2
     @Override
     public void onSyncpGetNoteByNoteIdSuccess(Object obj, int position, boolean is13) {
-        updateNote((GetNoteByNoteIdBean) obj);
-        //执行一个position或下一个接口
-        pUpdataNote(position + 1, false);
-
+        handleNote((GetNoteByNoteIdBean) obj, position, false);
     }
 
     @Override

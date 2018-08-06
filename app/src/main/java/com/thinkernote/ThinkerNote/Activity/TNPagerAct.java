@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -80,7 +82,9 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
     public static final int CAT_DELETE = 107;//
     public static final int CC_DELETE = 108;//清空回收站
     public static final int SYNC_DATA_BY_NOTEID = 110;//
-
+    public static final int CHILD_HANDLER_2_11 = 111;//
+    public static final int UI_HANDLER_2_11 = 112;//
+    //
     private HorizontalPager mPager;
     private Vector<TNChildViewBase> mChildPages;
     private TNChildViewBase mCurrChild;
@@ -999,9 +1003,19 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
                 //关闭弹窗
                 endGetAllDataByNoteId(0);
                 break;
+            case UI_HANDLER_2_11:
+                Bundle bundle = msg.getData();
+                int position = bundle.getInt("int");
+                boolean is13 = bundle.getBoolean("boolean");
+
+                pUpdataNote(position + 1, false);
+                break;
         }
 
     }
+
+    HandlerThread handlerThread2_11 = new HandlerThread("main_sjy2-11");
+
     //-------------------------------------GetDataByNoteId数据库操作----------------------------------------
 
     /**
@@ -1134,6 +1148,55 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
                 handler.sendMessage(msg);
             }
         });
+    }
+
+    /**
+     * 处理2-11-2接口数据 使用HandlerThread处理耗时操作
+     *
+     * @param bean
+     * @param position
+     * @param is13
+     */
+    private void handleNote(GetNoteByNoteIdBean bean, final int position, final boolean is13) {
+        //开启handlerThread线程
+        handlerThread2_11.start();
+        //构建异步handler
+        Handler chlidHanlder2_11 = new Handler(handlerThread2_11.getLooper(), new Handler.Callback() {
+
+            @Override
+            public boolean handleMessage(Message msg) {
+                switch (msg.what) {
+                    case CHILD_HANDLER_2_11://处理1-4接口数据
+                        //获取数据
+                        Bundle bundle = msg.getData();
+                        GetNoteByNoteIdBean myBean = (GetNoteByNoteIdBean) bundle.getSerializable("bean");
+                        //耗时操作
+                        updateNote(myBean);
+
+                        //操作完成，返回UI
+                        Bundle UIBundle = new Bundle();
+                        UIBundle.putInt("int", position);
+                        UIBundle.putBoolean("boolean", is13);
+                        Message message = Message.obtain();
+                        message.setData(bundle);
+                        message.what = UI_HANDLER_2_11;
+                        handler.sendMessage(message);
+                        break;
+                }
+
+                return false;
+            }
+        });
+
+        //触发 异步handler,执行耗时操作
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("bean", bean);
+        //向chlidHanlder2_11发送msg
+        Message msg = new Message();
+        msg.setData(bundle);
+        msg.what = CHILD_HANDLER_2_11;//传递给异步handler耗时处理
+        chlidHanlder2_11.sendMessage(msg);
+
     }
 
     //getDataBynoteId 调用 2-11-2
@@ -2298,13 +2361,7 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
     @Override
     public void onSyncpGetNoteByNoteIdSuccess(Object obj, int position, boolean is13) {
         MLog.d("sync----2-11-2-->Success");
-        updateNote((GetNoteByNoteIdBean) obj);
-        if (is13) {
-            //main中2-13接口使用，本类中不使用
-        } else {
-            //执行一个position或下一个接口
-            pUpdataNote(position + 1, false);
-        }
+        handleNote((GetNoteByNoteIdBean) obj,position,false);
 
     }
 

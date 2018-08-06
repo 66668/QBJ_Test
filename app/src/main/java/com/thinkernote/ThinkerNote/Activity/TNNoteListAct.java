@@ -107,7 +107,10 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
 
     public static final int CHILD_HANDLER_1_4 = 112;//
     public static final int UI_HANDLER_1_4 = 113;//
-
+    public static final int CHILD_HANDLER_2_11 = 114;//
+    public static final int UI_HANDLER_2_11 = 115;//
+    public static final int CHILD_HANDLER2_2_11 = 116;//
+    public static final int UI_HANDLER2_2_11 = 117;//
     /*
      * Bundle: ListType ListDetail
      */
@@ -1091,15 +1094,42 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
                 //执行新循环
                 syncGetFoldersByFolderId(0, true);
                 break;
+            case UI_HANDLER_2_11:
+                Bundle bundle = msg.getData();
+                int position = bundle.getInt("int");
+                boolean is13 = bundle.getBoolean("boolean");
 
+                if (is13) {
+                    MLog.d("sync----2-11-2-->Success--pUpdataNote13");
+                    pUpdataNote131(position + 1, is13);
+                } else {
+                    //执行一个position或下一个接口
+                    MLog.d("sync----2-11-2-->Success--pUpdataNote");
+                    pUpdataNote1(position + 1, false);
+                }
+                break;
+            case UI_HANDLER2_2_11:
+                Bundle bundle2 = msg.getData();
+                int position2 = bundle2.getInt("int");
+                boolean is132 = bundle2.getBoolean("boolean");
+
+                if (is132) {
+                    MLog.d("sync----2-11-2-->Success--pUpdataNote13");
+                    pUpdataNote132(position2 + 1, is132);
+                } else {
+                    //执行一个position或下一个接口
+                    MLog.d("sync----2-11-2-->Success--pUpdataNote");
+                    pUpdataNote2(position2 + 1, false);
+                }
+                break;
         }
     }
 
     /**
      * 创建HandlerThread,用于异步处理数据库数据
      */
-    HandlerThread handlerThread1_4 = new HandlerThread("main_sjy1_4");
-
+    HandlerThread handlerThread1_4 = new HandlerThread("notelist1_4");
+    HandlerThread handlerThread2_11 = new HandlerThread("notelist2-11");
 
     // ---------------------------------------数据库操作----------------------------------------
     // 本地搜索
@@ -1419,6 +1449,55 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
 
     }
 
+    /**
+     * 处理2-11-2接口数据 使用HandlerThread处理耗时操作
+     *
+     * @param bean
+     * @param position
+     * @param is13
+     */
+    private void handleNote1(GetNoteByNoteIdBean bean, final int position, final boolean is13) {
+        //开启handlerThread线程
+        handlerThread2_11.start();
+        //构建异步handler
+        Handler chlidHanlder2_11 = new Handler(handlerThread2_11.getLooper(), new Handler.Callback() {
+
+            @Override
+            public boolean handleMessage(Message msg) {
+                switch (msg.what) {
+                    case CHILD_HANDLER_2_11://处理1-4接口数据
+                        //获取数据
+                        Bundle bundle = msg.getData();
+                        GetNoteByNoteIdBean myBean = (GetNoteByNoteIdBean) bundle.getSerializable("bean");
+                        //耗时操作
+                        updateNote1(myBean);
+
+                        //操作完成，返回UI
+                        Bundle UIBundle = new Bundle();
+                        UIBundle.putInt("int", position);
+                        UIBundle.putBoolean("boolean", is13);
+                        Message message = Message.obtain();
+                        message.setData(bundle);
+                        message.what = UI_HANDLER_2_11;
+                        handler.sendMessage(message);
+                        break;
+                }
+
+                return false;
+            }
+        });
+
+        //触发 异步handler,执行耗时操作
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("bean", bean);
+        //向chlidHanlder2_11发送msg
+        Message msg = new Message();
+        msg.setData(bundle);
+        msg.what = CHILD_HANDLER_2_11;//传递给异步handler耗时处理
+        chlidHanlder2_11.sendMessage(msg);
+
+    }
+
     //2-11-2
     public static void updateNote1(GetNoteByNoteIdBean bean) {
 
@@ -1684,6 +1763,56 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
         });
 
     }
+
+    /**
+     * 处理2-11-2接口数据 使用HandlerThread处理耗时操作
+     *
+     * @param bean
+     * @param position
+     * @param is13
+     */
+    private void handleNote2(GetNoteByNoteIdBean bean, final int position, final boolean is13) {
+        //开启handlerThread线程
+        handlerThread2_11.start();
+        //构建异步handler
+        Handler chlidHanlder2_2_11 = new Handler(handlerThread2_11.getLooper(), new Handler.Callback() {
+
+            @Override
+            public boolean handleMessage(Message msg) {
+                switch (msg.what) {
+                    case CHILD_HANDLER2_2_11://处理2-11-2接口数据
+                        //获取数据
+                        Bundle bundle = msg.getData();
+                        GetNoteByNoteIdBean myBean = (GetNoteByNoteIdBean) bundle.getSerializable("bean");
+                        //耗时操作
+                        updateNote2(myBean);
+
+                        //操作完成，返回UI
+                        Bundle UIBundle = new Bundle();
+                        UIBundle.putInt("int", position);
+                        UIBundle.putBoolean("boolean", is13);
+                        Message message = Message.obtain();
+                        message.setData(bundle);
+                        message.what = UI_HANDLER_2_11;
+                        handler.sendMessage(message);
+                        break;
+                }
+
+                return false;
+            }
+        });
+
+        //触发 异步handler,执行耗时操作
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("bean", bean);
+        //向chlidHanlder2_11发送msg
+        Message msg = new Message();
+        msg.setData(bundle);
+        msg.what = CHILD_HANDLER2_2_11;//传递给异步handler耗时处理
+        chlidHanlder2_2_11.sendMessage(msg);
+
+    }
+
 
     //2-11-2
     public static void updateNote2(GetNoteByNoteIdBean bean) {
@@ -3846,13 +3975,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
         //2-11-2
         @Override
         public void onSyncpGetNoteByNoteIdSuccess(Object obj, int position, boolean is13) {
-            updateNote1((GetNoteByNoteIdBean) obj);
-            if (is13) {
-                pUpdataNote131(position + 1, is13);
-            } else {
-                //执行一个position或下一个接口
-                pUpdataNote1(position + 1, false);
-            }
+            handleNote1((GetNoteByNoteIdBean) obj, position, is13);
         }
 
         @Override
@@ -4204,13 +4327,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
         //2-11-2
         @Override
         public void onSyncpGetNoteByNoteIdSuccess2(Object obj, int position, boolean is13) {
-            updateNote2((GetNoteByNoteIdBean) obj);
-            if (is13) {
-                pUpdataNote132(position + 1, is13);
-            } else {
-                //执行一个position或下一个接口
-                pUpdataNote2(position + 1, false);
-            }
+            handleNote2((GetNoteByNoteIdBean) obj, position, is13);
 
         }
 

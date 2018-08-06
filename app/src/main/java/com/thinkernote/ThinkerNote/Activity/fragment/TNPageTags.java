@@ -91,6 +91,9 @@ public class TNPageTags extends TNChildViewBase implements
     public static final int UI_HANDLER_1_4 = 106;//
     public static final int CHILD_HANDLER_1_4 = 107;//
 
+    public static final int CHILD_HANDLER_2_11 = 108;//
+    public static final int UI_HANDLER_2_11 = 109;//
+
 
     private TNSettings mSettings = TNSettings.getInstance();
 
@@ -465,6 +468,20 @@ public class TNPageTags extends TNChildViewBase implements
                 //执行新循环
                 syncGetFoldersByFolderId(0, true);
                 break;
+            case UI_HANDLER_2_11:
+                Bundle bundle = msg.getData();
+                int position = bundle.getInt("int");
+                boolean is13 = bundle.getBoolean("boolean");
+
+                if (is13) {
+                    MLog.d("sync----2-11-2-->Success--pUpdataNote13");
+                    pUpdataNote13(position + 1, is13);
+                } else {
+                    //执行一个position或下一个接口
+                    MLog.d("sync----2-11-2-->Success--pUpdataNote");
+                    pUpdataNote(position + 1, false);
+                }
+                break;
         }
     }
 
@@ -472,6 +489,7 @@ public class TNPageTags extends TNChildViewBase implements
      * 创建HandlerThread,用于异步处理数据库数据
      */
     HandlerThread handlerThread1_4 = new HandlerThread("main_sjy1_4");
+    HandlerThread handlerThread2_11 = new HandlerThread("main_sjy2-11");
 
 
     /**
@@ -713,6 +731,54 @@ public class TNPageTags extends TNChildViewBase implements
                 handler.sendMessage(msg);
             }
         });
+
+    }
+    /**
+     * 处理2-11-2接口数据 使用HandlerThread处理耗时操作
+     *
+     * @param bean
+     * @param position
+     * @param is13
+     */
+    private void handleNote(GetNoteByNoteIdBean bean, final int position, final boolean is13) {
+        //开启handlerThread线程
+        handlerThread2_11.start();
+        //构建异步handler
+        Handler chlidHanlder2_11 = new Handler(handlerThread2_11.getLooper(), new Handler.Callback() {
+
+            @Override
+            public boolean handleMessage(Message msg) {
+                switch (msg.what) {
+                    case CHILD_HANDLER_2_11://处理1-4接口数据
+                        //获取数据
+                        Bundle bundle = msg.getData();
+                        GetNoteByNoteIdBean myBean = (GetNoteByNoteIdBean) bundle.getSerializable("bean");
+                        //耗时操作
+                        updateNote(myBean);
+
+                        //操作完成，返回UI
+                        Bundle UIBundle = new Bundle();
+                        UIBundle.putInt("int", position);
+                        UIBundle.putBoolean("boolean", is13);
+                        Message message = Message.obtain();
+                        message.setData(bundle);
+                        message.what = UI_HANDLER_2_11;
+                        handler.sendMessage(message);
+                        break;
+                }
+
+                return false;
+            }
+        });
+
+        //触发 异步handler,执行耗时操作
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("bean", bean);
+        //向chlidHanlder2_11发送msg
+        Message msg = new Message();
+        msg.setData(bundle);
+        msg.what = CHILD_HANDLER_2_11;//传递给异步handler耗时处理
+        chlidHanlder2_11.sendMessage(msg);
 
     }
 
@@ -2284,14 +2350,7 @@ public class TNPageTags extends TNChildViewBase implements
     //2-11-2
     @Override
     public void onSyncpGetNoteByNoteIdSuccess(Object obj, int position, boolean is13) {
-        updateNote((GetNoteByNoteIdBean) obj);
-        if (is13) {
-            pUpdataNote13(position + 1, is13);
-        } else {
-            //执行一个position或下一个接口
-            pUpdataNote(position + 1, false);
-        }
-
+        handleNote((GetNoteByNoteIdBean) obj, position, is13);
     }
 
     @Override
