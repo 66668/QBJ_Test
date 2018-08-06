@@ -1141,6 +1141,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
     }
 
     HandlerThread handlerThread2_11 = new HandlerThread("main_sjy2-11");
+    Handler chlidHanlder2_11;
 
     private void endSynchronize() {
         mProgressDialog.hide();
@@ -1478,45 +1479,53 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
      * @param is13
      */
     private void handleNote(GetNoteByNoteIdBean bean, final int position, final boolean is13) {
-        //开启handlerThread线程
-        handlerThread2_11.start();
-        //构建异步handler
-        Handler chlidHanlder2_11 = new Handler(handlerThread2_11.getLooper(), new Handler.Callback() {
-
-            @Override
-            public boolean handleMessage(Message msg) {
-                switch (msg.what) {
-                    case CHILD_HANDLER_2_11://处理1-4接口数据
-                        //获取数据
-                        Bundle bundle = msg.getData();
-                        GetNoteByNoteIdBean myBean = (GetNoteByNoteIdBean) bundle.getSerializable("bean");
-                        //耗时操作
-                        updateNote(myBean);
-
-                        //操作完成，返回UI
-                        Bundle UIBundle = new Bundle();
-                        UIBundle.putInt("int", position);
-                        UIBundle.putBoolean("boolean", is13);
-                        Message message = Message.obtain();
-                        message.setData(bundle);
-                        message.what = UI_HANDLER_2_11;
-                        handler.sendMessage(message);
-                        break;
-                }
-
-                return false;
-            }
-        });
 
         //触发 异步handler,执行耗时操作
         Bundle bundle = new Bundle();
         bundle.putSerializable("bean", bean);
+        bundle.putBoolean("boolean", is13);
+        bundle.putInt("int", position);
         //向chlidHanlder2_11发送msg
         Message msg = new Message();
         msg.setData(bundle);
         msg.what = CHILD_HANDLER_2_11;//传递给异步handler耗时处理
         chlidHanlder2_11.sendMessage(msg);
 
+    }
+    private void setChildHandler2_11(int position) {
+        if (position == 0 && !handlerThread2_11.isAlive()) {
+            //开启handlerThread线程
+            handlerThread2_11.start();
+            //构建异步handler
+            chlidHanlder2_11 = new Handler(handlerThread2_11.getLooper(), new Handler.Callback() {
+
+                @Override
+                public boolean handleMessage(Message msg) {
+                    switch (msg.what) {
+                        case CHILD_HANDLER_2_11://处理1-4接口数据
+                            //获取数据
+                            Bundle bundle = msg.getData();
+                            int position = bundle.getInt("int");
+                            boolean is13 = bundle.getBoolean("boolean");
+                            GetNoteByNoteIdBean myBean = (GetNoteByNoteIdBean) bundle.getSerializable("bean");
+                            //耗时操作
+                            updateNote(myBean);
+
+                            //操作完成，返回UI
+                            Bundle UIBundle = new Bundle();
+                            UIBundle.putInt("int", position);
+                            UIBundle.putBoolean("boolean", is13);
+                            Message message = Message.obtain();
+                            message.setData(bundle);
+                            message.what = UI_HANDLER_2_11;
+                            handler.sendMessage(message);
+                            break;
+                    }
+
+                    return false;
+                }
+            });
+        }
     }
 
     //2-11-2
@@ -2109,6 +2118,9 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
      */
     private void pUpdataNote(int position, boolean is13) {
         MLog.d("同步edit--pUpdataNote 2-11-2");
+        //为2-11-2接口返回，做预处理
+        setChildHandler2_11(position);
+
         if (cloudIds.size() > 0 && position < (cloudIds.size() - 1)) {
             boolean isExit = false;
             long id = cloudIds.get(position).getId();
