@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Message;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
@@ -93,6 +95,9 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     public static final int DELETE_REALNOTE = 102;//
     public static final int DELETE_REALNOTE2 = 103;//
     public static final int UPDATA_EDITNOTES = 104;//
+    public static final int CHILD_HANDLER_1_4 = 105;//
+    public static final int UI_HANDLER_1_4 = 106;//
+
 
     //==================================变量=======================================
     private long mLastClickBackTime = 0;
@@ -465,32 +470,66 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     }
 
     /**
-     * 调用GetFoldersByFolderId接口，就触发插入db
+     *
+     * 1_4 调用GetFoldersByFolderId接口，就触发插入db
      */
-    private void insertDBCatsSQL(AllFolderBean allFolderBean, long pCatId) {
-        TNSettings settings = TNSettings.getInstance();
-        CatDbHelper.clearCatsByParentId(pCatId);
-        List<AllFolderItemBean> beans = allFolderBean.getFolders();
+    private void insertDBCatsSQL( AllFolderBean allFolderBean,  long pCatId) {
+        //开启handlerThread线程
+        handlerThread1_4.start();
+        //构建异步handler
+        Handler chlidHanlder1_4 = new Handler(handlerThread1_4.getLooper(), new Handler.Callback() {
 
-        for (int i = 0; i < beans.size(); i++) {
-            AllFolderItemBean bean = beans.get(i);
+            @Override
+            public boolean handleMessage(Message msg) {
+                switch (msg.what) {
+                    case CHILD_HANDLER_1_4://处理1-4接口数据
+                        //获取数据
+                        Bundle bundle = msg.getData();
+                        long pCatId = bundle.getLong("long");
+                        AllFolderBean allFolderBean = (AllFolderBean) bundle.getSerializable("bean");
 
-            JSONObject tempObj = TNUtils.makeJSON(
-                    "catName", bean.getName(),
-                    "userId", settings.userId,
-                    "trash", 0,
-                    "catId", bean.getId(),
-                    "noteCounts", bean.getCount(),
-                    "catCounts", bean.getFolder_count(),
-                    "deep", bean.getFolder_count() > 0 ? 1 : 0,
-                    "pCatId", pCatId,
-                    "isNew", -1,
-                    "createTime", TNUtils.formatStringToTime(bean.getCreate_at()),
-                    "lastUpdateTime", TNUtils.formatStringToTime(bean.getUpdate_at()),
-                    "strIndex", TNUtils.getPingYinIndex(bean.getName())
-            );
-            CatDbHelper.addOrUpdateCat(tempObj);
-        }
+                        //耗时操作
+                        CatDbHelper.clearCatsByParentId(pCatId);
+                        List<AllFolderItemBean> beans = allFolderBean.getFolders();
+
+                        for (int i = 0; i < beans.size(); i++) {
+                            AllFolderItemBean bean = beans.get(i);
+
+                            JSONObject tempObj = TNUtils.makeJSON(
+                                    "catName", bean.getName(),
+                                    "userId", mSettings.userId,
+                                    "trash", 0,
+                                    "catId", bean.getId(),
+                                    "noteCounts", bean.getCount(),
+                                    "catCounts", bean.getFolder_count(),
+                                    "deep", bean.getFolder_count() > 0 ? 1 : 0,
+                                    "pCatId", pCatId,
+                                    "isNew", -1,
+                                    "createTime", TNUtils.formatStringToTime(bean.getCreate_at()),
+                                    "lastUpdateTime", TNUtils.formatStringToTime(bean.getUpdate_at()),
+                                    "strIndex", TNUtils.getPingYinIndex(bean.getName())
+                            );
+                            CatDbHelper.addOrUpdateCat(tempObj);
+                        }
+
+                        //操作完成，返回UI
+                        handler.sendEmptyMessage(UI_HANDLER_1_4);
+                        break;
+                }
+
+                return false;
+            }
+        });
+
+        //触发 异步handler,执行耗时操作
+        Bundle bundle = new Bundle();
+        bundle.putLong("long", pCatId);
+        bundle.putSerializable("bean", allFolderBean);
+        //
+        Message msg = new Message();
+        msg.setData(bundle);
+        msg.what = CHILD_HANDLER_1_4;//传递给异步handler耗时处理
+        chlidHanlder1_4.sendMessage(msg);
     }
 
     /**
@@ -766,7 +805,11 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     }
     //-------------------------------------handler处理同步------------------------------------------
 
-
+    /**
+     * 说明：该handleMessage方法用于处理UI相关，handler在基类act中设置
+     *
+     * @param msg
+     */
     @Override
     protected void handleMessage(Message msg) {
         super.handleMessage(msg);
@@ -797,8 +840,17 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                 //执行下一个position/执行下一个接口
                 pEditNotePic((int) msg.obj + 1);
                 break;
+            case UI_HANDLER_1_4:
+                //执行新循环
+                syncGetFoldersByFolderId(0, true);
+                break;
         }
     }
+
+    /**
+     * 创建HandlerThread,用于异步处理数据库数据
+     */
+    HandlerThread handlerThread1_4 = new HandlerThread("main_sjy1_4");
 
 
     //=============================================p层调用======================================================
@@ -888,18 +940,6 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     private void syncGetFolder() {
 
         presener.pGetFolder();
-
-        //cats.size()==0||main|catsFrag必执行，其他界面不执行
-
-//        Vector<TNCat> cats = TNDbUtils.getAllCatList(mSettings.userId);
-//        MLog.d("sync---1-3-pGetFolder");
-//
-//        if(cats.size()==0){
-//            presener.pGetFolder();
-//        }else{
-//            //
-//            presener.pGetFolder();
-//        }
     }
 
     /**
@@ -914,7 +954,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      *
      * @param isAdd 如果mapList.add之后立即执行该方法，为true
      */
-    Map<String, Integer> flagMap = new HashMap<>();//key值用mapList.size+"A"+position标记
+    Map<String, Integer> flagMap = new HashMap<>();//key值用mapList.size+"A"+position 标记
 
     private void syncGetFoldersByFolderId(int startPos, boolean isAdd) {
         MLog.d("1-4--syncGetFoldersByFolderId--mapList.size()=" + mapList.size());
@@ -944,7 +984,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                         List<AllFolderItemBean> allFolderItemBeans2 = mapList.get(mapList.size() - 1);
                         for (int i = 0; i < allFolderItemBeans2.size(); i++) {
                             if (flagMap.get(mapList.size() + "A" + i) != null) {//查找出该存储的值
-                                int newPos = flagMap.get(mapList.size() + "A" + i);
+                                int newPos = flagMap.get(mapList.size() + "A" + i);//key获取value
                                 //移除
                                 flagMap.remove(mapList.size() + "A" + i);
                                 syncGetFoldersByFolderId(newPos + 1, false);//
@@ -1838,9 +1878,6 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
         mapList.add(allFolderItemBeans);
         //更新数据库
         insertDBCatsSQL(allFolderBean, -1);
-
-        //执行下个接口 处理递归
-        syncGetFoldersByFolderId(0, true);
     }
 
     @Override
@@ -1871,8 +1908,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                     mapList.add(allFolderItemBeans);
                     //更新数据库
                     insertDBCatsSQL(allFolderBean, catID);
-                    //执行新循环
-                    syncGetFoldersByFolderId(0, true);
+
                 }
             } else {//没有数据
 
@@ -1887,8 +1923,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
             mapList.add(allFolderItemBeans);
             //更新数据库
             insertDBCatsSQL(allFolderBean, catID);
-            //执行新循环
-            syncGetFoldersByFolderId(0, true);
+
         }
     }
 

@@ -3,6 +3,8 @@ package com.thinkernote.ThinkerNote.Activity.fragment;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Message;
 import android.text.Html;
 import android.text.TextUtils;
@@ -90,6 +92,12 @@ public class TNPageCats extends TNChildViewBase implements
     public static final int DELETE_REALNOTE = 102;//
     public static final int DELETE_REALNOTE2 = 103;//
     public static final int UPDATA_EDITNOTES = 104;//
+
+    public static final int CHILD_HANDLER_1_4 = 105;//
+    public static final int UI_HANDLER_1_4 = 106;//
+
+    public static final int CHILD_HANDLER_2 = 107;//
+    public static final int UI_HANDLER_2 = 108;//
 
     //
     private String TAG = "TNPageCats";
@@ -815,31 +823,64 @@ public class TNPageCats extends TNChildViewBase implements
     }
 
     /**
-     * 调用GetFoldersByFolderId接口，就触发插入db
+     * 1_4接口 调用GetFoldersByFolderId接口，就触发插入db
      */
     private void insertDBCatsSQL1(AllFolderBean allFolderBean, long pCatId) {
-        TNSettings settings = TNSettings.getInstance();
-        CatDbHelper.clearCatsByParentId(pCatId);
-        List<AllFolderItemBean> beans = allFolderBean.getFolders();
-        for (int i = 0; i < beans.size(); i++) {
-            AllFolderItemBean bean = beans.get(i);
+        //开启handlerThread线程
+        handlerThread1_4.start();
+        //构建异步handler
+        Handler chlidHanlder1_4 = new Handler(handlerThread1_4.getLooper(), new Handler.Callback() {
 
-            JSONObject tempObj = TNUtils.makeJSON(
-                    "catName", bean.getName(),
-                    "userId", settings.userId,
-                    "trash", 0,
-                    "catId", bean.getId(),
-                    "noteCounts", bean.getCount(),
-                    "catCounts", bean.getFolder_count(),
-                    "deep", bean.getFolder_count() > 0 ? 1 : 0,
-                    "pCatId", pCatId,
-                    "isNew", -1,
-                    "createTime", TNUtils.formatStringToTime(bean.getCreate_at()),
-                    "lastUpdateTime", TNUtils.formatStringToTime(bean.getUpdate_at()),
-                    "strIndex", TNUtils.getPingYinIndex(bean.getName())
-            );
-            CatDbHelper.addOrUpdateCat(tempObj);
-        }
+            @Override
+            public boolean handleMessage(Message msg) {
+                switch (msg.what) {
+                    case CHILD_HANDLER_1_4://处理1-4接口数据
+                        //获取数据
+                        Bundle bundle = msg.getData();
+                        long pCatId = bundle.getLong("long");
+                        AllFolderBean allFolderBean = (AllFolderBean) bundle.getSerializable("bean");
+
+                        //耗时操作
+                        CatDbHelper.clearCatsByParentId(pCatId);
+                        List<AllFolderItemBean> beans = allFolderBean.getFolders();
+
+                        for (int i = 0; i < beans.size(); i++) {
+                            AllFolderItemBean bean = beans.get(i);
+
+                            JSONObject tempObj = TNUtils.makeJSON(
+                                    "catName", bean.getName(),
+                                    "userId", mSettings.userId,
+                                    "trash", 0,
+                                    "catId", bean.getId(),
+                                    "noteCounts", bean.getCount(),
+                                    "catCounts", bean.getFolder_count(),
+                                    "deep", bean.getFolder_count() > 0 ? 1 : 0,
+                                    "pCatId", pCatId,
+                                    "isNew", -1,
+                                    "createTime", TNUtils.formatStringToTime(bean.getCreate_at()),
+                                    "lastUpdateTime", TNUtils.formatStringToTime(bean.getUpdate_at()),
+                                    "strIndex", TNUtils.getPingYinIndex(bean.getName())
+                            );
+                            CatDbHelper.addOrUpdateCat(tempObj);
+                        }
+
+                        //操作完成，返回UI
+                        handler.sendEmptyMessage(UI_HANDLER_1_4);
+                        break;
+                }
+
+                return false;
+            }
+        });
+        //触发 异步handler,执行耗时操作
+        Bundle bundle = new Bundle();
+        bundle.putLong("long", pCatId);
+        bundle.putSerializable("bean", allFolderBean);
+        //
+        Message msg = new Message();
+        msg.setData(bundle);
+        msg.what = CHILD_HANDLER_1_4;//传递给异步handler耗时处理
+        chlidHanlder1_4.sendMessage(msg);
     }
 
     /**
@@ -1140,8 +1181,18 @@ public class TNPageCats extends TNChildViewBase implements
                 //执行下一个position/执行下一个接口
                 pEditNotePic1((int) msg.obj + 1);
                 break;
+            case UI_HANDLER_1_4:
+                //执行新循环
+                syncGetFoldersByFolderId(0, true);
+                break;
         }
     }
+
+    /**
+     * 创建HandlerThread,用于异步处理数据库数据
+     */
+    HandlerThread handlerThread1_4 = new HandlerThread("catfrag_4");
+
 
     //===================================================================================
     //01
@@ -1250,6 +1301,7 @@ public class TNPageCats extends TNChildViewBase implements
      * @param isAdd 如果mapList.add之后立即执行该方法，为true
      */
     Map<String, Integer> flagMap = new HashMap<>();//key值用mapList.size+"A"+position标记
+
     private void syncGetFoldersByFolderId(int startPos, boolean isAdd) {
         MLog.d("frag同步--syncGetFoldersByFolderId 1-4");
         if (mapList.size() > 0 && mapList.size() <= 5) {
@@ -1276,12 +1328,12 @@ public class TNPageCats extends TNChildViewBase implements
 
                         //移除最后一层后，暴露上一层，所以需要获取上一层的执行过的位置，从该位置继续执行
                         List<AllFolderItemBean> allFolderItemBeans2 = mapList.get(mapList.size() - 1);
-                        for(int i=0;i<allFolderItemBeans2.size();i++){
-                            if(flagMap.get(mapList.size()+"A"+i)!=null){//查找出该存储的值
-                                int newPos  =flagMap.get(mapList.size()+"A"+i);
+                        for (int i = 0; i < allFolderItemBeans2.size(); i++) {
+                            if (flagMap.get(mapList.size() + "A" + i) != null) {//查找出该存储的值
+                                int newPos = flagMap.get(mapList.size() + "A" + i);
                                 //移除
-                                flagMap.remove(mapList.size()+"A"+i);
-                                syncGetFoldersByFolderId(newPos+1, false);//
+                                flagMap.remove(mapList.size() + "A" + i);
+                                syncGetFoldersByFolderId(newPos + 1, false);//
                                 break;
                             }
                         }
@@ -1299,12 +1351,12 @@ public class TNPageCats extends TNChildViewBase implements
 
                     //移除最后一层后，暴露上一层，所以需要获取上一层的执行过的位置，从该位置继续执行
                     List<AllFolderItemBean> allFolderItemBeans2 = mapList.get(mapList.size() - 1);
-                    for(int i=0;i<allFolderItemBeans2.size();i++){
-                        if(flagMap.get(mapList.size()+"A"+i)!=null){//查找出该存储的值
-                            int newPos  =flagMap.get(mapList.size()+"A"+i);
+                    for (int i = 0; i < allFolderItemBeans2.size(); i++) {
+                        if (flagMap.get(mapList.size() + "A" + i) != null) {//查找出该存储的值
+                            int newPos = flagMap.get(mapList.size() + "A" + i);
                             //移除
-                            flagMap.remove(mapList.size()+"A"+i);
-                            syncGetFoldersByFolderId(newPos+1, false);//
+                            flagMap.remove(mapList.size() + "A" + i);
+                            syncGetFoldersByFolderId(newPos + 1, false);//
                             break;
                         }
                     }
@@ -2039,9 +2091,6 @@ public class TNPageCats extends TNChildViewBase implements
             mapList.add(allFolderItemBeans);
             //更新数据库
             insertDBCatsSQL1(allFolderBean, -1);
-
-            //执行下个接口 处理递归
-            syncGetFoldersByFolderId(0, true);
         }
 
         @Override
@@ -2068,13 +2117,12 @@ public class TNPageCats extends TNChildViewBase implements
                     } else {
                         //有多个数据
                         //新增循环层前添加标记，标记已经执行完的上一层位置
-                        flagMap.put(mapList.size()+"A"+startPos,startPos);
+                        flagMap.put(mapList.size() + "A" + startPos, startPos);
                         //1-4新增循环
                         mapList.add(allFolderItemBeans);
                         //更新数据库
-                        insertDBCatsSQL(allFolderBean, catID);
-                        //执行新循环
-                        syncGetFoldersByFolderId(0, true);
+                        insertDBCatsSQL1(allFolderBean, catID);
+
                     }
                 } else {
                     //执行下个position循环
@@ -2083,13 +2131,12 @@ public class TNPageCats extends TNChildViewBase implements
             } else {
                 //有多个数据
                 //新增循环层前添加标记，标记已经执行完的上一层位置
-                flagMap.put(mapList.size()+"A"+startPos,startPos);
+                flagMap.put(mapList.size() + "A" + startPos, startPos);
                 //1-4新增循环
                 mapList.add(allFolderItemBeans);
                 //更新数据库
-                insertDBCatsSQL(allFolderBean, catID);
-                //执行新循环
-                syncGetFoldersByFolderId(0, true);
+                insertDBCatsSQL1(allFolderBean, catID);
+
             }
         }
 

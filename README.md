@@ -64,3 +64,10 @@ mGetNoteByNoteId 异常onError:java.util.regex.PatternSyntaxException: Incorrect
 
 mGetNoteByNoteId 异常onError:java.net.UnknownHostException: Unable to resolve host "s.qingbiji.cn": No address associated with hostname
 权限每丢失的情况下 断网了
+
+
+#数据库优化说明：
+1。本app涉及大量数据插入查询，所以使用Transaction机制最合适。
+2。耗时操作用handlerThread异步，
+3。
+

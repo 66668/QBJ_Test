@@ -2,6 +2,8 @@ package com.thinkernote.ThinkerNote.Activity.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Message;
 import android.text.Html;
 import android.text.TextUtils;
@@ -85,6 +87,10 @@ public class TNPageTags extends TNChildViewBase implements
     public static final int DELETE_REALNOTE2 = 103;//
     public static final int UPDATA_EDITNOTES = 104;//
     public static final int TAGLIST = 105;//
+
+    public static final int UI_HANDLER_1_4 = 106;//
+    public static final int CHILD_HANDLER_1_4 = 107;//
+
 
     private TNSettings mSettings = TNSettings.getInstance();
 
@@ -454,8 +460,19 @@ public class TNPageTags extends TNChildViewBase implements
                 //执行下一个position/执行下一个接口
                 pEditNotePic((int) msg.obj + 1);
                 break;
+
+            case UI_HANDLER_1_4:
+                //执行新循环
+                syncGetFoldersByFolderId(0, true);
+                break;
         }
     }
+
+    /**
+     * 创建HandlerThread,用于异步处理数据库数据
+     */
+    HandlerThread handlerThread1_4 = new HandlerThread("main_sjy1_4");
+
 
     /**
      * 同步结束后的操作
@@ -520,28 +537,62 @@ public class TNPageTags extends TNChildViewBase implements
      * 调用GetFoldersByFolderId接口，就触发插入db
      */
     private void insertDBCatsSQL(AllFolderBean allFolderBean, long pCatId) {
-        TNSettings settings = TNSettings.getInstance();
-        CatDbHelper.clearCatsByParentId(pCatId);
-        List<AllFolderItemBean> beans = allFolderBean.getFolders();
-        for (int i = 0; i < beans.size(); i++) {
-            AllFolderItemBean bean = beans.get(i);
 
-            JSONObject tempObj = TNUtils.makeJSON(
-                    "catName", bean.getName(),
-                    "userId", settings.userId,
-                    "trash", 0,
-                    "catId", bean.getId(),
-                    "noteCounts", bean.getCount(),
-                    "catCounts", bean.getFolder_count(),
-                    "deep", bean.getFolder_count() > 0 ? 1 : 0,
-                    "pCatId", pCatId,
-                    "isNew", -1,
-                    "createTime", TNUtils.formatStringToTime(bean.getCreate_at()),
-                    "lastUpdateTime", TNUtils.formatStringToTime(bean.getUpdate_at()),
-                    "strIndex", TNUtils.getPingYinIndex(bean.getName())
-            );
-            CatDbHelper.addOrUpdateCat(tempObj);
-        }
+        //开启handlerThread线程
+        handlerThread1_4.start();
+        //构建异步handler
+        Handler chlidHanlder1_4 = new Handler(handlerThread1_4.getLooper(), new Handler.Callback() {
+
+            @Override
+            public boolean handleMessage(Message msg) {
+                switch (msg.what) {
+                    case CHILD_HANDLER_1_4://处理1-4接口数据
+                        //获取数据
+                        Bundle bundle = msg.getData();
+                        long pCatId = bundle.getLong("long");
+                        AllFolderBean allFolderBean = (AllFolderBean) bundle.getSerializable("bean");
+
+                        //耗时操作
+                        CatDbHelper.clearCatsByParentId(pCatId);
+                        List<AllFolderItemBean> beans = allFolderBean.getFolders();
+
+                        for (int i = 0; i < beans.size(); i++) {
+                            AllFolderItemBean bean = beans.get(i);
+
+                            JSONObject tempObj = TNUtils.makeJSON(
+                                    "catName", bean.getName(),
+                                    "userId", mSettings.userId,
+                                    "trash", 0,
+                                    "catId", bean.getId(),
+                                    "noteCounts", bean.getCount(),
+                                    "catCounts", bean.getFolder_count(),
+                                    "deep", bean.getFolder_count() > 0 ? 1 : 0,
+                                    "pCatId", pCatId,
+                                    "isNew", -1,
+                                    "createTime", TNUtils.formatStringToTime(bean.getCreate_at()),
+                                    "lastUpdateTime", TNUtils.formatStringToTime(bean.getUpdate_at()),
+                                    "strIndex", TNUtils.getPingYinIndex(bean.getName())
+                            );
+                            CatDbHelper.addOrUpdateCat(tempObj);
+                        }
+
+                        //操作完成，返回UI
+                        handler.sendEmptyMessage(UI_HANDLER_1_4);
+                        break;
+                }
+
+                return false;
+            }
+        });
+        //触发 异步handler,执行耗时操作
+        Bundle bundle = new Bundle();
+        bundle.putLong("long", pCatId);
+        bundle.putSerializable("bean", allFolderBean);
+        //
+        Message msg = new Message();
+        msg.setData(bundle);
+        msg.what = CHILD_HANDLER_1_4;//传递给异步handler耗时处理
+        chlidHanlder1_4.sendMessage(msg);
     }
 
     /**
@@ -1656,9 +1707,6 @@ public class TNPageTags extends TNChildViewBase implements
         mapList.add(allFolderItemBeans);
         //更新数据库
         insertDBCatsSQL(allFolderBean, -1);
-
-        //执行下个接口 处理递归
-        syncGetFoldersByFolderId(0, true);
     }
 
     @Override
@@ -1690,8 +1738,7 @@ public class TNPageTags extends TNChildViewBase implements
 
                     //更新数据库
                     insertDBCatsSQL(allFolderBean, catID);
-                    //执行新循环
-                    syncGetFoldersByFolderId(0, true);
+
                 }
             } else {
                 //执行下个position循环
@@ -1705,8 +1752,7 @@ public class TNPageTags extends TNChildViewBase implements
 
             //更新数据库
             insertDBCatsSQL(allFolderBean, catID);
-            //执行新循环
-            syncGetFoldersByFolderId(0, true);
+
         }
     }
 
