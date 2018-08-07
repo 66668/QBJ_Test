@@ -1496,6 +1496,10 @@ public class TNPageNotes extends TNChildViewBase implements OnItemLongClickListe
             }
             if (!isExit) {
                 pUpdataNote(position, id, is13);
+            } else{
+                //
+                //下一个position
+                pUpdataNote(position+1,is13);
             }
         } else {
             //下一个接口
@@ -1534,7 +1538,7 @@ public class TNPageNotes extends TNChildViewBase implements OnItemLongClickListe
      */
     private void pUpdataNote13(int position, boolean is13) {
         MLog.d("frag同步--全部笔记--pUpdataNote13 2-13");
-        if (trashNoteArr.size() > 0 && (position < trashNoteArr.size() - 1) && position >= 0) {
+        if (trashNoteArr.size() > 0 && (position < trashNoteArr.size() ) && position >= 0) {
             AllNotesIdsBean.NoteIdItemBean bean = trashNoteArr.get(position);
             long noteId = bean.getId();
             boolean trashNoteExit = false;

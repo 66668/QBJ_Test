@@ -1664,6 +1664,10 @@ public class TNPageTags extends TNChildViewBase implements
             }
             if (!isExit) {
                 pUpdataNote(position, id, is13);
+            } else{
+                //
+                //下一个position
+                pUpdataNote(position+1,is13);
             }
         } else {
             //下一个接口
@@ -1699,7 +1703,7 @@ public class TNPageTags extends TNChildViewBase implements
      * @param is13
      */
     private void pUpdataNote13(int position, boolean is13) {
-        if (trashNoteArr.size() > 0 && (position < trashNoteArr.size() - 1) && position >= 0) {
+        if (trashNoteArr.size() > 0 && (position < trashNoteArr.size() ) && position >= 0) {
             AllNotesIdsBean.NoteIdItemBean bean = trashNoteArr.get(position);
             long noteId = bean.getId();
             boolean trashNoteExit = false;

@@ -2039,6 +2039,10 @@ public class TNPageCats extends TNChildViewBase implements
             }
             if (!isExit) {
                 pUpdataNote1(position, id, is13);
+            } else{
+                //
+                //下一个position
+                pUpdataNote1(position+1,is13);
             }
         } else {
             //下一个接口
@@ -2078,7 +2082,7 @@ public class TNPageCats extends TNChildViewBase implements
      */
     private void pUpdataNote131(int position, boolean is13) {
         MLog.d("frag同步--pUpdataNote131 2-13");
-        if (trashNoteArr.size() > 0 && (position < trashNoteArr.size() - 1) && position >= 0) {
+        if (trashNoteArr.size() > 0 && (position < trashNoteArr.size() ) && position >= 0) {
             AllNotesIdsBean.NoteIdItemBean bean = trashNoteArr.get(position);
             long noteId = bean.getId();
             boolean trashNoteExit = false;

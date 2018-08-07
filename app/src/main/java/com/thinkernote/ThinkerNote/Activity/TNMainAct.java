@@ -26,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.gson.JsonObject;
 import com.thinkernote.ThinkerNote.Action.TNAction;
 import com.thinkernote.ThinkerNote.Action.TNAction.TNActionResult;
 import com.thinkernote.ThinkerNote.DBHelper.CatDbHelper;
@@ -675,7 +676,6 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      * @param is13
      */
     private void handleNote(GetNoteByNoteIdBean bean, final int position, final boolean is13) {
-
         //触发 异步handler,执行耗时操作
         Bundle bundle = new Bundle();
         bundle.putSerializable("bean", bean);
@@ -698,7 +698,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                 @Override
                 public boolean handleMessage(Message msg) {
                     switch (msg.what) {
-                        case CHILD_HANDLER_2_11://处理1-4接口数据
+                        case CHILD_HANDLER_2_11://处理12-11接口数据
                             //获取数据
                             Bundle bundle = msg.getData();
                             int position = bundle.getInt("int");
@@ -706,7 +706,6 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                             GetNoteByNoteIdBean myBean = (GetNoteByNoteIdBean) bundle.getSerializable("bean");
                             //耗时操作
                             updateNote(myBean);
-
                             //操作完成，返回UI
                             Bundle UIBundle = new Bundle();
                             UIBundle.putInt("int", position);
@@ -736,6 +735,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
 
             String tagStr = "";
             for (int k = 0; k < tags.size(); k++) {
+                //设置tagStr
                 GetNoteByNoteIdBean.TagBean tempTag = tags.get(k);
                 String tag = tempTag.getName();
                 if ("".equals(tag)) {
@@ -815,35 +815,60 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
             if (bean.getFolder_id() > 0) {
                 catId = bean.getFolder_id();
             }
+            MLog.e("打印结果tempObj：");
 
-            JSONObject tempObj = TNUtils.makeJSON(
-                    "title", bean.getTitle(),
-                    "userId", TNSettings.getInstance().userId,
-                    "trash", bean.getTrash(),
-                    "source", "android",
-                    "catId", catId,
-                    "content", TNUtilsHtml.codeHtmlContent(bean.getContent(), true),
-                    "createTime", com.thinkernote.ThinkerNote.Utils.TimeUtils.getMillsOfDate(bean.getCreate_at()) / 1000,
-                    "lastUpdate", com.thinkernote.ThinkerNote.Utils.TimeUtils.getMillsOfDate(bean.getUpdate_at()) / 1000,
-                    "syncState", syncState,
-                    "noteId", noteId,
-                    "shortContent", TNUtils.getBriefContent(bean.getContent()),
-                    "tagStr", tagStr,
-                    "lbsLongitude", bean.getLongitude() <= 0 ? 0 : bean.getLongitude(),
-                    "lbsLatitude", bean.getLatitude() <= 0 ? 0 : bean.getLatitude(),
-                    "lbsRadius", bean.getRadius() <= 0 ? 0 : bean.getRadius(),
-                    "lbsAddress", bean.getAddress(),
-                    "nickName", TNSettings.getInstance().username,
-                    "thumbnail", thumbnail,
-                    "contentDigest", contentDigest
-            );
+            JSONObject tempObj =new JSONObject();
+            tempObj.put("title", bean.getTitle());
+            tempObj.put("userId", TNSettings.getInstance().userId);
+            tempObj.put("trash", bean.getTrash());
+            tempObj.put("source", "android");
+            tempObj.put("catId", catId);
+            tempObj.put("content", TNUtilsHtml.codeHtmlContent(bean.getContent(), true));
+            tempObj.put("createTime", com.thinkernote.ThinkerNote.Utils.TimeUtils.getMillsOfDate(bean.getCreate_at()) / 1000);
+            tempObj.put("lastUpdate", com.thinkernote.ThinkerNote.Utils.TimeUtils.getMillsOfDate(bean.getUpdate_at()) / 1000);
+            tempObj.put("syncState", syncState);
+            tempObj.put("noteId", noteId);
+            tempObj.put("shortContent", TNUtils.getBriefContent(bean.getContent()));
+            tempObj.put("tagStr", tagStr);
+            tempObj.put("lbsLongitude", bean.getLongitude() <= 0 ? 0 : bean.getLongitude());
+            tempObj.put("lbsLatitude", bean.getLatitude() <= 0 ? 0 : bean.getLatitude());
+            tempObj.put("lbsRadius", bean.getRadius() <= 0 ? 0 : bean.getRadius());
+            tempObj.put("lbsAddress", bean.getAddress());
+            tempObj.put("nickName", TNSettings.getInstance().username);
+            tempObj.put("thumbnail", thumbnail);
+            tempObj.put("contentDigest", contentDigest);
+
+
+//            JSONObject tempObj = TNUtils.makeJSON(
+//                    "title", bean.getTitle(),
+//                    "userId", TNSettings.getInstance().userId,
+//                    "trash", bean.getTrash(),
+//                    "source", "android",
+//                    "catId", catId,
+//                    "content", TNUtilsHtml.codeHtmlContent(bean.getContent(), true)),
+//                    "createTime", com.thinkernote.ThinkerNote.Utils.TimeUtils.getMillsOfDate(bean.getCreate_at()) / 1000),
+//                    "lastUpdate", com.thinkernote.ThinkerNote.Utils.TimeUtils.getMillsOfDate(bean.getUpdate_at()) / 1000),
+//                    "syncState", syncState,
+//                    "noteId", noteId,
+//                    "shortContent", TNUtils.getBriefContent(bean.getContent()),
+//                    "tagStr", tagStr,
+//                    "lbsLongitude", bean.getLongitude() <= 0 ? 0 : bean.getLongitude(),
+//                    "lbsLatitude", bean.getLatitude() <= 0 ? 0 : bean.getLatitude(),
+//                    "lbsRadius", bean.getRadius() <= 0 ? 0 : bean.getRadius(),
+//                    "lbsAddress", bean.getAddress(),
+//                    "nickName", TNSettings.getInstance().username,
+//                    "thumbnail", thumbnail,
+//                    "contentDigest", contentDigest
+//            );
+
             MLog.e("updateNote接口返回--tempObj:" + tempObj.toString());
+
             if (note == null)
                 NoteDbHelper.addOrUpdateNote(tempObj);
             else
                 NoteDbHelper.updateNote(tempObj);
         } catch (Exception e) {
-            MLog.e(e.toString());
+            MLog.e("操作有异常：" + e.toString());
         }
     }
 
@@ -1728,7 +1753,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      * @param is13     (二.11)-2和(二.13)调用同一个接口，用于区分
      */
     private void pUpdataNote(int position, boolean is13) {
-        MLog.d("sync---2-11-2-pUpdataNote");
+        MLog.d("sync---2-11-2-pUpdataNot");
         //为2-11-2接口返回，做预处理
         setChildHandler2_11(position);
 
@@ -1748,6 +1773,10 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
             }
             if (!isExit) {
                 pUpdataNote(position, id, is13);
+            }else{
+                //
+                //下一个position
+                pUpdataNote(position+1,is13);
             }
         } else {
             //下一个接口
@@ -1791,8 +1820,8 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      * @param is13
      */
     private void pUpdataNote13(int position, boolean is13) {
-        MLog.d("sync---2-13-pUpdataNote13");
-        if (trashNoteArr.size() > 0 && (position < trashNoteArr.size() - 1) && position >= 0) {
+        MLog.d("sync---2-13-pUpdataNote13--trashNoteArr.size()"+trashNoteArr.size());
+        if (trashNoteArr.size() > 0 && (position < trashNoteArr.size() ) && position >= 0) {
             AllNotesIdsBean.NoteIdItemBean bean = trashNoteArr.get(position);
             long noteId = bean.getId();
             boolean trashNoteExit = false;
@@ -1803,9 +1832,11 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                 }
             }
             if (!trashNoteExit) {
-                pUpdataNote(position, noteId, is13);
+                //TODO bug
+                pUpdataNote(position, noteId, true);//is13=true
             } else {
-                pUpdataNote13(position + 1, is13);
+                //执行下一个position
+                pUpdataNote13(position + 1, true);
             }
         } else {
             //同步所有接口完成，结束同步
@@ -2579,6 +2610,8 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     public void onSyncpGetNoteByNoteIdFailed(String msg, Exception e) {
         MLog.e("sync----2-11-2-->Failed");
         MLog.e(msg);
+        endSynchronize(2);
+        TNUtilsUi.showToast("网络连接异常，同步终止");
     }
 
     //2-12
@@ -2598,7 +2631,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                 }
             }
             if (!trashNoteExit) {
-
+                //异步保存
                 executorService.execute(new Runnable() {
                     @Override
                     public void run() {

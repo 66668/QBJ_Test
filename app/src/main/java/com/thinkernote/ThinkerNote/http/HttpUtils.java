@@ -96,7 +96,7 @@ public class HttpUtils {
             }
         }
         initCache();//再设置一遍，可以注销
-        MLog.i("defaulthttp");
+//        MLog.i("defaulthttp");
         return (T) defaultHttps;
     }
 
@@ -111,7 +111,7 @@ public class HttpUtils {
                 fileHttps = getFileBuilder(URLUtils.API_BASE_URL, listener).build().create(clz);
             }
         }
-        MLog.i("FileDownloadhttp");
+//        MLog.i("FileDownloadhttp");
         return (T) fileHttps;
     }
 
@@ -126,7 +126,7 @@ public class HttpUtils {
                 uploadHttps = uploadBuilder(URLUtils.API_BASE_URL).build().create(clz);
             }
         }
-        MLog.i("uploadhttp");
+//        MLog.i("uploadhttp");
         return (T) uploadHttps;
     }
 
@@ -196,7 +196,7 @@ public class HttpUtils {
      * 查看文件上传下载进度/结合progress使用
      */
     private Retrofit.Builder getFileBuilder(String apiUrl, FileProgressListener listener) {
-        MLog.d("Retrofit-->getFileBuilder");
+//        MLog.d("Retrofit-->getFileBuilder");
         //retrofit配置
         Retrofit.Builder builder = new Retrofit.Builder();
         builder.client(getFileOkHttp(listener));//设置okhttp（重点），不设置走默认的
@@ -217,7 +217,7 @@ public class HttpUtils {
      * <p>
      */
     private Retrofit.Builder uploadBuilder(String apiUrl) {
-        MLog.d("Retrofit-->uploadBuilder");
+//        MLog.d("Retrofit-->uploadBuilder");
         //retrofit配置
         Retrofit.Builder builder = new Retrofit.Builder();
         builder.client(uploadOkHttp());//设置okhttp（重点），不设置走默认的
@@ -335,7 +335,7 @@ public class HttpUtils {
      * @return
      */
     private OkHttpClient getFileOkHttp(FileProgressListener listener) {
-        MLog.d("OkHttpClient-->getFileOkHttp");
+//        MLog.d("OkHttpClient-->getFileOkHttp");
         //log打印级别
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(HttpLoggingInterceptor.Logger.DEFAULT);
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -362,7 +362,7 @@ public class HttpUtils {
      * @return
      */
     private OkHttpClient uploadOkHttp() {
-        MLog.d("OkHttpClient-->getFileOkHttp");
+//        MLog.d("OkHttpClient-->getFileOkHttp");
         //log打印级别
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(HttpLoggingInterceptor.Logger.DEFAULT);
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -610,7 +610,7 @@ public class HttpUtils {
 
     // 01自定义gson处理
     private Gson getGson() {
-        Log.d(TAG, "getGson: HttpUtils走gson转换方法");
+//        Log.d(TAG, "getGson: HttpUtils走gson转换方法");
         if (gson == null) {
             GsonBuilder builder = new GsonBuilder();
             builder.setLenient();

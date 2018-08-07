@@ -199,4 +199,24 @@ public class GetNoteByNoteIdBean implements Serializable {
     public void setAttachments(List<Attachments> attachments) {
         this.attachments = attachments;
     }
+
+    @Override
+    public String toString() {
+        return "GetNoteByNoteIdBean{" +
+                "id=" + id +
+                ", folder_id=" + folder_id +
+                ", content_digest='" + content_digest + '\'' +
+                ", title='" + title + '\'' +
+                ", trash='" + trash + '\'' +
+                ", address='" + address + '\'' +
+                ", content='" + content + '\'' +
+                ", create_at='" + create_at + '\'' +
+                ", update_at='" + update_at + '\'' +
+                ", longitude=" + longitude +
+                ", latitude=" + latitude +
+                ", radius=" + radius +
+                ", tags=" + tags +
+                ", attachments=" + attachments +
+                '}';
+    }
 }

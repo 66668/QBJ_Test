@@ -2137,6 +2137,10 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
             }
             if (!isExit) {
                 pUpdataNote(position, id, is13);
+            } else{
+                //
+                //下一个position
+                pUpdataNote(position+1,is13);
             }
 
         } else {

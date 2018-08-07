@@ -66,62 +66,70 @@ public class TNUtilsHtml {
     }
 
     /*
+        html转string
      * isDecode  true decode, false endecode
      */
     public static String codeHtmlContent(String htmlContent, boolean isDecode) {
         String htmlContent0 = getPlainText2(htmlContent);
         String rText = new String(htmlContent0);
-        if (isDecode) {
-            rText = rText.replaceAll("  <br />  ", "\n");
-            rText = rText.replaceAll("  <br/>  ", "\n");
-        } else {
-            rText = rText.replaceAll("\n", "<br />");
-        }
         StringBuffer contentbf = new StringBuffer();
         StringBuffer tmpbf = new StringBuffer();
-        char s1 = '<';
-        char s2 = '>';
-        int tag = 0;
-        int len = rText.length();
-        for (int i = 0; i < len; i++) {
-            char c = rText.charAt(i);
-            if (c == s1) {
-                if (tmpbf.length() > 0) {
-                    if (isDecode) {
-                        contentbf.append(TNUtilsHtml.de(tmpbf.toString()));
-                    } else {
-                        contentbf.append(TNUtilsHtml.en(tmpbf.toString()));
-                    }
-                    tmpbf = new StringBuffer();
-                }
-                contentbf.append(c);
-                tag += 1;
-            } else if (c == s2) {
-                if (tmpbf.length() > 0) {
-                    if (isDecode) {
-                        contentbf.append(TNUtilsHtml.de(tmpbf.toString()));
-                    } else {
-                        contentbf.append(TNUtilsHtml.en(tmpbf.toString()));
-                    }
-                    tmpbf = new StringBuffer();
-                }
-                contentbf.append(c);
-                tag -= 1;
-            } else {
-                if (tag == 0) {
-                    tmpbf.append(c);
-                } else {
-                    contentbf.append(c);
-                }
-            }
-        }
-        if (tmpbf.length() > 0) {
+        try {
+
+
             if (isDecode) {
-                contentbf.append(TNUtilsHtml.de(tmpbf.toString()));
+                rText = rText.replaceAll("  <br />  ", "\n");
+                rText = rText.replaceAll("  <br/>  ", "\n");
             } else {
-                contentbf.append(TNUtilsHtml.en(tmpbf.toString()));
+                rText = rText.replaceAll("\n", "<br />");
             }
-            tmpbf = null;
+
+            char s1 = '<';
+            char s2 = '>';
+            int tag = 0;
+            int len = rText.length();
+            for (int i = 0; i < len; i++) {
+                char c = rText.charAt(i);
+                if (c == s1) {
+                    if (tmpbf.length() > 0) {
+                        if (isDecode) {
+                            contentbf.append(TNUtilsHtml.de(tmpbf.toString()));
+                        } else {
+                            contentbf.append(TNUtilsHtml.en(tmpbf.toString()));
+                        }
+                        tmpbf = new StringBuffer();
+                    }
+                    contentbf.append(c);
+                    tag += 1;
+                } else if (c == s2) {
+                    if (tmpbf.length() > 0) {
+                        if (isDecode) {
+                            contentbf.append(TNUtilsHtml.de(tmpbf.toString()));
+                        } else {
+                            contentbf.append(TNUtilsHtml.en(tmpbf.toString()));
+                        }
+                        tmpbf = new StringBuffer();
+                    }
+                    contentbf.append(c);
+                    tag -= 1;
+                } else {
+                    if (tag == 0) {
+                        tmpbf.append(c);
+                    } else {
+                        contentbf.append(c);
+                    }
+                }
+            }
+            if (tmpbf.length() > 0) {
+                if (isDecode) {
+                    contentbf.append(TNUtilsHtml.de(tmpbf.toString()));
+                } else {
+                    contentbf.append(TNUtilsHtml.en(tmpbf.toString()));
+                }
+                tmpbf = null;
+            }
+        } catch (Exception e) {
+            MLog.e("html转String异常：" + e.toString());
         }
 //        MLog.d(TAG, "isDecode=" + isDecode + "\ncontent=" + contentbf.toString());
         return contentbf.toString().trim();

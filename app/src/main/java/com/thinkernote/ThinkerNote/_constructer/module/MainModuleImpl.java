@@ -1040,7 +1040,7 @@ public class MainModuleImpl implements IMainModule {
 
     //2-11-2
     @Override
-    public void mGetNoteByNoteId(final OnMainListener listener, final int position, long id, final boolean is12) {
+    public void mGetNoteByNoteId(final OnMainListener listener, final int position, long id, final boolean is13) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .GetNoteByNoteId(id, settings.token)
@@ -1065,7 +1065,7 @@ public class MainModuleImpl implements IMainModule {
 
                         //处理返回结果
                         if (bean.getCode() == 0) {
-                            listener.onSyncpGetNoteByNoteIdSuccess(bean.getNote(), position, is12);
+                            listener.onSyncpGetNoteByNoteIdSuccess(bean.getNote(), position, is13);
                         } else {
                             listener.onSyncpGetNoteByNoteIdFailed(bean.getMsg(), null);
                         }

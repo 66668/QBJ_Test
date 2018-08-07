@@ -2446,6 +2446,10 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
             }
             if (!isExit) {
                 pUpdataNote2(position, id, is13);
+            } else{
+                //
+                //下一个position
+                pUpdataNote2(position+1,is13);
             }
         } else {
             //下一个接口
@@ -2481,7 +2485,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
      * @param is13
      */
     private void pUpdataNote132(int position, boolean is13) {
-        if (trashNoteArr.size() > 0 && (position < trashNoteArr.size() - 1) && position >= 0) {
+        if (trashNoteArr.size() > 0 && (position < trashNoteArr.size() ) && position >= 0) {
             AllNotesIdsBean.NoteIdItemBean bean = trashNoteArr.get(position);
             long noteId = bean.getId();
             boolean trashNoteExit = false;
@@ -3210,6 +3214,10 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
             }
             if (!isExit) {
                 pUpdataNote1(position, id, is13);
+            } else{
+                //
+                //下一个position
+                pUpdataNote1(position+1,is13);
             }
         } else {
             //下一个接口
@@ -3248,7 +3256,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
      */
     private void pUpdataNote131(int position, boolean is13) {
         MLog.d("NoteList同步---pUpdataNote131 2-13");
-        if (trashNoteArr.size() > 0 && (position < trashNoteArr.size() - 1) && position >= 0) {
+        if (trashNoteArr.size() > 0 && (position < trashNoteArr.size() ) && position >= 0) {
             AllNotesIdsBean.NoteIdItemBean bean = trashNoteArr.get(position);
             long noteId = bean.getId();
             boolean trashNoteExit = false;
