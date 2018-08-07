@@ -725,6 +725,9 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
 
     //2-11-2
     public static void updateNote(GetNoteByNoteIdBean bean) {
+        //TODO 是否需要清空内存 test
+        System.gc();
+        //
         try {
             long noteId = bean.getId();
             String contentDigest = bean.getContent_digest();
@@ -815,9 +818,10 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
             if (bean.getFolder_id() > 0) {
                 catId = bean.getFolder_id();
             }
-            MLog.e("打印结果tempObj：");
+            //TODO 数据过长，卡死
+            MLog.e("打印结果tempObj："+bean.getTitle()+bean.getCreate_at());
 
-            JSONObject tempObj =new JSONObject();
+            JSONObject tempObj = new JSONObject();
             tempObj.put("title", bean.getTitle());
             tempObj.put("userId", TNSettings.getInstance().userId);
             tempObj.put("trash", bean.getTrash());
@@ -1773,10 +1777,10 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
             }
             if (!isExit) {
                 pUpdataNote(position, id, is13);
-            }else{
+            } else {
                 //
                 //下一个position
-                pUpdataNote(position+1,is13);
+                pUpdataNote(position + 1, is13);
             }
         } else {
             //下一个接口
@@ -1812,7 +1816,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     /**
      * trashNotes
      * <p>
-     * (二.13) 更新云端的笔记
+     * (二.13) 同步回收站的笔记后，再更新云端的笔记
      * <p>
      * 该接口同(二.11)-2
      *
@@ -1820,8 +1824,8 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      * @param is13
      */
     private void pUpdataNote13(int position, boolean is13) {
-        MLog.d("sync---2-13-pUpdataNote13--trashNoteArr.size()"+trashNoteArr.size());
-        if (trashNoteArr.size() > 0 && (position < trashNoteArr.size() ) && position >= 0) {
+        MLog.e("sync---2-13-pUpdataNote13--trashNoteArr.size()" + trashNoteArr.size() + "--position=" + position);
+        if (trashNoteArr.size() > 0 && (position < trashNoteArr.size()) && position >= 0) {
             AllNotesIdsBean.NoteIdItemBean bean = trashNoteArr.get(position);
             long noteId = bean.getId();
             boolean trashNoteExit = false;
@@ -1832,7 +1836,6 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                 }
             }
             if (!trashNoteExit) {
-                //TODO bug
                 pUpdataNote(position, noteId, true);//is13=true
             } else {
                 //执行下一个position

@@ -65,9 +65,13 @@ mGetNoteByNoteId 异常onError:java.util.regex.PatternSyntaxException: Incorrect
 mGetNoteByNoteId 异常onError:java.net.UnknownHostException: Unable to resolve host "s.qingbiji.cn": No address associated with hostname
 权限每丢失的情况下 断网了
 
-
+ （3）2-11-2异常： java.util.regex.PatternSyntaxException: In a character range [x-y], x is greater than y near index 43
+ 原因：解析html转换成String的时候，转换异常引起
+ 
 #数据库优化说明：
 1。本app涉及大量数据插入查询，所以使用Transaction机制最合适。
 2。耗时操作用handlerThread异步，
 3。
+
+#内存泄漏分析：
 

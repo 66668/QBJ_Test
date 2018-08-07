@@ -914,7 +914,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         if (checkNote()) {
             handleProgressDialog("show");
             mNote.prepareToSave();
-            pNoteSave(mNote, true);
+            pNoteSave(mNote, false);//true false
         }
     }
 

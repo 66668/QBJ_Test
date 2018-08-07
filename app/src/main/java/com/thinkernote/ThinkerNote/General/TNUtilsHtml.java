@@ -70,12 +70,12 @@ public class TNUtilsHtml {
      * isDecode  true decode, false endecode
      */
     public static String codeHtmlContent(String htmlContent, boolean isDecode) {
-        String htmlContent0 = getPlainText2(htmlContent);
-        String rText = new String(htmlContent0);
+
         StringBuffer contentbf = new StringBuffer();
         StringBuffer tmpbf = new StringBuffer();
         try {
-
+            String htmlContent0 = getPlainText2(htmlContent);
+            String rText = new String(htmlContent0);
 
             if (isDecode) {
                 rText = rText.replaceAll("  <br />  ", "\n");
@@ -129,6 +129,7 @@ public class TNUtilsHtml {
                 tmpbf = null;
             }
         } catch (Exception e) {
+
             MLog.e("html转String异常：" + e.toString());
         }
 //        MLog.d(TAG, "isDecode=" + isDecode + "\ncontent=" + contentbf.toString());
@@ -156,27 +157,31 @@ public class TNUtilsHtml {
 
     public static String getPlainText2(String content) {
         String str = content;
-        int index1 = str.indexOf("<table");
-        int index2 = str.indexOf("\n</table>");
-        while (index1 >= 0 && index2 > 0) {
-            String temp = str.substring(index1, index2 + 1);
-            String temp2 = temp.replaceAll("\n", "");
-            str = str.replaceAll(temp, temp2);
-            index1 = str.indexOf("<table");
-            index2 = str.indexOf("\n</table>");
+        try {
+            int index1 = str.indexOf("<table");
+            int index2 = str.indexOf("\n</table>");
+            while (index1 >= 0 && index2 > 0) {
+                String temp = str.substring(index1, index2 + 1);
+                String temp2 = temp.replaceAll("\n", "");
+                str = str.replaceAll(temp, temp2);
+                index1 = str.indexOf("<table");
+                index2 = str.indexOf("\n</table>");
+            }
+
+            str = str.replaceAll("  <br />  ", "\n");
+            str = str.replaceAll("  <br/>  ", "\n");
+            str = str.replaceAll("<br/>", "\n");
+            str = str.replaceAll("<br />", "\n");
+            str = str.replaceAll("<html>", "");
+            str = str.replaceAll("</html>", "");
+            str = str.replaceAll("<body>", "");
+            str = str.replaceAll("</body>", "");
+            str = str.replaceAll("\n<tn-media", "<tn-media");
+            str = str.replaceAll("\n</tn-media>", "</tn-media>");
+        } catch (Exception e) {
+            //TODO java.util.regex.PatternSyntaxException: In a character range [x-y], x is greater than y near index 43
+            MLog.e("html转换异常：" + e.toString());
         }
-
-        str = str.replaceAll("  <br />  ", "\n");
-        str = str.replaceAll("  <br/>  ", "\n");
-        str = str.replaceAll("<br/>", "\n");
-        str = str.replaceAll("<br />", "\n");
-        str = str.replaceAll("<html>", "");
-        str = str.replaceAll("</html>", "");
-        str = str.replaceAll("<body>", "");
-        str = str.replaceAll("</body>", "");
-        str = str.replaceAll("\n<tn-media", "<tn-media");
-        str = str.replaceAll("\n</tn-media>", "</tn-media>");
-
         return str;
     }
 

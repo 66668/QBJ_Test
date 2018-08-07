@@ -41,32 +41,44 @@ public class NoteViewDownloadPresenter2 implements OnNoteViewDownloadListener {
     private Activity act;
     private INoteViewDownloadModule module;
 
-    private NoteViewDownloadPresenter2() {
-        readyDownloadAtts = new Vector<TNNoteAtt>();
-        downloadingAtts = new Vector<TNNoteAtt>();
 
-        module = new NoteViewDownloadModuleImpl(act, this);
-    }
-
-    public static NoteViewDownloadPresenter2 getInstance() {
-        if (singleton == null) {
-            synchronized (NoteViewDownloadPresenter2.class) {
-                if (singleton == null) {
-                    singleton = new NoteViewDownloadPresenter2();
-                }
-            }
-        }
-        return singleton;
-    }
-
-    public NoteViewDownloadPresenter2 init(Activity act, TNNote note) {
+    public NoteViewDownloadPresenter2(Activity act) {
         this.act = act;
+    }
+
+//    private NoteViewDownloadPresenter2() {
+//        readyDownloadAtts = new Vector<TNNoteAtt>();
+//        downloadingAtts = new Vector<TNNoteAtt>();
+//
+//        module = new NoteViewDownloadModuleImpl(act, this);
+//    }
+
+    //不可用单例
+//    public static NoteViewDownloadPresenter2 getInstance() {
+//        if (singleton == null) {
+//            synchronized (NoteViewDownloadPresenter2.class) {
+//                if (singleton == null) {
+//                    singleton = new NoteViewDownloadPresenter2();
+//                }
+//            }
+//        }
+//        return singleton;
+//    }
+
+    public void setNewNote(TNNote note){
         mNote = note;
         this.readyDownloadAtts.clear();
         this.readyDownloadAtts.addAll(note.atts);
-
-        return this;
     }
+
+//    public NoteViewDownloadPresenter2 init(Activity act, TNNote note) {
+//        this.act = act;
+//        mNote = note;
+//        this.readyDownloadAtts.clear();
+//        this.readyDownloadAtts.addAll(note.atts);
+//
+//        return this;
+//    }
 
     public void updateNote(TNNote note) {
         this.mNote = note;

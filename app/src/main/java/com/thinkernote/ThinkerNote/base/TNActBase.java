@@ -92,6 +92,7 @@ public class TNActBase extends Activity {
         super.onStop();
     }
 
+
     protected void onResume() {
 
         super.onResume();
@@ -161,7 +162,7 @@ public class TNActBase extends Activity {
     @Override
     public void onDestroy() {
         TNAction.unregister(this);
-
+        TNActivityManager.getInstance().deleteActivity(this);
         for (Dialog dialog : dialogs) {
             MLog.e(TAG, "dismiss:" + dialog + " showing:" + dialog.isShowing());
             dialog.dismiss();
@@ -231,7 +232,7 @@ public class TNActBase extends Activity {
      * @param act
      * @param clz
      */
-    public void startActivity(Activity act,Class clz, Bundle aBundle) {
+    public void startActivity(Activity act, Class clz, Bundle aBundle) {
         Intent i = new Intent(act, clz);//推荐显示调用
         i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         if (aBundle != null) {

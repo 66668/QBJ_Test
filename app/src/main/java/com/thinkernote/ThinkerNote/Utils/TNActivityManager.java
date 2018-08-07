@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * act管理类 sjy 0620
+ * 容易内存泄漏，本人不支持使用
  */
 
 public class TNActivityManager {

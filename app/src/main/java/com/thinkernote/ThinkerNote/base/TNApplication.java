@@ -3,6 +3,7 @@ package com.thinkernote.ThinkerNote.base;
 import android.app.Application;
 import android.os.AsyncTask;
 
+import com.squareup.leakcanary.LeakCanary;
 import com.thinkernote.ThinkerNote.Action.TNAction;
 import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDb2;
@@ -41,6 +42,12 @@ public class TNApplication extends Application {
 
         //微信初始化网络
         WeichatHttpUtils.getInstance().init(this, MLog.DEBUG);
+
+        //TODO leakcanary初始化（打包时清除）
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            return;
+        }
+        LeakCanary.install(this);
     }
 
     // private methods

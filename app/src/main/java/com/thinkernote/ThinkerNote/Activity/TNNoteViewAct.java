@@ -127,7 +127,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
     private AlertDialog dialog;
     //p
     private INoteViewPresenter presenter;
-
+    NoteViewDownloadPresenter2 download;
     @Override
     public void handleMessage(Message msg) {
         switch (msg.what) {
@@ -173,8 +173,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
             case GETNOTEBYNOTEID_SUCCESS:
                 //
                 mNote = TNDbUtils.getNoteByNoteLocalId(mNoteLocalId);
-                NoteViewDownloadPresenter2.getInstance().init(this, mNote);
-
+                 download.setNewNote(mNote);
                 startAutoDownload();
 
                 Message msg1 = new Message();
@@ -236,7 +235,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
         registerForContextMenu(findViewById(R.id.noteview_read_menu));
         registerForContextMenu(findViewById(R.id.noteview_share_menu));
 
-        NoteViewDownloadPresenter2 download = NoteViewDownloadPresenter2.getInstance();
+         download = new NoteViewDownloadPresenter2(this);
         download.setOnDownloadEndListener(this);
         download.setOnDownloadStartListener(this);
         mGestureDetector = new GestureDetector(this, new TNGestureListener());
@@ -391,9 +390,9 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
         MLog.e("configView--根据mNoteLocalId获取--mNote:" + mNote.toString());
 
         if (createStatus == 0) {
-            NoteViewDownloadPresenter2.getInstance().init(this, mNote);
+            download.setNewNote( mNote);
         } else {
-            NoteViewDownloadPresenter2.getInstance().updateNote(mNote);
+            download.updateNote(mNote);
         }
         //判断是否是回收站的笔记，如果是 顶部显示还原的按钮
         if (mNote.trash == 1) {
@@ -1054,7 +1053,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
         if (mNote == null)
             return;
         MLog.e("startAutoDownload");
-        NoteViewDownloadPresenter2.getInstance().start();
+        download.start();
     }
 
     private void setReadBarVisible(boolean visible) {
@@ -1413,7 +1412,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
         @JavascriptInterface
         public void downloadAtt(long id) {
             MLog.d("download", "JSInterface-->downloadAtt:" + id);
-            NoteViewDownloadPresenter2.getInstance().start(id);
+            download.start(id);
         }
 
         @JavascriptInterface
