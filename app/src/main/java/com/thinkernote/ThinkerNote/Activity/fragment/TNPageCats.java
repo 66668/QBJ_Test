@@ -665,6 +665,9 @@ public class TNPageCats extends TNChildViewBase implements
      */
     private void endSynchronize(int state) {
         MLog.d("frag同步--endSynchronize ");
+        mapList.clear();
+        flagMap.clear();
+
         mCatListView.onRefreshComplete();
         if (state == 0) {
             //正常结束

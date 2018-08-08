@@ -82,3 +82,44 @@ mGetNoteByNoteId 异常onError:java.net.UnknownHostException: Unable to resolve 
     ; font-size: 12px; line-height: 1.5em; color: #333333; border-style: initial; border-color: initial; height: 26px; border-width: 0px; padding: 5px; margin: 0px;\">14-oct-2005<\/td>\n<\/tr>\n<tr bgcolor=\"#F3F3F3\">\n<td class=\"info_text15\" style=\"font-family: \u5b8b\u4f53, Arial, Verdana; font-size: 12px; line-height: 12px; color: #333333; border-style: initial; border-color: initial; height: 26px; border-width: 0px; padding: 5px; margin: 0px;\"><strong style=\"font-weight: bold;\">\u5230\u671f\u65e5\u671f<\/strong><br\/>Expiration Date<\/td>\n<td style=\"font-family: \u5b8b\u4f53, Arial, Verdana; font-size: 12px; line-height: 1.5em; color: #333333; border-style: initial; border-color: initial; height: 26px; border-width: 0px; padding: 5px; margin: 0px;\">14-oct-2015<\/td>\n<\/tr>\n<tr>\n<td colspan=\"2\" style=\"font-family: \u5b8b\u4f53, Arial, Verdana; font-size: 12px; line-height: 1.5em; color: #333333; border-style: initial; border-color: initial; height: 26px; border-width: 0px; padding: 5px; margin: 0px;\">\n<div class=\"linkblue_query\" style=\"border-style: initial; border-color: initial; outline-width: 0px; outline-style: initial; outline-color: initial; font-weight: inherit; font-style: inherit; font-family: inherit; text-align: left; vertical-align: baseline; color: #48607a; text-decoration: underline; cursor: pointer; border-width: 0px; padding: 0px; margin: 0px;\"><img alt=\"\" id=\"img1\" src=\"http:\/\/www.net.cn\/static\/member\/images\/icon_close.gif\" style=\"border-style: initial; border-color: initial; outline-width: 0px; outline-style: initial; outline-color: initial; font-weight: inherit; font-style: inherit; font-family: inherit; text-align: left; vertical-align: middle; border-width: 0px; padding: 0px; margin: 0px;\"\/>\u00a0<strong style=\"font-weight: bold;\">\u67e5\u770b\u5b8c\u6574\u6ce8\u518c\u4fe1\u606f<\/strong><\/div>\n<div id=\"tab1\" style=\"border-style: initial; border-color: initial; outline-width: 0px; outline-style: initial; outline-color: initial; font-weight: inherit; font-style: inherit; font-family: inherit; text-align: left; vertical-align: baseline; border-width: 0px; padding: 0px; margin: 0px;\"><br\/><a class=\"linkblue_query\" href=\"http:\/\/www.net.cn\/service\/faq\/yuming\/ymzc\/201108\/4968.html\" style=\"text-decoration: underline; color: #48607a;\" target=\"_blank\">\u4e0d\u61c2\u4ee5\u4e0b\u6ce8\u518c\u4fe1\u606f\u4e2d\u7684\u82f1\u6587\u9879\u542b\u4e49\uff1f<\/a><br\/>\n<div class=\"dbody\" style=\"border-style: initial; border-color: initial; outline-width: 0px; outline-style: initial; outline-color: initial; font-weight: inherit; font-style: inherit; font-family: inherit; text-align: left; vertical-align: baseline; width: 620px; border-width: 0px; padding: 0px; margin: 0px;\">\n<pre style=\"white-space: pre-wrap; word-wrap: break-word;\">Domain Name ..................... lanbitou.com\nName Server ..................... dns9.hichina.com\n                                  dns10.hichina.com\nRegistrant ID ................... hc961508640-cn\nRegistrant Name ................. Guobin Chang\nRegistrant Organization ......... GuobinChang\nRegistrant Address .............. No.26-1-2-14C Longhai Middle Road,Zhengzhou,PRC\nRegistrant City ................. zhengzhoushi\nRegistrant Province\/State ....... henan\nRegistrant Postal Code .......... 450052\nRegistrant Country Code ......... CN\nRegistrant Phone Number ......... +86.03718237130 - \nRegistrant Fax .................. +86. - \nRegistrant Email ................ changgb@hotmail.com\nAdministrative ID ............... hc961508640-cn\nAdministrative Name ............. Guobin Chang\nAdministrative Organization ..... GuobinChang\nAdministrative Address .......... No.26-1-2-14C Longhai Middle Road,Zhengzhou,PRC\nAdministrative City ............. zhengzhoushi\nAdministrative Province\/State ... henan\nAdministrative Postal Code ...... 450052\nAdministrative Country Code ..... CN\nAdministrative Phone Number ..... +86.0371823713
     0 - \nAdministrative Fax .............. +86. - \nAdministrative Email ............ changgb@hotmail.com\nBilling ID ...................... hichina001-cn\nBilling Name .................... hichina\nBilling Organization ............ HiChina Web Solutions Limited\nBilling Address ................. 3\/F., HiChina Mansion\n                                  No.27 Gulouwai Avenue\n                                  Dongcheng District\nBilling City .................... Beijing\nBilling Province\/State .......... Beijing\nBilling Postal Code ............. 100011\nBilling Country Code ............ CN\nBilling Phone Number ............ +86.01064242299 - \nBilling Fax ..................... +86.01064258796 - \nBilling Email ................... domainadm@hichina.com\nTechnical ID .................... hichina001-cn\nTechnical Name .................. hichina\nTechnical Organization .......... HiChina Web Solutions Limited\nTechnical Address ............... 3\/F., HiChina Mansion\n                                  No.27 Gulouwai Avenue\n                                  Dongcheng District\nTechnical City .................. Beijing\nTechnical Province\/State ........ Beijing\nTechnical Postal Code ........... 100011\nTechnical Country Code .......... CN\nTechnical Phone Number .......... +86.01064242299 - \nTechnical Fax ................... +86.01064258796 - \nTechnical Email ................. domainadm@hichina.com\nExpiration Date ................. 2015-10-14 11:07:35<\/pre>\n<\/div>\n<\/div>\n<\/td>\n<\/tr>\n<\/tbody>\n<\/table><\/body><\/html>","content_digest":"84ACD8178B5F40C336A9F4B6C398C540","access_times":2,"trash":0},"code":0}
 
+#Okhttp+Rxjava关于手动back键关闭网络连接的代码提示：
+
+在具体的module中eg:
+
+                 Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                .syncNewNoteAdd(note.title, content, note.tagStr, note.catId, note.createTime, note.lastUpdate, note.lbsLongitude, note.lbsLatitude, note.lbsAddress, note.lbsRadius, settings.token)//接口方法
+                .subscribeOn(Schedulers.io())//固定样式
+                .unsubscribeOn(Schedulers.io())//固定样式
+                .observeOn(AndroidSchedulers.mainThread())//固定样式
+                .subscribe(new Observer<OldNoteAddBean>() {//固定样式，可自定义其他处理
+                    @Override
+                    public void onCompleted() {
+                        MLog.d(TAG, "mNewNote--onCompleted");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        MLog.e("mNewNote 异常onError:" + e.toString());
+                        listener.onSyncNewNoteAddFailed("异常", new Exception("接口异常！"), position, arraySize);
+                    }
+
+                    @Override
+                    public void onNext(OldNoteAddBean bean) {
+                        MLog.d(TAG, "mNewNote-onNext");
+
+                        //处理返回结果
+                        if (bean.getCode() == 0) {
+                            listener.onSyncNewNoteAddSuccess(bean, position, arraySize, isNewDb);
+                        } else {
+                            listener.onSyncNewNoteAddFailed(bean.getMessage(), null, position, arraySize);
+                        }
+                    }
+
+                });
+  subscribe返回对象Subscription 
+  通过如下代码 中断该次连接
+         
+         
+          if (subscription != null && !subscription.isUnsubscribed()) {
+              subscription.unsubscribe();
+          }         

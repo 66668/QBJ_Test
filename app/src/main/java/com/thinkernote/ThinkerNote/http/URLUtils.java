@@ -8,8 +8,8 @@ package com.thinkernote.ThinkerNote.http;
 public class URLUtils {
     //URL根目录
 //    public final static String API_BASE_URL = "http://new.qingbiji.cn:8088/";//内网测试
-    public final static String API_BASE_URL = "https://s.qingbiji.cn/";//外网测试
-//    public final static String API_BASE_URL = "http://new.qingbiji.cn/";//正式
+    public final static String API_BASE_URL = "https://s.qingbiji.cn/";//正式1
+//    public final static String API_BASE_URL = "http://new.qingbiji.cn/";//正式2
 
     public final static String WEICHAT_BASE_URL = "https://api.weixin.qq.com";//微信登陆BaseURL
 

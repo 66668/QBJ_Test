@@ -39,6 +39,7 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import rx.Observer;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
@@ -635,7 +636,7 @@ public class MainModuleImpl implements IMainModule {
     @Override
     public void mNewNote(final OnMainListener listener, final int position, final int arraySize, TNNote note, final boolean isNewDb, String content) {
         TNSettings settings = TNSettings.getInstance();
-        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+      Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .syncNewNoteAdd(note.title, content, note.tagStr, note.catId, note.createTime, note.lastUpdate, note.lbsLongitude, note.lbsLatitude, note.lbsAddress, note.lbsRadius, settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式

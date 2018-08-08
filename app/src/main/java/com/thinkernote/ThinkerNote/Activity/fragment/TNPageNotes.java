@@ -310,6 +310,9 @@ public class TNPageNotes extends TNChildViewBase implements OnItemLongClickListe
      */
     private void endSynchronize(int state) {
         MLog.d("frag同步--全部笔记--同步结束");
+        mapList.clear();
+        flagMap.clear();
+
         mPullListview.onRefreshComplete();
         if (state == 0) {
             //正常结束

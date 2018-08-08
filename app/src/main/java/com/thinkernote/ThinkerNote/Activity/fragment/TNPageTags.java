@@ -498,6 +498,8 @@ public class TNPageTags extends TNChildViewBase implements
      * @param state 0 = 成功/1=back取消同步/2-异常触发同步终止
      */
     private void endSynchronize(int state) {
+        mapList.clear();
+        flagMap.clear();
 
         mListview.onRefreshComplete();
         if (state == 0) {

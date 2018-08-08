@@ -28,7 +28,7 @@ public class TNActionUtils {
 			}
 		}		
 	}
-	
+	//TODO 删
 	public static boolean isSynchronizing(){
 		Vector<TNAction> actions = TNAction.runningList();
 		synchronized(actions){

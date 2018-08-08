@@ -107,7 +107,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     private String mDownLoadAPKPath = "";
     private TextView mTimeView;
     private TNSettings mSettings = TNSettings.getInstance();
-
+    private boolean isSynchronizing = false;//
     //
     private IMainPresenter presener;
 
@@ -241,12 +241,13 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
 
         //第一次进来有网或者在wifi情况下自动同步
         if ((createStatus == 0 && TNUtils.isAutoSync()) || mSettings.firstLaunch) {
-            if (TNActionUtils.isSynchronizing()) {
+            if (isSynchronizing) {
                 return;
             }
             startSyncAnimation();
             TNUtilsUi.showNotification(this, R.string.alert_NoteView_Synchronizing, false);
             //p
+            isSynchronizing = true;
             synchronizeData();
         }
 
@@ -308,13 +309,14 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
             }
             case R.id.main_sync_btn: {//同步按钮
                 if (TNUtils.isNetWork()) {
-                    if (TNActionUtils.isSynchronizing()) {
+                    if (isSynchronizing) {
                         TNUtilsUi.showNotification(this, R.string.alert_Synchronize_TooMuch, false);
                         return;
                     }
                     startSyncAnimation();
                     TNUtilsUi.showNotification(this, R.string.alert_NoteView_Synchronizing, false);
                     //
+                    isSynchronizing = true;
                     synchronizeData();
                 } else {
                     TNUtilsUi.showToast(R.string.alert_Net_NotWork);
@@ -376,6 +378,10 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      * @param state 0 = 成功/1=back取消同步/2-异常触发同步终止
      */
     private void endSynchronize(int state) {
+        //一些变量需要清空，否则bug
+        isSynchronizing = false;
+        mapList.clear();
+        flagMap.clear();
 
         //结束动画
         findViewById(R.id.main_sync_btn).clearAnimation();
@@ -725,7 +731,8 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
 
     /**
      * 2-11-2
-     *该处工作环境最恶劣，上千跳接口返回数据走该处执行耗时任务，有必要手动gc处理内存
+     * 该处工作环境最恶劣，上千跳接口返回数据走该处执行耗时任务，有必要手动gc处理内存
+     *
      * @param bean
      */
     public static void updateNote(GetNoteByNoteIdBean bean) {
@@ -1080,7 +1087,8 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
         if (mapList.size() > 0 && mapList.size() <= 5) {
             //有1---5，for循环层层内嵌,从最内层（mapList.size最大处）开始执行
             List<AllFolderItemBean> allFolderItemBeans = mapList.get(mapList.size() - 1);
-
+            //
+            MLog.d("1-4--syncGetFoldersByFolderId--allFolderItemBeans.size()=" + allFolderItemBeans.size());
             if (allFolderItemBeans.size() > 0) {
                 if (startPos < allFolderItemBeans.size() - 1) {
                     //从1层的第一个数据开始
@@ -1102,6 +1110,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                         //移除最后一层后，暴露上一层，所以需要获取上一层的执行过的位置，从该位置继续执行
                         List<AllFolderItemBean> allFolderItemBeans2 = mapList.get(mapList.size() - 1);
                         for (int i = 0; i < allFolderItemBeans2.size(); i++) {
+
                             if (flagMap.get(mapList.size() + "A" + i) != null) {//查找出该存储的值
                                 int newPos = flagMap.get(mapList.size() + "A" + i);//key获取value
                                 //移除
@@ -1109,6 +1118,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                                 syncGetFoldersByFolderId(newPos + 1, false);//
                                 break;
                             }
+
                         }
 
                     }
@@ -1131,6 +1141,8 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                             flagMap.remove(mapList.size() + "A" + i);
                             syncGetFoldersByFolderId(newPos + 1, false);//
                             break;
+                        } else {
+                            MLog.e("卡死在这里了");
                         }
                     }
                 }
@@ -1925,7 +1937,9 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     //下载完成
     @Override
     public void onUpgradeFailed(String msg, Exception e) {
-        TNUtilsUi.showToast(msg);
+        MLog.e(msg);
+        endSynchronize(2);
+//        TNUtilsUi.showToast(msg);
     }
 
     @Override
@@ -1940,6 +1954,8 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
 
     @Override
     public void onDownloadFailed(String msg, Exception e) {
+        MLog.e(msg);
+        endSynchronize(2);
         TNUtilsUi.showToast(msg);
     }
 
@@ -1963,6 +1979,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     public void onSyncFolderAddFailed(String msg, Exception e, int position, int arraySize) {
         MLog.d("sync----1-1-->Failed");
         MLog.e(msg);
+        endSynchronize(2);
         //
 //        if (position < arraySize - 1) {//同步该接口的列表数据，
 //            //（有数组，循环调用）
@@ -1993,6 +2010,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     @Override
     public void onSyncTagAddFailed(String msg, Exception e, int position, int arraySize) {
         MLog.e(msg);
+        endSynchronize(2);
     }
 
     //1-3
@@ -2010,6 +2028,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     @Override
     public void onSyncGetFolderFailed(String msg, Exception e) {
         MLog.e(msg);
+        endSynchronize(2);
     }
 
     //1-4
@@ -2172,6 +2191,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     public void onSyncProfileAddFailed(String msg, Exception e) {
         //
         MLog.e(msg);
+        endSynchronize(2);
         MLog.e("sync----2-1-->Failed");
     }
 
@@ -2244,8 +2264,10 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
 
     @Override
     public void onSyncOldNoteAddFailed(String msg, Exception e, int position, int arraySize) {
-        MLog.e(msg);
         MLog.e("sync----2-3-->Failed");
+        MLog.e(msg);
+        endSynchronize(2);
+
         //
 //        if (position < arraySize - 1) {
 //            pUploadOldNotePic(0, oldNotesAtts.size(), position + 1, arraySize, addOldNotes.get(position + 1).atts.get(0));
@@ -2292,6 +2314,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     public void onSyncTagListAddFailed(String msg, Exception e) {
         MLog.e(msg);
         MLog.e("sync----2-4-->Failed");
+        endSynchronize(2);
     }
 
     //2-5
@@ -2338,6 +2361,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     @Override
     public void onSyncNewNotePicFailed(String msg, Exception e, int picPos, int picArry, int notePos, int noteArry) {
         MLog.e(msg);
+        endSynchronize(2);
         MLog.e("sync----2-5-->Failed");
     }
 
@@ -2367,6 +2391,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     @Override
     public void onSyncNewNoteAddFailed(String msg, Exception e, int position, int arraySize) {
         MLog.e(msg);
+        endSynchronize(2);
         MLog.e("sync----2-6-->Failed");
     }
 
@@ -2386,6 +2411,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
 
         MLog.e("sync----2-7-1-->Failed");
         MLog.e(msg);
+        endSynchronize(2);
     }
 
     //2-7-2
@@ -2432,6 +2458,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     @Override
     public void onSyncRecoveryNotePicFailed(String msg, Exception e, int picPos, int picArry, int notePos, int noteArry) {
         MLog.e(msg);
+        endSynchronize(2);
         MLog.e("sync----2-7-2-->Failed");
     }
 
@@ -2453,6 +2480,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     @Override
     public void onSyncRecoveryNoteAddFailed(String msg, Exception e, int position, int arraySize) {
         MLog.e(msg);
+        endSynchronize(2);
         MLog.e("sync----2-7-3-->Failed");
     }
 
@@ -2472,6 +2500,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
 
         MLog.e("sync----2-8-->Failed");
         MLog.e(msg);
+        endSynchronize(2);
     }
 
     //2-9-1
@@ -2497,6 +2526,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     public void onSyncDeleteRealNotes1Failed(String msg, Exception e, int position) {
         isRealDelete1 = true;
         MLog.e(msg);
+        endSynchronize(2);
         MLog.e("sync----2-9-1-->Failed");
     }
 
@@ -2513,6 +2543,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     public void onSyncDeleteRealNotes2Failed(String msg, Exception e, int position) {
         isRealDelete2 = true;
         MLog.e(msg);
+        endSynchronize(2);
         MLog.e("sync----2-9-2-->Failed");
     }
 
@@ -2566,6 +2597,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     public void onSyncAllNotesIdAddFailed(String msg, Exception e) {
         MLog.e("sync----2-10-->Failed");
         MLog.e(msg);
+        endSynchronize(2);
     }
 
     //2-10-1
@@ -2588,6 +2620,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     @Override
     public void onSyncEditNotePicFailed(String msg, Exception e, int cloudsPos, int attsPos, TNNote tnNote) {
         MLog.e(msg);
+        endSynchronize(2);
         MLog.e("sync----2-10-1-->Failed");
     }
 
@@ -2604,6 +2637,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     public void onSyncEditNoteAddFailed(String msg, Exception e) {
         MLog.e("sync----2-11-1-->Failed");
         MLog.e(msg);
+        endSynchronize(2);
     }
 
     //2-11-2
@@ -2662,6 +2696,8 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     @Override
     public void onSyncpGetAllTrashNoteIdsFailed(String msg, Exception e) {
         MLog.e("sync----2-12-->Failed");
+        MLog.e(msg);
+        endSynchronize(2);
     }
 
 

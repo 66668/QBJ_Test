@@ -672,6 +672,9 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
      */
     private void endSynchronize1(int state) {
         MLog.d("NoteList同步---结束");
+        mapList.clear();
+        flagMap.clear();
+
         mLoadingView.setVisibility(View.GONE);
         mPullListview.onRefreshComplete();
         mNotes = TNDbUtils.getNoteListByTrash(mSettings.userId, mSettings.sort);
