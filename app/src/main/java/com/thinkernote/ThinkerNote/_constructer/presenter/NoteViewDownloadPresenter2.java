@@ -44,6 +44,10 @@ public class NoteViewDownloadPresenter2 implements OnNoteViewDownloadListener {
 
     public NoteViewDownloadPresenter2(Activity act) {
         this.act = act;
+        readyDownloadAtts = new Vector<TNNoteAtt>();
+        downloadingAtts = new Vector<TNNoteAtt>();
+
+        module = new NoteViewDownloadModuleImpl(act, this);
     }
 
 //    private NoteViewDownloadPresenter2() {

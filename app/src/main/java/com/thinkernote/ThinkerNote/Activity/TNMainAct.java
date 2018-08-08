@@ -723,9 +723,13 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
         }
     }
 
-    //2-11-2
+    /**
+     * 2-11-2
+     *该处工作环境最恶劣，上千跳接口返回数据走该处执行耗时任务，有必要手动gc处理内存
+     * @param bean
+     */
     public static void updateNote(GetNoteByNoteIdBean bean) {
-        //TODO 是否需要清空内存 test
+        //
         System.gc();
         //
         try {
@@ -819,7 +823,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                 catId = bean.getFolder_id();
             }
             //TODO 数据过长，卡死
-            MLog.e("打印结果tempObj："+bean.getTitle()+bean.getCreate_at());
+            MLog.e("打印结果tempObj：" + bean.getTitle() + bean.getCreate_at());
 
             JSONObject tempObj = new JSONObject();
             tempObj.put("title", bean.getTitle());
