@@ -382,7 +382,10 @@ public class TNSettingsAct extends TNActBase implements OnClickListener, OnChild
         Bundle b = new Bundle();
         b.putInt("Type", 0);
         b.putString("OriginalPath", "[]");
-        startActivity(TNLockAct.class, b);
+
+        Intent intent = new Intent(this,TNLockAct.class);
+        intent.putExtras(b);
+        startActivity(intent);
     }
 
     //

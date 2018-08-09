@@ -132,7 +132,10 @@ public class TNActBase extends Activity {
                     Bundle b = new Bundle();
                     b.putInt("Type", 2);
                     b.putString("OriginalPath", settings.lockPattern.toString());
-                    startActivity(TNLockAct.class, b);
+                    //解锁界面不可以使用singleTop模式,使用默认模式
+                    Intent intent = new Intent(this,TNLockAct.class);
+                    intent.putExtras(b);
+                    startActivity(intent);
                 }
             }
         }
