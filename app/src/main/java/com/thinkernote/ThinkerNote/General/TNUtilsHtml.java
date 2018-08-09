@@ -65,8 +65,10 @@ public class TNUtilsHtml {
         return s;
     }
 
-    /*
-        html转string
+    /**
+     * TODO bug
+     * <p>
+     * html转string
      * isDecode  true decode, false endecode
      */
     public static String codeHtmlContent(String htmlContent, boolean isDecode) {
@@ -155,6 +157,7 @@ public class TNUtilsHtml {
         return str;
     }
 
+    //TODO bug
     public static String getPlainText2(String content) {
         String str = content;
         try {

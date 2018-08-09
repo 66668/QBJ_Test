@@ -18,7 +18,7 @@ import com.thinkernote.ThinkerNote.Utils.MLog;
  * <p>
  * 说明：
  * 更新前该类是act各种调用的反射集合类，用于反射调用各种方法（android版本升级后，异步AysncTask类已经不支持使用）
- * 更新后，所有反射调用 后台接口的方法都已删除，只剩下反射调用常用的方法：数据库，监听等
+ * 更新后，所有反射调用 后台接口的方法都已删除，只剩下反射调用常用的方法，比如：数据库，监听等
  */
 public class TNAction {
     private static final String TAG = "TNAction";

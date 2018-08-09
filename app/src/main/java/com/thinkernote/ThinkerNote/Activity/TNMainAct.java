@@ -829,29 +829,41 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
             if (bean.getFolder_id() > 0) {
                 catId = bean.getFolder_id();
             }
-            //TODO 数据过长，卡死
+            //TODO html数据过长，卡死
             MLog.e("打印结果tempObj：" + bean.getTitle() + bean.getCreate_at());
 
             JSONObject tempObj = new JSONObject();
+            MLog.e("1");
             tempObj.put("title", bean.getTitle());
             tempObj.put("userId", TNSettings.getInstance().userId);
+            MLog.e("2");
             tempObj.put("trash", bean.getTrash());
             tempObj.put("source", "android");
             tempObj.put("catId", catId);
+            MLog.e("3");
             tempObj.put("content", TNUtilsHtml.codeHtmlContent(bean.getContent(), true));
+            MLog.e("4");
             tempObj.put("createTime", com.thinkernote.ThinkerNote.Utils.TimeUtils.getMillsOfDate(bean.getCreate_at()) / 1000);
             tempObj.put("lastUpdate", com.thinkernote.ThinkerNote.Utils.TimeUtils.getMillsOfDate(bean.getUpdate_at()) / 1000);
+            MLog.e("5");
             tempObj.put("syncState", syncState);
             tempObj.put("noteId", noteId);
+            MLog.e("6");
             tempObj.put("shortContent", TNUtils.getBriefContent(bean.getContent()));
+            MLog.e("7");
             tempObj.put("tagStr", tagStr);
+            MLog.e("8");
             tempObj.put("lbsLongitude", bean.getLongitude() <= 0 ? 0 : bean.getLongitude());
             tempObj.put("lbsLatitude", bean.getLatitude() <= 0 ? 0 : bean.getLatitude());
+            MLog.e("9");
             tempObj.put("lbsRadius", bean.getRadius() <= 0 ? 0 : bean.getRadius());
+            MLog.e("10");
             tempObj.put("lbsAddress", bean.getAddress());
             tempObj.put("nickName", TNSettings.getInstance().username);
+            MLog.e("11");
             tempObj.put("thumbnail", thumbnail);
             tempObj.put("contentDigest", contentDigest);
+            MLog.e("12");
 
 
 //            JSONObject tempObj = TNUtils.makeJSON(
@@ -2651,8 +2663,8 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     public void onSyncpGetNoteByNoteIdFailed(String msg, Exception e) {
         MLog.e("sync----2-11-2-->Failed");
         MLog.e(msg);
-        endSynchronize(2);
         TNUtilsUi.showToast("网络连接异常，同步终止");
+        endSynchronize(2);
     }
 
     //2-12

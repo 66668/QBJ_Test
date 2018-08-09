@@ -1307,7 +1307,8 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                         TNUtilsAtt.copyFile(att.path, tPath);
                         TNUtilsAtt.recursionDeleteDir(new File(att.path));
                         MLog.d("saveNote", "save attr", att.path + " >> " + tPath + "(" + att.digest + ")");
-                        //
+
+                        //本地笔记保存文件路径
                         TNDb.getInstance().execSQL(TNSQLString.ATT_PATH, tPath, attLocalId);
                         note.atts.get(k).attLocalId = attLocalId;
                     }
