@@ -1909,16 +1909,23 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
             int lastUpdate = cloudIds.get(position).getUpdate_at();
 
             //本地更新
-            for (int j = 0; j < allLocalNotes.size(); j++) {
-                TNNote note = allLocalNotes.get(j);
-                if (id == note.noteId && lastUpdate > note.lastUpdate) {
+            for (int j = 0; j < allNotes.size(); j++) {
+                TNNote note = allNotes.get(j);
+                if (id == note.noteId) {
                     isExit = true;
-                    pUpdataNote(position, id, false);
+
+                    if (lastUpdate > note.lastUpdate) {
+                        pUpdataNote(position, id, is13);
+                    }
                     break;
                 }
             }
             if (!isExit) {
                 pUpdataNote(position, id, false);
+            } else {
+                //
+                //下一个position
+                pUpdataNote(position + 1, is13);
             }
         } else {
             //下一个接口

@@ -2457,9 +2457,12 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
             //本地更新
             for (int j = 0; j < allNotes.size(); j++) {
                 TNNote note = allNotes.get(j);
-                if (id == note.noteId && lastUpdate > note.lastUpdate) {
+                if (id == note.noteId) {
                     isExit = true;
-                    pUpdataNote2(position, id, is13);
+
+                    if (lastUpdate > note.lastUpdate) {
+                        pUpdataNote2(position, id, is13);
+                    }
                     break;
                 }
             }
@@ -3225,9 +3228,12 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
             //本地更新
             for (int j = 0; j < allNotes.size(); j++) {
                 TNNote note = allNotes.get(j);
-                if (id == note.noteId && lastUpdate > note.lastUpdate) {
+                if (id == note.noteId) {
                     isExit = true;
-                    pUpdataNote1(position, id, is13);
+
+                    if (lastUpdate > note.lastUpdate) {
+                        pUpdataNote1(position, id, is13);
+                    }
                     break;
                 }
             }

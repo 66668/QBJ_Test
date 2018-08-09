@@ -17,7 +17,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * 新版 百度定位 sjy 0717
+ * 新版 百度定位  没有值，还有错 sjy 0717
+ * 百度地图开放平台 ：行客记事/Qunbiji2015
  * @author baidu
  */
 public class LocationService {

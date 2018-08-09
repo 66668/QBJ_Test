@@ -76,7 +76,7 @@ android的AyncTask类升级了四次，导致老的AyncTask已经无法调用
 
 #数据库优化说明：
 1。本app涉及大量数据插入查询，所以使用Transaction机制最合适。
-2。耗时操作用handlerThread异步，
+2。耗时操作用handlerThread异步，否则app ANR
 3。
 
 #内存泄漏分析：

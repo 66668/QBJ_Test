@@ -617,7 +617,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      *
      * @param noteId
      */
-    private void updataEditNotesState(final int position, final long noteId) {
+    private void updataEditNotesState(final int cloudPos, final long noteId) {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.execute(new Runnable() {
             @Override
@@ -625,16 +625,14 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                 TNDb.beginTransaction();
                 try {
                     //
-                    TNDb.getInstance().execSQL(TNSQLString.NOTE_UPDATE_SYNCSTATE,
-                            1,
-                            noteId);
+                    TNDb.getInstance().execSQL(TNSQLString.NOTE_UPDATE_SYNCSTATE, 1, noteId);
                     TNDb.setTransactionSuccessful();
                 } finally {
                     TNDb.endTransaction();
                 }
                 //
                 Message msg = Message.obtain();
-                msg.obj = position;
+                msg.obj = cloudPos;
                 msg.what = UPDATA_EDITNOTES;
                 handler.sendMessage(msg);
             }
@@ -645,7 +643,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     /**
      * 2-11-1 更新日记时间 （接口返回处理）
      */
-    private void updataEditNotes(final int position, final TNNote note) {
+    private void updataEditNotes(final int cloudPos, final TNNote note) {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.execute(new Runnable() {
             @Override
@@ -655,7 +653,6 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                 try {
                     //
                     TNDb.getInstance().execSQL(TNSQLString.NOTE_SHORT_CONTENT, shortContent, note.noteId);
-
                     //
                     TNDb.getInstance().execSQL(TNSQLString.CAT_UPDATE_LASTUPDATETIME, System.currentTimeMillis() / 1000, note.catId);
 
@@ -666,7 +663,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                 //下一个position
                 //
                 Message msg = Message.obtain();
-                msg.obj = position;
+                msg.obj = cloudPos;
                 msg.what = UPDATA_EDITNOTES;
                 handler.sendMessage(msg);
             }
@@ -829,7 +826,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
             if (bean.getFolder_id() > 0) {
                 catId = bean.getFolder_id();
             }
-            //TODO html数据过长，卡死
+            //TODO html不标准，容易卡死 需要再处理
             MLog.e("打印结果tempObj：" + bean.getTitle() + bean.getCreate_at());
 
             JSONObject tempObj = new JSONObject();
@@ -864,7 +861,6 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
             tempObj.put("thumbnail", thumbnail);
             tempObj.put("contentDigest", contentDigest);
             MLog.e("12");
-
 
 //            JSONObject tempObj = TNUtils.makeJSON(
 //                    "title", bean.getTitle(),
@@ -1622,6 +1618,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     }
 
     /**
+     * cloudIds同步云端的 所有数据（包括回收站数据）
      * (二.10)
      */
     private void pGetAllNoteIds() {
@@ -1631,19 +1628,21 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     }
 
     /**
+     * 通过最后更新时间来与云端比较是否该上传本地编辑的笔记
+     * <p>
      * editNotes
      * <p>
      * (二.10)-1 editNote上传图片
      * 说明：
      * 2-10-1和2-11-1图片上传和2-5/2-6相同
      *
-     * @param position cloudIds数据的其实操作位置
+     * @param cloudPos cloudIds数据的其实操作位置
      */
-    private void pEditNotePic(int position) {
-        MLog.d("sync---2-10-pEditNotePic");
-        if (cloudIds.size() > 0 && position < (cloudIds.size())) {
-            long id = cloudIds.get(position).getId();
-            int lastUpdate = cloudIds.get(position).getUpdate_at();
+    private void pEditNotePic(int cloudPos) {
+        MLog.d("bbb", "sync---2-10-pEditNotePic");
+        if (cloudIds.size() > 0 && cloudPos < (cloudIds.size())) {
+            long id = cloudIds.get(cloudPos).getId();
+            int lastUpdate = cloudIds.get(cloudPos).getUpdate_at();
             if (editNotes != null && editNotes.size() > 0) {
                 if (editNotes == null || editNotes.size() <= 0) {
                     //执行下一个接口
@@ -1655,20 +1654,20 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                         if (editNotes.get(j).lastUpdate > lastUpdate) {
                             //上传图片，之后上传文本
                             TNNote note = EditNotePicBefore(editNotes.get(j));//上传图片，处理content参数
-                            pEditNotePic(position, 0, note);
+                            pEditNotePic(cloudPos, 0, note);
                         } else {
-                            updataEditNotesState(position, editNotes.get(j).noteLocalId);
+                            updataEditNotesState(cloudPos, editNotes.get(j).noteLocalId);
                         }
                     }
                     if ((j == (editNotes.size() - 1)) && id != editNotes.get(j).noteId) {
                         //执行下一个position
-                        pEditNotePic(position + 1);
+                        pEditNotePic(cloudPos + 1);
                     }
                 }
 
             } else {
                 //执行下一个循环
-                pEditNotePic(position + 1);
+                pEditNotePic(cloudPos + 1);
             }
 
         } else {
@@ -1723,7 +1722,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      * @param tnNote
      */
     private void pEditNotePic(int cloudsPos, int attsPos, TNNote tnNote) {
-        MLog.d("sync---2-10-1-pEditNotePic");
+        MLog.d("bbb", "sync---2-10-1-pEditNotePic");
         TNNote note = tnNote;
         if (cloudIds.size() > 0 && cloudsPos < (cloudIds.size())) {
 
@@ -1766,8 +1765,9 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      *
      * @param cloudsPos cloudIds数据的其实操作位置
      */
+
     private void pEditNotes(int cloudsPos, TNNote note) {
-        MLog.d("sync---2-11-1-pEditNotes");
+        MLog.d("bbb", "sync---2-11-1-pEditNotes");
         if (cloudIds.size() > 0 && cloudsPos < (cloudIds.size() - 1)) {
             presener.pEditNote(cloudsPos, note);
         } else {
@@ -1785,7 +1785,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      * @param is13     (二.11)-2和(二.13)调用同一个接口，用于区分
      */
     private void pUpdataNote(int position, boolean is13) {
-        MLog.d("sync---2-11-2-pUpdataNot");
+        MLog.d("bbb", "sync---2-11-2-pUpdataNot");
         //为2-11-2接口返回，做预处理
         setChildHandler2_11(position);
 
@@ -1797,12 +1797,16 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
             //本地更新
             for (int j = 0; j < allNotes.size(); j++) {
                 TNNote note = allNotes.get(j);
-                if (id == note.noteId && lastUpdate > note.lastUpdate) {
+                if (id == note.noteId) {
                     isExit = true;
-                    pUpdataNote(position, id, is13);
+
+                    if (lastUpdate > note.lastUpdate) {
+                        pUpdataNote(position, id, is13);
+                    }
                     break;
                 }
             }
+
             if (!isExit) {
                 pUpdataNote(position, id, is13);
             } else {
@@ -1827,7 +1831,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      * p层
      */
     private void pUpdataNote(int position, long noteId, boolean is13) {
-        MLog.d("sync---2-11-3-pUpdataNote");
+        MLog.d("bbb", "sync---2-11-3-pUpdataNote");
         presener.pGetNoteByNoteId(position, noteId, is13);
     }
 
@@ -2567,6 +2571,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
 
         //与云端同步数据 sjy-0623
         allNotes = TNDbUtils.getAllNoteList(TNSettings.getInstance().userId);
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
         for (int i = 0; i < allNotes.size(); i++) {
             boolean isExit = false;
             final TNNote note = allNotes.get(i);
@@ -2577,11 +2582,8 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                     break;
                 }
             }
-
             //不存在就删除  /使用异步
-            ExecutorService executorService = Executors.newSingleThreadExecutor();
             if (!isExit && note.syncState != 7) {
-
                 executorService.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -2589,7 +2591,6 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                         try {
                             //
                             TNDb.getInstance().deleteSQL(TNSQLString.NOTE_DELETE_BY_NOTEID, new Object[]{note.noteId});
-
                             TNDb.setTransactionSuccessful();
                         } finally {
                             TNDb.endTransaction();
@@ -2641,7 +2642,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     @Override
     public void onSyncEditNoteSuccess(Object obj, int cloudsPos, TNNote note) {
         MLog.d("sync----2-11-1--->Success");
-        //更新下一个cloudsPos位置的数据
+        //更新下一个cloudsPos位置的数据 (仍使用cloudsPos，由updataEditNotes（）的handler实现cloudsPos+1)
         updataEditNotes(cloudsPos, note);
     }
 

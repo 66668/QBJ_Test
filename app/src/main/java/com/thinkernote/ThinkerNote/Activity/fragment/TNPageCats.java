@@ -2044,11 +2044,15 @@ public class TNPageCats extends TNChildViewBase implements
             int lastUpdate = cloudIds.get(position).getUpdate_at();
 
             //本地更新
+            //本地更新
             for (int j = 0; j < allNotes.size(); j++) {
                 TNNote note = allNotes.get(j);
-                if (id == note.noteId && lastUpdate > note.lastUpdate) {
+                if (id == note.noteId) {
                     isExit = true;
-                    pUpdataNote1(position, id, is13);
+
+                    if (lastUpdate > note.lastUpdate) {
+                        pUpdataNote1(position, id, is13);
+                    }
                     break;
                 }
             }

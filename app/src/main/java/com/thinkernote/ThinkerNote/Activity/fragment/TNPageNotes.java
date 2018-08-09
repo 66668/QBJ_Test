@@ -1501,14 +1501,19 @@ public class TNPageNotes extends TNChildViewBase implements OnItemLongClickListe
             int lastUpdate = cloudIds.get(position).getUpdate_at();
 
             //本地更新
+            //本地更新
             for (int j = 0; j < allNotes.size(); j++) {
                 TNNote note = allNotes.get(j);
-                if (id == note.noteId && lastUpdate > note.lastUpdate) {
+                if (id == note.noteId) {
                     isExit = true;
-                    pUpdataNote(position, id, is13);
+
+                    if (lastUpdate > note.lastUpdate) {
+                        pUpdataNote(position, id, is13);
+                    }
                     break;
                 }
             }
+
             if (!isExit) {
                 pUpdataNote(position, id, is13);
             } else {
