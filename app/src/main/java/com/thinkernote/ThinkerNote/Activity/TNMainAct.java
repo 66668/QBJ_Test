@@ -120,7 +120,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     private String[] arrayFolderName;//第一次登录，要同步的数据，（1-1）
     private String[] arrayTagName;//第一次登录，要同步的数据，（1-2）
     //
-    private Vector<TNCat> cats;//第一次登录，要同步的数据，（1-3）
+    private Vector<TNCat> cats = new Vector<>();//第一次登录，要同步的数据，（1-3）
     private String[] groupWorks;//（3）下第一个数组数据
     private String[] groupLife;//（3）下第2个数组数据
     private String[] groupFun;//（3）下第3个数组数据
@@ -1093,7 +1093,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     Map<String, Integer> flagMap = new HashMap<>();//key值用mapList.size+"A"+position 标记
 
     private void syncGetFoldersByFolderId(int startPos, boolean isAdd) {
-        MLog.d("1-4--syncGetFoldersByFolderId--mapList.size()=" );
+        MLog.d("1-4--syncGetFoldersByFolderId--mapList.size()=");
         if (mapList.size() > 0 && mapList.size() <= 5) {
             //有1---5，for循环层层内嵌,从最内层（mapList.size最大处）开始执行
             List<AllFolderItemBean> allFolderItemBeans = mapList.get(mapList.size() - 1);
@@ -1370,8 +1370,8 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      */
 
     private void pAddNewNote() {
-        MLog.d("sync---2-5-pAddNewNote--addNewNotes.size()=" + addNewNotes.size());
         addNewNotes = TNDbUtils.getNoteListBySyncState(TNSettings.getInstance().userId, 3);
+        MLog.d("sync---2-5-pAddNewNote--addNewNotes.size()=" + addNewNotes.size());
 
         if (addNewNotes.size() > 0) {
             //先 上传数组的第一个
@@ -2085,7 +2085,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     public void onSyncGetFoldersByFolderIdFailed(String msg, Exception e, long catID, int startPos, List<AllFolderItemBean> beans) {
         MLog.e(msg);
         //执行下个position循环
-        syncGetFoldersByFolderId(startPos + 1, false);
+        endSynchronize(2);
     }
 
     //1-5
