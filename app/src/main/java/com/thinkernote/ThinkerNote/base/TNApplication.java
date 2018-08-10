@@ -98,6 +98,19 @@ public class TNApplication extends Application {
 
         MLog.i("DbReportError e");
     }
+    // mainAct 2-11-2数据处理时的异常,
+    public void htmlError(String error) {
+        MLog.i("DbReportError s", TNSettings.getInstance().topAct);
+        //TNUtilsUi.showToast("DB ERROR!!");
+        if (TNSettings.getInstance().topAct != null) {
+            TNUtilsUi.showNotification(TNSettings.getInstance().topAct,
+                    error, true);
+        }
+        TNSettings.getInstance().hasDbError = true;
+        TNSettings.getInstance().savePref(false);
+
+        MLog.i("DbReportError e");
+    }
 
     private void watchAppSwitch() {
         //一个线程，让我一直检测

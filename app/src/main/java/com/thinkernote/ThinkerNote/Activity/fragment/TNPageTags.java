@@ -929,6 +929,8 @@ public class TNPageTags extends TNChildViewBase implements
                 NoteDbHelper.updateNote(tempObj);
         } catch (Exception e) {
             MLog.e("操作有异常：" + e.toString());
+            //该异常只在TNMainAct的2-11-2的数据处理函数使用，这里只使用try catch 不处理即可 sjy
+            MLog.e("TNPagerTags--updateNote:" + e.toString());
         }
     }
 

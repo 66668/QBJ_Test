@@ -52,7 +52,7 @@ public class TNUtilsHtml {
         return s;
     }
 
-    public static String en(String str) {
+    public static String en(String str) throws Exception {
         String s = new String(str);
 //		s = s.replaceAll("&", "&amp;");
         s = s.replaceAll("<", "&lt;");
@@ -66,16 +66,16 @@ public class TNUtilsHtml {
     }
 
     /**
-     * TODO bug
      * <p>
      * html转string
      * isDecode  true decode, false endecode
      */
-    public static String codeHtmlContent(String htmlContent, boolean isDecode) {
+    public static String codeHtmlContent(String htmlContent, boolean isDecode) throws Exception {
 
         StringBuffer contentbf = new StringBuffer();
         StringBuffer tmpbf = new StringBuffer();
         try {
+            //TODO bug
             String htmlContent0 = getPlainText2(htmlContent);
             String rText = new String(htmlContent0);
 
@@ -131,8 +131,8 @@ public class TNUtilsHtml {
                 tmpbf = null;
             }
         } catch (Exception e) {
-
             MLog.e("html转String异常：" + e.toString());
+            throw new Exception(e);
         }
 //        MLog.d(TAG, "isDecode=" + isDecode + "\ncontent=" + contentbf.toString());
         return contentbf.toString().trim();
@@ -157,18 +157,33 @@ public class TNUtilsHtml {
         return str;
     }
 
-    //TODO bug
-    public static String getPlainText2(String content) {
+
+    public static String getPlainText2(String content) throws Exception {
+        MLog.e("TNUtilsHtml--getPlainText2");
         String str = content;
+        MLog.e("TNUtilsHtml--getPlainText2-2");
         try {
+            //
             int index1 = str.indexOf("<table");
             int index2 = str.indexOf("\n</table>");
+
+            //TODO html bug 死循环,oom
+            //说明：html写的不严谨，本处容易死循环，通过标记跳过死循环即可 sjy 0810
+            int flagIndex1 =index1;
+            int flagIndex2 = index2;
+
             while (index1 >= 0 && index2 > 0) {
+                System.gc();//强制gc，html过大，容易gc
+                MLog.e("index1=" + index1 + "--index2=" + index2);
                 String temp = str.substring(index1, index2 + 1);
                 String temp2 = temp.replaceAll("\n", "");
                 str = str.replaceAll(temp, temp2);
                 index1 = str.indexOf("<table");
                 index2 = str.indexOf("\n</table>");
+                if (flagIndex1==index1&&flagIndex2==index2||index2>100000){
+                    //暴力跳出，容易超出int最大值，容易导致app显示内容有<table></table>遗留，本人不管了，懂得上
+                    break;
+                }
             }
 
             str = str.replaceAll("  <br />  ", "\n");
@@ -177,13 +192,15 @@ public class TNUtilsHtml {
             str = str.replaceAll("<br />", "\n");
             str = str.replaceAll("<html>", "");
             str = str.replaceAll("</html>", "");
+
             str = str.replaceAll("<body>", "");
             str = str.replaceAll("</body>", "");
             str = str.replaceAll("\n<tn-media", "<tn-media");
             str = str.replaceAll("\n</tn-media>", "</tn-media>");
         } catch (Exception e) {
             //TODO java.util.regex.PatternSyntaxException: In a character range [x-y], x is greater than y near index 43
-            MLog.e("html转换异常：" + e.toString());
+            MLog.e("TNUtilsHtml--getPlainText2" + e.toString());
+            throw new Exception(e);
         }
         return str;
     }

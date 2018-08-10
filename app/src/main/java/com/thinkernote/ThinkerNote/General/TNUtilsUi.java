@@ -501,8 +501,7 @@ public class TNUtilsUi {
                 : type + System.currentTimeMillis();
     }
 
-    public static void showNotification(Activity act, int msgId,
-                                        boolean isCancel) {
+    public static void showNotification(Activity act, int msgId, boolean isCancel) {
         MLog.d(TAG, "showNotification:" + act.getString(msgId));
         String service = Context.NOTIFICATION_SERVICE;
         final NotificationManager nm = (NotificationManager) act
@@ -526,6 +525,36 @@ public class TNUtilsUi {
                 @Override
                 public void run() {
                     // TODO Auto-generated method stub
+                    nm.cancel(1);
+                }
+            }, 1000);
+        }
+
+    }
+
+    public static void showNotification(Activity act, String msgStr, boolean isCancel) {
+        MLog.d(TAG, "showNotification:" + msgStr);
+        String service = Context.NOTIFICATION_SERVICE;
+        final NotificationManager nm = (NotificationManager) act
+                .getSystemService(service); // 获得系统级服务，用于管理消息
+        Builder builder = new Notification.Builder(act);
+        PendingIntent pi = PendingIntent.getActivity(act, 0, new Intent(), 0); // 消息触发后调用
+        builder.setContentIntent(pi);
+        Notification n = builder.setContentTitle("轻笔记")
+                .setContentText(msgStr)
+                .setSmallIcon(R.drawable.icon)
+                .build();
+        n.icon = R.drawable.icon; // 设置图标
+        n.tickerText = msgStr; // 设置消息
+        n.when = System.currentTimeMillis(); // 设置时间
+
+        nm.notify(1, n); // 发送通知
+
+        if (isCancel) {
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
                     nm.cancel(1);
                 }
             }, 1000);
