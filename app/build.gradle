@@ -132,10 +132,10 @@ dependencies {
     //-----------------------------------------------------------------------------------------------------------
 
     //-------------------------leakcanary内存泄漏检测 打包时注意清除--------------------------------
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
-    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
-    // Optional, if you use support library fragments:
-    debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.1'
+//    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
+//    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
+//    // Optional, if you use support library fragments:
+//    debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.1'
 }
 //repositories {
 //    jcenter()

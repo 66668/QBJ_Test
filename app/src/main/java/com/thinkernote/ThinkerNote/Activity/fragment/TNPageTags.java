@@ -992,7 +992,13 @@ public class TNPageTags extends TNChildViewBase implements
      * （一.1）更新 文件
      */
     private void pFolderAdd(int position, int arraySize, String name) {
-        presenter.folderAdd(position, arraySize, name);
+        MLog.d("sync---1-1-synchronizeData-pFolderAdd");
+        if (position < arraySize) {
+            presenter.folderAdd(position, arraySize, name);
+        } else {//同步完成后，再同步其他接口列表数据
+            //（有数组，循环调用）
+            pTagAdd(0, arrayTagName.length, arrayTagName[0]);
+        }
     }
 
     /**
@@ -1146,7 +1152,7 @@ public class TNPageTags extends TNChildViewBase implements
      * @param postion
      */
     private void syncTNCat(int postion, int catsSize) {
-        if (postion < catsSize - 1) {
+        if (postion < catsSize ) {
             //获取postion条数据
             TNCat tempCat = cats.get(postion);
 
@@ -1753,26 +1759,15 @@ public class TNPageTags extends TNChildViewBase implements
     //1-1
     @Override
     public void onSyncFolderAddSuccess(Object obj, int position, int arraySize) {
-        if (position < arraySize - 1) {//同步该接口的列表数据，
-            //（有数组，循环调用）
-            pFolderAdd(position + 1, arraySize, arrayFolderName[position + 1]);
-        } else {//同步完成后，再同步其他接口列表数据
-            //（有数组，循环调用）
-            pTagAdd(0, arrayTagName.length, arrayTagName[0]);
-        }
+        MLog.d("sync----1-1-->Success");
+        //下一个position
+        pFolderAdd(position + 1, arraySize, arrayFolderName[position + 1]);
+
     }
 
     @Override
     public void onSyncFolderAddFailed(String msg, Exception e, int position, int arraySize) {
         MLog.e(msg);
-        //
-//        if (position < arraySize - 1) {//同步该接口的列表数据，
-//            //（有数组，循环调用）
-//            pFolderAdd(position + 1, arraySize, arrayFolderName[position + 1]);
-//        } else {//同步完成后，再同步其他接口列表数据
-//            //（有数组，循环调用）
-//            pTagAdd(0, arrayTagName.length, arrayTagName[0]);
-//        }
     }
 
     //1-2

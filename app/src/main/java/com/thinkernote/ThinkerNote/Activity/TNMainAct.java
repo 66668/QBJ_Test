@@ -880,7 +880,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
             MLog.e("updateNote接口返回--tempObj:" + tempObj.toString());
         } catch (Exception e) {
             MLog.e("2-11-2--updateNote异常：" + e.toString());
-            TNApplication.getInstance().htmlError("笔记:"+bean.getTitle()+"  "+bean.getCreate_at()+"需要到网页版中"+"\n"+"+修改成新版app支持的格式,新版app不支持网页抓去 \n或者删除该笔记");
+            TNApplication.getInstance().htmlError("笔记:" + bean.getTitle() + "  " + bean.getCreate_at() + "需要到网页版中" + "\n" + "+修改成新版app支持的格式,新版app不支持网页抓去 \n或者删除该笔记");
         }
         if (note == null)
             NoteDbHelper.addOrUpdateNote(tempObj);
@@ -888,7 +888,6 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
             NoteDbHelper.updateNote(tempObj);
 
     }
-
 
 
     public static void insertAttr(GetNoteByNoteIdBean.Attachments tempAtt, long noteLocalId) {
@@ -983,7 +982,6 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     Handler chlidHanlder1_4;
 
 
-
     //=============================================p层调用======================================================
 
     //检查更新
@@ -1043,7 +1041,12 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      */
     private void pFolderAdd(int position, int arraySize, String name) {
         MLog.d("sync---1-1-synchronizeData-pFolderAdd");
-        presener.folderAdd(position, arraySize, name);
+        if (position < arraySize) {
+            presener.folderAdd(position, arraySize, name);
+        } else {//同步完成后，再同步其他接口列表数据
+            //（有数组，循环调用）
+            pTagAdd(0, arrayTagName.length, arrayTagName[0]);
+        }
     }
 
     /**
@@ -1096,7 +1099,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
             //
             MLog.d("1-4--syncGetFoldersByFolderId--allFolderItemBeans.size()=" + allFolderItemBeans.size());
             if (allFolderItemBeans.size() > 0) {
-                if (startPos < allFolderItemBeans.size() ) {
+                if (startPos < allFolderItemBeans.size()) {
                     //从1层的第一个数据开始
                     if (isAdd) {
                         syncGetFoldersByFolderId(0, allFolderItemBeans);
@@ -1180,17 +1183,19 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      * 接口个数 = 3*cats.size*groupXXX.size;
      */
     private void syncTNCat() {
-        MLog.d("sync---1-5-syncTNCat");
+
         if (mSettings.firstLaunch) {
             //同步TNCat
             cats = TNDbUtils.getAllCatList(mSettings.userId);
-            if (cats.size() > 0) {
-                //先执行最外层的数据
-                syncTNCat(0, cats.size());
-            } else {
+            MLog.d("sync---1-5-syncTNCat--cats=" + cats.size());
+            if (cats == null || cats.size() <= 0) {
                 //执行下一个接口
                 pGetTagList();
+            } else if (cats.size() > 0) {
+                //先执行最外层的数据
+                syncTNCat(0, cats.size());
             }
+
         } else {
             //执行下一个接口
             pGetTagList();
@@ -1205,8 +1210,8 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      */
 
     private void syncTNCat(int postion, int catsSize) {
-        MLog.d("sync---1-5-syncTNCat--syncTNCat");
-        if (postion < catsSize - 1) {
+        MLog.d("sync---1-5-syncTNCat--syncTNCat--postion=" + postion + "--catsSize" + catsSize);
+        if (postion < catsSize) {
             //获取postion条数据
             TNCat tempCat = cats.get(postion);
             MLog.d("sync---1-5-syncTNCat--tempCat.catName=" + tempCat.catName);
@@ -1275,10 +1280,10 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      * 接口个数 = addOldNotes.size * oldNotesAtts.size;
      */
     private void syncOldNote() {
-        MLog.d("sync---2-2-syncOldNote");
         if (!mSettings.syncOldDb) {
             //add老数据库的笔记
             addOldNotes = TNDbUtils.getOldDbNotesByUserId(TNSettings.getInstance().userId);
+            MLog.d("sync---2-2-syncOldNote=" + addOldNotes.size());
             if (addOldNotes.size() > 0) {
                 //先 上传数组的第一个
                 TNNote tnNote = addOldNotes.get(0);
@@ -1347,8 +1352,8 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     private void pGetTagList() {
         Vector<TNTag> tags = TNDbUtils.getTagList(mSettings.userId);
         if (tags.size() == 0) {
-            presener.pGetTagList();
             MLog.d("sync---2-4-pGetTagList");
+            presener.pGetTagList();
         } else {
             //执行下一个接口
             pAddNewNote();
@@ -1364,7 +1369,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      */
 
     private void pAddNewNote() {
-        MLog.d("sync---2-5-pAddNewNote");
+        MLog.d("sync---2-5-pAddNewNote--addNewNotes.size()=" + addNewNotes.size());
         addNewNotes = TNDbUtils.getNoteListBySyncState(TNSettings.getInstance().userId, 3);
 
         if (addNewNotes.size() > 0) {
@@ -1420,7 +1425,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      * @param position 标记，表示recoveryNotes的开始位置，非recoveryNotesAtts位置
      */
     private void recoveryNote(int position) {
-        MLog.d("sync---2-7-recoveryNote");
+        MLog.d("sync---2-7-recoveryNote--recoveryNotes.size()=" + recoveryNotes.size());
         if (position < recoveryNotes.size() && position >= 0) {
             if (recoveryNotes.get(position).noteId != -1) {
                 //循环执行
@@ -1481,7 +1486,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      * @param position
      */
     private void pDelete(int position) {
-        MLog.d("sync---2-8-pDelete");
+        MLog.d("sync---2-8-pDelete--deleteNotes.size()=" + deleteNotes.size());
 
         if (deleteNotes.size() > 0 && position < deleteNotes.size()) {
             if (deleteNotes.get(position).noteId != -1) {
@@ -1553,7 +1558,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     private boolean isRealDelete2 = false;
 
     private void pRealDelete(int position) {
-        MLog.d("sync---2-9-pRealDelete");
+        MLog.d("sync---2-9-pRealDelete---deleteRealNotes.size()=" + deleteRealNotes.size());
         if (deleteRealNotes.size() > 0 && position < deleteRealNotes.size()) {
             if (deleteRealNotes.get(position).noteId == -1) {
                 //
@@ -1637,7 +1642,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      * @param cloudPos cloudIds数据的其实操作位置
      */
     private void pEditNotePic(int cloudPos) {
-        MLog.d("bbb", "sync---2-10-pEditNotePic");
+        MLog.d("bbb", "sync---2-10-pEditNotePic--cloudIds.size()=" + cloudIds.size());
         if (cloudIds.size() > 0 && cloudPos < (cloudIds.size())) {
             long id = cloudIds.get(cloudPos).getId();
             int lastUpdate = cloudIds.get(cloudPos).getUpdate_at();
@@ -1783,7 +1788,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      * @param is13     (二.11)-2和(二.13)调用同一个接口，用于区分
      */
     private void pUpdataNote(int position, boolean is13) {
-        MLog.d("bbb", "sync---2-11-2-pUpdataNot");
+        MLog.d("bbb", "sync---2-11-2-pUpdataNot--allNotes.size()=" + allNotes.size());
         //为2-11-2接口返回，做预处理
         setChildHandler2_11(position);
 
@@ -1839,8 +1844,8 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      * (二.12) 同步回收站的笔记
      */
     private void pTrashNotes() {
+        MLog.d("sync---2-12-pTrashNotes--trashNotes.size()=" + trashNotes.size());
         presener.pGetAllTrashNoteIds();
-        MLog.d("sync---2-12-pTrashNotes");
     }
 
     /**
@@ -1980,13 +1985,9 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     @Override
     public void onSyncFolderAddSuccess(Object obj, int position, int arraySize) {
         MLog.d("sync----1-1-->Success");
-        if (position < arraySize - 1) {//同步该接口的列表数据，
-            //（有数组，循环调用）
-            pFolderAdd(position + 1, arraySize, arrayFolderName[position + 1]);
-        } else {//同步完成后，再同步其他接口列表数据
-            //（有数组，循环调用）
-            pTagAdd(0, arrayTagName.length, arrayTagName[0]);
-        }
+        //下一个position
+        pFolderAdd(position + 1, arraySize, arrayFolderName[position + 1]);
+
     }
 
     @Override
@@ -1994,14 +1995,6 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
         MLog.d("sync----1-1-->Failed");
         MLog.e(msg);
         endSynchronize(2);
-        //
-//        if (position < arraySize - 1) {//同步该接口的列表数据，
-//            //（有数组，循环调用）
-//            pFolderAdd(position + 1, arraySize, arrayFolderName[position + 1]);
-//        } else {//同步完成后，再同步其他接口列表数据
-//            //（有数组，循环调用）
-//            pTagAdd(0, arrayTagName.length, arrayTagName[0]);
-//        }
     }
 
     //1-2
