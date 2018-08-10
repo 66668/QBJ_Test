@@ -173,6 +173,10 @@ public class TNUtilsHtml {
 
             while (index1 >= 0 && index2 > 0) {
                 System.gc();//强制gc，html过大，容易oom
+
+                flagIndex1 = index1;
+                flagIndex2 = index2;
+
                 MLog.e("index1=" + index1 + "--index2=" + index2);
                 String temp = str.substring(index1, index2 + 1);
                 String temp2 = temp.replaceAll("\n", "");
