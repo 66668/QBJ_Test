@@ -1096,7 +1096,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
             //
             MLog.d("1-4--syncGetFoldersByFolderId--allFolderItemBeans.size()=" + allFolderItemBeans.size());
             if (allFolderItemBeans.size() > 0) {
-                if (startPos < allFolderItemBeans.size() - 1) {
+                if (startPos < allFolderItemBeans.size() ) {
                     //从1层的第一个数据开始
                     if (isAdd) {
                         syncGetFoldersByFolderId(0, allFolderItemBeans);

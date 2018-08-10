@@ -1,0 +1,92 @@
+<html><body><div style="caret-color: #31353b; color: #31353b; font-family: Helvetica, Helvetica, 微软雅黑, 宋体; font-size: 14px; font-style: normal; font-variant-caps: normal; font-weight: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px; text-decoration: none;">
+    <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse; border-spacing: 0px; border: 1px solid #e6e6e6; font-size: 12px; color: #333333; line-height: 18px; width: 100%;">
+    <tbody>
+    <tr>
+    <td class="info_text15" style="font-family: 宋体, Arial, Verdana; line-height: 12px; border: 0px; height: 26px; padding: 5px;" width="27%"><strong>域名</strong><br/>DomainName</td>
+    <td style="font-family: 宋体, Arial, Verdana; line-height: 1.5em; border: 0px; height: 26px; white-space: pre-wrap; word-break: break-all; padding: 5px;" width="73%">lanbitou.com  <a class="linkblue_query" href="http://www.lanbitou.com/" style="color: #48607a;" target="_blank">访问该网站</a></td>
+    </tr>
+    <tr bgcolor="#F3F3F3">
+    <td class="info_text15" style="font-family: 宋体, Arial, Verdana; line-height: 12px; border: 0px; height: 26px; padding: 5px;"><strong>域名状态</strong>(<a class="linkblue_query" href="http://www.net.cn/service/faq/yuming/ymzc/200708/2462.html" style="color: #48607a;" target="_blank">这是什么?</a>)<br/>Domain Status</td>
+    <td style="font-family: 宋体, Arial, Verdana; line-height: 1.5em; border: 0px; height: 26px; cursor: pointer; padding: 5px;"><span title="正常状态">ok</span></td>
+    </tr>
+    <tr>
+    <td class="info_text15" style="font-family: 宋体, Arial, Verdana; line-height: 12px; border: 0px; height: 26px; padding: 5px;"><strong>注册商</strong><br/>Sponsoring Registrar</td>
+    <td style="font-family: 宋体, Arial, Verdana; line-height: 1.5em; border: 0px; height: 26px; padding: 5px;">北京万网志成科技有限公司</td>
+    </tr>
+    <tr bgcolor="#F3F3F3">
+    <td class="info_text15" style="font-family: 宋体, Arial, Verdana; line-height: 12px; border: 0px; height: 26px; padding: 5px;"><strong>DNS 服务器</strong><br/>Name Server</td>
+    <td style="font-family: 宋体, Arial, Verdana; line-height: 1.5em; border: 0px; height: 26px; padding: 5px;">DNS10.HICHINA.COM, DNS9.HICHINA.COM</td>
+    </tr>
+    <tr>
+    <td class="info_text15" style="font-family: 宋体, Arial, Verdana; line-height: 12px; border: 0px; height: 26px; padding: 5px;"><strong>注册日期</strong><br/>Registration Date</td>
+    <td style="font-family: 宋体, Arial, Verdana; line-height: 1.5em; border: 0px; height: 26px; padding: 5px;">14-oct-2005</td>
+    </tr>
+    <tr bgcolor="#F3F3F3">
+    <td class="info_text15" style="font-family: 宋体, Arial, Verdana; line-height: 12px; border: 0px; height: 26px; padding: 5px;"><strong>到期日期</strong><br/>Expiration Date</td>
+    <td style="font-family: 宋体, Arial, Verdana; line-height: 1.5em; border: 0px; height: 26px; padding: 5px;">14-oct-2015</td>
+    </tr>
+    <tr>
+    <td colspan="2" style="font-family: 宋体, Arial, Verdana; line-height: 1.5em; border: 0px; height: 26px; padding: 5px;">
+    <div class="linkblue_
+    query" style="border: 0px; outline: 0px; font-style: inherit; font-family: inherit; vertical-align: baseline; color: #48607a; text-decoration: underline; cursor: pointer;"><img alt="" id="img1" src="http://www.net.cn/static/member/images/icon_close.gif" style="border: 0px; outline: 0px; font-style: inherit; font-family: inherit; vertical-align: middle;"/> <strong>查看完整注册信息</strong></div>
+    <div id="tab1" style="border: 0px; outline: 0px; font-style: inherit; font-family: inherit; vertical-align: baseline;"><br/><a class="linkblue_query" href="http://www.net.cn/service/faq/yuming/ymzc/201108/4968.html" style="color: #48607a;" target="_blank">不懂以下注册信息中的英文项含义？</a><br/>
+    <div class="dbody" style="border: 0px; outline: 0px; font-style: inherit; font-family: inherit; vertical-align: baseline; width: 620px;">
+    <pre style="white-space: pre-wrap; word-wrap: break-word;">Domain Name ..................... lanbitou.com
+    Name Server ..................... dns9.hichina.com
+                                      dns10.hichina.com
+    Registrant ID ................... hc961508640-cn
+    Registrant Name ................. Guobin Chang
+    Registrant Organization ......... GuobinChang
+    Registrant Address .............. No.26-1-2-14C Longhai Middle Road,Zhengzhou,PRC
+    Registrant City ................. zhengzhoushi
+    Registrant Province/State ....... henan
+    Registrant Postal Code .......... 450052
+    Registrant Country Code ......... CN
+    Registrant Phone Number ......... +86.03718237130 -
+    Registrant Fax .................. +86. -
+    Registrant Email ................ <a href="mailto:changgb@hotmail.com">changgb@hotmail.com</a>
+    Administrative ID ............... hc961508640-cn
+    Administrative Name ............. Guobin Chang
+    Administrative Organization ..... GuobinChang
+    Administrative Address .......... No.26-1-2-14C Longhai Middle Road,Zhengzhou,PRC
+    Administrative City ............. zhengzhoushi
+    Administrative Province/State ... henan
+    Administrative Postal Code ...... 450052
+    Administrative Country Code ..... CN
+    Administrative Phone Number ..... +86.03718237130 -
+    Administrative Fax .............. +86. -
+    Administrative Email ............ <a href="mailto:changgb@hotmail.com">changgb@hotmail.com</a>
+    Billing ID ...................... hichina001-cn
+    Billing Name .................... hichina
+    Billing Organization ............ HiChina Web Solutions Limited
+    Billing Address ................. 3/F., HiChina Mansion
+                                      No.27 Gulouwai Avenue
+                                      Dongcheng District
+    Billing City .................... Beijing
+    Billing Province/State .......... Beijing
+    Billing Postal Code ............. 100011
+    Billing Country Code ............ CN
+    Billing Phone Number ............ +86.01064242299 -
+    Billing Fax ..................... +86.01064258796 -
+    Billing Email ................... <a href="mailto:domainadm@hichina.com">domainadm@hichina.com</a>
+    Technical ID .................... hichina001-cn
+    Technical Name .................. hichina
+    Technical Organization .......... HiChina Web Solutions Limited
+    Technical Address ............... 3/F., HiChina Mansion
+                                      No.27 Gulouwai Avenue
+                                      Dongcheng District
+    Technical City .................. Beijing
+    Technical Province/State ........ Beijing
+    Technical Postal Code ........... 100011
+    Technical Country Code .......... CN
+    Technical Phone Number .......... +86.01064242299 -
+    Technical Fax ................... +86.01064258796 -
+    Technical Email ................. <a href="mailto:domainadm@hichina.com">domainadm@hichina.com</a>
+    Expiration Date ................. 2015-10-14 11:07:35</pre>
+    </div>
+    </div>
+    </td>
+    </tr>
+    </tbody>
+    </table>
+    </div></body></html>

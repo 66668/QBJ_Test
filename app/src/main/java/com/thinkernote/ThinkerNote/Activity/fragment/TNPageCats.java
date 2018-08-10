@@ -1397,7 +1397,7 @@ public class TNPageCats extends TNChildViewBase implements
             List<AllFolderItemBean> allFolderItemBeans = mapList.get(mapList.size() - 1);
 
             if (allFolderItemBeans.size() > 0) {
-                if (startPos < allFolderItemBeans.size() - 1) {
+                if (startPos < allFolderItemBeans.size() ) {
                     //从1层从第一个数据开始
                     if (isAdd) {
                         syncGetFoldersByFolderId(0, allFolderItemBeans);
@@ -1476,19 +1476,17 @@ public class TNPageCats extends TNChildViewBase implements
      */
     private void syncTNCat() {
         MLog.d("sync---1-5-syncTNCat");
+        MLog.d("sync---1-5-syncTNCat");
         if (mSettings.firstLaunch) {
             //同步TNCat
             cats = TNDbUtils.getAllCatList(mSettings.userId);
-            if (cats.size() > 0) {
-                //先执行最外层的数据
-                syncTNCat(0, cats.size());
-            } else {
+            if (cats == null || cats.size() <= 0) {
                 //执行下一个接口
                 pGetTagList1();
+            } else if (cats.size() > 0) {
+                //先执行最外层的数据
+                syncTNCat(0, cats.size());
             }
-        } else {
-            //执行下一个接口
-            pGetTagList1();
         }
 
     }
