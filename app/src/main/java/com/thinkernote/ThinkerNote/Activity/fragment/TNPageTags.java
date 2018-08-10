@@ -1046,23 +1046,25 @@ public class TNPageTags extends TNChildViewBase implements
      *
      * @param isAdd 如果mapList.add之后立即执行该方法，为true
      */
-    Map<String, Integer> flagMap = new HashMap<>();//key值用mapList.size+"A"+position标记
+    Map<String, Integer> flagMap = new HashMap<>();//key值用mapList.size+"A"+position 标记
 
     private void syncGetFoldersByFolderId(int startPos, boolean isAdd) {
+        MLog.d("1-4--syncGetFoldersByFolderId--mapList.size()=" + mapList.size());
         if (mapList.size() > 0 && mapList.size() <= 5) {
-            //有1---5，for循环层层内嵌,从最内层（size最大处）开始执行
+            //有1---5，for循环层层内嵌,从最内层（mapList.size最大处）开始执行
             List<AllFolderItemBean> allFolderItemBeans = mapList.get(mapList.size() - 1);
-
+            //
+            MLog.d("1-4--syncGetFoldersByFolderId--allFolderItemBeans.size()=" + allFolderItemBeans.size());
             if (allFolderItemBeans.size() > 0) {
-                if (startPos < allFolderItemBeans.size() ) {
-                    //从1层从第一个数据开始
+                if (startPos < allFolderItemBeans.size() - 1) {
+                    //从1层的第一个数据开始
                     if (isAdd) {
                         syncGetFoldersByFolderId(0, allFolderItemBeans);
                     } else {
                         syncGetFoldersByFolderId(startPos, allFolderItemBeans);
                     }
-
                 } else {
+                    //执行上一层的循环
                     if (mapList.size() == 1) {
                         //执行下一个接口
                         syncTNCat();
@@ -1074,14 +1076,17 @@ public class TNPageTags extends TNChildViewBase implements
                         //移除最后一层后，暴露上一层，所以需要获取上一层的执行过的位置，从该位置继续执行
                         List<AllFolderItemBean> allFolderItemBeans2 = mapList.get(mapList.size() - 1);
                         for (int i = 0; i < allFolderItemBeans2.size(); i++) {
+
                             if (flagMap.get(mapList.size() + "A" + i) != null) {//查找出该存储的值
-                                int newPos = flagMap.get(mapList.size() + "A" + i);
+                                int newPos = flagMap.get(mapList.size() + "A" + i);//key获取value
                                 //移除
                                 flagMap.remove(mapList.size() + "A" + i);
                                 syncGetFoldersByFolderId(newPos + 1, false);//
                                 break;
                             }
+
                         }
+
                     }
                 }
             } else {
@@ -1090,10 +1095,9 @@ public class TNPageTags extends TNChildViewBase implements
                     //执行下一个接口
                     syncTNCat();
                 } else {
-                    //执行上一层的循环
+                    //执行上一层的新循环
                     MLog.d("执行上一层的循环");
                     mapList.remove(mapList.size() - 1);//移除最后一个item
-
                     //移除最后一层后，暴露上一层，所以需要获取上一层的执行过的位置，从该位置继续执行
                     List<AllFolderItemBean> allFolderItemBeans2 = mapList.get(mapList.size() - 1);
                     for (int i = 0; i < allFolderItemBeans2.size(); i++) {
@@ -1103,6 +1107,8 @@ public class TNPageTags extends TNChildViewBase implements
                             flagMap.remove(mapList.size() + "A" + i);
                             syncGetFoldersByFolderId(newPos + 1, false);//
                             break;
+                        } else {
+                            MLog.e("卡死在这里了");
                         }
                     }
                 }
@@ -1114,13 +1120,16 @@ public class TNPageTags extends TNChildViewBase implements
     }
 
     /**
-     * 具体执行GetFoldersByFolderId的步骤 p层调用
+     * 执行GetFoldersByFolderId的具体步骤 p层调用
      */
 
     private void syncGetFoldersByFolderId(int startPos, List<AllFolderItemBean> beans) {
+        MLog.e("sync---1-4-syncGetFoldersByFolderId--startPos=" + startPos + "--Folder_count=" + beans.get(startPos).getFolder_count());
         if (beans.get(startPos).getFolder_count() == 0) {//没有数据就跳过
+            MLog.d("sync---1-4-syncGetFoldersByFolderId--下一个position");
             syncGetFoldersByFolderId(startPos + 1, false);
         } else {
+            MLog.d("sync---1-4-syncGetFoldersByFolderId--调用当前position接口：");
             presenter.pGetFoldersByFolderId(beans.get(startPos).getId(), startPos, beans);
         }
     }
@@ -1152,7 +1161,7 @@ public class TNPageTags extends TNChildViewBase implements
      * @param postion
      */
     private void syncTNCat(int postion, int catsSize) {
-        if (postion < catsSize ) {
+        if (postion < catsSize) {
             //获取postion条数据
             TNCat tempCat = cats.get(postion);
 
@@ -1823,7 +1832,7 @@ public class TNPageTags extends TNChildViewBase implements
         AllFolderBean allFolderBean = (AllFolderBean) obj;
         List<AllFolderItemBean> allFolderItemBeans = allFolderBean.getFolders();
         //
-        MLog.d("sync----1-4-->Success" + "--allFolderItemBeans:" + allFolderItemBeans.size());
+        MLog.d("sync----1-4-->Success--接口返回数据：" + allFolderItemBeans.size());
         //判断是否有返回值
         if (allFolderBean == null || allFolderItemBeans == null || allFolderItemBeans.size() <= 1) {
             if (allFolderItemBeans.size() == 1) {
@@ -1833,25 +1842,26 @@ public class TNPageTags extends TNChildViewBase implements
                     //执行下个position循环
                     syncGetFoldersByFolderId(startPos + 1, false);
                 } else {
+                    //有多个数据
                     //新增循环层前添加标记，标记已经执行完的上一层位置
                     flagMap.put(mapList.size() + "A" + startPos, startPos);
                     //1-4新增循环
                     mapList.add(allFolderItemBeans);
-
                     //更新数据库
                     insertDBCatsSQL(allFolderBean, catID);
 
                 }
-            } else {
+            } else {//没有数据
+
                 //执行下个position循环
                 syncGetFoldersByFolderId(startPos + 1, false);
             }
         } else {
+            //有多个数据
             //新增循环层前添加标记，标记已经执行完的上一层位置
             flagMap.put(mapList.size() + "A" + startPos, startPos);
             //1-4新增循环
             mapList.add(allFolderItemBeans);
-
             //更新数据库
             insertDBCatsSQL(allFolderBean, catID);
 

@@ -1077,6 +1077,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
 
     }
 
+
     /**
      * 第一次登录同步 每一次层的调用
      * <p>
@@ -1092,14 +1093,14 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     Map<String, Integer> flagMap = new HashMap<>();//key值用mapList.size+"A"+position 标记
 
     private void syncGetFoldersByFolderId(int startPos, boolean isAdd) {
-        MLog.d("1-4--syncGetFoldersByFolderId--mapList.size()=" + mapList.size());
+        MLog.d("1-4--syncGetFoldersByFolderId--mapList.size()=" );
         if (mapList.size() > 0 && mapList.size() <= 5) {
             //有1---5，for循环层层内嵌,从最内层（mapList.size最大处）开始执行
             List<AllFolderItemBean> allFolderItemBeans = mapList.get(mapList.size() - 1);
             //
             MLog.d("1-4--syncGetFoldersByFolderId--allFolderItemBeans.size()=" + allFolderItemBeans.size());
             if (allFolderItemBeans.size() > 0) {
-                if (startPos < allFolderItemBeans.size()) {
+                if (startPos < allFolderItemBeans.size() - 1) {
                     //从1层的第一个数据开始
                     if (isAdd) {
                         syncGetFoldersByFolderId(0, allFolderItemBeans);
@@ -1158,7 +1159,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
             }
 
         } else {
-            TNUtilsUi.showToast("递归调用数据出错了！");
+            syncTNCat();
         }
     }
 
@@ -1183,7 +1184,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      * 接口个数 = 3*cats.size*groupXXX.size;
      */
     private void syncTNCat() {
-
+        mapList.clear();
         if (mSettings.firstLaunch) {
             //同步TNCat
             cats = TNDbUtils.getAllCatList(mSettings.userId);
