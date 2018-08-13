@@ -95,6 +95,26 @@ mGetNoteByNoteId 异常onError:java.net.UnknownHostException: Unable to resolve 
 2-11-2异常： java.util.regex.PatternSyntaxException: In a character range [x-y], x is greater than y near index 43
  原因：解析html转换成String的时候，转换异常引起
  
+ 
+2-11-2oom异常：
+ 
+   java.lang.OutOfMemoryError: Failed to allocate a 272911368 byte allocation with 25165824 free bytes and 111MB until OOM, max allowed footprint 176454560, growth limit 268435456
+         at java.util.Arrays.copyOf(Arrays.java:3260)
+         at java.lang.AbstractStringBuilder.ensureCapacityInternal(AbstractStringBuilder.java:125)
+         at java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:660)
+         at java.lang.StringBuffer.append(StringBuffer.java:381)
+         at java.util.regex.Matcher.appendEvaluated(Matcher.java:674)
+         at java.util.regex.Matcher.appendReplacement(Matcher.java:633)
+         at java.util.regex.Matcher.replaceAll(Matcher.java:750)
+         at java.lang.String.replaceAll(String.java:2216)
+         at com.thinkernote.ThinkerNote.General.TNUtilsHtml.getPlainText2(TNUtilsHtml.java:183)
+         at com.thinkernote.ThinkerNote.General.TNUtilsHtml.codeHtmlContent(TNUtilsHtml.java:78)
+         at com.thinkernote.ThinkerNote.Activity.TNMainAct.updateNote(TNMainAct.java:841)
+         at com.thinkernote.ThinkerNote.Activity.TNMainAct$8.handleMessage(TNMainAct.java:713)
+         at android.os.Handler.dispatchMessage(Handler.java:101)
+         at android.os.Looper.loop(Looper.java:164)
+         at android.os.HandlerThread.run(HandlerThread.java:65)
+ 
 #Okhttp+Rxjava关于手动back键关闭网络连接的代码提示：
 
 在具体的module中eg:

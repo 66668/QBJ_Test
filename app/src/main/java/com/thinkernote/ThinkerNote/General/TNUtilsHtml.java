@@ -5,6 +5,8 @@ import android.text.TextUtils;
 import com.thinkernote.ThinkerNote.Data.TNNote;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -156,40 +158,48 @@ public class TNUtilsHtml {
         return str;
     }
 
+    //TODO html bug 死循环,oom
 
+    /**
+     *
+     *
+     * @param content
+     * @return
+     * @throws Exception
+     */
     public static String getPlainText2(String content) throws Exception {
-        MLog.e("TNUtilsHtml--getPlainText2");
         String str = content;
-        MLog.e("TNUtilsHtml--getPlainText2-2");
         try {
+            //功能：替换<table></table>标签内的所有\n
+//            //索引位置
+//            int index1 = str.indexOf("<table");
+//            int index2 = str.indexOf("</table>");
+//            //说明：html写的不严谨，本处容易死循环，通过标记跳过死循环即可 sjy 0810
+//            int flagIndex1 = index1;
+//            int flagIndex2 = index2;
+//
+//            while (index1 >= 0 && index2 > 0) {
+//                System.gc();//强制gc，html过大，容易oom
+//                flagIndex1 = index1;
+//                flagIndex2 = index2;
+//                //获取子字符串
+//                String temp = str.substring(index1, index2 + 1);
+//                //替换所有的\n
+//                String temp2 = temp.replaceAll("\n", "");
+//                //str的temp子字符串替换成temp2
+//                str = str.replaceAll(temp, temp2);
+//                //下一个索引位置
+//                index1 = str.indexOf("<table");
+//                index2 = str.indexOf("</table>");
+//
+//
+//                if (flagIndex1 == index1 && flagIndex2 == index2 || index2 > 1000000) {//||10000000
+//                    //暴力跳出，如果有多个<table>标签，死循环了，本人不管了，懂得上
+//                    break;
+//                }
+//            }
+
             //
-            int index1 = str.indexOf("<table");
-            int index2 = str.indexOf("</table>");
-
-            //TODO html bug 死循环,oom
-            //说明：html写的不严谨，本处容易死循环，通过标记跳过死循环即可 sjy 0810
-            int flagIndex1 = index1;
-            int flagIndex2 = index2;
-
-            while (index1 >= 0 && index2 > 0) {
-                System.gc();//强制gc，html过大，容易oom
-
-                flagIndex1 = index1;
-                flagIndex2 = index2;
-
-                MLog.e("index1=" + index1 + "--index2=" + index2);
-                String temp = str.substring(index1, index2 + 1);
-                String temp2 = temp.replaceAll("\n", "");
-                str = str.replaceAll(temp, temp2);
-                index1 = str.indexOf("<table");
-                index2 = str.indexOf("</table>");
-
-                if (flagIndex1 == index1 && flagIndex2 == index2 || index2 > 1000000) {//||10000000
-                    //暴力跳出，如果有多个<table>标签，死循环了，本人不管了，懂得上
-                    break;
-                }
-            }
-
             str = str.replaceAll("  <br />  ", "\n");
             str = str.replaceAll("  <br/>  ", "\n");
             str = str.replaceAll("<br/>", "\n");

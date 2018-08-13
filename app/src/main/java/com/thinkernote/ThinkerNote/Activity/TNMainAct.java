@@ -878,14 +878,17 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
 //            );
 
             MLog.e("updateNote接口返回--tempObj:" + tempObj.toString());
+
+            if (note == null)
+                NoteDbHelper.addOrUpdateNote(tempObj);
+            else
+                NoteDbHelper.updateNote(tempObj);
         } catch (Exception e) {
             MLog.e("2-11-2--updateNote异常：" + e.toString());
+
             TNApplication.getInstance().htmlError("笔记:" + bean.getTitle() + "  " + bean.getCreate_at() + "需要到网页版中" + "\n" + "+修改成新版app支持的格式,新版app不支持网页抓去 \n或者删除该笔记");
+
         }
-        if (note == null)
-            NoteDbHelper.addOrUpdateNote(tempObj);
-        else
-            NoteDbHelper.updateNote(tempObj);
 
     }
 
