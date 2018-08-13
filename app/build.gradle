@@ -6,12 +6,11 @@ android {
     buildToolsVersion '27.0.3'
 
     defaultConfig {
-        //TODO 版本需要升级
         applicationId "com.thinkernote.ThinkerNote"
         minSdkVersion 21//8-12 异步还能用，13+异步升级不能用 12
         targetSdkVersion 27//10-12 12
         versionCode 47
-        versionName "5.7.6"
+        versionName "5.7.8"
     }
 
     signingConfigs {

@@ -33,7 +33,7 @@ public class TNApplication extends Application {
         initialize();
 
         //新网络框架 log初始化
-        MLog.init(true, "SJY");
+        MLog.init(false, "SJY");
 
         //新网络框架 初始化
         HttpUtils.getInstance().init(this, MLog.DEBUG);
