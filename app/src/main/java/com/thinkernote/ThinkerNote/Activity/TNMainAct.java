@@ -384,6 +384,8 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
         isSynchronizing = false;
         mapList.clear();
         flagMap.clear();
+        //
+        System.gc();
 
         //结束动画
         findViewById(R.id.main_sync_btn).clearAnimation();
@@ -2021,6 +2023,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     @Override
     public void onSyncTagAddFailed(String msg, Exception e, int position, int arraySize) {
         MLog.e(msg);
+        MLog.d("1-2");
         endSynchronize(2);
     }
 
@@ -2039,6 +2042,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     @Override
     public void onSyncGetFolderFailed(String msg, Exception e) {
         MLog.e(msg);
+        MLog.d("1-3");
         endSynchronize(2);
     }
 
@@ -2087,6 +2091,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     @Override
     public void onSyncGetFoldersByFolderIdFailed(String msg, Exception e, long catID, int startPos, List<AllFolderItemBean> beans) {
         MLog.e(msg);
+        MLog.d("1-4");
         //执行下个position循环
         endSynchronize(2);
     }
