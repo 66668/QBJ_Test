@@ -201,6 +201,11 @@ public class TNActBase extends Activity {
 
     //===================================新版 跳转 --开始==========================================
 
+    public void startToMain(Class clz) {
+        Intent i = new Intent(this, clz);//推荐显示调用
+        startActivity(i);
+    }
+
     public void startActivity(Class clz) {
         Intent i = new Intent(this, clz);//推荐显示调用
         i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -222,6 +227,15 @@ public class TNActBase extends Activity {
     public void startActivity(Class clz, Bundle aBundle) {
         Intent i = new Intent(this, clz);//推荐显示调用
         i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        if (aBundle != null) {
+            i.putExtras(aBundle);
+        }
+        startActivity(i);
+
+    }
+
+    public void startToMain(Class clz, Bundle aBundle) {
+        Intent i = new Intent(this, clz);//推荐显示调用
         if (aBundle != null) {
             i.putExtras(aBundle);
         }

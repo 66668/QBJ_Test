@@ -421,7 +421,7 @@ public class TNRegistAct extends TNActBase implements OnClickListener, OnRegistL
         settings.password = mPsw;
         settings.userType = mUserType;
         settings.savePref(false);
-        startActivity(TNMainAct.class);
+        startToMain(TNMainAct.class);
         finish();
     }
 

@@ -188,7 +188,7 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
                     if (user == null) {
                         startActivity(TNLoginAct.class, extraBundle);
                     } else {
-                        startActivity(TNMainAct.class, extraBundle);
+                        startToMain(TNMainAct.class, extraBundle);
                     }
                     finish();
                 } else if ((settings.expertTime != 0) && (settings.expertTime * 1000 - System.currentTimeMillis() < 0)) {
@@ -293,7 +293,7 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
             Bundle b = new Bundle();
             settings.isLogout = false;
             settings.savePref(false);
-            startActivity(TNMainAct.class, b);
+            startToMain(TNMainAct.class, b);
             finish();
         }
     }

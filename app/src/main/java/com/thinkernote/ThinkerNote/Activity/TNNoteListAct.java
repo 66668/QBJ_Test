@@ -2438,7 +2438,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
      * @param cloudsPos cloudIds数据的其实操作位置
      */
     private void pEditNotes2(int cloudsPos, TNNote note) {
-        if (cloudIds.size() > 0 && cloudsPos < (cloudIds.size() - 1)) {
+        if (cloudIds.size() > 0 && cloudsPos < (cloudIds.size() )) {
             presenter.pEditNote2(cloudsPos, note);
         } else {
             //执行下一个接口
@@ -2454,7 +2454,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
      */
     private void pUpdataNote2(int position, boolean is13) {
         setChildHandler2_2_11(position);
-        if (cloudIds.size() > 0 && position < (cloudIds.size() - 1)) {
+        if (cloudIds.size() > 0 && position < (cloudIds.size() )) {
             boolean isExit = false;
             long id = cloudIds.get(position).getId();
             int lastUpdate = cloudIds.get(position).getUpdate_at();
@@ -3215,7 +3215,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
      */
     private void pEditNotes1(int cloudsPos, TNNote note) {
         MLog.d("NoteList同步---pEditNotes1 2-11-1");
-        if (cloudIds.size() > 0 && cloudsPos < (cloudIds.size() - 1)) {
+        if (cloudIds.size() > 0 && cloudsPos < (cloudIds.size() )) {
             presenter.pEditNote(cloudsPos, note);
         } else {
             //执行下一个接口
@@ -3234,7 +3234,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
         //
         setChildHandler1_2_11(position);
 
-        if (cloudIds.size() > 0 && position < (cloudIds.size() - 1)) {
+        if (cloudIds.size() > 0 && position < (cloudIds.size() )) {
             boolean isExit = false;
             long id = cloudIds.get(position).getId();
             int lastUpdate = cloudIds.get(position).getUpdate_at();

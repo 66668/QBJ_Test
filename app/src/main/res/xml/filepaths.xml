@@ -16,6 +16,11 @@
         name="external-path"
         path="." />
 
+    <!--Environment.getExternalStoragePublicDirectory()/.目录-->
+    <!--<external-path-->
+        <!--name="qbj_download"-->
+        <!--path="Download" />-->
+
     <!--Context#getExternalFilesDir(String)/ Context.getExternalFilesDir(null) -->
     <external-files-path
         name="external-files-path"

@@ -1662,7 +1662,7 @@ public class TNPageTags extends TNChildViewBase implements
      * @param cloudsPos cloudIds数据的其实操作位置
      */
     private void pEditNotes(int cloudsPos, TNNote note) {
-        if (cloudIds.size() > 0 && cloudsPos < (cloudIds.size() - 1)) {
+        if (cloudIds.size() > 0 && cloudsPos < (cloudIds.size() )) {
             presenter.pEditNote(cloudsPos, note);
         } else {
             //执行下一个接口
@@ -1680,7 +1680,7 @@ public class TNPageTags extends TNChildViewBase implements
         //为2-11-2接口返回，做预处理
         setChildHandler2_11(position);
         //
-        if (cloudIds.size() > 0 && position < (cloudIds.size() - 1)) {
+        if (cloudIds.size() > 0 && position < (cloudIds.size() )) {
             boolean isExit = false;
             long id = cloudIds.get(position).getId();
             int lastUpdate = cloudIds.get(position).getUpdate_at();

@@ -1885,7 +1885,7 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
      */
     private void pEditNotes(int cloudsPos, TNNote note) {
         MLog.d("sync---2-11-1-pEditNotes");
-        if (cloudIds.size() > 0 && cloudsPos < (cloudIds.size() - 1)) {
+        if (cloudIds.size() > 0 && cloudsPos < (cloudIds.size() )) {
             presenter.pEditNote(cloudsPos, note);
         } else {
             //执行下一个接口
@@ -1905,7 +1905,7 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
         //为2-11-2接口返回，做预处理
         setChildHandler2_11(position);
 
-        if (cloudIds.size() > 0 && position < (cloudIds.size() - 1)) {
+        if (cloudIds.size() > 0 && position < (cloudIds.size() )) {
             boolean isExit = false;
             long id = cloudIds.get(position).getId();
             int lastUpdate = cloudIds.get(position).getUpdate_at();

@@ -309,7 +309,7 @@ public class TNBindPhoneAct extends TNActBase implements OnClickListener,OnBindP
 		if (!"change".equals(mType)) {
 			Bundle b = new Bundle();
 			b.putInt("FLAG", 1);
-			startActivity(TNMainAct.class, b);
+			startToMain(TNMainAct.class, b);
 		}
 		finish();
 	}

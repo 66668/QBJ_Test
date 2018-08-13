@@ -1,17 +1,23 @@
 package com.thinkernote.ThinkerNote.Activity;
 
+import android.Manifest;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.view.KeyEvent;
@@ -26,9 +32,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.gson.JsonObject;
-import com.thinkernote.ThinkerNote.Action.TNAction;
-import com.thinkernote.ThinkerNote.Action.TNAction.TNActionResult;
+import com.thinkernote.ThinkerNote.BuildConfig;
 import com.thinkernote.ThinkerNote.DBHelper.CatDbHelper;
 import com.thinkernote.ThinkerNote.DBHelper.NoteAttrDbHelper;
 import com.thinkernote.ThinkerNote.DBHelper.NoteDbHelper;
@@ -41,18 +45,16 @@ import com.thinkernote.ThinkerNote.Data.TNTag;
 import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.Database.TNSQLString;
-import com.thinkernote.ThinkerNote.General.TNActionType;
-import com.thinkernote.ThinkerNote.General.TNActionUtils;
 import com.thinkernote.ThinkerNote.General.TNConst;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
+import com.thinkernote.ThinkerNote.General.TNUtilsDialog;
 import com.thinkernote.ThinkerNote.General.TNUtilsHtml;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Utils.TNActivityManager;
-import com.thinkernote.ThinkerNote.Utils.UiUtils;
 import com.thinkernote.ThinkerNote.Views.CustomDialog;
 import com.thinkernote.ThinkerNote._constructer.presenter.MainPresenterImpl;
 import com.thinkernote.ThinkerNote._interface.p.IMainPresenter;
@@ -70,6 +72,8 @@ import com.thinkernote.ThinkerNote.bean.main.OldNotePicBean;
 import com.thinkernote.ThinkerNote.bean.main.TagItemBean;
 import com.thinkernote.ThinkerNote.bean.main.TagListBean;
 import com.thinkernote.ThinkerNote.http.fileprogress.FileProgressListener;
+import com.thinkernote.ThinkerNote.permission.PermissionHelper;
+import com.thinkernote.ThinkerNote.permission.PermissionInterface;
 
 import org.json.JSONObject;
 
@@ -81,6 +85,8 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static android.content.Intent.CATEGORY_DEFAULT;
 
 /**
  * 主界面
@@ -112,7 +118,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     private boolean isSynchronizing = false;//
     //
     private IMainPresenter presener;
-
+    File installFile;//安装包file
     /**
      * 如下数据，当最后一个接口调用完成后，一定好清空数据
      */
@@ -359,6 +365,37 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
             }
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 10001:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    MLog.d("4");
+                    TNUtilsUi.openFile(this, installFile);
+                } else {
+                    //打开未知安装许可
+                    Uri packageURI = Uri.parse("package:" + getPackageName());
+                    Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, packageURI);
+                    startActivityForResult(intent, 10002);
+                }
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case 10002:
+                MLog.d("6");
+                checkIsAndroidO();
+                break;
+            default:
+                break;
+        }
     }
 
     /**
@@ -887,9 +924,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                 NoteDbHelper.updateNote(tempObj);
         } catch (Exception e) {
             MLog.e("2-11-2--updateNote异常：" + e.toString());
-
             TNApplication.getInstance().htmlError("笔记:" + bean.getTitle() + "  " + bean.getCreate_at() + "需要到网页版中" + "\n" + "+修改成新版app支持的格式,新版app不支持网页抓去 \n或者删除该笔记");
-
         }
 
     }
@@ -1004,7 +1039,6 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
 
         @Override
         public void onFileProgressing(int progress) {
-            MLog.d("实时progress=" + progress);
             ProgressBar pb = (ProgressBar) upgradeDialog.findViewById(R.id.update_progressbar);
             TextView percent = (TextView) upgradeDialog.findViewById(R.id.update_percent);
 
@@ -1648,7 +1682,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      * @param cloudPos cloudIds数据的其实操作位置
      */
     private void pEditNotePic(int cloudPos) {
-        MLog.d("bbb", "sync---2-10-pEditNotePic--cloudIds.size()=" + cloudIds.size());
+        MLog.d("sync---2-10-pEditNotePic");
         if (cloudIds.size() > 0 && cloudPos < (cloudIds.size())) {
             long id = cloudIds.get(cloudPos).getId();
             int lastUpdate = cloudIds.get(cloudPos).getUpdate_at();
@@ -1777,7 +1811,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
 
     private void pEditNotes(int cloudsPos, TNNote note) {
         MLog.d("bbb", "sync---2-11-1-pEditNotes");
-        if (cloudIds.size() > 0 && cloudsPos < (cloudIds.size() - 1)) {
+        if (cloudIds.size() > 0 && cloudsPos < (cloudIds.size())) {
             presener.pEditNote(cloudsPos, note);
         } else {
             //执行下一个接口
@@ -1798,7 +1832,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
         //为2-11-2接口返回，做预处理
         setChildHandler2_11(position);
 
-        if (cloudIds.size() > 0 && position < (cloudIds.size() - 1)) {
+        if (cloudIds.size() > 0 && position < (cloudIds.size())) {
             boolean isExit = false;
             long id = cloudIds.get(position).getId();
             int lastUpdate = cloudIds.get(position).getUpdate_at();
@@ -1971,10 +2005,31 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     public void onDownloadSuccess(File filePath) {
         upgradeDialog.dismiss();
         MLog.d("下载完成--apk路径：" + filePath);
+        installFile = filePath;
         if (filePath != null) {
-            //打开文件
-            TNUtilsUi.openFile(filePath.toString());
+            /**
+             * 判断是否是8.0,8.0需要处理未知应用来源权限问题,否则直接安装
+             */
+            checkIsAndroidO();
         }
+    }
+
+    /**
+     * 判断是否是8.0,8.0需要处理未知应用来源权限问题,否则直接安装
+     */
+    private void checkIsAndroidO() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            boolean b = getPackageManager().canRequestPackageInstalls();
+            if (b) {
+                TNUtilsUi.openFile(this, installFile);//安装应用的逻辑(写自己的就可以)
+            } else {
+                //请求安装未知应用来源的权限
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.REQUEST_INSTALL_PACKAGES}, 10001);
+            }
+        } else {
+            TNUtilsUi.openFile(this, installFile);
+        }
+
     }
 
     @Override
@@ -2032,7 +2087,8 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     public void onSyncGetFolderSuccess(Object obj) {
         AllFolderBean allFolderBean = (AllFolderBean) obj;
         List<AllFolderItemBean> allFolderItemBeans = allFolderBean.getFolders();
-        MLog.d("sync----1-3-->Success" + "allFolderBean:" + allFolderBean.toString() + "--allFolderItemBeans:" + allFolderItemBeans.size());
+        MLog.d("ABC", "1-3List=" + allFolderItemBeans.size());
+        MLog.d("sync----1-3-->Success");
         //
         mapList.add(allFolderItemBeans);
         //更新数据库
@@ -2051,8 +2107,9 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     public void onSyncGetFoldersByFolderIdSuccess(Object obj, long catID, int startPos, List<AllFolderItemBean> beans) {
         AllFolderBean allFolderBean = (AllFolderBean) obj;
         List<AllFolderItemBean> allFolderItemBeans = allFolderBean.getFolders();
+        MLog.d("ABC", "1-4List=" + allFolderItemBeans.size());
         //
-        MLog.d("sync----1-4-->Success--接口返回数据：" + allFolderItemBeans.size());
+        MLog.d("sync----1-4-->Success");
         //判断是否有返回值
         if (allFolderBean == null || allFolderItemBeans == null || allFolderItemBeans.size() <= 1) {
             if (allFolderItemBeans.size() == 1) {
@@ -2568,9 +2625,10 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     public void onSyncAllNotesIdSuccess(Object obj) {
         MLog.d("sync----2-10-->Success");
         cloudIds = (List<AllNotesIdsBean.NoteIdItemBean>) obj;
-
+        MLog.d("ABC", "2-10List=" + cloudIds.size());
         //与云端同步数据 sjy-0623
         allNotes = TNDbUtils.getAllNoteList(TNSettings.getInstance().userId);
+        //
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         for (int i = 0; i < allNotes.size(); i++) {
             boolean isExit = false;

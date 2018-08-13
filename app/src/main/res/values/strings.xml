@@ -293,7 +293,7 @@
 	<string name="update_hint" formatted="false">发现新版本！现在开始更新？推荐在完成同步后，再更新。\n您的版本：%s\n最新版本：%s\n\n%s</string>
 	<string name="update_start">开始更新</string>
 	<string name="update_downloading">正在下载……</string>
-	<string name="userinfo_update_info">检查新版本</string>
+	<string name="userinfo_update_info">下载成功后，apk在：内部存储/Download文件夹下</string>
 	<string name="userinfo_update">检查更新</string>
 	<string name="userinfo_audio_settings">语音朗读设置</string>
 	<string name="userinfo_audio_settings_child">不看笔记，听笔记</string>

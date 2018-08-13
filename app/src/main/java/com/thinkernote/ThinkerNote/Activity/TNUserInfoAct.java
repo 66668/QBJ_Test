@@ -1,5 +1,6 @@
 package com.thinkernote.ThinkerNote.Activity;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,7 +9,11 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.text.method.ScrollingMovementMethod;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -58,7 +63,7 @@ public class TNUserInfoAct extends TNActBase implements OnClickListener,
     private TNPreferenceChild mCurrentChild;
     private String mDownLoadAPKPath = "";
     private TNSettings mSettings = TNSettings.getInstance();
-
+    File installFile;//安装包file
     //
     private IUserInfoPresenter presener;
 
@@ -275,7 +280,6 @@ public class TNUserInfoAct extends TNActBase implements OnClickListener,
     }
 
 
-
     //更新弹窗的自定义监听（确定按钮的监听）
     private AlertDialog upgradeDialog;
 
@@ -311,6 +315,37 @@ public class TNUserInfoAct extends TNActBase implements OnClickListener,
 
             //下载接口
             download(mDownLoadAPKPath);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 10001:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    MLog.d("4");
+                    TNUtilsUi.openFile(this, installFile);
+                } else {
+                    //打开未知安装许可
+                    Uri packageURI = Uri.parse("package:" + getPackageName());
+                    Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, packageURI);
+                    startActivityForResult(intent, 10002);
+                }
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case 10002://
+                MLog.d("6");
+                checkIsAndroidO();
+                break;
+            default:
+                break;
         }
     }
 
@@ -351,6 +386,7 @@ public class TNUserInfoAct extends TNActBase implements OnClickListener,
         }
 
     };
+
     //-----------------------------------------接口回调--------------------------------------------
     @Override
     public void onLogoutSuccess(Object obj) {
@@ -453,11 +489,34 @@ public class TNUserInfoAct extends TNActBase implements OnClickListener,
     @Override
     public void onDownloadSuccess(File filePath) {
         upgradeDialog.dismiss();
-        MLog.d("下载完成--apk路径：" + filePath);
+        MLog.d("下载完成--apk路径：" + filePath.getParentFile());
         if (filePath != null) {
-            //打开文件
-            TNUtilsUi.openFile(filePath.toString());
+            installFile = filePath;
+            if (filePath != null) {
+                /**
+                 * 判断是否是8.0,8.0需要处理未知应用来源权限问题,否则直接安装
+                 */
+                checkIsAndroidO();
+            }
         }
+    }
+
+    /**
+     * 判断是否是8.0,8.0需要处理未知应用来源权限问题,否则直接安装
+     */
+    private void checkIsAndroidO() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            boolean b = getPackageManager().canRequestPackageInstalls();
+            if (b) {
+                TNUtilsUi.openFile(this, installFile);//安装应用的逻辑(写自己的就可以)
+            } else {
+                //请求安装未知应用来源的权限
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.REQUEST_INSTALL_PACKAGES}, 10001);
+            }
+        } else {
+            TNUtilsUi.openFile(this, installFile);
+        }
+
     }
 
     @Override
