@@ -34,6 +34,7 @@ public class PermissionHelper {
 
     /**
      * 在Activity中的onRequestPermissionsResult中调用
+     *
      * @param requestCode
      * @param permissions
      * @param grantResults
