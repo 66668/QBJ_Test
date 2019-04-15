@@ -430,7 +430,8 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
         flagMap.clear();
         //
         System.gc();
-
+        //结束同步
+        SPUtil.putBoolean("MainSync", false);
         //结束动画
         findViewById(R.id.main_sync_btn).clearAnimation();
 
