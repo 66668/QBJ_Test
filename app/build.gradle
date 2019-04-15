@@ -3,7 +3,6 @@ apply plugin: 'com.android.application'
 android {
     //    useLibrary 'org.apache.http.legacy'//API 23 弃用 HttpClient替换方案
     compileSdkVersion 27//用哪个 Android SDK 版本编译你的应用
-    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "com.thinkernote.ThinkerNote"
