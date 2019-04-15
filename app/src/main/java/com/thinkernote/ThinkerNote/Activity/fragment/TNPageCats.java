@@ -1080,7 +1080,8 @@ public class TNPageCats extends TNChildViewBase implements
 
     /**
      * 2-11-2
-     *该处工作环境最恶劣，上千跳接口返回数据走该处执行耗时任务，有必要手动gc处理内存
+     * 该处工作环境最恶劣，上千跳接口返回数据走该处执行耗时任务，有必要手动gc处理内存
+     *
      * @param bean
      */
     public static void updateNote1(GetNoteByNoteIdBean bean) {
@@ -1355,6 +1356,7 @@ public class TNPageCats extends TNChildViewBase implements
             pTagAdd(0, arrayTagName.length, arrayTagName[0]);
         }
     }
+
     /**
      * 第一次登录同步
      * <p>
@@ -1487,7 +1489,6 @@ public class TNPageCats extends TNChildViewBase implements
      */
     private void syncTNCat() {
         MLog.d("sync---1-5-syncTNCat");
-        MLog.d("sync---1-5-syncTNCat");
         if (mSettings.firstLaunch) {
             //同步TNCat
             cats = TNDbUtils.getAllCatList(mSettings.userId);
@@ -1509,7 +1510,7 @@ public class TNPageCats extends TNChildViewBase implements
      */
     private void syncTNCat(int postion, int catsSize) {
         MLog.d("frag同步--syncTNCat 1-5");
-        if (postion < catsSize ) {
+        if (postion < catsSize) {
             //获取postion条数据
             TNCat tempCat = cats.get(postion);
 
@@ -2031,7 +2032,7 @@ public class TNPageCats extends TNChildViewBase implements
      */
     private void pEditNotes1(int cloudsPos, TNNote note) {
         MLog.d("frag同步--pEditNotes1 2-11-1");
-        if (cloudIds.size() > 0 && cloudsPos < (cloudIds.size() )) {
+        if (cloudIds.size() > 0 && cloudsPos < (cloudIds.size())) {
             presenter.pEditNote(cloudsPos, note);
         } else {
             //执行下一个接口
@@ -2049,7 +2050,7 @@ public class TNPageCats extends TNChildViewBase implements
         MLog.d("frag同步--pUpdataNote1 2-11-2");
         //为2-11-2接口返回，做预处理
         setChildHandler1_2_11(position);
-        if (cloudIds.size() > 0 && position < (cloudIds.size() )) {
+        if (cloudIds.size() > 0 && position < (cloudIds.size())) {
             boolean isExit = false;
             long id = cloudIds.get(position).getId();
             int lastUpdate = cloudIds.get(position).getUpdate_at();
@@ -2217,10 +2218,9 @@ public class TNPageCats extends TNChildViewBase implements
                         mapList.add(allFolderItemBeans);
                         //更新数据库
                         insertDBCatsSQL(allFolderBean, catID);
-
+                        MLog.d("sync----1-4-->Success--接口返回数据：空" );
                     }
                 } else {//没有数据
-
                     //执行下个position循环
                     syncGetFoldersByFolderId(startPos + 1, false);
                 }
@@ -2232,7 +2232,10 @@ public class TNPageCats extends TNChildViewBase implements
                 mapList.add(allFolderItemBeans);
                 //更新数据库
                 insertDBCatsSQL(allFolderBean, catID);
-
+                //TODO 2019测试，走该处方法
+                MLog.d("sync----1-4-->Success--接口返回数据：非空" );
+                //结束同步
+                endSynchronize(0);
             }
         }
 

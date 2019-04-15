@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.thinkernote.ThinkerNote.Activity.TNNoteViewAct;
 import com.thinkernote.ThinkerNote.Activity.TNPagerAct;
@@ -42,6 +43,7 @@ import com.thinkernote.ThinkerNote.PullToRefresh.PullToRefreshBase.OnRefreshList
 import com.thinkernote.ThinkerNote.PullToRefresh.PullToRefreshListView;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.Utils.SPUtil;
 import com.thinkernote.ThinkerNote._constructer.presenter.SynchronizeDataPresenterImpl;
 import com.thinkernote.ThinkerNote._interface.p.ISynchronizeDataPresenter;
 import com.thinkernote.ThinkerNote._interface.v.OnSynchronizeDataListener;
@@ -225,6 +227,13 @@ public class TNPageNotes extends TNChildViewBase implements OnItemLongClickListe
     @Override
     public void onRefresh() {
         if (TNUtils.isNetWork()) {
+            //主线同步
+            if (SPUtil.getBoolean("MainSync", false)) {
+                TNUtilsUi.showNotification(mActivity, R.string.alert_Synchronize_TooMuch, false);
+                mPullListview.onRefreshComplete();
+                return;
+            }
+            //
             if (TNActionUtils.isSynchronizing()) {
                 TNUtilsUi.showNotification(mActivity, R.string.alert_Synchronize_TooMuch, false);
                 mPullListview.onRefreshComplete();
@@ -232,6 +241,7 @@ public class TNPageNotes extends TNChildViewBase implements OnItemLongClickListe
             }
             mPageNum = 1;
             TNUtilsUi.showNotification(mActivity, R.string.alert_NoteView_Synchronizing, false);
+
             pSynchronizeData();
 
         } else {
@@ -312,7 +322,6 @@ public class TNPageNotes extends TNChildViewBase implements OnItemLongClickListe
         MLog.d("frag同步--全部笔记--同步结束");
         mapList.clear();
         flagMap.clear();
-
         mPullListview.onRefreshComplete();
         if (state == 0) {
             //正常结束
@@ -945,6 +954,7 @@ public class TNPageNotes extends TNChildViewBase implements OnItemLongClickListe
             presenter.pGetFoldersByFolderId(beans.get(startPos).getId(), startPos, beans);
         }
     }
+
     /**
      * （一.5）更新TNCat
      * 双层for循环的样式,串行执行接口
@@ -1487,7 +1497,7 @@ public class TNPageNotes extends TNChildViewBase implements OnItemLongClickListe
      */
     private void pEditNotes(int cloudsPos, TNNote note) {
         MLog.d("frag同步--全部笔记--pEditNotes 2-11-1");
-        if (cloudIds.size() > 0 && cloudsPos < (cloudIds.size() )) {
+        if (cloudIds.size() > 0 && cloudsPos < (cloudIds.size())) {
             presenter.pEditNote(cloudsPos, note);
         } else {
             //执行下一个接口
@@ -1506,7 +1516,7 @@ public class TNPageNotes extends TNChildViewBase implements OnItemLongClickListe
         //为2-11-2接口返回，做预处理
         setChildHandler2_11(position);
         //
-        if (cloudIds.size() > 0 && position < (cloudIds.size() )) {
+        if (cloudIds.size() > 0 && position < (cloudIds.size())) {
             boolean isExit = false;
             long id = cloudIds.get(position).getId();
             int lastUpdate = cloudIds.get(position).getUpdate_at();

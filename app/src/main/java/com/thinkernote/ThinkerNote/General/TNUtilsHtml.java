@@ -76,7 +76,9 @@ public class TNUtilsHtml {
 
         StringBuffer contentbf = new StringBuffer();
         StringBuffer tmpbf = new StringBuffer();
+
         try {
+            //处理html标签
             String htmlContent0 = getPlainText2(htmlContent);
             String rText = new String(htmlContent0);
 
@@ -132,10 +134,8 @@ public class TNUtilsHtml {
                 tmpbf = null;
             }
         } catch (Exception e) {
-            MLog.e("html转String异常：" + e.toString());
-            throw new Exception(e);
+            return contentbf.toString().trim();
         }
-//        MLog.d(TAG, "isDecode=" + isDecode + "\ncontent=" + contentbf.toString());
         return contentbf.toString().trim();
     }
 
@@ -158,47 +158,76 @@ public class TNUtilsHtml {
         return str;
     }
 
-    //TODO html bug 死循环,oom
+    //TODO html bug
 
     /**
-     *
-     *
      * @param content
      * @return
      * @throws Exception
      */
     public static String getPlainText2(String content) throws Exception {
-        String str = content;
-        try {
-            //功能：替换<table></table>标签内的所有\n
-//            //索引位置
-//            int index1 = str.indexOf("<table");
-//            int index2 = str.indexOf("</table>");
-//            //说明：html写的不严谨，本处容易死循环，通过标记跳过死循环即可 sjy 0810
-//            int flagIndex1 = index1;
-//            int flagIndex2 = index2;
-//
-//            while (index1 >= 0 && index2 > 0) {
-//                System.gc();//强制gc，html过大，容易oom
-//                flagIndex1 = index1;
-//                flagIndex2 = index2;
-//                //获取子字符串
-//                String temp = str.substring(index1, index2 + 1);
-//                //替换所有的\n
-//                String temp2 = temp.replaceAll("\n", "");
-//                //str的temp子字符串替换成temp2
-//                str = str.replaceAll(temp, temp2);
-//                //下一个索引位置
-//                index1 = str.indexOf("<table");
-//                index2 = str.indexOf("</table>");
-//
-//
-//                if (flagIndex1 == index1 && flagIndex2 == index2 || index2 > 1000000) {//||10000000
-//                    //暴力跳出，如果有多个<table>标签，死循环了，本人不管了，懂得上
-//                    break;
-//                }
-//            }
 
+        //  方案1
+//        String str = content.replaceAll("\\&[a-zA-Z]{1,10};", "") //去除类似< >  的字串
+//                .replaceAll("<[a-zA-Z]+[1-9]?[^><]*>", "") //去除开始标签及没有结束标签的标签
+//                .replaceAll("</[a-zA-Z]+[1-9]?>", ""); //去除结束标签
+
+
+        //方案2
+        String str = content;
+
+        //处理table标签问题
+
+        String str0 = content;
+        String str1 = content;
+
+        int startNum = 0;//
+        int endNum = 0;//
+        try {
+            //
+            int index0 = 0;
+            while ((index0 = str0.indexOf("<table")) != -1) {
+                if (str0.length() > (index0 + "<table".length())) {
+                    str0 = str0.substring(index0 + "<table".length());
+                }
+                startNum++;
+            }
+            //
+            int index01 = 0;
+            while ((index01 = str1.indexOf("</table>")) != -1) {
+                if (str1.length() > (index01 + "</table>".length())) {
+                    str1 = str1.substring(index01 + "</table>".length());
+                }
+                endNum++;
+            }
+            str0 = null;
+            str1 = null;
+
+            //避免table标签不相等
+            if (startNum == endNum) {
+                //功能：替换<table></table>标签内的所有\n
+                //索引位置
+                int index1 = str.indexOf("<table");
+                int index2 = str.indexOf("</table>");
+
+                long count = 0;
+                //循环2次
+                while ((index1 >= 0 && index2 > 0) && count < 2) {
+                    count++;
+                    MLog.d("getPlainText2--while--count=" + count);
+                    System.gc();//强制gc，html过大，容易oom
+                    //获取子字符串
+                    String temp = str.substring(index1, index2 + 1);
+                    //替换所有的\n
+                    String temp2 = temp.replaceAll("\n", "");
+                    //str的temp子字符串替换成temp2
+                    str = str.replaceAll(temp, temp2);
+                    //下一个索引位置
+                    index1 = str.indexOf("<table");
+                    index2 = str.indexOf("</table>");
+
+                }
+            }
             //
             str = str.replaceAll("  <br />  ", "\n");
             str = str.replaceAll("  <br/>  ", "\n");
@@ -212,9 +241,11 @@ public class TNUtilsHtml {
             str = str.replaceAll("\n<tn-media", "<tn-media");
             str = str.replaceAll("\n</tn-media>", "</tn-media>");
         } catch (Exception e) {
-            MLog.e("TNUtilsHtml--getPlainText2" + e.toString());
-            throw new Exception(e);
+            MLog.e("TNUtilsHtml--getPlainText2=" + e.toString());
+            //继续执行
+            return str;
         }
+
         return str;
     }
 

@@ -46,6 +46,7 @@ android {
 }
 
 dependencies {
+
     //系统包依赖
     implementation 'com.android.support:support-v4:27.1.1'
 
@@ -55,7 +56,9 @@ dependencies {
     implementation files('libs/android_api.jar')
 
     //旧版百度定位
+
     //    implementation files('libs/baidu_locSDK_2.3.jar')
+
     //新版百度定位 2018-0712 sjy
     implementation files('libs/BaiduLBS_Android.jar')
     implementation files('libs/httpmime-4.1.jar')
@@ -130,10 +133,15 @@ dependencies {
     //-----------------------------------------------------------------------------------------------------------
 
     //-------------------------leakcanary内存泄漏检测 打包时注意清除--------------------------------
-//    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
-//    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
-//    // Optional, if you use support library fragments:
-//    debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.1'
+
+    //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
+
+    //    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
+
+    //    // Optional, if you use support library fragments:
+
+    //    debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.1'
+
 }
 //repositories {
 //    jcenter()
