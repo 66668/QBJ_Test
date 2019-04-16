@@ -8,7 +8,7 @@ android {
         applicationId "com.thinkernote.ThinkerNote"
         minSdkVersion 21//8-12 异步还能用，13+异步升级不能用 12
         targetSdkVersion 27//10-12 12
-        versionCode 47
+        versionCode 48
         versionName "5.7.8"
     }
 
