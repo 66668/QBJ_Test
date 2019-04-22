@@ -777,7 +777,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     }
 
     /**
-     * 2-11-2
+     * 2-11-2 TODO
      * 该处工作环境最恶劣，上千跳接口返回数据走该处执行耗时任务，有必要手动gc处理内存
      *
      * @param bean
@@ -1409,7 +1409,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
 
 
     /**
-     * addNotes TODO
+     * addNotes
      * (二.5+二.6)正常同步 pAddNewNote
      * 说明：同(二.2+二.3)的执行顺序，先处理notepos的图片，处理完就上传notepos的文本，然后再处理notepos+1的图片，如此循环
      * 接口个数：addNewNotes.size * addNewNotes.size
@@ -1424,10 +1424,8 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
             TNNote tnNote = addNewNotes.get(0);
             Vector<TNNoteAtt> newNotesAtts = tnNote.atts;
             if (newNotesAtts.size() > 0) {//有图，先上传图片
-                MLog.d("sync---2-5-pAddNewNote--先上传图片--pNewNotePic--newNotesAtts.size=" + newNotesAtts.size());
                 pNewNotePic(0, newNotesAtts.size(), 0, addNewNotes.size(), newNotesAtts.get(0));
             } else {//如果没有图片，就执行OldNote
-                MLog.d("sync---2-5-pAddNewNote--执行OldNote--pNewNote");
                 pNewNote(0, addNewNotes.size(), addNewNotes.get(0), false, addNewNotes.get(0).content);
             }
         } else {
@@ -1449,7 +1447,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     }
 
     /**
-     * addNotes TODO
+     * addNotes
      * <p>
      * (二.6)正常同步 第2个执行的接口 循环调用
      * 和（二.5组成双层for循环，该处是最外层for执行）
@@ -1829,7 +1827,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     }
 
     /**
-     * editNotes
+     * editNotes TODO
      * <p>
      * (二.11)-2 更新云端的笔记
      *
