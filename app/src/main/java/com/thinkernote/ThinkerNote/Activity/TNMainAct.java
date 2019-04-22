@@ -777,7 +777,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     }
 
     /**
-     * 2-11-2 TODO
+     * 2-11-2
      * 该处工作环境最恶劣，上千跳接口返回数据走该处执行耗时任务，有必要手动gc处理内存
      *
      * @param bean
@@ -876,7 +876,6 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
         if (bean.getFolder_id() > 0) {
             catId = bean.getFolder_id();
         }
-        MLog.d("打印结果tempObj：" + bean.getTitle() + bean.getCreate_at());
         JSONObject tempObj = new JSONObject();
         try {
             tempObj.put("title", bean.getTitle());
@@ -921,8 +920,6 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
 //                    "thumbnail", thumbnail,
 //                    "contentDigest", contentDigest
 //            );
-
-            MLog.d("updateNote接口返回--tempObj:" + tempObj.toString());
 
             if (note == null)
                 NoteDbHelper.addOrUpdateNote(tempObj);
@@ -1817,7 +1814,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      */
 
     private void pEditNotes(int cloudsPos, TNNote note) {
-        MLog.d("bbb", "sync---2-11-1-pEditNotes");
+        MLog.d("sync---2-11-1-pEditNotes");
         if (cloudIds.size() > 0 && cloudsPos < (cloudIds.size())) {
             presener.pEditNote(cloudsPos, note);
         } else {
@@ -1827,7 +1824,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     }
 
     /**
-     * editNotes TODO
+     * editNotes
      * <p>
      * (二.11)-2 更新云端的笔记
      *
@@ -1835,7 +1832,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      * @param is13     (二.11)-2和(二.13)调用同一个接口，用于区分
      */
     private void pUpdataNote(int position, boolean is13) {
-        MLog.d("bbb", "sync---2-11-2-pUpdataNot--allNotes.size()=" + allNotes.size());
+        MLog.e("sync---2-11-2-pUpdataNot--allNotes.size()=" + allNotes.size() + "--position=" + position + "--is13=" + is13);
         //为2-11-2接口返回，做预处理
         setChildHandler2_11(position);
 
