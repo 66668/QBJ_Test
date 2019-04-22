@@ -9,6 +9,7 @@ import android.os.Message;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -2526,14 +2527,20 @@ public class TNPageCats extends TNChildViewBase implements
             if (isNewDb) {//false时表示老数据库的数据上传，不用在修改本地的数据
                 upDataNoteLocalIdSQL1(newNoteBean, addNewNotes.get(position));
             }
-
-
+            //本组笔记上传完成，
+            // 开始上传position+1位置的下一组笔记
             if (position < arraySize - 1) {
-                //处理position + 1下的图片上传
-                Vector<TNNoteAtt> newNotesAtts = addNewNotes.get(position + 1).atts;
-                pNewNotePic1(0, newNotesAtts.size(), position + 1, arraySize, addNewNotes.get(position + 1).atts.get(0));
-            } else {
+                TNNote tnNote = addNewNotes.get(position + 1);
+                Vector<TNNoteAtt> newNotesAtts = tnNote.atts;
 
+                if (newNotesAtts.size() > 0) {//有图，先上传图片
+                    pNewNotePic1(0, newNotesAtts.size(), position + 1, arraySize, newNotesAtts.get(0));
+                } else {//如果没有图片，就执行OldNote
+                    pNewNote1(position + 1, addNewNotes.size(), tnNote, false, tnNote.content);
+                }
+
+            } else {
+                MLog.d("sync----2-6-->Success--执行下个接口");
                 //执行下个接口
                 recoveryNotes = TNDbUtils.getNoteListBySyncState(TNSettings.getInstance().userId, 7);
                 recoveryNote1(0);

@@ -20,6 +20,7 @@ import android.text.Selection;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -34,11 +35,12 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.iflytek.speech.RecognizerResult;
-import com.iflytek.speech.SpeechConfig.RATE;
-import com.iflytek.speech.SpeechError;
-import com.iflytek.ui.RecognizerDialog;
-import com.iflytek.ui.RecognizerDialogListener;
+import com.iflytek.cloud.ErrorCode;
+import com.iflytek.cloud.InitListener;
+import com.iflytek.cloud.RecognizerResult;
+import com.iflytek.cloud.SpeechError;
+import com.iflytek.cloud.ui.RecognizerDialog;
+import com.iflytek.cloud.ui.RecognizerDialogListener;
 import com.thinkernote.ThinkerNote.BuildConfig;
 import com.thinkernote.ThinkerNote.DBHelper.NoteAttrDbHelper;
 import com.thinkernote.ThinkerNote.DBHelper.NoteDbHelper;
@@ -61,6 +63,7 @@ import com.thinkernote.ThinkerNote.Other.PoPuMenuView;
 import com.thinkernote.ThinkerNote.Other.PoPuMenuView.OnPoPuMenuItemClickListener;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Service.LocationService;
+import com.thinkernote.ThinkerNote.Utils.JsonParser;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote._constructer.presenter.NoteEditPresenterImpl;
 import com.thinkernote.ThinkerNote._interface.p.INoteEditPresenter;
@@ -72,11 +75,14 @@ import com.thinkernote.ThinkerNote.bean.main.GetNoteByNoteIdBean;
 import com.thinkernote.ThinkerNote.bean.main.OldNoteAddBean;
 import com.thinkernote.ThinkerNote.bean.main.OldNotePicBean;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -88,7 +94,7 @@ import java.util.concurrent.Executors;
  * 主页--写笔记界面 sjy 0626
  */
 public class TNNoteEditAct extends TNActBase implements OnClickListener,
-        OnFocusChangeListener, TextWatcher, RecognizerDialogListener,
+        OnFocusChangeListener, TextWatcher,
         OnPoPuMenuItemClickListener, OnNoteEditListener {
     //正常登录的同步常量
     public static final int DELETE_LOCALNOTE = 101;//1
@@ -106,7 +112,12 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
     private TNNote mNote = null;
     private Uri mCameraUri = null;
     private boolean mIsStartOtherAct = false;
+    //语音相关
     private RecognizerDialog mIatDialog;
+    // 用HashMap存储听写结果
+    private HashMap<String, String> mIatResults = new LinkedHashMap<String, String>();
+
+    //
     private int mSelection = -1;
     private EditText mTitleView;
     private EditText mContentView;
@@ -122,6 +133,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
 
     private Timer mTimer;
     private TimerTask mTimerTask;
+    private boolean isAutoSave = true;//默认是自动保存的
 
     private TNSettings mSettings = TNSettings.getInstance();
     //p
@@ -302,8 +314,12 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
 
     @Override
     public void onDestroy() {
+        //关闭倒计时
         try {
-            mTimer.cancel();
+            if (mTimer != null) {
+                mTimer.cancel();
+                mTimer = null;
+            }
 //            TNLBSService.getInstance().stopLocation();
             LocationService.getInstance().stop();
         } catch (Exception e) {
@@ -399,6 +415,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                     mRecord.asynStop(8);
                     break;
                 }
+                isAutoSave = false;
                 saveNote();
                 break;
             }
@@ -727,13 +744,82 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
     private void showIatDialog() {
         if (TNUtils.checkNetwork(this)) {
             if (mIatDialog == null) {
-                mIatDialog = new RecognizerDialog(this, "appid=4ea04eee");
-                mIatDialog.setEngine("sms", null, null);
-                mIatDialog.setSampleRate(RATE.rate16k);
-                mIatDialog.setListener(this);
+                mIatDialog = new RecognizerDialog(TNNoteEditAct.this, mInitListener);
+                mIatDialog.setListener(mRecognizerDialogListener);
             }
             mIatDialog.show();
         }
+    }
+
+    /**
+     * 初始化监听器。
+     */
+    private InitListener mInitListener = new InitListener() {
+
+        @Override
+        public void onInit(int code) {
+            Log.d(TAG, "SpeechRecognizer init() code = " + code);
+            if (code != ErrorCode.SUCCESS) {
+                MLog.e("初始化失败，错误码：" + code);
+                TNUtilsUi.showToast("语音初始化失败，不可用");
+            }
+        }
+    };
+    /**
+     * 听写UI监听器
+     */
+    private RecognizerDialogListener mRecognizerDialogListener = new RecognizerDialogListener() {
+        public void onResult(com.iflytek.cloud.RecognizerResult results, boolean isLast) {
+//            printTransResult(results);
+            StringBuffer builder = printResult(results);
+            EditText currentText = null;
+            if (mTitleView.isFocused()) {
+                currentText = mTitleView;
+            } else if (mContentView.isFocused()) {
+                currentText = mContentView;
+            }
+
+            if (currentText != null) {
+                int start = currentText.getSelectionStart();
+                int end = currentText.getSelectionEnd();
+                currentText.getText().replace(Math.min(start, end),
+                        Math.max(start, end), builder);
+                currentText.setSelection(Math.min(start, end) + builder.length(),
+                        Math.min(start, end) + builder.length());
+            }
+        }
+
+        /**
+         * 识别回调错误.
+         */
+        public void onError(SpeechError error) {
+            MLog.i(TAG, "iat onEnd:" + error);
+            if (error != null) {
+                TNUtilsUi.showToast(error.toString());
+            }
+        }
+
+    };
+
+    private StringBuffer printResult(RecognizerResult results) {
+        mIatResults.clear();
+        String text = JsonParser.parseIatResult(results.getResultString());
+
+        String sn = null;
+        // 读取json结果中的sn字段
+        try {
+            JSONObject resultJson = new JSONObject(results.getResultString());
+            sn = resultJson.optString("sn");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mIatResults.put(sn, text);
+
+        StringBuffer resultBuffer = new StringBuffer();
+        for (String key : mIatResults.keySet()) {
+            resultBuffer.append(mIatResults.get(key));
+        }
+        return resultBuffer;
     }
 
     @Override
@@ -783,38 +869,6 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         MLog.e(TAG, "str:" + s + " start:" + start + " before:" + before
                 + " count:" + count);
-    }
-
-    @Override
-    public void onEnd(SpeechError error) {
-        MLog.i(TAG, "iat onEnd:" + error);
-        if (error != null) {
-            TNUtilsUi.showToast(error.toString());
-        }
-    }
-
-    @Override
-    public void onResults(ArrayList<RecognizerResult> results, boolean islast) {
-        StringBuilder builder = new StringBuilder();
-        for (RecognizerResult recognizerResult : results) {
-            builder.append(recognizerResult.text);
-        }
-
-        EditText currentText = null;
-        if (mTitleView.isFocused()) {
-            currentText = mTitleView;
-        } else if (mContentView.isFocused()) {
-            currentText = mContentView;
-        }
-
-        if (currentText != null) {
-            int start = currentText.getSelectionStart();
-            int end = currentText.getSelectionEnd();
-            currentText.getText().replace(Math.min(start, end),
-                    Math.max(start, end), builder);
-            currentText.setSelection(Math.min(start, end) + builder.length(),
-                    Math.min(start, end) + builder.length());
-        }
     }
 
     @Override
@@ -950,6 +1004,9 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         }
     }
 
+    /**
+     * 2min自动保存笔记,不退出
+     */
     private void startTimer() {
         if (mTimer != null) {
             mTimer.cancel();
@@ -964,7 +1021,9 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                 handler.sendMessage(message);
             }
         };
-        mTimer.schedule(mTimerTask, 60 * 1000, 60 * 1000);
+        mTimer.schedule(mTimerTask,
+                60 * 1000, //60 * 1000
+                60 * 1000);//60 * 1000
     }
 
     private void handleProgressDialog(String type) {
@@ -995,10 +1054,14 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
     public void handleMessage(Message msg) {
         switch (msg.what) {
             case 1:
+                //自动保存
+                isAutoSave = true;
+                Log.d("SJY", "2min自动保存 ");
                 saveInput();
                 if (mNote.isModified() && checkNote()) {
                     mNote.prepareToSave();
                     //异步执行
+                    Log.d("SJY", "2min自动保存-异步执行");
                     pNoteSave(mNote, false);
                 }
                 break;
@@ -1072,7 +1135,13 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                         mTitleView.setText(mNote.title);
                     }
                 }
-                finish();
+                //自动保存状态，不退出编辑
+                if (isAutoSave) {
+                    isAutoSave = false;
+                } else {
+                    finish();
+                }
+
                 break;
             case START_SYNC://保存并同步
                 MLog.d("saveNote", "保存并同步");
@@ -2234,12 +2303,20 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         }
 
 
+        //本组笔记上传完成，
+        // 开始上传position+1位置的下一组笔记
         if (position < arraySize - 1) {
-            //处理position + 1下的图片上传
-            Vector<TNNoteAtt> newNotesAtts = addNewNotes.get(position + 1).atts;
-            pNewNotePic(0, newNotesAtts.size(), position + 1, arraySize, addNewNotes.get(position + 1).atts.get(0));
-        } else {
+            TNNote tnNote = addNewNotes.get(position + 1);
+            Vector<TNNoteAtt> newNotesAtts = tnNote.atts;
 
+            if (newNotesAtts.size() > 0) {//有图，先上传图片
+                pNewNotePic(0, newNotesAtts.size(), position + 1, arraySize, newNotesAtts.get(0));
+            } else {//如果没有图片，就执行OldNote
+                pNewNote(position + 1, addNewNotes.size(), tnNote, false, tnNote.content);
+            }
+
+        } else {
+            MLog.d("sync----2-6-->Success--执行下个接口");
             //执行下个接口
             recoveryNotes = TNDbUtils.getNoteListBySyncState(TNSettings.getInstance().userId, 7);
             recoveryNote(0);

@@ -6,10 +6,15 @@ android {
 
     defaultConfig {
         applicationId "com.thinkernote.ThinkerNote"
-        minSdkVersion 21//8-12 异步还能用，13+异步升级不能用 12
+        minSdkVersion 23//8-12 异步还能用，13+异步升级不能用 12
         targetSdkVersion 27//10-12 12
-        versionCode 48
+        versionCode 49
         versionName "5.7.8"
+
+        // 语音转文字没有对应的64位so包，所以只能使用32位的，配置如下：
+        ndk{
+            abiFilters "armeabi","arm64-v8a","armeabi-v7a","x86","x86_64"
+        }
     }
 
     signingConfigs {
@@ -32,9 +37,10 @@ android {
         }
     }
 
+    //so库在libs下的配置
     sourceSets {
         main {
-            jniLibs.srcDirs 'libs'
+            jniLibs.srcDirs 'libs'//app/libs下
             jni.srcDirs = []
         }
     }
@@ -141,7 +147,7 @@ dependencies {
     //    // Optional, if you use support library fragments:
 
     //    debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.1'
-
+    implementation files('libs/Sunflower.jar')
 }
 //repositories {
 //    jcenter()

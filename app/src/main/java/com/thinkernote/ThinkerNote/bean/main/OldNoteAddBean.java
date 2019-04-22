@@ -7,7 +7,6 @@ import java.io.Serializable;
 /**
  *
  * 格式{code msg xx}
- * TODO 需要测试接口返回gson
  */
 
 public class OldNoteAddBean extends CommonBean implements Serializable {

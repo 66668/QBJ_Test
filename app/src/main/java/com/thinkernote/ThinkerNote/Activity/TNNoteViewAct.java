@@ -16,6 +16,7 @@ import android.support.v4.content.FileProvider;
 import android.text.ClipboardManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.GestureDetector;
@@ -33,12 +34,18 @@ import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.iflytek.speech.SpeechError;
-import com.iflytek.speech.SynthesizerPlayer;
-import com.iflytek.speech.SynthesizerPlayerListener;
+import com.iflytek.cloud.ErrorCode;
+import com.iflytek.cloud.InitListener;
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechError;
+import com.iflytek.cloud.SpeechSynthesizer;
+//import com.iflytek.speech.SpeechError;
+//import com.iflytek.speech.SynthesizerPlayer;
+//import com.iflytek.speech.SynthesizerPlayerListener;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
@@ -85,7 +92,7 @@ import java.util.concurrent.Executors;
  * 笔记详情
  */
 public class TNNoteViewAct extends TNActBase implements OnClickListener,
-        SynthesizerPlayerListener,
+//        SynthesizerPlayerListener,//隐藏
         NoteViewDownloadPresenter.OnDownloadEndListener,
         NoteViewDownloadPresenter.OnDownloadStartListener,
         PoPuMenuView.OnPoPuMenuItemClickListener,
@@ -111,7 +118,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
     private Tencent mTencent;
     private IUiListener mListener;
 
-    private SynthesizerPlayer mSynthesizerPlayer;
+//    private SynthesizerPlayer mSynthesizerPlayer;
     private String mPlainText = null;
     private int mStartPos = 0;
     private int mEndPos = 0;
@@ -126,6 +133,22 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
     //p
     private INoteViewPresenter presenter;
     NoteViewDownloadPresenter download;
+
+    //讯飞语音合成
+    // 语音合成对象
+    private SpeechSynthesizer mTts;
+    // 默认发音人
+    private String voicer = "xiaoyan";
+
+    private String[] mCloudVoicersEntries;
+    private String[] mCloudVoicersValue;
+
+    // 缓冲进度
+    private int mPercentForBuffering = 0;
+    // 播放进度
+    private int mPercentForPlaying = 0;
+    // 引擎类型
+    private String mEngineType = SpeechConstant.TYPE_CLOUD;
 
     @Override
     public void handleMessage(Message msg) {
@@ -277,7 +300,37 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
         });
 
         mProgressDialog = TNUtilsUi.progressDialog(this, R.string.in_progress);
+        //
+        initTts();
     }
+
+    //讯飞语音初始化
+    private void initTts() {
+        // 初始化合成对象
+        mTts = SpeechSynthesizer.createSynthesizer(TNNoteViewAct.this, mTtsInitListener);
+
+        // 云端发音人名称列表
+        mCloudVoicersEntries = getResources().getStringArray(R.array.voicer_cloud_entries);
+        mCloudVoicersValue = getResources().getStringArray(R.array.voicer_cloud_values);
+    }
+
+    /**
+     * 初始化监听。
+     */
+    private InitListener mTtsInitListener = new InitListener() {
+        @Override
+        public void onInit(int code) {
+            Log.d(TAG, "InitListener init() code = " + code);
+            if (code != ErrorCode.SUCCESS) {
+                TNUtilsUi.showToast("语音合成功能不可用");
+            } else {
+                // 初始化成功，之后可以调用startSpeaking方法
+                // 注：有的开发者在onCreate方法中创建完合成对象之后马上就调用startSpeaking进行合成，
+                // 正确的做法是将onCreate中的startSpeaking调用移至这里
+            }
+        }
+    };
+
 
     @Override
     protected void setViews() {
@@ -367,7 +420,6 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
          * atts=[
          * TNNoteAtt{attLocalId=2, noteLocalId=3, attId=28534881, attName='1533627547924.docx', type=40003, path='null', syncState=1, size=22923, digest='50B902779AE38EF95F8112CBEE1918E4', thumbnail='null', width=0, height=0}],
          * currentAtt=null, noteId=37877769, revision=0, originalNote=null, richText='null', mapping=null}<<---
-
          *
          * 老版
          * (2-2)退出再次进入 值：
@@ -425,19 +477,19 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (event.getRepeatCount() == 0) {
-                if (mSynthesizerPlayer != null) {
-                    if (mSynthesizerPlayer.getState().toString().equals("PLAYING")) {
-                        mSynthesizerPlayer.pause();
-                        ImageButton playBtn = (ImageButton) findViewById(R.id.noteview_read_play);
-                        playBtn.setImageResource(R.drawable.ic_media_play);
-                        return true;
-                    } else if (mSynthesizerPlayer.getState().toString()
-                            .equals("PAUSED")) {
-                        mSynthesizerPlayer.cancel();
-                        setReadBarVisible(false);
-                        return true;
-                    }
-                }
+//                if (mSynthesizerPlayer != null) {
+//                    if (mSynthesizerPlayer.getState().toString().equals("PLAYING")) {
+//                        mSynthesizerPlayer.pause();
+//                        ImageButton playBtn = (ImageButton) findViewById(R.id.noteview_read_play);
+//                        playBtn.setImageResource(R.drawable.ic_media_play);
+//                        return true;
+//                    } else if (mSynthesizerPlayer.getState().toString()
+//                            .equals("PAUSED")) {
+//                        mSynthesizerPlayer.cancel();
+//                        setReadBarVisible(false);
+//                        return true;
+//                    }
+//                }
             }
             TNActionUtils.stopNoteSyncing();
         }
@@ -454,13 +506,13 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
     @Override
     protected void onPause() {
         super.onPause();
-        if (null != mSynthesizerPlayer) {
-            if (mSynthesizerPlayer.getState().toString().equals("PLAYING")) {
-                mSynthesizerPlayer.pause();
-                ImageButton playBtn = (ImageButton) findViewById(R.id.noteview_read_play);
-                playBtn.setImageResource(R.drawable.ic_media_play);
-            }
-        }
+//        if (null != mSynthesizerPlayer) {
+//            if (mSynthesizerPlayer.getState().toString().equals("PLAYING")) {
+//                mSynthesizerPlayer.pause();
+//                ImageButton playBtn = (ImageButton) findViewById(R.id.noteview_read_play);
+//                playBtn.setImageResource(R.drawable.ic_media_play);
+//            }
+//        }
     }
 
 
@@ -569,16 +621,17 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
             }
             //==================read_menu朗读相关=====================
             case R.id.read_menu_restart://
-                mStartPos = 0;
-                setReadBarVisible(true);
-                if (mSynthesizerPlayer != null)
-                    mSynthesizerPlayer.playText(getNextReadStr(), null, this);
+//                mStartPos = 0;
+//                setReadBarVisible(true);
+//
+//                if (mSynthesizerPlayer != null)
+//                    mSynthesizerPlayer.playText(getNextReadStr(), null, this);
                 break;
 
             case R.id.read_menu_continue:
-                setReadBarVisible(true);
-                if (mSynthesizerPlayer != null)
-                    mSynthesizerPlayer.playText(getNextReadStr(), null, this);
+//                setReadBarVisible(true);
+//                if (mSynthesizerPlayer != null)
+//                    mSynthesizerPlayer.playText(getNextReadStr(), null, this);
                 break;
 
             //==================noteview_share分享相关=====================
@@ -688,26 +741,26 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
                 break;
 
             case R.id.noteview_read_close:
-                if (mSynthesizerPlayer != null)
-                    mSynthesizerPlayer.cancel();
-                setReadBarVisible(false);
+//                if (mSynthesizerPlayer != null)
+//                    mSynthesizerPlayer.cancel();
+//                setReadBarVisible(false);
                 break;
 
-            case R.id.noteview_read_play:
-                if (mSynthesizerPlayer == null)
-                    break;
-
-                if (mSynthesizerPlayer.getState().toString().equals("PLAYING")) {
-                    mSynthesizerPlayer.pause();
-                    ImageButton playBtn = (ImageButton) findViewById(R.id.noteview_read_play);
-                    playBtn.setImageResource(R.drawable.ic_media_play);
-                } else if (mSynthesizerPlayer.getState().toString()
-                        .equals("PAUSED")) {
-                    ImageButton playBtn = (ImageButton) findViewById(R.id.noteview_read_play);
-                    playBtn.setImageResource(R.drawable.ic_media_pause);
-                    mSynthesizerPlayer.resume();
-                    break;
-                }
+            case R.id.noteview_read_play://暂停
+//                if (mSynthesizerPlayer == null)
+//                    break;
+//
+//                if (mSynthesizerPlayer.getState().toString().equals("PLAYING")) {
+//                    mSynthesizerPlayer.pause();
+//                    ImageButton playBtn = (ImageButton) findViewById(R.id.noteview_read_play);
+//                    playBtn.setImageResource(R.drawable.ic_media_play);
+//                } else if (mSynthesizerPlayer.getState().toString()
+//                        .equals("PAUSED")) {
+//                    ImageButton playBtn = (ImageButton) findViewById(R.id.noteview_read_play);
+//                    playBtn.setImageResource(R.drawable.ic_media_pause);
+//                    mSynthesizerPlayer.resume();
+//                    break;
+//                }
                 break;
 
             case R.id.noteview_more: {
@@ -1309,59 +1362,59 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
 
     // Implement SynthesizerPlayerListener
     // -------------------------------------------------------------------------------
-    @Override
-    public void onEnd(SpeechError error) {
-        MLog.i(TAG, "onEnd error:" + error);
-
-        if (error == null) {
-            mStartPos = mEndPos;
-            if (mEndPos < mPlainText.length()) {
-                mSynthesizerPlayer.playText(getNextReadStr(), null, this);
-            } else {
-                mStartPos = 0;
-                setReadBarVisible(false);
-            }
-        } else {
-            TNUtilsUi.showToast(error.toString());
-            setReadBarVisible(false);
-        }
-    }
-
-
-    @Override
-    public void onBufferPercent(int percent, int beginPos, int endPos) {
-        MLog.i(TAG, "onBufferPercent:" + percent + "," + beginPos + "," + endPos);
-        ProgressBar pb = (ProgressBar) findViewById(R.id.noteview_read_progressbar);
-        pb.setSecondaryProgress(percent);
-
-    }
-
-
-    @Override
-    public void onPlayBegin() {
-        MLog.i(TAG, "onPlayBegin:" + mSynthesizerPlayer.getState());
-    }
-
-
-    @Override
-    public void onPlayPaused() {
-        MLog.i(TAG, "onPlayPaused:" + mSynthesizerPlayer.getState());
-    }
-
-
-    @Override
-    public void onPlayPercent(int percent, int beginPos, int endPos) {
-        MLog.i(TAG, "onPlayPercent:" + percent + "," + beginPos + "," + endPos);
-        ProgressBar pb = (ProgressBar) findViewById(R.id.noteview_read_progressbar);
-        pb.setProgress(percent);
-    }
-
-
-    @Override
-    public void onPlayResumed() {
-        MLog.i(TAG, "onPlayResumed:" + mSynthesizerPlayer.getState());
-
-    }
+//    @Override
+//    public void onEnd(SpeechError error) {
+//        MLog.i(TAG, "onEnd error:" + error);
+//
+//        if (error == null) {
+//            mStartPos = mEndPos;
+//            if (mEndPos < mPlainText.length()) {
+//                mSynthesizerPlayer.playText(getNextReadStr(), null, this);
+//            } else {
+//                mStartPos = 0;
+//                setReadBarVisible(false);
+//            }
+//        } else {
+//            TNUtilsUi.showToast(error.toString());
+//            setReadBarVisible(false);
+//        }
+//    }
+//
+//
+//    @Override
+//    public void onBufferPercent(int percent, int beginPos, int endPos) {
+//        MLog.i(TAG, "onBufferPercent:" + percent + "," + beginPos + "," + endPos);
+//        ProgressBar pb = (ProgressBar) findViewById(R.id.noteview_read_progressbar);
+//        pb.setSecondaryProgress(percent);
+//
+//    }
+//
+//
+//    @Override
+//    public void onPlayBegin() {
+//        MLog.i(TAG, "onPlayBegin:" + mSynthesizerPlayer.getState());
+//    }
+//
+//
+//    @Override
+//    public void onPlayPaused() {
+//        MLog.i(TAG, "onPlayPaused:" + mSynthesizerPlayer.getState());
+//    }
+//
+//
+//    @Override
+//    public void onPlayPercent(int percent, int beginPos, int endPos) {
+//        MLog.i(TAG, "onPlayPercent:" + percent + "," + beginPos + "," + endPos);
+//        ProgressBar pb = (ProgressBar) findViewById(R.id.noteview_read_progressbar);
+//        pb.setProgress(percent);
+//    }
+//
+//
+//    @Override
+//    public void onPlayResumed() {
+//        MLog.i(TAG, "onPlayResumed:" + mSynthesizerPlayer.getState());
+//
+//    }
 
     //=================================js交互========================================
 

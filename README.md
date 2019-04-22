@@ -20,6 +20,8 @@ android的AyncTask类升级了四次，导致老的AyncTask已经无法调用
 
 4：TNPagerAct
 
+5:讯飞语音优化so库
+
 ##本人修改没有注意的地方：
 1没有添加back键中断网络操作
 2笔记详情:下载文件的地方，没有写单击下载文件的提示，回调写的比较潦草（缺少单击回调）
@@ -209,3 +211,6 @@ act中设置：下载文件后调用checkIsAndroidO()方法即可，然后执行
                 break;
         }
     }
+    
+ 讯飞语音
+ nill.chen@thinkernote.com /Qunbijixxxx   

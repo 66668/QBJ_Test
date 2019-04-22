@@ -3,6 +3,8 @@ package com.thinkernote.ThinkerNote.base;
 import android.app.Application;
 import android.os.AsyncTask;
 
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechUtility;
 import com.thinkernote.ThinkerNote.Action.TNAction;
 import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDb2;
@@ -41,7 +43,7 @@ public class TNApplication extends Application {
         //微信初始化网络
         WeichatHttpUtils.getInstance().init(this, MLog.DEBUG);
 
-        //TODO leakcanary初始化（打包时清除）
+        //leakcanary初始化（打包时清除）
 //        if (LeakCanary.isInAnalyzerProcess(this)) {
 //            return;
 //        }
@@ -66,6 +68,14 @@ public class TNApplication extends Application {
         watchAppSwitch();
         // 设置此接口后，音频文件和识别结果文件保存在/sdcard/msc/record/目录下
         //com.iflytek.resource.MscSetting.setLogSaved(true);
+
+        //讯飞语音初始化
+        StringBuffer param = new StringBuffer();
+        param.append("appid="+getString(R.string.app_id));
+        param.append(",");
+        // 设置使用v5+
+        param.append(SpeechConstant.ENGINE_MODE+"="+SpeechConstant.MODE_MSC);
+        SpeechUtility.createUtility(this, param.toString());
 
     }
 

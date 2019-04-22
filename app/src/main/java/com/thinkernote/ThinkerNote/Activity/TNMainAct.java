@@ -20,6 +20,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -1408,7 +1409,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
 
 
     /**
-     * addNotes
+     * addNotes TODO
      * (二.5+二.6)正常同步 pAddNewNote
      * 说明：同(二.2+二.3)的执行顺序，先处理notepos的图片，处理完就上传notepos的文本，然后再处理notepos+1的图片，如此循环
      * 接口个数：addNewNotes.size * addNewNotes.size
@@ -1423,8 +1424,10 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
             TNNote tnNote = addNewNotes.get(0);
             Vector<TNNoteAtt> newNotesAtts = tnNote.atts;
             if (newNotesAtts.size() > 0) {//有图，先上传图片
+                MLog.d("sync---2-5-pAddNewNote--先上传图片--pNewNotePic--newNotesAtts.size=" + newNotesAtts.size());
                 pNewNotePic(0, newNotesAtts.size(), 0, addNewNotes.size(), newNotesAtts.get(0));
             } else {//如果没有图片，就执行OldNote
+                MLog.d("sync---2-5-pAddNewNote--执行OldNote--pNewNote");
                 pNewNote(0, addNewNotes.size(), addNewNotes.get(0), false, addNewNotes.get(0).content);
             }
         } else {
@@ -1446,7 +1449,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     }
 
     /**
-     * addNotes
+     * addNotes TODO
      * <p>
      * (二.6)正常同步 第2个执行的接口 循环调用
      * 和（二.5组成双层for循环，该处是最外层for执行）
@@ -2447,20 +2450,26 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     //2-6
     @Override
     public void onSyncNewNoteAddSuccess(Object obj, int position, int arraySize, boolean isNewDb) {
-        MLog.d("sync----2-6-->Success");
+        MLog.d("sync----2-6-->Success--position=" + position + "--arraySize=" + arraySize + "--isNewDb=" + isNewDb);
         OldNoteAddBean newNoteBean = (OldNoteAddBean) obj;
         //更新数据库
         if (isNewDb) {//false时表示老数据库的数据上传，不用在修改本地的数据
             upDataNoteLocalIdSQL(newNoteBean, addNewNotes.get(position));
         }
-
-
+        //本组笔记上传完成，
+        // 开始上传position+1位置的下一组笔记
         if (position < arraySize - 1) {
-            //处理position + 1下的图片上传
-            Vector<TNNoteAtt> newNotesAtts = addNewNotes.get(position + 1).atts;
-            pNewNotePic(0, newNotesAtts.size(), position + 1, arraySize, addNewNotes.get(position + 1).atts.get(0));
-        } else {
+            TNNote tnNote = addNewNotes.get(position + 1);
+            Vector<TNNoteAtt> newNotesAtts = tnNote.atts;
 
+            if (newNotesAtts.size() > 0) {//有图，先上传图片
+                pNewNotePic(0, newNotesAtts.size(), position + 1, arraySize, newNotesAtts.get(0));
+            } else {//如果没有图片，就执行OldNote
+                pNewNote(position + 1, addNewNotes.size(), tnNote, false, tnNote.content);
+            }
+
+        } else {
+            MLog.d("sync----2-6-->Success--执行下个接口");
             //执行下个接口
             recoveryNotes = TNDbUtils.getNoteListBySyncState(TNSettings.getInstance().userId, 7);
             recoveryNote(0);

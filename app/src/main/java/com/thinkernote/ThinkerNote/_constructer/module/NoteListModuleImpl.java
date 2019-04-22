@@ -732,7 +732,7 @@ public class NoteListModuleImpl implements INoteListModule {
 
                     @Override
                     public void onError(Throwable e) {
-                        MLog.e("mNewNote 异常onError:" + e.toString());
+                        MLog.e("NoteListModelueImpl----mNewNote 异常onError:" + e.toString());
                         listener.onSyncNewNoteAddFailed("异常", new Exception("接口异常！"), position, arraySize);
                     }
 
@@ -1277,7 +1277,7 @@ public class NoteListModuleImpl implements INoteListModule {
 
                     @Override
                     public void onError(Throwable e) {
-                        MLog.e("mNewNote 异常onError:" + e.toString());
+                        MLog.e("NoteListModuleImpl--mNewNote 异常onError:" + e.toString());
                         listener.onSyncNewNoteAddFailed2("异常", new Exception("接口异常！"), position, arraySize);
                     }
 
