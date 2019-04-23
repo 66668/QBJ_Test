@@ -7,9 +7,9 @@ android {
     defaultConfig {
         applicationId "com.thinkernote.ThinkerNote"
         minSdkVersion 23//8-12 异步还能用，13+异步升级不能用 12
-        targetSdkVersion 27//10-12 12
-        versionCode 49
-        versionName "5.7.8"
+        targetSdkVersion 27//说明：28+需要大改代码，一些类不支持了/sjy-2019-04-23
+        versionCode 50
+        versionName "5.7.9"
 
         // 语音转文字没有对应的64位so包，所以只能使用32位的，配置如下：
         ndk{
@@ -68,13 +68,15 @@ dependencies {
     //新版百度定位 2018-0712 sjy
     implementation files('libs/BaiduLBS_Android.jar')
     implementation files('libs/httpmime-4.1.jar')
+    //讯飞离线语音转文字
     implementation files('libs/Msc.jar')
     implementation files('libs/mta-sdk-1.6.2.jar')
     implementation files('libs/open_sdk.jar')
     implementation files('libs/pinyin4j-2.5.0.jar')
     implementation files('libs/weibo_sdk.jar')
     implementation files('libs/commons-lang3-3.1.jar')
-
+    //讯飞语音合成
+    implementation files('libs/Sunflower.jar')
     //01 说明：微信功能jar，和02相同
     implementation files('libs/libammsdk.jar')
 
@@ -147,7 +149,8 @@ dependencies {
     //    // Optional, if you use support library fragments:
 
     //    debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.1'
-    implementation files('libs/Sunflower.jar')
+
+
 }
 //repositories {
 //    jcenter()

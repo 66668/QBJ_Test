@@ -109,7 +109,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
     private static final int START_SYNC = 103;
     private static final int MAX_CONTENT_LEN = 4 * 100 * 1024;
 
-    private TNNote mNote = null;
+    private TNNote mNote = null;//全局笔记，最终操作都是这一个笔记
     private Uri mCameraUri = null;
     private boolean mIsStartOtherAct = false;
     //语音相关
@@ -167,7 +167,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         }
         if (savedInstanceState == null) {
             initNote();
-        } else {
+        } else {//获取缓存笔记
             Serializable obj = (TNNote) savedInstanceState
                     .getSerializable("NOTE");
             Uri uri = savedInstanceState.getParcelable("CAMERA_URI");
@@ -207,7 +207,6 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
 
         mTitleView.setOnFocusChangeListener(this);
         mContentView.addTextChangedListener(this);
-
     }
 
     private void initNote() {
@@ -215,11 +214,14 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
             long id = getIntent().getLongExtra("NoteForEdit", -1);
             // edit note
             if (id < 0) {// new note
+                MLog.d("initNote==获取缓存的笔记");
                 mNote = (TNNote) getIntent().getSerializableExtra("NOTE");
             } else
                 // edit note
-                mNote = TNDbUtils.getNoteByNoteLocalId(id);
+                MLog.d("initNote==获取已保存笔记");
+            mNote = TNDbUtils.getNoteByNoteLocalId(id);
         } else {
+            MLog.d("initNote==创建新笔记");
             mNote = TNNote.newNote();
 
             Intent it = getIntent();
@@ -265,6 +267,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
             return;
         }
 
+        //
         if (mNote.originalNote == null && mNote.noteLocalId > 0) {
             TNNote newnote = TNNote.newNote();
             newnote.originalNote = mNote;
@@ -332,6 +335,11 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         super.onDestroy();
     }
 
+    /**
+     * 缓存机制
+     *
+     * @param outBundle
+     */
     @Override
     public void onSaveInstanceState(Bundle outBundle) {
         saveInput();
@@ -825,7 +833,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-            back();
+            backDialog();
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -931,7 +939,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         }
     }
 
-    private void back() {
+    private void backDialog() {
         saveInput();
         if (!mNote.isModified() && (mRecord == null || mRecord.isStop())) {
             toFinish();
@@ -940,6 +948,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         DialogInterface.OnClickListener pbtn_Click = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                isAutoSave = false;//退出不属于自动保存
                 saveNote();
             }
         };
@@ -1023,7 +1032,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         };
         mTimer.schedule(mTimerTask,
                 60 * 1000, //60 * 1000
-                60 * 1000);//60 * 1000
+                90 * 1000);//60 * 1000
     }
 
     private void handleProgressDialog(String type) {
@@ -1129,8 +1138,10 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                 } else {
                     TNUtilsUi.showShortToast(R.string.alert_NoteSave_SaveOK);
                     mNote = (TNNote) msg.obj;
+                    //更新已保存的笔记
                     getIntent().putExtra("NoteForEdit", mNote.noteLocalId);
                     initNote();
+
                     if (!mTitleView.hasFocus()) {
                         mTitleView.setText(mNote.title);
                     }
@@ -1270,9 +1281,9 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                                         note.contentDigest});//19
                         note.noteLocalId = id;
 
-                        MLog.d("saveNote:", "insert", "note.noteLocalId < 0", "note.noteLocalId=" + id);
+                        MLog.d("保存新笔记id=" + id);
                     } else {
-                        MLog.d("saveNote:", " update", "note.noteLocalId >=0");
+                        MLog.d("更新笔记");
                         // update
                         note.syncState = note.noteId != -1 ? 4 : 3;
                         TNDb.getInstance().execSQL(TNSQLString.NOTE_LOCAL_UPDATE,

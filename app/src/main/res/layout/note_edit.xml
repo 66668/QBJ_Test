@@ -15,8 +15,8 @@
 
         <ScrollView
             android:id="@+id/noteedit_scrollview"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:background="@null"
             android:fadingEdge="none">
 
@@ -55,7 +55,7 @@
 
                 <EditText
                     android:id="@+id/noteedit_input_content"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="fill_parent"
                     android:background="#FFFFFFFF"
                     android:gravity="top"
