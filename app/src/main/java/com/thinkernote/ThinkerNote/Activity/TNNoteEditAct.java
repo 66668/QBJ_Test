@@ -21,8 +21,10 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
@@ -195,6 +197,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         mRecordTime = (TextView) findViewById(R.id.record_time);
         mRecordAmplitudeProgress = (ProgressBar) findViewById(R.id.record_progressbar);
         mContentView.requestFocus();
+        mContentView.setTextIsSelectable(true);
 
         findViewById(R.id.noteedit_save).setOnClickListener(this);
         findViewById(R.id.noteedit_camera).setOnClickListener(this);
@@ -295,11 +298,11 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         }
         refreshAttsView();
         initContentView();
-        mTitleView.setText(mTitleView.getHint().equals(mNote.title) ? ""
-                : mNote.title);
+        mTitleView.setText(mTitleView.getHint().equals(mNote.title) ? "" : mNote.title);
         mContentView.setText(mNote.content);
         mContentView.setSelection(mNote.content.length());
     }
+
 
     private void startTargetAct(String target) {
         if (target == null) {

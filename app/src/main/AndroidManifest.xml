@@ -144,11 +144,6 @@
                 <category android:name="android.intent.category.DEFAULT"></category>
                 <data android:mimeType="*/*"></data>
             </intent-filter>
-            <!-- 			<intent-filter>
-                            <action android:name="android.intent.action.SEND_MULTIPLE"></action>
-                            <category android:name="android.intent.category.DEFAULT"></category>
-                            <data android:mimeType="image/*"></data>
-                        </intent-filter> -->
         </activity>
 
         <activity
