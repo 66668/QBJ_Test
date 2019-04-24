@@ -736,7 +736,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
                 break;
             }
 
-            case R.id.noteview_edit://
+            case R.id.noteview_edit://编辑
                 editNote();
                 break;
 

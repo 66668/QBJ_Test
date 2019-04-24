@@ -13,7 +13,9 @@ android {
 
         // 语音转文字没有对应的64位so包，所以只能使用32位的，配置如下：
         ndk{
-            abiFilters "armeabi","arm64-v8a","armeabi-v7a","x86","x86_64"
+            abiFilters "armeabi"
+
+//                    ，"arm64-v8a","armeabi-v7a","x86","x86_64"
         }
     }
 
