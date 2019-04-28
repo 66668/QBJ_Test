@@ -541,6 +541,7 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //
+                mProgressDialog.hide();
                 dialog.dismiss();
             }
         };
@@ -586,6 +587,8 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //
+                MLog.d("取消");
+                mProgressDialog.hide();
                 dialog.dismiss();
             }
         };
@@ -639,6 +642,7 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //
+                mProgressDialog.hide();
                 dialog.dismiss();
             }
         };
@@ -681,6 +685,7 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //
+                mProgressDialog.hide();
                 dialog.dismiss();
             }
         };
@@ -723,6 +728,7 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //
+                mProgressDialog.hide();
                 dialog.dismiss();
             }
         };
