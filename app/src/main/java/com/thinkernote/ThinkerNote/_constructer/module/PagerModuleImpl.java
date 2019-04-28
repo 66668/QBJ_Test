@@ -151,7 +151,6 @@ public class PagerModuleImpl implements IPagerModule {
                         }
                     }
 
-
                 });
     }
 
