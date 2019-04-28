@@ -1444,6 +1444,7 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
     }
 
     private void pCatDelete(TNCat cat) {
+        MLog.d("TNPagerAct删除文件夹");
         presenter.pDeleteCat(cat.catId);
     }
 
@@ -2019,6 +2020,7 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
     //
     @Override
     public void onDeleteFolderSuccess(Object obj, final long catId) {
+        MLog.d("TNPagerAct--onDeleteFolderSuccess");
         ExecutorService service = Executors.newSingleThreadExecutor();
         service.execute(new Runnable() {
             @Override

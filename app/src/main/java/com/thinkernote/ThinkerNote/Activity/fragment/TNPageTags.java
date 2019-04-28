@@ -974,6 +974,7 @@ public class TNPageTags extends TNChildViewBase implements
      */
 
     private void pSynchronizeData() {
+        MLog.d("TNPageTags--pSynchronizeData--mSettings.firstLaunch="+mSettings.firstLaunch );
         if (mSettings.firstLaunch) {//如果第一次登录app，执行该处方法
             //需要同步的文件数据
             arrayFolderName = new String[]{TNConst.FOLDER_DEFAULT, TNConst.FOLDER_MEMO, TNConst.GROUP_FUN, TNConst.GROUP_WORK, TNConst.GROUP_LIFE};
@@ -1009,6 +1010,7 @@ public class TNPageTags extends TNChildViewBase implements
      * （一.2）更新 tag
      */
     private void pTagAdd(int position, int arraySize, String name) {
+        MLog.d("sync---1-2-pTagAdd");
         presenter.tagAdd(position, arraySize, name);
     }
 
@@ -1151,7 +1153,7 @@ public class TNPageTags extends TNChildViewBase implements
                 //先执行最外层的数据
                 syncTNCat(0, cats.size());
             }
-        }else{
+        } else {
             //执行下一个接口
             pGetTagList();
         }
@@ -1237,6 +1239,7 @@ public class TNPageTags extends TNChildViewBase implements
         if (!mSettings.syncOldDb) {
             //add老数据库的笔记
             addOldNotes = TNDbUtils.getOldDbNotesByUserId(TNSettings.getInstance().userId);
+            MLog.d("sync---2-2-syncOldNote=" + addOldNotes.size());
             if (addOldNotes.size() > 0) {
                 //先 上传数组的第一个
                 TNNote tnNote = addOldNotes.get(0);
@@ -1248,10 +1251,12 @@ public class TNPageTags extends TNChildViewBase implements
                 }
             } else {
                 //下个执行接口
+                MLog.d("TNPageTags--syncOldNote--syncProfile");
                 syncProfile();
             }
         } else {
             //下个执行接口
+            MLog.d("TNPageTags--syncOldNote--syncProfile");
             syncProfile();
         }
     }
@@ -1664,7 +1669,7 @@ public class TNPageTags extends TNChildViewBase implements
      * @param cloudsPos cloudIds数据的其实操作位置
      */
     private void pEditNotes(int cloudsPos, TNNote note) {
-        if (cloudIds.size() > 0 && cloudsPos < (cloudIds.size() )) {
+        if (cloudIds.size() > 0 && cloudsPos < (cloudIds.size())) {
             presenter.pEditNote(cloudsPos, note);
         } else {
             //执行下一个接口
@@ -1682,7 +1687,7 @@ public class TNPageTags extends TNChildViewBase implements
         //为2-11-2接口返回，做预处理
         setChildHandler2_11(position);
         //
-        if (cloudIds.size() > 0 && position < (cloudIds.size() )) {
+        if (cloudIds.size() > 0 && position < (cloudIds.size())) {
             boolean isExit = false;
             long id = cloudIds.get(position).getId();
             int lastUpdate = cloudIds.get(position).getUpdate_at();

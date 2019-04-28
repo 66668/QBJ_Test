@@ -143,7 +143,7 @@ public class NoteListModuleImpl implements INoteListModule {
                 .subscribe(new Observer<CommonBean3<GetNoteByNoteIdBean>>() {//固定样式，可自定义其他处理
                     @Override
                     public void onCompleted() {
-                        MLog.d(TAG, "mGetNoteByNoteId--onCompleted");
+                        MLog.d(TAG, "mGetDataByNoteId--onCompleted");
                     }
 
                     @Override

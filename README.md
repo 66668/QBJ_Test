@@ -219,3 +219,11 @@ act中设置：下载文件后调用checkIsAndroidO()方法即可，然后执行
  
  ## 讯飞语音
  nill.chen@thinkernote.com /Qunbijixxxx   
+ 
+ ## 接口异常：
+ delete接口正确写法：
+ 
+     @FormUrlEncoded
+     @HTTP(method = "DELETE", path = URLUtils.Note.TAG, hasBody = true)
+     Observable<CommonBean> deleteTag(@Field("tag_id") long tag_id
+             , @Field("session_token") String session_token);

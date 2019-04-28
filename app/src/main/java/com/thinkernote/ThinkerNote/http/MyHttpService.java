@@ -9,7 +9,6 @@ import com.thinkernote.ThinkerNote.bean.CommonBean3;
 import com.thinkernote.ThinkerNote.bean.CommonListBean;
 import com.thinkernote.ThinkerNote.bean.login.LoginBean;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
-import com.thinkernote.ThinkerNote.bean.login.QQBean;
 import com.thinkernote.ThinkerNote.bean.login.VerifyPicBean;
 import com.thinkernote.ThinkerNote.bean.main.AlipayBean;
 import com.thinkernote.ThinkerNote.bean.main.AllFolderBean;
@@ -28,7 +27,6 @@ import java.util.List;
 
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
-import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -714,10 +712,11 @@ public interface MyHttpService {
      *
      * @return
      */
-    @DELETE(URLUtils.Note.TAG)
+    @Headers("Content-Type:application/x-www-form-urlencoded")
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = URLUtils.Note.TAG, hasBody = true)
     Observable<CommonBean> deleteTag(@Field("tag_id") long tag_id
             , @Field("session_token") String session_token);
-
 
     /**
      * 设置默认文件路径
@@ -804,15 +803,18 @@ public interface MyHttpService {
             , @Query("session_token") String session_token);
 
     /**
+     * <p>
+     * 删除文件夹
+     * <p>
      * deleteFodler
      *
      * @return
      */
-    @GET(URLUtils.Cat.FOLDER)
-    Observable<CommonBean> folderDelete(
-            @Query("folder_id") long folder_id
-            , @Query("session_token") String session_token);
-
+    @Headers("Content-Type:application/x-www-form-urlencoded")
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = URLUtils.Cat.FOLDER, hasBody = true)
+    Observable<CommonBean> folderDelete(@Field("folder_id") long tag_id
+            , @Field("session_token") String session_token);
 
     //-------------------------------------------------NoteList----------------------------------------------------
 

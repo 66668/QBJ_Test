@@ -130,7 +130,7 @@ public class PagerModuleImpl implements IPagerModule {
                 .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                     @Override
                     public void onCompleted() {
-                        MLog.d(TAG, "mGetNoteByNoteId--onCompleted");
+                        MLog.d(TAG, "mDeleteFolder--onCompleted");
                     }
 
                     @Override
@@ -141,7 +141,7 @@ public class PagerModuleImpl implements IPagerModule {
 
                     @Override
                     public void onNext(CommonBean bean) {
-                        MLog.d(TAG, "mGetNoteByNoteId-onNext");
+                        MLog.d(TAG, "Pager--mGetNoteByNoteId-onNext");
 
                         //处理返回结果
                         if (bean.getCode() == 0) {
@@ -169,7 +169,7 @@ public class PagerModuleImpl implements IPagerModule {
                 .subscribe(new Observer<CommonBean3<GetNoteByNoteIdBean>>() {//固定样式，可自定义其他处理
                     @Override
                     public void onCompleted() {
-                        MLog.d(TAG, "mGetNoteByNoteId--onCompleted");
+                        MLog.d(TAG, "mGetDataByNoteId--onCompleted");
                     }
 
                     @Override

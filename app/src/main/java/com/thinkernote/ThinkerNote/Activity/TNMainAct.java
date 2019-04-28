@@ -1344,6 +1344,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
             }
         } else {
             //下个执行接口
+            MLog.d("TNMainAct--syncOldNote--syncProfile");
             syncProfile();
         }
     }
