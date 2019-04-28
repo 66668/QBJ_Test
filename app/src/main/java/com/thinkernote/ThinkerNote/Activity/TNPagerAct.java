@@ -179,11 +179,14 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
         switch (v.getId()) {
             //================================布局相关的点击事件================================
             case R.id.table_notes_newnote: {//新建 标签
-                TNNote note = TNNote.newNote();
-                Bundle b = new Bundle();
-                b.putLong("NoteForEdit", note.noteLocalId);
-                b.putSerializable("NOTE", note);
-                startActivity(TNNoteEditAct.class, b);
+//                TNNote note = TNNote.newNote();
+//                Bundle b = new Bundle();
+//                b.putLong("NoteForEdit", note.noteLocalId);
+//                b.putSerializable("NOTE", note);//设置后，无法获取
+//                startActivity(TNNoteEditAct.class, b);
+
+                //sjy 编辑界面自己创建，
+                startActivity(TNNoteEditAct.class);
                 break;
             }
             case R.id.table_notes_search: {//搜索

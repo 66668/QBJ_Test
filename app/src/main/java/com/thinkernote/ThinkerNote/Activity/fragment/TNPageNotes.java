@@ -962,7 +962,6 @@ public class TNPageNotes extends TNChildViewBase implements OnItemLongClickListe
      */
     private void syncTNCat() {
         MLog.d("sync---1-5-syncTNCat");
-        MLog.d("sync---1-5-syncTNCat");
         if (mSettings.firstLaunch) {
             //同步TNCat
             cats = TNDbUtils.getAllCatList(mSettings.userId);
@@ -973,6 +972,9 @@ public class TNPageNotes extends TNChildViewBase implements OnItemLongClickListe
                 //先执行最外层的数据
                 syncTNCat(0, cats.size());
             }
+        }else{
+            //执行下一个接口
+            pGetTagList();
         }
 
     }

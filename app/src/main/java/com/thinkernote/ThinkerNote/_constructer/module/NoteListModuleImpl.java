@@ -389,7 +389,7 @@ public class NoteListModuleImpl implements INoteListModule {
                 .subscribe(new Observer<AllFolderBean>() {//固定样式，可自定义其他处理
                     @Override
                     public void onCompleted() {
-                        MLog.d(TAG, "GetFoldersByFolderId--onCompleted");
+                        MLog.d(TAG, "NoteList--GetFoldersByFolderId--onCompleted");
                     }
 
                     @Override

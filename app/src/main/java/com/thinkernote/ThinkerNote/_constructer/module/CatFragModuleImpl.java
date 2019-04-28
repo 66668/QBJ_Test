@@ -98,7 +98,7 @@ public class CatFragModuleImpl implements ICatFragModule {
                 .subscribe(new Observer<AllFolderBean>() {//固定样式，可自定义其他处理
                     @Override
                     public void onCompleted() {
-                        MLog.d(TAG, "GetFoldersByFolderId--onCompleted");
+                        MLog.d(TAG, "CatFrag--mGetFolderByFolderId--onCompleted");
                     }
 
                     @Override
@@ -134,7 +134,7 @@ public class CatFragModuleImpl implements ICatFragModule {
                 .subscribe(new Observer<NoteListBean>() {//固定样式，可自定义其他处理
                     @Override
                     public void onCompleted() {
-                        MLog.d(TAG, "GetFoldersByFolderId--onCompleted");
+                        MLog.d(TAG, "CatFrag--mGetNoteListByTrash--onCompleted");
                     }
 
                     @Override
@@ -315,7 +315,7 @@ public class CatFragModuleImpl implements ICatFragModule {
                 .subscribe(new Observer<AllFolderBean>() {//固定样式，可自定义其他处理
                     @Override
                     public void onCompleted() {
-                        MLog.d(TAG, "GetFoldersByFolderId--onCompleted");
+//                        MLog.d(TAG, "CatFrag--GetFoldersByFolderId--onCompleted");
                     }
 
                     @Override

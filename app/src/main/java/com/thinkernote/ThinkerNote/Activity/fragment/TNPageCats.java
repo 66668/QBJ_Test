@@ -1416,6 +1416,7 @@ public class TNPageCats extends TNChildViewBase implements
                     //执行上一层的循环
                     if (mapList.size() == 1) {
                         //执行下一个接口
+                        MLog.d("syncGetFoldersByFolderId--allFolderItemBeans.size() > 0--syncTNCat（）");
                         syncTNCat();
                     } else {
                         //执行上一层的循环
@@ -1442,6 +1443,7 @@ public class TNPageCats extends TNChildViewBase implements
                 //执行上一层的循环
                 if (mapList.size() == 1) {
                     //执行下一个接口
+                    MLog.d("syncGetFoldersByFolderId--allFolderItemBeans.size() = 0--mapList.size() == 1--syncTNCat（）");
                     syncTNCat();
                 } else {
                     //执行上一层的新循环
@@ -1489,7 +1491,7 @@ public class TNPageCats extends TNChildViewBase implements
      * 接口个数 = 3*cats.size*groupXXX.size;
      */
     private void syncTNCat() {
-        MLog.d("sync---1-5-syncTNCat");
+        MLog.d("TNPageCats--sync---1-5-syncTNCat");
         if (mSettings.firstLaunch) {
             //同步TNCat
             cats = TNDbUtils.getAllCatList(mSettings.userId);
@@ -1500,6 +1502,9 @@ public class TNPageCats extends TNChildViewBase implements
                 //先执行最外层的数据
                 syncTNCat(0, cats.size());
             }
+        }else{
+            //执行下一个接口
+            pGetTagList1();
         }
 
     }

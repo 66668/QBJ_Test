@@ -1,4 +1,8 @@
 
+#重要说明：
+本app的网络框架Okhttp第一次搭建，所以没有优化View层的封装，导致View层的网络逻辑比较复杂，影响View层的单一性。
+
+修改建议：最好将view层的网络逻辑从View层中移出去。
 #轻笔记升级的两个方向：
 android的AyncTask类升级了四次，导致老的AyncTask已经无法调用
 （1）最方便的做法是将老版的AyncTask及相关类集成jar包，替换成jar包的类

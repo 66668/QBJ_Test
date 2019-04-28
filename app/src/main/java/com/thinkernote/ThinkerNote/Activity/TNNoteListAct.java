@@ -2712,8 +2712,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
      * 接口个数 = 3*cats.size*groupXXX.size;
      */
     private void syncTNCat() {
-        MLog.d("sync---1-5-syncTNCat");
-        MLog.d("sync---1-5-syncTNCat");
+        MLog.d("TNNoteListAct--sync---1-5-syncTNCat");
         if (mSettings.firstLaunch) {
             //同步TNCat
             cats = TNDbUtils.getAllCatList(mSettings.userId);
@@ -2724,6 +2723,9 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
                 //先执行最外层的数据
                 syncTNCat(0, cats.size());
             }
+        }else{
+            //执行下一个接口
+            pGetTagList1();
         }
 
     }

@@ -217,11 +217,9 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
             long id = getIntent().getLongExtra("NoteForEdit", -1);
             // edit note
             if (id < 0) {// new note
-                MLog.d("initNote==获取缓存的笔记");
                 mNote = (TNNote) getIntent().getSerializableExtra("NOTE");
             } else
                 // edit note
-                MLog.d("initNote==获取已保存笔记");
             mNote = TNDbUtils.getNoteByNoteLocalId(id);
         } else {
             MLog.d("initNote==创建新笔记");
@@ -266,6 +264,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
 
         }
         if (mNote == null) {
+            MLog.d("编辑笔记--关闭");
             finish();
             return;
         }

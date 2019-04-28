@@ -300,7 +300,7 @@ public class MainModuleImpl implements IMainModule {
                 .subscribe(new Observer<AllFolderBean>() {//固定样式，可自定义其他处理
                     @Override
                     public void onCompleted() {
-                        MLog.d(TAG, "GetFoldersByFolderId--onCompleted");
+                        MLog.d(TAG, "Main--GetFoldersByFolderId--onCompleted");
                     }
 
                     @Override
