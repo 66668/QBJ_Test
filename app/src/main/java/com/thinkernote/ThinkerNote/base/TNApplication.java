@@ -65,16 +65,16 @@ public class TNApplication extends Application {
 //        TNLBSService.getInstance();
         //地图定位 新版
         LocationService.getInstance();
-        watchAppSwitch();
+//        watchAppSwitch();
         // 设置此接口后，音频文件和识别结果文件保存在/sdcard/msc/record/目录下
         //com.iflytek.resource.MscSetting.setLogSaved(true);
 
         //讯飞语音初始化
         StringBuffer param = new StringBuffer();
-        param.append("appid="+getString(R.string.app_id));
+        param.append("appid=" + getString(R.string.app_id));
         param.append(",");
         // 设置使用v5+
-        param.append(SpeechConstant.ENGINE_MODE+"="+SpeechConstant.MODE_MSC);
+        param.append(SpeechConstant.ENGINE_MODE + "=" + SpeechConstant.MODE_MSC);
         SpeechUtility.createUtility(this, param.toString());
 
     }
@@ -106,6 +106,7 @@ public class TNApplication extends Application {
 
         MLog.i("DbReportError e");
     }
+
     // mainAct 2-11-2数据处理时的异常,
     public void htmlError(String error) {
         MLog.i("DbReportError s", TNSettings.getInstance().topAct);
@@ -120,6 +121,9 @@ public class TNApplication extends Application {
         MLog.i("DbReportError e");
     }
 
+    /**
+     * 说明：检查锁屏保存笔记的功能放到baseAct中，在此处死循环处理，会引发华为适配bug，固舍弃
+     */
     private void watchAppSwitch() {
         //一个线程，让我一直检测
         AsyncTask<Object, Object, Object> taskWatcher =
