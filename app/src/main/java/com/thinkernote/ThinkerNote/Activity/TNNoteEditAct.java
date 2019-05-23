@@ -21,10 +21,8 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
@@ -36,7 +34,6 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
-
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.InitListener;
 import com.iflytek.cloud.RecognizerResult;
@@ -71,15 +68,12 @@ import com.thinkernote.ThinkerNote._constructer.presenter.NoteEditPresenterImpl;
 import com.thinkernote.ThinkerNote._interface.p.INoteEditPresenter;
 import com.thinkernote.ThinkerNote._interface.v.OnNoteEditListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
+import com.thinkernote.ThinkerNote.base.TNApplication;
 import com.thinkernote.ThinkerNote.bean.main.AllFolderItemBean;
 import com.thinkernote.ThinkerNote.bean.main.AllNotesIdsBean;
 import com.thinkernote.ThinkerNote.bean.main.GetNoteByNoteIdBean;
 import com.thinkernote.ThinkerNote.bean.main.OldNoteAddBean;
 import com.thinkernote.ThinkerNote.bean.main.OldNotePicBean;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -91,6 +85,8 @@ import java.util.TimerTask;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * 主页--写笔记界面 sjy 0626
@@ -367,12 +363,14 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         super.onResume();
         setCursorLocation();
         ((ScrollView) findViewById(R.id.noteedit_scrollview)).scrollTo(0, 0);
+        TNApplication.getInstance().watchAppEnable(false);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         getCursorLocation();
+        TNApplication.getInstance().watchAppEnable(true);
     }
 
     private void setCursorLocation() {
@@ -693,7 +691,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
     }
 
     private void setAttView(ImageView attView, final TNNoteAtt att) {
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+        LayoutParams layoutParams = new LayoutParams(
                 100, LayoutParams.WRAP_CONTENT);
 
         if (att.type > 10000 && att.type < 20000) {
@@ -779,7 +777,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
      * 听写UI监听器
      */
     private RecognizerDialogListener mRecognizerDialogListener = new RecognizerDialogListener() {
-        public void onResult(com.iflytek.cloud.RecognizerResult results, boolean isLast) {
+        public void onResult(RecognizerResult results, boolean isLast) {
 //            printTransResult(results);
             StringBuffer builder = printResult(results);
             EditText currentText = null;
@@ -995,7 +993,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
 
     private String getPath(Uri uri) {
         try {
-            String[] projection = {MediaStore.Images.Media.DATA};
+            String[] projection = {Media.DATA};
 
             Cursor cursor = managedQuery(uri, projection, null, null, null);
             if (cursor != null) {
@@ -1003,7 +1001,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                 // THIS CAN BE, IF YOU USED OI FILE MANAGER FOR PICKING THE
                 // MEDIA
                 int column_index = cursor
-                        .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                        .getColumnIndexOrThrow(Media.DATA);
                 cursor.moveToFirst();
                 return cursor.getString(column_index);
             } else {
