@@ -20,6 +20,9 @@ import com.thinkernote.ThinkerNote.base.TNActBase;
 import java.util.LinkedList;
 import java.util.Queue;
 
+/**
+ * 九宫格锁 界面
+ */
 public class TNLockAct extends TNActBase implements OnLockPatternListener, OnClickListener {
 
     /* Bundle:

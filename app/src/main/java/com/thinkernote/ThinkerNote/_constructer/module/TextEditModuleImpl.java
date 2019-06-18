@@ -68,18 +68,18 @@ public class TextEditModuleImpl implements ITextEditModule {
                     .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                         @Override
                         public void onCompleted() {
-                            MLog.d(TAG, "upgrade--onCompleted");
+                            MLog.d(TAG, "pFolderAdd--onCompleted");
                         }
 
                         @Override
                         public void onError(Throwable e) {
-                            MLog.e("upgrade 异常onError:" + e.toString());
+                            MLog.e("pFolderAdd 异常onError:" + e.toString());
                             listener.onFolderAddFailed("异常", new Exception("接口异常！"));
                         }
 
                         @Override
                         public void onNext(CommonBean bean) {
-                            MLog.d(TAG, "upgrade-onNext");
+                            MLog.d(TAG, "pFolderAdd-onNext");
 
                             //处理返回结果
                             if (bean.getCode() == 0) {

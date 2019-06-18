@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -33,7 +34,8 @@ import org.json.JSONObject;
 
 /**
  * 通用类
- * 编辑文件夹名称，标签名称等
+ * <p>
+ * 编辑/新建 文件夹名称，标签名称等
  * <p>
  * sjy 0614
  */
@@ -83,15 +85,19 @@ public class TNTextEditAct extends TNActBase implements OnClickListener, OnKeyLi
         mOriginalText = b.getString("OriginalText");
         mParentId = b.getLong("ParentId");
         mIsLeaf = b.getInt("IsLeaf");
-        MLog.i(TAG, mTextType + mHint + mOriginalText + mParentId + mIsLeaf);
+        MLog.i(TAG, "TNTextEditAct--TextType=" + mTextType + "--TextHint=" + mHint + "--OriginalText=" + mOriginalText + "--ParentId=" + mParentId + "--IsLeaf=" + mIsLeaf);
 
         if (mTextType.equals("cat_add")) {
+            MLog.d("SJY", "新增文件夹");
             ((TextView) findViewById(R.id.textedit_back)).setText("新增文件夹");
         } else if (mTextType.equals("cat_rename")) {
+            MLog.d("SJY", "修改文件夹");
             ((TextView) findViewById(R.id.textedit_back)).setText("修改文件夹");
         } else if (mTextType.equals("tag_add")) {
+            MLog.d("SJY", "新增标签");
             ((TextView) findViewById(R.id.textedit_back)).setText("新增标签");
         } else if (mTextType.equals("tag_rename")) {
+            MLog.d("SJY", "修改标签");
             ((TextView) findViewById(R.id.textedit_back)).setText("修改标签");
         }
     }
@@ -169,7 +175,6 @@ public class TNTextEditAct extends TNActBase implements OnClickListener, OnKeyLi
 
         if (mTextType.equals("cat_add")) {
             folderAdd(text);
-
         } else if (mTextType.equals("cat_rename")) {
             if (!text.equals(mOriginalText)) {
                 folderRename(text);
@@ -348,7 +353,6 @@ public class TNTextEditAct extends TNActBase implements OnClickListener, OnKeyLi
 
     private void tagRename(String text) {
         presener.pTagRename(mParentId, text);
-
     }
 
     //-------------------------------------接口结果回调-----------------------------------------

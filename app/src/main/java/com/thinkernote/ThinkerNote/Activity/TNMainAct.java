@@ -541,7 +541,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                 @Override
                 public boolean handleMessage(Message msg) {
                     switch (msg.what) {
-                        case CHILD_HANDLER_1_4://处理1-4接口数据
+                        case CHILD_HANDLER_1_4://处理1-4接口数据:文件夹数据插入db
                             //获取数据
                             Bundle bundle = msg.getData();
                             long pCatId = bundle.getLong("long");
@@ -568,6 +568,10 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                                         "lastUpdateTime", TNUtils.formatStringToTime(bean.getUpdate_at()),
                                         "strIndex", TNUtils.getPingYinIndex(bean.getName())
                                 );
+                                //更新数据库
+
+                                Log.d("SJY", "一级文件夹数据库更新，等待同步");
+                                Log.d("SJY", tempObj.toString());
                                 CatDbHelper.addOrUpdateCat(tempObj);
                             }
 
@@ -996,7 +1000,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                 pEditNotePic((int) msg.obj + 1);
                 break;
             case UI_HANDLER_1_4:
-                //执行新循环
+                //开始 执行循环，更新文件夹
                 syncGetFoldersByFolderId(0, true);
                 break;
 
@@ -1128,22 +1132,22 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      * list中都要调用接口，串行调用
      * 接口个数= allFolderItemBeans.size的n个连乘（n最大5）
      * <p>
-     * 说明：此处有个bug，如果mapList的第一层执行到有getFolder_count>=1时，就会调用接口，使mapList增加一层，这没有问题。
-     * 但是，当新增的一层执行完后，还会返回执行mapList的第一层，还是从0开始的，又会触碰getFolder_count>=1这个已经执行完的位置，所以需要标记跳过他,避免重复执行
+     * <p>
+     * TODO 说明：此处有个bug，如果mapList的第一层执行到有getFolder_count>=1时，就会调用接口，使mapList增加一层，这没有问题。
+     * TODO  但是，当新增的一层执行完后，还会返回执行mapList的第一层，还是从0开始的，又会触碰getFolder_count>=1这个已经执行完的位置，所以需要标记跳过他,避免重复执行
      *
      * @param isAdd 如果mapList.add之后立即执行该方法，为true
      */
     Map<String, Integer> flagMap = new HashMap<>();//key值用mapList.size+"A"+position 标记
 
     private void syncGetFoldersByFolderId(int startPos, boolean isAdd) {
-        MLog.d("1-4--syncGetFoldersByFolderId--mapList.size()=");
         if (mapList.size() > 0 && mapList.size() <= 5) {
             //有1---5，for循环层层内嵌,从最内层（mapList.size最大处）开始执行
             List<AllFolderItemBean> allFolderItemBeans = mapList.get(mapList.size() - 1);
             //
-            MLog.d("1-4--syncGetFoldersByFolderId--allFolderItemBeans.size()=" + allFolderItemBeans.size());
+            MLog.d("1-4--syncGetFoldersByFolderId--allFolderItemBeans.size()=" + allFolderItemBeans.size() + "--startPos=" + startPos);
             if (allFolderItemBeans.size() > 0) {
-                if (startPos < allFolderItemBeans.size() - 1) {
+                if (startPos < allFolderItemBeans.size()) {//TODO startPos < allFolderItemBeans.size() - 1
                     //从1层的第一个数据开始
                     if (isAdd) {
                         syncGetFoldersByFolderId(0, allFolderItemBeans);
@@ -1152,8 +1156,9 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                     }
                 } else {
                     //执行上一层的循环
-                    if (mapList.size() == 1) {
+                    if (mapList.size() == 0 || mapList.size() == 1) {//TODO mapList.size() == 1
                         //执行下一个接口
+                        MLog.d("syncGetFoldersByFolderId--执行下一个接口syncTNCat()");
                         syncTNCat();
                     } else {
                         //执行上一层的循环
@@ -1168,6 +1173,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                                 int newPos = flagMap.get(mapList.size() + "A" + i);//key获取value
                                 //移除
                                 flagMap.remove(mapList.size() + "A" + i);
+                                MLog.d("newPos=" + newPos);
                                 syncGetFoldersByFolderId(newPos + 1, false);//
                                 break;
                             }
@@ -1178,7 +1184,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
                 }
             } else {
                 //执行上一层的循环
-                if (mapList.size() == 1) {
+                if (mapList.size() == 0 || mapList.size() == 1) {//TODO mapList.size() == 1
                     //执行下一个接口
                     syncTNCat();
                 } else {
@@ -1202,6 +1208,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
             }
 
         } else {
+            //执行下一个接口
             syncTNCat();
         }
     }
@@ -2092,11 +2099,10 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     public void onSyncGetFolderSuccess(Object obj) {
         AllFolderBean allFolderBean = (AllFolderBean) obj;
         List<AllFolderItemBean> allFolderItemBeans = allFolderBean.getFolders();
-        MLog.d("ABC", "1-3List=" + allFolderItemBeans.size());
         MLog.d("sync----1-3-->Success");
         //
         mapList.add(allFolderItemBeans);
-        //更新数据库
+        //更新文件夹数据库
         insertDBCatsSQL(allFolderBean, -1);
     }
 
@@ -2108,25 +2114,30 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     }
 
     //1-4
+    //TODO 有问题
     @Override
     public void onSyncGetFoldersByFolderIdSuccess(Object obj, long catID, int startPos, List<AllFolderItemBean> beans) {
         AllFolderBean allFolderBean = (AllFolderBean) obj;
         List<AllFolderItemBean> allFolderItemBeans = allFolderBean.getFolders();
         MLog.d("ABC", "1-4List=" + allFolderItemBeans.size());
         //
-        MLog.d("sync----1-4-->Success");
+        MLog.d("sync----1-4-->onSyncGetFoldersByFolderIdSuccess");
         //判断是否有返回值
         if (allFolderBean == null || allFolderItemBeans == null || allFolderItemBeans.size() <= 1) {
             if (allFolderItemBeans.size() == 1) {
-                //需要这么写 勿改
-                AllFolderItemBean itemBean = allFolderItemBeans.get(0);
+                MLog.d("onSyncGetFoldersByFolderIdSuccess--有数据");
+
+                AllFolderItemBean itemBean = allFolderItemBeans.get(0); //TODO 需要这么写 勿改
                 if (itemBean.getCount() == 0) {
                     //执行下个position循环
+                    MLog.d("onSyncGetFoldersByFolderIdSuccess--syncGetFoldersByFolderId");
                     syncGetFoldersByFolderId(startPos + 1, false);
                 } else {
                     //有多个数据
                     //新增循环层前添加标记，标记已经执行完的上一层位置
-                    flagMap.put(mapList.size() + "A" + startPos, startPos);
+                    String key = mapList.size() + "A" + startPos;
+                    MLog.d("onSyncGetFoldersByFolderIdSuccess--添加标记=" + key);
+                    flagMap.put(key, startPos);
                     //1-4新增循环
                     mapList.add(allFolderItemBeans);
                     //更新数据库
@@ -2134,7 +2145,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
 
                 }
             } else {//没有数据
-
+                MLog.d("onSyncGetFoldersByFolderIdSuccess--无数据--执行下个position循环=" + (startPos + 1));
                 //执行下个position循环
                 syncGetFoldersByFolderId(startPos + 1, false);
             }
@@ -2159,6 +2170,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     }
 
     //1-5
+    //TODO 有问题
     @Override
     public void onSyncFirstFolderAddSuccess(Object obj, int workPos, int workSize, long catID, String name, int catPos, int flag) {
         MLog.d("sync----1-5-->Success");

@@ -567,7 +567,7 @@ public class TNSettingsAct extends TNActBase implements OnClickListener, OnChild
         TNUtilsUi.alertDialogBuilder(jsonData).show();
     }
 
-    //清楚缓存
+    //清除缓存
     public void clearCache() {
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout fl = (LinearLayout) layoutInflater.inflate(

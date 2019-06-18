@@ -34,6 +34,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.InitListener;
 import com.iflytek.cloud.RecognizerResult;
@@ -74,6 +75,7 @@ import com.thinkernote.ThinkerNote.bean.main.AllNotesIdsBean;
 import com.thinkernote.ThinkerNote.bean.main.GetNoteByNoteIdBean;
 import com.thinkernote.ThinkerNote.bean.main.OldNoteAddBean;
 import com.thinkernote.ThinkerNote.bean.main.OldNotePicBean;
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -85,11 +87,13 @@ import java.util.TimerTask;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * 主页--写笔记界面 sjy 0626
+ * 主页--写笔记界面
+ * sjy 0626
  */
 public class TNNoteEditAct extends TNActBase implements OnClickListener,
         OnFocusChangeListener, TextWatcher,
@@ -216,7 +220,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                 mNote = (TNNote) getIntent().getSerializableExtra("NOTE");
             } else
                 // edit note
-            mNote = TNDbUtils.getNoteByNoteLocalId(id);
+                mNote = TNDbUtils.getNoteByNoteLocalId(id);
         } else {
             MLog.d("initNote==创建新笔记");
             mNote = TNNote.newNote();

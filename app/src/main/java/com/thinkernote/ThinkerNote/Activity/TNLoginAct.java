@@ -51,6 +51,7 @@ import org.json.JSONObject;
 import rx.functions.Action1;
 
 /**
+ * 登陆 界面
  * sjy 0607
  */
 public class TNLoginAct extends TNActBase implements OnClickListener, OnLogListener {
