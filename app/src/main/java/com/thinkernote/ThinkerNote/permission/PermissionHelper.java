@@ -2,7 +2,8 @@ package com.thinkernote.ThinkerNote.permission;
 
 import android.app.Activity;
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 /**
  * 动态权限帮助类

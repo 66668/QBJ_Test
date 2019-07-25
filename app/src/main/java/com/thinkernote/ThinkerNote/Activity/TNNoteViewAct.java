@@ -12,7 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Message;
-import android.support.v4.content.FileProvider;
 import android.text.ClipboardManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -34,18 +33,15 @@ import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.core.content.FileProvider;
 
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.InitListener;
 import com.iflytek.cloud.SpeechConstant;
-import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SpeechSynthesizer;
-//import com.iflytek.speech.SpeechError;
-//import com.iflytek.speech.SynthesizerPlayer;
-//import com.iflytek.speech.SynthesizerPlayerListener;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
@@ -88,6 +84,10 @@ import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+//import com.iflytek.speech.SpeechError;
+//import com.iflytek.speech.SynthesizerPlayer;
+//import com.iflytek.speech.SynthesizerPlayerListener;
+
 /**
  * 笔记详情
  */
@@ -118,7 +118,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
     private Tencent mTencent;
     private IUiListener mListener;
 
-//    private SynthesizerPlayer mSynthesizerPlayer;
+    //    private SynthesizerPlayer mSynthesizerPlayer;
     private String mPlainText = null;
     private int mStartPos = 0;
     private int mEndPos = 0;
@@ -476,22 +476,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (event.getRepeatCount() == 0) {
-//                if (mSynthesizerPlayer != null) {
-//                    if (mSynthesizerPlayer.getState().toString().equals("PLAYING")) {
-//                        mSynthesizerPlayer.pause();
-//                        ImageButton playBtn = (ImageButton) findViewById(R.id.noteview_read_play);
-//                        playBtn.setImageResource(R.drawable.ic_media_play);
-//                        return true;
-//                    } else if (mSynthesizerPlayer.getState().toString()
-//                            .equals("PAUSED")) {
-//                        mSynthesizerPlayer.cancel();
-//                        setReadBarVisible(false);
-//                        return true;
-//                    }
-//                }
-            }
-            TNActionUtils.stopNoteSyncing();
+            //TODO 添加结束接口调用代码（结束异步调用）
         }
         return super.onKeyDown(keyCode, event);
     }

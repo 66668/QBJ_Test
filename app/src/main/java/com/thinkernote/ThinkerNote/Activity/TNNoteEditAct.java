@@ -14,7 +14,6 @@ import android.os.HandlerThread;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images.Media;
-import android.support.v4.content.FileProvider;
 import android.text.Editable;
 import android.text.Selection;
 import android.text.TextUtils;
@@ -34,6 +33,8 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import androidx.core.content.FileProvider;
 
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.InitListener;

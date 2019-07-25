@@ -1,17 +1,15 @@
 package com.thinkernote.ThinkerNote.Action;
 
+import android.os.AsyncTask;
+
+import com.thinkernote.ThinkerNote.Utils.MLog;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
-
-import junit.framework.Assert;
-
-import android.os.AsyncTask;
-
-import com.thinkernote.ThinkerNote.Utils.MLog;
 
 /**
  * 可不删 sjy 反射封装 sjy 0726
@@ -132,35 +130,6 @@ public class TNAction {
         }
     }
 
-    /* 【执行根任务（非异步）】
-     * 推荐仅在UI模块调用
-     */
-    public static TNAction runAction(Object aType, Object... aArray) {
-        TNAction action = new TNAction(aType, aArray);
-
-        // 执行任务
-        try {
-            runActionImp(action);
-        } catch (TNActionException e) {
-            // remove child action
-            removeChildAction(action);
-
-            action.result = e.result;
-            action.outputs.clear();
-            action.outputs.addAll(e.outputs);
-        }
-
-        // 从列表移除任务
-        TNActionCenter center = TNActionCenter.getInstance();
-        synchronized (center.actions) {
-            center.actions.remove(action);
-        }
-
-        // 执行响应函数
-        respondActionImp(action, null);
-
-        return action;
-    }
 
     /* 【执行跟任务（异步）】
      * 推荐仅在UI模块调用
@@ -186,22 +155,6 @@ public class TNAction {
             temp = new Vector<TNAction>(center.actions);
         }
         return temp;
-    }
-
-    // 对象方法
-    /* 【执行子任务（非异步）】
-     * 执行子任务时，上次的子任务将从列表移除。
-     */
-    public TNAction runChildAction(Object aType, Object... aArray) {
-        removeChildAction(this);
-
-        TNAction action = new TNAction(aType, aArray);
-        childAction = action;
-        action.parentAction = this;
-
-        runActionImp(action);
-
-        return action;
     }
 
     // 为简单化，暂不支持异步子任务！！！！
@@ -255,103 +208,6 @@ public class TNAction {
         throw new TNActionException(TNActionResult.Failed, aArray);
     }
 
-    /* 【任务取消】
-     * 只有异步任务，才可以取消。
-     * 某任务取消将使根任务下所有任务都取消。
-     * 任务取消不会立即进行，而是当下一次执行任务runAction时，让任务立即结束。
-     */
-    public void cancel() {
-        TNAction root = rootAction();
-        Assert.assertTrue("cancel root.asyncTaskObj != null",
-                root.asyncTaskObj != null);
-        if (root.asyncTaskObj != null) {
-            root.wantCancel = true;
-        }
-    }
-
-    /* 【任务等待】
-     * 只有异步任务，才有任务等待。
-     * 当调用异步函数后，需调用该函数，锁定线程。
-     * 异步函数执行完毕后，需调用resume，改变status，从而线程解锁，继续执行。
-     */
-    public void waitting() {
-        TNAction root = rootAction();
-        Assert.assertTrue("waitting root.asyncTaskObj != null",
-                root.asyncTaskObj != null);
-        if (root.asyncTaskObj != null) {
-            result = TNActionResult.Waitting;
-            MLog.d(TAG, "(waitting....)" + toString());
-            while (result == TNActionResult.Waitting) {
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            Assert.assertTrue("failed status == TNActionResult.Working",
-                    result == TNActionResult.Working);
-            MLog.d(TAG, "(resume....)" + toString());
-        }
-    }
-
-    /* 【任务继续执行】
-     * 当异步任务完成后，在回调函数中，调用该函数，使得线程解锁，继续执行。
-     */
-    public void resume() {
-        result = TNActionResult.Working;
-    }
-
-    /* 【任务进度更新】
-     * 只有异步任务，才有进度更新
-     * 调用该函数后，将调用根任务的响应函数
-     */
-    public void progressUpdate(Object aInfo) {
-        Assert.assertTrue("progressUpdate status == TNActionResult.Working",
-                result == TNActionResult.Working);
-        TNAction root = rootAction();
-        Assert.assertTrue("progressUpdate root.asyncTaskObj != null",
-                root.asyncTaskObj != null);
-        if (root.asyncTaskObj != null) {
-//			Log.d(TAG,"(progress....)" + toString());
-            root.asyncTaskObj.doProgress(aInfo);
-        }
-    }
-
-    /* 【检查子任务是否完成】
-     * 完成则返回true，如失败或取消，则设置status并复制outputs
-     * 这样，调用该函数，如返回false，则可以立即return，任务结束。
-     */
-//	public boolean isChildFinished(){
-//		Assert.assertTrue("isChildFinished childAction != null", childAction != null);
-//		Assert.assertTrue("isChildFinished childAction.status != TNActionResult.NotStart", 
-//				childAction.result != TNActionResult.NotStart);
-//		Assert.assertTrue("isChildFinished childAction.status != TNActionResult.Working", 
-//				childAction.result != TNActionResult.Working);
-//		Assert.assertTrue("isChildFinished childAction.status != TNActionResult.Waitting", 
-//				childAction.result != TNActionResult.Waitting);
-//		
-//		if(childAction != null){
-//			if(childAction.result == TNActionResult.Finished){
-//				return true;
-//			}else if(childAction.result == TNActionResult.Failed
-//					|| childAction.result == TNActionResult.Cancelled){
-//				result = childAction.result;
-//				outputs.clear();
-//				outputs.addAll(childAction.outputs);				
-//			}
-//		}
-//
-//		return false;
-//	}
-
-    /* 【检查是否异步任务】
-     *
-     */
-    public boolean isAsync() {
-        TNAction root = rootAction();
-        return root.asyncTaskObj != null;
-    }
-
     /* 【返回Log字符串】
      */
     public String toString() {
@@ -372,8 +228,6 @@ public class TNAction {
     private static TNAction runActionImp(TNAction aAction) {
         // 加入actions列表
         TNActionCenter center = TNActionCenter.getInstance();
-        Assert.assertTrue("runAction !center.actions.contains(aAction)",
-                !center.actions.contains(aAction));
         if (!center.actions.contains(aAction)) {
             synchronized (center.actions) {
                 center.actions.add(aAction);
@@ -396,8 +250,7 @@ public class TNAction {
             // 执行任务
             aAction.result = TNActionResult.Working;
             TNRunner runner = center.runners.get(aAction.type);
-            Assert.assertTrue("runActionImp runner != null",
-                    runner != null);
+
             if (runner != null) {
                 runner.run(aAction);
             }
@@ -539,8 +392,6 @@ public class TNAction {
 
         public TNActionException(TNActionResult aResult, Object... aArray) {
             super(aResult.toString());
-            Assert.assertTrue("TNActionException aResult == TNActionResult.Failed || aResult == TNActionResult.Cancelled",
-                    aResult == TNActionResult.Failed || aResult == TNActionResult.Cancelled);
             result = aResult;
             outputs = new Vector<Object>();
             for (Object obj : aArray) {

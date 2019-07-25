@@ -101,7 +101,7 @@
 
         <!--============================android7.0+ 使用应用间共享文件 设置 开始============================-->
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="com.thinkernote.ThinkerNote.FileProvider"
             android:exported="false"
             android:grantUriPermissions="true">

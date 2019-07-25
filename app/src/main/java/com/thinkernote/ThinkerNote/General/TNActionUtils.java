@@ -9,25 +9,7 @@ import java.util.Vector;
 //TODO delete
 public class TNActionUtils {
 	private static final String TAG = "TNActionUtils";
-	
-	public static void stopSynchronizing(){
-		Vector<TNAction> actions = TNAction.runningList();
-		synchronized(actions){
-			for(TNAction action : actions){
-				if(action.type == TNActionType.Synchronize 
-						|| action.type == TNActionType.SynchronizeCat
-						|| action.type == TNActionType.SynchronizeEdit
-						|| action.type == TNActionType.GetAllData
-						|| action.type == TNActionType.GetNoteList
-						|| action.type == TNActionType.GetParentFolders
-						|| action.type == TNActionType.GetTagList){
-					if( action.isAsync()){
-						action.cancel();
-					}
-				}
-			}
-		}		
-	}
+
 	//TODO 删
 	public static boolean isSynchronizing(){
 		Vector<TNAction> actions = TNAction.runningList();
@@ -132,40 +114,7 @@ public class TNActionUtils {
 		return false;
 	}
 	
-	public static void stopSyncing(){
-		Vector<TNAction> actions = TNAction.runningList();
-		synchronized(actions){
-			for(TNAction action : actions){
-				if( action.type == TNActionType.Synchronize 
-						|| action.type == TNActionType.SynchronizeCat
-						|| action.type == TNActionType.SynchronizeEdit
-						|| action.type == TNActionType.GetAllData
-						|| action.type == TNActionType.GetNoteList
-						|| action.type == TNActionType.GetParentFolders
-						|| action.type == TNActionType.GetTagList
-						|| action.type == TNActionType.GetAllDataByNoteId){
-					if( action.isAsync() ){
-						action.cancel();
-					}
-				}
-			}
-		}		
-	}
 
-	public static void stopNoteSyncing(){
-		Vector<TNAction> actions = TNAction.runningList();
-		synchronized(actions){
-			for(TNAction action : actions){
-				if( action.type == TNActionType.GetNoteByNoteId
-						|| action.type == TNActionType.SyncNoteAtt
-						|| action.type == TNActionType.GetAllDataByNoteId){
-					if( action.isAsync() ){
-						action.cancel();
-					}
-				}
-			}
-		}
-	}
 	
 	public static boolean isSyncing(){
 		Vector<TNAction> actions = TNAction.runningList();
@@ -205,18 +154,6 @@ public class TNActionUtils {
 			}
 		}
 		return false;
-	}
-	
-	public static void clearActions(){
-		Vector<TNAction> actions = TNAction.runningList();
-			synchronized(actions){
-				for(TNAction action : actions){
-					if( action.isAsync() ){
-						action.cancel();
-					}
-				}
-			}
-			actions.clear();
 	}
 	
 	public static boolean isRunning(Object aType){

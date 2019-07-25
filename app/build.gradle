@@ -2,12 +2,12 @@ apply plugin: 'com.android.application'
 
 android {
     //    useLibrary 'org.apache.http.legacy'//API 23 弃用 HttpClient替换方案
-    compileSdkVersion 27//用哪个 Android SDK 版本编译你的应用
+    compileSdkVersion 29//用哪个 Android SDK 版本编译你的应用
 
     defaultConfig {
         applicationId "com.thinkernote.ThinkerNote"
         minSdkVersion 23//8-12 异步还能用，13+异步升级不能用 12
-        targetSdkVersion 27//说明：28+需要大改代码，一些类不支持了/sjy-2019-04-23
+        targetSdkVersion 28//说明：28+需要大改代码，一些类不支持了/sjy-2019-04-23
         versionCode 53
         versionName "5.8.2"
 
@@ -51,6 +51,7 @@ android {
         checkReleaseBuilds false
         abortOnError false
     }
+    buildToolsVersion = '28.0.3'
     buildTypes {
         release {
             // 混淆
@@ -69,7 +70,9 @@ android {
 dependencies {
 
     //系统包依赖
-    implementation 'com.android.support:support-v4:27.1.1'
+    implementation 'androidx.appcompat:appcompat:1.0.0'//替换 com.android.support:appcompat-v7:28.0.2
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'//替换 com.android.support:support-v4:28.0.2
+
 
     //libs包依赖
     implementation files('libs/alipaySdk-20161009.jar')
@@ -167,7 +170,4 @@ dependencies {
 
 
 }
-//repositories {
-//    jcenter()
-//}
 
