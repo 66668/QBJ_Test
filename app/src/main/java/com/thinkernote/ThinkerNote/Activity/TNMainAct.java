@@ -1121,7 +1121,6 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
     private void syncGetFolder() {
         setChildHandler1_4();
         presener.pGetFolder();
-
     }
 
 

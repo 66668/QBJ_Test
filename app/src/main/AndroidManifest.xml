@@ -304,7 +304,7 @@
             android:exported="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoDisplay" />
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <activity
             android:name="com.tencent.tauth.AuthActivity"
@@ -320,22 +320,22 @@
             </intent-filter>
         </activity>
 
-        <!-- serrvice -->
-        <service android:name=".Service.TNPushService"></service>
+        <!-- serrvice 百度地图注册服务 -->
+        <service android:name=".Service.LocationService"></service>
 
-        <!-- BroadcastReceiver -->
-        <receiver android:name=".Service.TNSystemStartedReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
         <receiver android:name=".Register.AppRegister">
             <intent-filter>
                 <action android:name="com.tencent.mm.plugin.openapi.Intent.ACTION_REFRESH_WXAPP" />
             </intent-filter>
         </receiver>
 
+        <!--未使用-->
+        <!-- BroadcastReceiver -->
+        <receiver android:name=".Service.TNSystemStartedReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
     </application>
-
-
 </manifest>
