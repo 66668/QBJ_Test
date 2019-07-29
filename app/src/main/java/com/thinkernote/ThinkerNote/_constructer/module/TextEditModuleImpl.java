@@ -28,9 +28,9 @@ public class TextEditModuleImpl implements ITextEditModule {
     @Override
     public void pFolderAdd(final OnTextEditListener listener, long pid, String text) {
         TNSettings settings = TNSettings.getInstance();
-        if (pid==-1){
+        if (pid == -1) {
             MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                    .folderAdd(text,settings.token)//接口方法
+                    .addNewFolder(text, settings.token)//接口方法
                     .subscribeOn(Schedulers.io())//固定样式
                     .unsubscribeOn(Schedulers.io())//固定样式
                     .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -59,9 +59,9 @@ public class TextEditModuleImpl implements ITextEditModule {
                         }
 
                     });
-        }else {
+        } else {
             MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                    .folderAdd(text,pid,settings.token)//接口方法
+                    .folderAdd(text, pid, settings.token)//接口方法
                     .subscribeOn(Schedulers.io())//固定样式
                     .unsubscribeOn(Schedulers.io())//固定样式
                     .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -98,7 +98,7 @@ public class TextEditModuleImpl implements ITextEditModule {
     public void pFolderRename(final OnTextEditListener listener, final long pid, final String text) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .folderRename(text,pid,settings.token)//接口方法
+                .renameFolder(text, pid, settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -120,7 +120,7 @@ public class TextEditModuleImpl implements ITextEditModule {
 
                         //处理返回结果
                         if (bean.getCode() == 0) {
-                            listener.onFolderRenameSuccess(bean,text,pid);
+                            listener.onFolderRenameSuccess(bean, text, pid);
                         } else {
                             listener.onFolderRenameFailed(bean.getMessage(), null);
                         }
@@ -133,7 +133,7 @@ public class TextEditModuleImpl implements ITextEditModule {
     public void pTagAdd(final OnTextEditListener listener, String text) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .tagAdd(text,settings.token)//接口方法
+                .tagAdd(text, settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -168,7 +168,7 @@ public class TextEditModuleImpl implements ITextEditModule {
     public void pTagRename(final OnTextEditListener listener, final long pid, final String text) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .tagRename(text,pid,settings.token)//接口方法
+                .tagRename(text, pid, settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -190,7 +190,7 @@ public class TextEditModuleImpl implements ITextEditModule {
 
                         //处理返回结果
                         if (bean.getCode() == 0) {
-                            listener.onTagRenameSuccess(bean,text,pid);
+                            listener.onTagRenameSuccess(bean, text, pid);
                         } else {
                             listener.onTagRenameFailed(bean.getMessage(), null);
                         }

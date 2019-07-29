@@ -1229,21 +1229,15 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainListe
      */
     private void syncTNCat() {
         mapList.clear();
-        if (mSettings.firstLaunch) {
-            //同步TNCat
-            cats = TNDbUtils.getAllCatList(mSettings.userId);
-            MLog.d("sync---1-5-syncTNCat--cats=" + cats.size());
-            if (cats == null || cats.size() <= 0) {
-                //执行下一个接口
-                pGetTagList();
-            } else if (cats.size() > 0) {
-                //先执行最外层的数据
-                syncTNCat(0, cats.size());
-            }
-
-        } else {
+        //同步TNCat
+        cats = TNDbUtils.getAllCatList(mSettings.userId);
+        MLog.d("sync---1-5-syncTNCat--cats=" + cats.size());
+        if (cats == null || cats.size() <= 0) {
             //执行下一个接口
             pGetTagList();
+        } else if (cats.size() > 0) {
+            //先执行最外层的数据
+            syncTNCat(0, cats.size());
         }
 
     }

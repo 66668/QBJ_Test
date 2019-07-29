@@ -70,7 +70,7 @@ public class CatInfoModuleImpl implements ICatInfoModule {
     public void mCatDelete(final OnCatInfoListener listener, final long catId) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .folderDelete(catId, settings.token)
+                .deleteFolder(catId, settings.token)
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式

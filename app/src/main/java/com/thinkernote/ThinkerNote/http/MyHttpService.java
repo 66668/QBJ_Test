@@ -27,6 +27,7 @@ import java.util.List;
 
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -264,7 +265,7 @@ public interface MyHttpService {
      * @return
      */
     @FormUrlEncoded
-    @PUT(URLUtils.Log.CHANGE_PHONE)
+    @PUT(URLUtils.Log.USER_INFO)
     Observable<CommonBean> changePhone(
             @Field("phone") String phone
             , @Field("password") String password
@@ -289,7 +290,7 @@ public interface MyHttpService {
      * @return
      */
     @FormUrlEncoded
-    @PUT(URLUtils.Log.CHANGE_NAME_OR_EMAIL)
+    @PUT(URLUtils.Log.USER_INFO)
     Observable<CommonBean> changeUserName(
             @Field("username") String username
             , @Field("password") String password
@@ -302,7 +303,7 @@ public interface MyHttpService {
      * @return
      */
     @FormUrlEncoded
-    @PUT(URLUtils.Log.CHANGE_NAME_OR_EMAIL)
+    @PUT(URLUtils.Log.USER_INFO)
     Observable<CommonBean> changeUserEmail(
             @Field("email") String email
             , @Field("password") String password
@@ -325,6 +326,14 @@ public interface MyHttpService {
     @GET(URLUtils.Log.LOGOUT)
     Observable<CommonBean> logout(@Query("session_token") String session_token);
 
+    /**
+     * verifyEmail
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST(URLUtils.Log.VERIFY_EMAIL)
+    Observable<CommonBean> verifyEmail(@Field("session_token") String session_token);
 
     //-------------------------------------------------main相关----------------------------------------------------d
 
@@ -393,16 +402,6 @@ public interface MyHttpService {
 
     //-------------------------------------------------同步相关----------------------------------------------------
 
-    /**
-     * 同步新建文件
-     *
-     * @return
-     */
-    @FormUrlEncoded
-    @POST(URLUtils.Note.FOLDER)
-    Observable<CommonBean> syncFolderAdd(@Field("name") String name
-            , @Field("session_token") String session_token);
-
 
     /**
      * 同步tag
@@ -410,7 +409,7 @@ public interface MyHttpService {
      * @return
      */
     @FormUrlEncoded
-    @POST(URLUtils.Note.TAG)
+    @POST(URLUtils.Tags.TAG)
     Observable<CommonBean> syncTagAdd(@Field("name") String name
             , @Field("session_token") String session_token);
 
@@ -498,28 +497,9 @@ public interface MyHttpService {
      * @return
      */
     @FormUrlEncoded
-    @PUT(URLUtils.Note.RECOVERY_NOTE)
+    @PUT(URLUtils.Note.NOTE_TRASH)
     Observable<CommonBean> syncRecoveryNote(@Field("note_id") long note_id
             , @Field("session_token") String session_token);
-
-    /**
-     * 同步获取folder get形式
-     *
-     * @return
-     */
-    @GET(URLUtils.Note.FOLDER)
-    Observable<AllFolderBean> syncGetFolder(
-            @Query("session_token") String session_token);
-
-    /**
-     * 同步获取GetFolderByFodlerId
-     *
-     * @return
-     */
-    @GET(URLUtils.Note.FOLDER)
-    Observable<AllFolderBean> syncGetFolderByFodlerId(
-            @Query("folder_id") long folder_id
-            , @Query("session_token") String session_token);
 
 
     /**
@@ -527,7 +507,7 @@ public interface MyHttpService {
      *
      * @return
      */
-    @GET(URLUtils.Note.TAGLIST)
+    @GET(URLUtils.Tags.TAG)
     Observable<TagListBean> syncTagList(@Query("session_token") String session_token);
 
 
@@ -567,7 +547,7 @@ public interface MyHttpService {
      * @return
      */
     @Headers("Content-Type:application/x-www-form-urlencoded")
-    @HTTP(method = "DELETE", path = URLUtils.Note.RECOVERY_NOTE, hasBody = true)
+    @HTTP(method = "DELETE", path = URLUtils.Note.NOTE_TRASH, hasBody = true)
     @FormUrlEncoded
     Observable<CommonBean> syncDeleteRealNote2(
             @Field("note_id") long note_id
@@ -636,45 +616,10 @@ public interface MyHttpService {
      * @return
      */
     @FormUrlEncoded
-    @POST(URLUtils.Note.TAG)
+    @POST(URLUtils.Tags.TAG)
     Observable<CommonBean> tagAdd(@Field("name") String phone
             , @Field("session_token") String session_token);
 
-    /**
-     * 新建 文件
-     *
-     * @return
-     */
-    @FormUrlEncoded
-    @POST(URLUtils.Note.FOLDER)
-    Observable<CommonBean> folderAdd(@Field("name") String phone
-            , @Field("session_token") String session_token);
-
-
-    /**
-     * 新建 文件
-     *
-     * @return
-     */
-    @FormUrlEncoded
-    @POST(URLUtils.Note.FOLDER)
-    Observable<CommonBean> folderAdd(
-            @Field("name") String name
-            , @Field("pid") long pid
-            , @Field("session_token") String session_token);
-
-
-    /**
-     * 文件rename
-     *
-     * @return
-     */
-    @FormUrlEncoded
-    @PUT(URLUtils.Note.FOLDER)
-    Observable<CommonBean> folderRename(
-            @Field("name") String phone
-            , @Field("folder_id") long pid
-            , @Field("session_token") String session_token);
 
     /**
      * 标签rename
@@ -682,7 +627,7 @@ public interface MyHttpService {
      * @return
      */
     @FormUrlEncoded
-    @PUT(URLUtils.Note.TAG)
+    @PUT(URLUtils.Tags.TAG)
     Observable<CommonBean> tagRename(
             @Field("name") String phone
             , @Field("tag_id") long pid
@@ -693,7 +638,7 @@ public interface MyHttpService {
      *
      * @return
      */
-    @GET(URLUtils.Note.TAGLIST)
+    @GET(URLUtils.Tags.TAG)
     Observable<TagListBean> getTagList(@Query("session_token") String session_token);
 
 
@@ -714,7 +659,7 @@ public interface MyHttpService {
      */
     @Headers("Content-Type:application/x-www-form-urlencoded")
     @FormUrlEncoded
-    @HTTP(method = "DELETE", path = URLUtils.Note.TAG, hasBody = true)
+    @HTTP(method = "DELETE", path = URLUtils.Tags.TAG, hasBody = true)
     Observable<CommonBean> deleteTag(@Field("tag_id") long tag_id
             , @Field("session_token") String session_token);
 
@@ -724,19 +669,9 @@ public interface MyHttpService {
      * @return
      */
     @FormUrlEncoded
-    @PUT(URLUtils.Note.DEFAULT_FOLDER)
+    @PUT(URLUtils.Cat.DEFAULT_FOLDER)
     Observable<CommonBean> setDefaultFolder(@Field("folder_id") long pid
             , @Field("session_token") String session_token);
-
-
-    /**
-     * verifyEmail
-     *
-     * @return
-     */
-    @FormUrlEncoded
-    @POST(URLUtils.Note.VERIFY_EMAIL)
-    Observable<CommonBean> verifyEmail(@Field("session_token") String session_token);
 
 
     /**
@@ -744,7 +679,7 @@ public interface MyHttpService {
      *
      * @return
      */
-    @GET(URLUtils.Note.NOTE_LIST_FOLDERID)
+    @GET(URLUtils.Cat.FOLDER_NOTE_LIST)
     Observable<NoteListBean> getNoteListByFolderId(
             @Query("folder_id") long folder_id
             , @Query("pagenum") int pagenum
@@ -758,7 +693,7 @@ public interface MyHttpService {
      *
      * @return
      */
-    @GET(URLUtils.Note.NOTE_LIST_TAGID)
+    @GET(URLUtils.Tags.TAG)
     Observable<NoteListBean> getNoteListByTagId(
             @Query("tag_id") long folder_id
             , @Query("pagenum") int pagenum
@@ -766,16 +701,85 @@ public interface MyHttpService {
             , @Query("sortord") String sortord
             , @Query("session_token") String session_token);
 
-    //-------------------------------------------------folder/cat相关----------------------------------------------------
+    //-------------------------------------------------folder/cat（文件夹）相关----------------------------------------------------
 
     /**
-     * getParentFolder
+     * 获取文件夹
      *
      * @return
      */
-    @GET(URLUtils.Note.FOLDER)
-    Observable<AllFolderBean> getParentFolder(
+    @GET(URLUtils.Cat.FOLDER)
+    Observable<AllFolderBean> getFolder(
             @Query("session_token") String session_token);
+
+    /**
+     * 获取folder_id下的文件夹
+     *
+     * @return
+     */
+    @GET(URLUtils.Cat.FOLDER)
+    Observable<AllFolderBean> getFolderByFolderID(
+            @Query("folder_id") long folder_id
+            , @Query("session_token") String session_token);
+
+
+    /**
+     * 新建文件夹(第一次登陆要创建)
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST(URLUtils.Cat.FOLDER)
+    Observable<CommonBean> addNewFolder(@Field("name") String name
+            , @Field("session_token") String session_token);
+
+    /**
+     * 新建 父文件夹下的子文件夹
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST(URLUtils.Cat.FOLDER)
+    Observable<CommonBean> folderAdd(
+            @Field("name") String name
+            , @Field("pid") long pid
+            , @Field("session_token") String session_token);
+
+
+    /**
+     * 修改文件夹
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @PUT(URLUtils.Cat.FOLDER)
+    Observable<CommonBean> renameFolder(
+            @Field("name") String phone
+            , @Field("folder_id") long pid
+            , @Field("session_token") String session_token);
+
+    /**
+     * TODO 删除文件夹
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @DELETE(URLUtils.Cat.FOLDER)
+    Observable<CommonBean> deleteFolder2(@Field("folder_id") long pid
+            , @Field("session_token") String session_token);
+
+    /**
+     * TODO 删除文件夹
+     * <p>
+     * deleteFodler
+     *
+     * @return
+     */
+    @Headers("Content-Type:application/x-www-form-urlencoded")
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = URLUtils.Cat.FOLDER, hasBody = true)
+    Observable<CommonBean> deleteFolder(@Field("folder_id") long tag_id
+            , @Field("session_token") String session_token);
 
     /**
      * 同步syncRecoveryNote
@@ -795,26 +799,13 @@ public interface MyHttpService {
      *
      * @return
      */
-    @GET(URLUtils.Cat.FOLDER_TRASH)
+    @GET(URLUtils.Note.NOTE_TRASH)
     Observable<NoteListBean> getNoteListByTrash(
             @Query("pagesize") int pagesize
             , @Query("pagenum") int pagenum
             , @Query("sortord") String sortord
             , @Query("session_token") String session_token);
 
-    /**
-     * <p>
-     * 删除文件夹
-     * <p>
-     * deleteFodler
-     *
-     * @return
-     */
-    @Headers("Content-Type:application/x-www-form-urlencoded")
-    @FormUrlEncoded
-    @HTTP(method = "DELETE", path = URLUtils.Cat.FOLDER, hasBody = true)
-    Observable<CommonBean> folderDelete(@Field("folder_id") long tag_id
-            , @Field("session_token") String session_token);
 
     //-------------------------------------------------NoteList----------------------------------------------------
 

@@ -54,7 +54,7 @@ public class CatFragModuleImpl implements ICatFragModule {
     public void mGetParentFolder(final OnCatFragListener listener) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .getParentFolder(settings.token)//接口方法
+                .getFolder(settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -91,7 +91,7 @@ public class CatFragModuleImpl implements ICatFragModule {
     public void mGetFolderByFolderId(final OnCatFragListener listener, final long catId) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .syncGetFolderByFodlerId(catId, settings.token)//接口方法
+                .getFolderByFolderID(catId, settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -200,7 +200,7 @@ public class CatFragModuleImpl implements ICatFragModule {
     public void mfolderAdd(final OnSynchronizeDataListener listener, final int position, final int arraySize, String name) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .syncFolderAdd(name, settings.token)//接口方法
+                .addNewFolder(name, settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -272,7 +272,7 @@ public class CatFragModuleImpl implements ICatFragModule {
     public void GetFolder(final OnSynchronizeDataListener listener) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .syncGetFolder(settings.token)//接口方法
+                .getFolder(settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -308,7 +308,7 @@ public class CatFragModuleImpl implements ICatFragModule {
     public void mGetFoldersByFolderId(final OnSynchronizeDataListener listener, final long id, final int position, final List<AllFolderItemBean> beans) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .syncGetFolderByFodlerId(id, settings.token)//接口方法
+                .getFolderByFolderID(id, settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -346,7 +346,7 @@ public class CatFragModuleImpl implements ICatFragModule {
         TNSettings settings = TNSettings.getInstance();
         if (catID == -1L) {
             MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                    .folderAdd(name, settings.token)//接口方法
+                    .addNewFolder(name, settings.token)//接口方法
                     .subscribeOn(Schedulers.io())//固定样式
                     .unsubscribeOn(Schedulers.io())//固定样式
                     .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -476,7 +476,7 @@ public class CatFragModuleImpl implements ICatFragModule {
         MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
 
         //拼接url(本app后台特殊嗜好，蛋疼):
-        String url = URLUtils.API_BASE_URL + URLUtils.Home.UPLOAD_PIC + "?" + "filename=" + file.getName() + "&session_token=" + settings.token;
+        String url = URLUtils.API_BASE_URL + URLUtils.Home.UPLOAD_FILE + "?" + "filename=" + file.getName() + "&session_token=" + settings.token;
         MLog.d("FeedBackPic", "url=" + url + "\nfilename=" + file.toString() + "---" + file.getName());
         url = url.replace(" ", "%20");//文件名有空格
 
@@ -613,7 +613,7 @@ public class CatFragModuleImpl implements ICatFragModule {
 
 
         //拼接url(本app后台特殊嗜好，蛋疼):
-        String url = URLUtils.API_BASE_URL + URLUtils.Home.UPLOAD_PIC + "?" + "filename=" + file.getName() + "&session_token=" + settings.token;
+        String url = URLUtils.API_BASE_URL + URLUtils.Home.UPLOAD_FILE + "?" + "filename=" + file.getName() + "&session_token=" + settings.token;
         MLog.d("FeedBackPic", "url=" + url + "\nfilename=" + file.toString() + "---" + file.getName());
         url = url.replace(" ", "%20");//文件名有空格
 
@@ -748,7 +748,7 @@ public class CatFragModuleImpl implements ICatFragModule {
         MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
 
         //拼接url(本app后台特殊嗜好，蛋疼):
-        String url = URLUtils.API_BASE_URL + URLUtils.Home.UPLOAD_PIC + "?" + "filename=" + file.getName() + "&session_token=" + settings.token;
+        String url = URLUtils.API_BASE_URL + URLUtils.Home.UPLOAD_FILE + "?" + "filename=" + file.getName() + "&session_token=" + settings.token;
         MLog.d("FeedBackPic", "url=" + url + "\nfilename=" + file.toString() + "---" + file.getName());
         url = url.replace(" ", "%20");//文件名有空格
 
@@ -988,7 +988,7 @@ public class CatFragModuleImpl implements ICatFragModule {
         MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
 
         //拼接url(本app后台特殊嗜好，蛋疼):
-        String url = URLUtils.API_BASE_URL + URLUtils.Home.UPLOAD_PIC + "?" + "filename=" + file.getName() + "&session_token=" + settings.token;
+        String url = URLUtils.API_BASE_URL + URLUtils.Home.UPLOAD_FILE + "?" + "filename=" + file.getName() + "&session_token=" + settings.token;
         MLog.d("FeedBackPic", "url=" + url + "\nfilename=" + file.toString() + "---" + file.getName());
         url = url.replace(" ", "%20");//文件名有空格
 

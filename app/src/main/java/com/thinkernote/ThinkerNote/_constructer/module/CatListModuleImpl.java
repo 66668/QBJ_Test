@@ -30,7 +30,7 @@ public class CatListModuleImpl implements ICatListModule {
     public void mParentFolder(final OnCatListListener listener) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .getParentFolder(settings.token)//接口方法
+                .getFolder(settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -66,7 +66,7 @@ public class CatListModuleImpl implements ICatListModule {
     public void mGetFolderByFolderId(final OnCatListListener listener, final long catId) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .syncGetFolderByFodlerId(catId, settings.token)//接口方法
+                .getFolderByFolderID(catId, settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
