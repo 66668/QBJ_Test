@@ -16,7 +16,7 @@ import com.thinkernote.ThinkerNote.bean.main.AllNotesIdsBean;
 import com.thinkernote.ThinkerNote.bean.main.GetNoteByNoteIdBean;
 import com.thinkernote.ThinkerNote.bean.main.MainUpgradeBean;
 import com.thinkernote.ThinkerNote.bean.main.NoteListBean;
-import com.thinkernote.ThinkerNote.bean.main.OldNoteAddBean;
+import com.thinkernote.ThinkerNote.bean.main.NewNoteBean;
 import com.thinkernote.ThinkerNote.bean.main.OldNotePicBean;
 import com.thinkernote.ThinkerNote.bean.main.TagListBean;
 import com.thinkernote.ThinkerNote.bean.main.WxpayBean;
@@ -335,7 +335,7 @@ public interface MyHttpService {
     @POST(URLUtils.Log.VERIFY_EMAIL)
     Observable<CommonBean> verifyEmail(@Field("session_token") String session_token);
 
-    //-------------------------------------------------main相关----------------------------------------------------d
+    //-------------------------------------------------main相关----------------------------------------------------
 
     /**
      * 13 检查更新
@@ -400,7 +400,7 @@ public interface MyHttpService {
             , @Field("session_token") String session_token);
 
 
-    //-------------------------------------------------同步相关----------------------------------------------------
+    //-------------------------------------------------笔记Note相关----------------------------------------------------
 
 
     /**
@@ -430,13 +430,13 @@ public interface MyHttpService {
 
 
     /**
-     * 同步oldNoteAdd
+     * 创建笔记（创建old，新的）
      *
      * @return
      */
     @FormUrlEncoded
     @POST(URLUtils.Note.NOTE)
-    Observable<OldNoteAddBean> syncOldNoteAdd(
+    Observable<NewNoteBean> addNewNote(
             @Field("title") String title
             , @Field("content") String content
             , @Field("tags") String tags
@@ -451,134 +451,58 @@ public interface MyHttpService {
 
 
     /**
-     * 同步NewNote
-     *
-     * @return
-     */
-    @FormUrlEncoded
-    @POST(URLUtils.Note.NOTE)
-    Observable<OldNoteAddBean> syncNewNoteAdd(
-            @Field("title") String title
-            , @Field("content") String content
-            , @Field("tags") String tags
-            , @Field("folder_id") long folder_id
-            , @Field("create_time") int create_time
-            , @Field("update_time") int update_time
-            , @Field("longitude") int longitude
-            , @Field("latitude") int latitude
-            , @Field("address") String address
-            , @Field("radius") int radius
-            , @Field("session_token") String session_token);
-
-
-    /**
-     * 同步syncRecoveryNoteAdd
-     *
-     * @return
-     */
-    @FormUrlEncoded
-    @POST(URLUtils.Note.NOTE)
-    Observable<OldNoteAddBean> syncRecoveryNoteAdd(
-            @Field("title") String title
-            , @Field("content") String content
-            , @Field("tags") String tags
-            , @Field("folder_id") long folder_id
-            , @Field("create_time") int create_time
-            , @Field("update_time") int update_time
-            , @Field("longitude") int longitude
-            , @Field("latitude") int latitude
-            , @Field("address") String address
-            , @Field("radius") int radius
-            , @Field("session_token") String session_token);
-
-    /**
-     * 同步syncRecoveryNote
-     *
-     * @return
-     */
-    @FormUrlEncoded
-    @PUT(URLUtils.Note.NOTE_TRASH)
-    Observable<CommonBean> syncRecoveryNote(@Field("note_id") long note_id
-            , @Field("session_token") String session_token);
-
-
-    /**
-     * 同步 syncTagList
-     *
-     * @return
-     */
-    @GET(URLUtils.Tags.TAG)
-    Observable<TagListBean> syncTagList(@Query("session_token") String session_token);
-
-
-    /**
-     * 同步 DeleteNote
-     * 使用 delete请求
+     * TODO  删除笔记
      *
      * @return
      */
     @Headers("Content-Type:application/x-www-form-urlencoded")
     @HTTP(method = "DELETE", path = URLUtils.Note.NOTE, hasBody = true)
     @FormUrlEncoded
-    Observable<CommonBean> syncDeleteNote(
+    Observable<CommonBean> deleteNote(
             @Field("note_id") long note_id
             , @Field("session_token") String session_token);
 
-
     /**
-     * 2-9
-     * 同步 DeleteRealNote1
-     * 使用 delete请求
+     * TODO 删除笔记
      *
      * @return
      */
-    @Headers("Content-Type:application/x-www-form-urlencoded")
-    @HTTP(method = "DELETE", path = URLUtils.Note.NOTE, hasBody = true)
     @FormUrlEncoded
-    Observable<CommonBean> syncDeleteRealNote1(
+    @DELETE(URLUtils.Note.NOTE)
+    Observable<CommonBean> deleteNote2(@Field("note_id") long note_id
+            , @Field("session_token") String session_token);
+
+    /**
+     * 删除回收站笔记
+     *
+     * @return
+     */
+    @DELETE(URLUtils.Note.NOTE_TRASH)
+    @FormUrlEncoded
+    Observable<CommonBean> deleteTrashNote(
             @Field("note_id") long note_id
             , @Field("session_token") String session_token);
 
-
     /**
-     * 同步 DeleteRealNote2
-     * 使用 delete请求
+     * TODO 删除回收站笔记
      *
      * @return
      */
     @Headers("Content-Type:application/x-www-form-urlencoded")
     @HTTP(method = "DELETE", path = URLUtils.Note.NOTE_TRASH, hasBody = true)
     @FormUrlEncoded
-    Observable<CommonBean> syncDeleteRealNote2(
+    Observable<CommonBean> deleteTrashNote2(
             @Field("note_id") long note_id
             , @Field("session_token") String session_token);
 
     /**
-     * 同步 getAllNotsId
-     *
-     * @return
-     */
-    @GET(URLUtils.Note.ALLNOTESID)
-    Observable<AllNotesIdsBean> syncAllNotsId(@Query("session_token") String session_token);
-
-    /**
-     * 同步 GetFolderNoteIds
-     *
-     * @return
-     */
-    @GET(URLUtils.Cat.FOLDER_NOTEIDS)
-    Observable<AllNotesIdsBean> GetFolderNoteIds(@Query("folder_id") long folder_id
-            , @Query("session_token") String session_token);
-
-
-    /**
-     * 同步 EditNote
+     * 修改笔记
      *
      * @return
      */
     @FormUrlEncoded
     @PUT(URLUtils.Note.NOTE)
-    Observable<CommonBean> syncEditNote(
+    Observable<CommonBean> editNote(
             @Field("note_id") long note_id
             , @Field("title") String title
             , @Field("content") String content
@@ -589,26 +513,61 @@ public interface MyHttpService {
             , @Field("session_token") String session_token);
 
     /**
-     * 同步 getAllNotsId
+     * 获取笔记
      *
      * @return
      */
     @GET(URLUtils.Note.NOTE)
-    Observable<CommonBean3<GetNoteByNoteIdBean>> GetNoteByNoteId(
+    Observable<CommonBean3<GetNoteByNoteIdBean>> getNoteByNoteId(
             @Query("note_id") long note_id
             , @Query("session_token") String session_token);
 
-
     /**
-     * 同步 GetTrashNoteIds
+     * 获取回收站所有的笔记id
      *
      * @return
      */
-    @GET(URLUtils.Note.TRASH_NOTE)
-    Observable<AllNotesIdsBean> GetTrashNoteIds(@Query("session_token") String session_token);
+    @GET(URLUtils.Note.NOTE_TRASH_ID)
+    Observable<AllNotesIdsBean> getTrashNoteIds(@Query("session_token") String session_token);
+
+    /**
+     * 修改 回收站笔记
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @PUT(URLUtils.Note.NOTE_TRASH)
+    Observable<CommonBean> putRecoveryNote(@Field("note_id") long note_id
+            , @Field("session_token") String session_token);
 
 
-    //-------------------------------------------------写笔记相关----------------------------------------------------
+    /**
+     * /**
+     * 同步 syncTagList
+     *
+     * @return
+     */
+    @GET(URLUtils.Tags.TAG)
+    Observable<TagListBean> syncTagList(@Query("session_token") String session_token);
+
+
+    /**
+     * 同步 getAllNotsId
+     *
+     * @return
+     */
+    @GET(URLUtils.Note.NOTE_ALL_ID)
+    Observable<AllNotesIdsBean> syncAllNotsId(@Query("session_token") String session_token);
+
+    /**
+     * 同步 GetFolderNoteIds
+     *
+     * @return
+     */
+    @GET(URLUtils.Cat.NOTE_ID_LIST_BY_FOLDER)
+    Observable<AllNotesIdsBean> GetFolderNoteIds(@Query("folder_id") long folder_id
+            , @Query("session_token") String session_token);
+
 
     /**
      * 新建 标签
@@ -618,6 +577,16 @@ public interface MyHttpService {
     @FormUrlEncoded
     @POST(URLUtils.Tags.TAG)
     Observable<CommonBean> tagAdd(@Field("name") String phone
+            , @Field("session_token") String session_token);
+
+    /**
+     * 新建 标签
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST(URLUtils.Tags.TAG)
+    Observable<CommonBean> addNewTag(@Field("name") String phone
             , @Field("session_token") String session_token);
 
 
@@ -643,16 +612,6 @@ public interface MyHttpService {
 
 
     /**
-     * getNote
-     *
-     * @return
-     */
-    @GET(URLUtils.Note.NOTE)
-    Observable<CommonBean> getNote(@Query("note_id") long note_id
-            , @Query("session_token") String session_token);
-
-
-    /**
      * deleteTag
      *
      * @return
@@ -663,23 +622,13 @@ public interface MyHttpService {
     Observable<CommonBean> deleteTag(@Field("tag_id") long tag_id
             , @Field("session_token") String session_token);
 
-    /**
-     * 设置默认文件路径
-     *
-     * @return
-     */
-    @FormUrlEncoded
-    @PUT(URLUtils.Cat.DEFAULT_FOLDER)
-    Observable<CommonBean> setDefaultFolder(@Field("folder_id") long pid
-            , @Field("session_token") String session_token);
-
 
     /**
      * NoteListByFolderId
      *
      * @return
      */
-    @GET(URLUtils.Cat.FOLDER_NOTE_LIST)
+    @GET(URLUtils.Cat.NOTE_LIST_BY_FOLDER)
     Observable<NoteListBean> getNoteListByFolderId(
             @Query("folder_id") long folder_id
             , @Query("pagenum") int pagenum
@@ -740,11 +689,10 @@ public interface MyHttpService {
      */
     @FormUrlEncoded
     @POST(URLUtils.Cat.FOLDER)
-    Observable<CommonBean> folderAdd(
+    Observable<CommonBean> addNewFolderByPid(
             @Field("name") String name
             , @Field("pid") long pid
             , @Field("session_token") String session_token);
-
 
     /**
      * 修改文件夹
@@ -782,7 +730,17 @@ public interface MyHttpService {
             , @Field("session_token") String session_token);
 
     /**
-     * 同步syncRecoveryNote
+     * 设置默认文件夹
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @PUT(URLUtils.Cat.FOLDER_DEFAULT)
+    Observable<CommonBean> setDefaultFolder(@Field("folder_id") long pid
+            , @Field("session_token") String session_token);
+
+    /**
+     * 移动文件夹
      *
      * @return
      */
@@ -841,16 +799,6 @@ public interface MyHttpService {
             , @Field("email") String email
             , @Field("session_token") String session_token);
 
-    /**
-     * set
-     *
-     * @return
-     */
-    @FormUrlEncoded
-    @PUT(URLUtils.Cat.DEFAULT_FOLDER)
-    Observable<CommonBean> setDefaultFolder(
-            @Field("folder_id") String folder_id
-            , @Field("session_token") String session_token);
 
 //*************************************************以下不使用***********************************************
 

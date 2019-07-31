@@ -12,7 +12,7 @@ android {
         versionName "5.8.2"
 
         // 语音转文字没有对应的64位so包，所以只能使用32位的，配置如下：
-        ndk{
+        ndk {
             abiFilters "armeabi"
 
 //                    ，"arm64-v8a","armeabi-v7a","x86","x86_64"//最好不要加，会导致app包变大
@@ -70,12 +70,15 @@ android {
 dependencies {
 
     //系统包依赖
-    implementation 'androidx.appcompat:appcompat:1.0.0'//替换 com.android.support:appcompat-v7:28.0.2
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'//替换 com.android.support:support-v4:28.0.2
+    implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
+//替换 com.android.support:appcompat-v7:28.0.2
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+//替换 com.android.support:support-v4:28.0.2
 
 
     //libs包依赖
     implementation files('libs/alipaySdk-20161009.jar')
+    //TODO 后期删除
     implementation files('libs/android-async-http-1.4.4.jar')
     implementation files('libs/android_api.jar')
 
@@ -106,57 +109,26 @@ dependencies {
 
     //    implementation 'jp.wasabeef:richeditor-android:1.2.2'
 
-    //-----------------------------------------------------------------------------------------------------------
 
-    //---------------------------------使用最新网络框架--开始（不可缺少的依赖）----------------------------------------
-
-    //-----------------------------------------------------------------------------------------------------------
+    //---------------------------------使用最新网络框架--开始----------------------------------------
 
     //=============okhttp3相关==============
-
-    //local： https://github.com/square/okhttp
-
-    //    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
-
-    //    //okhttp:打印网络请求的log日志
-
-    //    implementation 'com.squareup.okio:okio:1.14.1'
-
     //    //okhttp3: 网络请求log 拦截器
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
-
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.0.1'
     //=============retrofit相关：说明：retrofit2之后，自动绑定了okhttp3和okio，所以不需要再添加==============
-
-    //local： https://github.com/square/retrofit
-    implementation('com.squareup.retrofit2:retrofit:2.4.0') {
+    implementation('com.squareup.retrofit2:retrofit:2.6.0') {
         //retrofit2内绑定的依赖
-        exclude module: 'com.squareup.okhttp3:okhttp:3.10.0'
-        exclude module: 'com.squareup.okio:okio:1.14.1'
+        exclude module: 'com.squareup.okhttp3:okhttp:4.0.1'
+        exclude module: 'com.squareup.okio:okio:2.2.2'
     }
-
     //RxJava2 请求结果适配器
-    implementation 'com.squareup.retrofit2:adapter-rxjava:2.4.0'
-
+    implementation 'com.squareup.retrofit2:adapter-rxjava:2.6.0'
     //RxJava2 请求结果gson格式转换
-    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
-
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
     //=============rxjava相关==============
-
-    //rxjava 响应式
-
-    //    implementation 'io.reactivex.rxjava2:rxjava:2.1.14'
-
-    //    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
-
-    //注意不要引错包，使用下边的，而不是上边的
-    implementation 'io.reactivex:rxjava:1.3.8'
+    implementation "io.reactivex.rxjava2:rxjava:2.2.10"
     implementation 'io.reactivex:rxandroid:1.2.1'
 
-    //-----------------------------------------------------------------------------------------------------------
-
-    //---------------------------------使用最新网络框架--结束----------------------------------------
-
-    //-----------------------------------------------------------------------------------------------------------
 
     //-------------------------leakcanary内存泄漏检测 打包时注意清除--------------------------------
 

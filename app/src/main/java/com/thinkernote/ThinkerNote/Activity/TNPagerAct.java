@@ -16,7 +16,6 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.thinkernote.ThinkerNote.Action.TNAction;
 import com.thinkernote.ThinkerNote.Activity.fragment.TNPageCats;
 import com.thinkernote.ThinkerNote.Activity.fragment.TNPageNotes;
 import com.thinkernote.ThinkerNote.Activity.fragment.TNPageTags;
@@ -29,7 +28,6 @@ import com.thinkernote.ThinkerNote.Data.TNTag;
 import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.Database.TNSQLString;
-import com.thinkernote.ThinkerNote.General.TNActionType;
 import com.thinkernote.ThinkerNote.General.TNActionUtils;
 import com.thinkernote.ThinkerNote.General.TNConst;
 import com.thinkernote.ThinkerNote.General.TNHandleError;
@@ -49,7 +47,7 @@ import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.base.TNChildViewBase;
 import com.thinkernote.ThinkerNote.bean.main.AllNotesIdsBean;
 import com.thinkernote.ThinkerNote.bean.main.GetNoteByNoteIdBean;
-import com.thinkernote.ThinkerNote.bean.main.OldNoteAddBean;
+import com.thinkernote.ThinkerNote.bean.main.NewNoteBean;
 import com.thinkernote.ThinkerNote.bean.main.OldNotePicBean;
 
 import org.json.JSONObject;
@@ -1052,7 +1050,7 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
     /**
      * 调用OldNoteAdd接口，就触发更新db
      */
-    private void upDataNoteLocalIdSQL(OldNoteAddBean oldNoteAddBean, TNNote note) {
+    private void upDataNoteLocalIdSQL(NewNoteBean oldNoteAddBean, TNNote note) {
         long id = oldNoteAddBean.getId();
         TNDb.beginTransaction();
         try {
@@ -2143,7 +2141,7 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
     @Override
     public void onSyncNewNoteAddSuccess(Object obj, int position, int arraySize, boolean isNewDb) {
         MLog.d("sync----2-6-->Success");
-        OldNoteAddBean newNoteBean = (OldNoteAddBean) obj;
+        NewNoteBean newNoteBean = (NewNoteBean) obj;
         //更新数据库
         if (isNewDb) {//false时表示老数据库的数据上传，不用在修改本地的数据
             upDataNoteLocalIdSQL(newNoteBean, addNewNotes.get(position));
@@ -2245,7 +2243,7 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
     @Override
     public void onSyncRecoveryNoteAddSuccess(Object obj, int position, int arraySize, boolean isNewDb) {
         MLog.d("sync----2-7-3-->Success");
-        OldNoteAddBean recoveryNoteBean = (OldNoteAddBean) obj;
+        NewNoteBean recoveryNoteBean = (NewNoteBean) obj;
         //更新数据库
         if (isNewDb) {//false时表示老数据库的数据上传，不用在修改本地的数据
             upDataNoteLocalIdSQL(recoveryNoteBean, recoveryNotes.get(position));

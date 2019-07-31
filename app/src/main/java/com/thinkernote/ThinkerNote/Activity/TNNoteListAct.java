@@ -23,7 +23,6 @@ import android.widget.TextView;
 
 import com.thinkernote.ThinkerNote.Action.TNAction;
 import com.thinkernote.ThinkerNote.Action.TNAction.TNActionResult;
-import com.thinkernote.ThinkerNote.Action.TNAction.TNRunner;
 import com.thinkernote.ThinkerNote.Adapter.TNNotesAdapter;
 import com.thinkernote.ThinkerNote.DBHelper.CatDbHelper;
 import com.thinkernote.ThinkerNote.DBHelper.NoteAttrDbHelper;
@@ -43,7 +42,6 @@ import com.thinkernote.ThinkerNote.General.TNConst;
 import com.thinkernote.ThinkerNote.General.TNHandleError;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
-import com.thinkernote.ThinkerNote.General.TNUtilsDialog;
 import com.thinkernote.ThinkerNote.General.TNUtilsHtml;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
@@ -64,7 +62,7 @@ import com.thinkernote.ThinkerNote.bean.main.AllFolderItemBean;
 import com.thinkernote.ThinkerNote.bean.main.AllNotesIdsBean;
 import com.thinkernote.ThinkerNote.bean.main.GetNoteByNoteIdBean;
 import com.thinkernote.ThinkerNote.bean.main.NoteListBean;
-import com.thinkernote.ThinkerNote.bean.main.OldNoteAddBean;
+import com.thinkernote.ThinkerNote.bean.main.NewNoteBean;
 import com.thinkernote.ThinkerNote.bean.main.OldNotePicBean;
 import com.thinkernote.ThinkerNote.bean.main.TagItemBean;
 import com.thinkernote.ThinkerNote.bean.main.TagListBean;
@@ -1257,7 +1255,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
     /**
      * 调用OldNoteAdd接口，就触发更新db
      */
-    private void upDataNoteLocalIdSQL1(OldNoteAddBean oldNoteAddBean, TNNote note) {
+    private void upDataNoteLocalIdSQL1(NewNoteBean oldNoteAddBean, TNNote note) {
         long id = oldNoteAddBean.getId();
         TNDb.beginTransaction();
         try {
@@ -1692,7 +1690,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
     /**
      * 调用OldNoteAdd接口，就触发更新db
      */
-    private void upDataNoteLocalIdSQL2(OldNoteAddBean oldNoteAddBean, TNNote note) {
+    private void upDataNoteLocalIdSQL2(NewNoteBean oldNoteAddBean, TNNote note) {
         upDataNoteLocalIdSQL2(oldNoteAddBean, note);
     }
 
@@ -3692,7 +3690,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
         //2-3OldNoteAdd
         @Override
         public void onSyncOldNoteAddSuccess(Object obj, int position, int arraySize, boolean isNewDb) {
-            OldNoteAddBean oldNoteAddBean = (OldNoteAddBean) obj;
+            NewNoteBean oldNoteAddBean = (NewNoteBean) obj;
 
             if (isNewDb) {//false时表示老数据库的数据上传，不用在修改本地的数据
                 upDataNoteLocalIdSQL1(oldNoteAddBean, addOldNotes.get(position));
@@ -3808,7 +3806,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
         @Override
         public void onSyncNewNoteAddSuccess(Object obj, int position, int arraySize, boolean isNewDb) {
 
-            OldNoteAddBean newNoteBean = (OldNoteAddBean) obj;
+            NewNoteBean newNoteBean = (NewNoteBean) obj;
             //更新数据库
             if (isNewDb) {//false时表示老数据库的数据上传，不用在修改本地的数据
                 upDataNoteLocalIdSQL1(newNoteBean, addNewNotes.get(position));
@@ -3903,7 +3901,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
         @Override
         public void onSyncRecoveryNoteAddSuccess(Object obj, int position, int arraySize, boolean isNewDb) {
 
-            OldNoteAddBean recoveryNoteBean = (OldNoteAddBean) obj;
+            NewNoteBean recoveryNoteBean = (NewNoteBean) obj;
             //更新数据库
             if (isNewDb) {//false时表示老数据库的数据上传，不用在修改本地的数据
                 upDataNoteLocalIdSQL1(recoveryNoteBean, recoveryNotes.get(position));
@@ -4167,7 +4165,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
         @Override
         public void onSyncNewNoteAddSuccess2(Object obj, int position, int arraySize, boolean isNewDb) {
 
-            OldNoteAddBean newNoteBean = (OldNoteAddBean) obj;
+            NewNoteBean newNoteBean = (NewNoteBean) obj;
             //更新数据库
             if (isNewDb) {//false时表示老数据库的数据上传，不用在修改本地的数据
                 upDataNoteLocalIdSQL2(newNoteBean, addNewNotes.get(position));
@@ -4255,7 +4253,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
         @Override
         public void onSyncRecoveryNoteAddSuccess2(Object obj, int position, int arraySize, boolean isNewDb) {
 
-            OldNoteAddBean recoveryNoteBean = (OldNoteAddBean) obj;
+            NewNoteBean recoveryNoteBean = (NewNoteBean) obj;
             //更新数据库
             if (isNewDb) {//false时表示老数据库的数据上传，不用在修改本地的数据
                 upDataNoteLocalIdSQL2(recoveryNoteBean, recoveryNotes.get(position));

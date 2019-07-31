@@ -24,7 +24,7 @@ import com.thinkernote.ThinkerNote.bean.main.AllFolderItemBean;
 import com.thinkernote.ThinkerNote.bean.main.AllNotesIdsBean;
 import com.thinkernote.ThinkerNote.bean.main.GetNoteByNoteIdBean;
 import com.thinkernote.ThinkerNote.bean.main.NoteListBean;
-import com.thinkernote.ThinkerNote.bean.main.OldNoteAddBean;
+import com.thinkernote.ThinkerNote.bean.main.NewNoteBean;
 import com.thinkernote.ThinkerNote.bean.main.OldNotePicBean;
 import com.thinkernote.ThinkerNote.bean.main.TagListBean;
 import com.thinkernote.ThinkerNote.http.MyHttpService;
@@ -136,7 +136,7 @@ public class NoteListModuleImpl implements INoteListModule {
     public void mGetDataByNoteId(final OnNoteListListener listener, final long noteId) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .GetNoteByNoteId(noteId, settings.token)
+                .getNoteByNoteId(noteId, settings.token)
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -451,7 +451,7 @@ public class NoteListModuleImpl implements INoteListModule {
                     });
         } else {
             MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                    .folderAdd(name, catID, settings.token)//接口方法
+                    .addNewFolderByPid(name, catID, settings.token)//接口方法
                     .subscribeOn(Schedulers.io())//固定样式
                     .unsubscribeOn(Schedulers.io())//固定样式
                     .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -588,11 +588,11 @@ public class NoteListModuleImpl implements INoteListModule {
 
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .syncOldNoteAdd(note.title, content, note.tagStr, note.catId, note.createTime, note.lastUpdate, note.lbsLongitude, note.lbsLatitude, note.lbsAddress, note.lbsRadius, settings.token)//接口方法
+                .addNewNote(note.title, content, note.tagStr, note.catId, note.createTime, note.lastUpdate, note.lbsLongitude, note.lbsLatitude, note.lbsAddress, note.lbsRadius, settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
-                .subscribe(new Observer<OldNoteAddBean>() {//固定样式，可自定义其他处理
+                .subscribe(new Observer<NewNoteBean>() {//固定样式，可自定义其他处理
                     @Override
                     public void onCompleted() {
                         MLog.d(TAG, "mfolderAdd--onCompleted");
@@ -605,7 +605,7 @@ public class NoteListModuleImpl implements INoteListModule {
                     }
 
                     @Override
-                    public void onNext(OldNoteAddBean bean) {
+                    public void onNext(NewNoteBean bean) {
                         MLog.d(TAG, "mfolderAdd-onNext");
 
                         //处理返回结果
@@ -720,11 +720,11 @@ public class NoteListModuleImpl implements INoteListModule {
     public void mNewNote(final OnSynchronizeDataListener listener, final int position, final int arraySize, TNNote note, final boolean isNewDb, String content) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .syncNewNoteAdd(note.title, content, note.tagStr, note.catId, note.createTime, note.lastUpdate, note.lbsLongitude, note.lbsLatitude, note.lbsAddress, note.lbsRadius, settings.token)//接口方法
+                .addNewNote(note.title, content, note.tagStr, note.catId, note.createTime, note.lastUpdate, note.lbsLongitude, note.lbsLatitude, note.lbsAddress, note.lbsRadius, settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
-                .subscribe(new Observer<OldNoteAddBean>() {//固定样式，可自定义其他处理
+                .subscribe(new Observer<NewNoteBean>() {//固定样式，可自定义其他处理
                     @Override
                     public void onCompleted() {
                         MLog.d(TAG, "mNewNote--onCompleted");
@@ -737,7 +737,7 @@ public class NoteListModuleImpl implements INoteListModule {
                     }
 
                     @Override
-                    public void onNext(OldNoteAddBean bean) {
+                    public void onNext(NewNoteBean bean) {
                         MLog.d(TAG, "mNewNote-onNext");
 
                         //处理返回结果
@@ -756,7 +756,7 @@ public class NoteListModuleImpl implements INoteListModule {
     public void mRecoveryNote(final OnSynchronizeDataListener listener, final long noteID, final int position, int arrySize) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .syncRecoveryNote(noteID, settings.token)
+                .putRecoveryNote(noteID, settings.token)
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -853,11 +853,11 @@ public class NoteListModuleImpl implements INoteListModule {
     public void mRecoveryNoteAdd(final OnSynchronizeDataListener listener, final int position, final int arraySize, TNNote note, final boolean isNewDb, String content) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .syncRecoveryNoteAdd(note.title, content, note.tagStr, note.catId, note.createTime, note.lastUpdate, note.lbsLongitude, note.lbsLatitude, note.lbsAddress, note.lbsRadius, settings.token)//接口方法
+                .addNewNote(note.title, content, note.tagStr, note.catId, note.createTime, note.lastUpdate, note.lbsLongitude, note.lbsLatitude, note.lbsAddress, note.lbsRadius, settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
-                .subscribe(new Observer<OldNoteAddBean>() {//固定样式，可自定义其他处理
+                .subscribe(new Observer<NewNoteBean>() {//固定样式，可自定义其他处理
                     @Override
                     public void onCompleted() {
                         MLog.d(TAG, "mRecoveryNoteAdd--onCompleted");
@@ -870,7 +870,7 @@ public class NoteListModuleImpl implements INoteListModule {
                     }
 
                     @Override
-                    public void onNext(OldNoteAddBean bean) {
+                    public void onNext(NewNoteBean bean) {
                         MLog.d(TAG, "mRecoveryNoteAdd-onNext");
 
                         //处理返回结果
@@ -889,7 +889,7 @@ public class NoteListModuleImpl implements INoteListModule {
     public void mDeleteNote(final OnSynchronizeDataListener listener, final long noteId, final int poistion) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .syncDeleteNote(noteId, settings.token)
+                .deleteNote(noteId, settings.token)
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -926,7 +926,7 @@ public class NoteListModuleImpl implements INoteListModule {
         TNSettings settings = TNSettings.getInstance();
         //2-9-1
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .syncDeleteRealNote1(noteId, settings.token)
+                .deleteNote(noteId, settings.token)
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -958,7 +958,7 @@ public class NoteListModuleImpl implements INoteListModule {
 
         //2-9-2
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .syncDeleteRealNote2(noteId, settings.token)
+                .deleteTrashNote2(noteId, settings.token)
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -1092,7 +1092,7 @@ public class NoteListModuleImpl implements INoteListModule {
     public void mEditNote(final OnSynchronizeDataListener listener, final int position, final TNNote note) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .syncEditNote(note.noteId, note.title, note.content, note.tagStr, note.catId, note.createTime, note.lastUpdate, settings.token)
+                .editNote(note.noteId, note.title, note.content, note.tagStr, note.catId, note.createTime, note.lastUpdate, settings.token)
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -1128,7 +1128,7 @@ public class NoteListModuleImpl implements INoteListModule {
     public void mGetNoteByNoteId(final OnSynchronizeDataListener listener, final int position, long id, final boolean is12) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .GetNoteByNoteId(id, settings.token)
+                .getNoteByNoteId(id, settings.token)
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -1165,7 +1165,7 @@ public class NoteListModuleImpl implements INoteListModule {
     public void mGetAllTrashNoteIds(final OnSynchronizeDataListener listener) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .GetTrashNoteIds(settings.token)
+                .getTrashNoteIds(settings.token)
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -1265,11 +1265,11 @@ public class NoteListModuleImpl implements INoteListModule {
     public void mNewNote(final OnSynchronizeEditListener listener, final int position, final int arraySize, TNNote note, final boolean isNewDb, String content) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .syncNewNoteAdd(note.title, content, note.tagStr, note.catId, note.createTime, note.lastUpdate, note.lbsLongitude, note.lbsLatitude, note.lbsAddress, note.lbsRadius, settings.token)//接口方法
+                .addNewNote(note.title, content, note.tagStr, note.catId, note.createTime, note.lastUpdate, note.lbsLongitude, note.lbsLatitude, note.lbsAddress, note.lbsRadius, settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
-                .subscribe(new Observer<OldNoteAddBean>() {//固定样式，可自定义其他处理
+                .subscribe(new Observer<NewNoteBean>() {//固定样式，可自定义其他处理
                     @Override
                     public void onCompleted() {
                         MLog.d(TAG, "mNewNote--onCompleted");
@@ -1282,7 +1282,7 @@ public class NoteListModuleImpl implements INoteListModule {
                     }
 
                     @Override
-                    public void onNext(OldNoteAddBean bean) {
+                    public void onNext(NewNoteBean bean) {
                         MLog.d(TAG, "mNewNote-onNext");
 
                         //处理返回结果
@@ -1301,7 +1301,7 @@ public class NoteListModuleImpl implements INoteListModule {
     public void mRecoveryNote(final OnSynchronizeEditListener listener, final long noteID, final int position, int arrySize) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .syncRecoveryNote(noteID, settings.token)
+                .putRecoveryNote(noteID, settings.token)
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -1395,11 +1395,11 @@ public class NoteListModuleImpl implements INoteListModule {
     public void mRecoveryNoteAdd(final OnSynchronizeEditListener listener, final int position, final int arraySize, TNNote note, final boolean isNewDb, String content) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .syncRecoveryNoteAdd(note.title, content, note.tagStr, note.catId, note.createTime, note.lastUpdate, note.lbsLongitude, note.lbsLatitude, note.lbsAddress, note.lbsRadius, settings.token)//接口方法
+                .addNewNote(note.title, content, note.tagStr, note.catId, note.createTime, note.lastUpdate, note.lbsLongitude, note.lbsLatitude, note.lbsAddress, note.lbsRadius, settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
-                .subscribe(new Observer<OldNoteAddBean>() {//固定样式，可自定义其他处理
+                .subscribe(new Observer<NewNoteBean>() {//固定样式，可自定义其他处理
                     @Override
                     public void onCompleted() {
                         MLog.d(TAG, "mRecoveryNoteAdd--onCompleted");
@@ -1412,7 +1412,7 @@ public class NoteListModuleImpl implements INoteListModule {
                     }
 
                     @Override
-                    public void onNext(OldNoteAddBean bean) {
+                    public void onNext(NewNoteBean bean) {
                         MLog.d(TAG, "mRecoveryNoteAdd-onNext");
 
                         //处理返回结果
@@ -1431,7 +1431,7 @@ public class NoteListModuleImpl implements INoteListModule {
     public void mDeleteNote(final OnSynchronizeEditListener listener, final long noteId, final int poistion) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .syncDeleteNote(noteId, settings.token)
+                .deleteNote(noteId, settings.token)
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -1468,7 +1468,7 @@ public class NoteListModuleImpl implements INoteListModule {
         TNSettings settings = TNSettings.getInstance();
         //2-9-1
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .syncDeleteRealNote1(noteId, settings.token)
+                .deleteNote(noteId, settings.token)
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -1500,7 +1500,7 @@ public class NoteListModuleImpl implements INoteListModule {
 
         //2-9-2
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .syncDeleteRealNote2(noteId, settings.token)
+                .deleteTrashNote2(noteId, settings.token)
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -1634,7 +1634,7 @@ public class NoteListModuleImpl implements INoteListModule {
     public void mEditNote(final OnSynchronizeEditListener listener, final int position, final TNNote note) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .syncEditNote(note.noteId, note.title, note.content, note.tagStr, note.catId, note.createTime, note.lastUpdate, settings.token)
+                .editNote(note.noteId, note.title, note.content, note.tagStr, note.catId, note.createTime, note.lastUpdate, settings.token)
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -1670,7 +1670,7 @@ public class NoteListModuleImpl implements INoteListModule {
     public void mGetNoteByNoteId(final OnSynchronizeEditListener listener, final int position, long id, final boolean is12) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .GetNoteByNoteId(id, settings.token)
+                .getNoteByNoteId(id, settings.token)
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -1707,7 +1707,7 @@ public class NoteListModuleImpl implements INoteListModule {
     public void mGetAllTrashNoteIds(final OnSynchronizeEditListener listener) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .GetTrashNoteIds(settings.token)
+                .getTrashNoteIds(settings.token)
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式

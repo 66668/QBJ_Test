@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.thinkernote.ThinkerNote.Activity.TNNoteViewAct;
 import com.thinkernote.ThinkerNote.Activity.TNPagerAct;
@@ -53,7 +52,7 @@ import com.thinkernote.ThinkerNote.bean.main.AllFolderBean;
 import com.thinkernote.ThinkerNote.bean.main.AllFolderItemBean;
 import com.thinkernote.ThinkerNote.bean.main.AllNotesIdsBean;
 import com.thinkernote.ThinkerNote.bean.main.GetNoteByNoteIdBean;
-import com.thinkernote.ThinkerNote.bean.main.OldNoteAddBean;
+import com.thinkernote.ThinkerNote.bean.main.NewNoteBean;
 import com.thinkernote.ThinkerNote.bean.main.OldNotePicBean;
 import com.thinkernote.ThinkerNote.bean.main.TagItemBean;
 import com.thinkernote.ThinkerNote.bean.main.TagListBean;
@@ -364,7 +363,7 @@ public class TNPageNotes extends TNChildViewBase implements OnItemLongClickListe
     /**
      * 调用OldNoteAdd接口，就触发更新db
      */
-    private void upDataNoteLocalIdSQL(OldNoteAddBean oldNoteAddBean, TNNote note) {
+    private void upDataNoteLocalIdSQL(NewNoteBean oldNoteAddBean, TNNote note) {
         long id = oldNoteAddBean.getId();
         TNDb.beginTransaction();
         try {
@@ -1878,7 +1877,7 @@ public class TNPageNotes extends TNChildViewBase implements OnItemLongClickListe
     //2-3OldNoteAdd
     @Override
     public void onSyncOldNoteAddSuccess(Object obj, int position, int arraySize, boolean isNewDb) {
-        OldNoteAddBean oldNoteAddBean = (OldNoteAddBean) obj;
+        NewNoteBean oldNoteAddBean = (NewNoteBean) obj;
 
         if (isNewDb) {//false时表示老数据库的数据上传，不用在修改本地的数据
             upDataNoteLocalIdSQL(oldNoteAddBean, addOldNotes.get(position));
@@ -1995,7 +1994,7 @@ public class TNPageNotes extends TNChildViewBase implements OnItemLongClickListe
     @Override
     public void onSyncNewNoteAddSuccess(Object obj, int position, int arraySize, boolean isNewDb) {
 
-        OldNoteAddBean newNoteBean = (OldNoteAddBean) obj;
+        NewNoteBean newNoteBean = (NewNoteBean) obj;
         //更新数据库
         if (isNewDb) {//false时表示老数据库的数据上传，不用在修改本地的数据
             upDataNoteLocalIdSQL(newNoteBean, addNewNotes.get(position));
@@ -2090,7 +2089,7 @@ public class TNPageNotes extends TNChildViewBase implements OnItemLongClickListe
     @Override
     public void onSyncRecoveryNoteAddSuccess(Object obj, int position, int arraySize, boolean isNewDb) {
 
-        OldNoteAddBean recoveryNoteBean = (OldNoteAddBean) obj;
+        NewNoteBean recoveryNoteBean = (NewNoteBean) obj;
         //更新数据库
         if (isNewDb) {//false时表示老数据库的数据上传，不用在修改本地的数据
             upDataNoteLocalIdSQL(recoveryNoteBean, recoveryNotes.get(position));

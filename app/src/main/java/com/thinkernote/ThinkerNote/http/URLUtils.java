@@ -11,6 +11,7 @@ public class URLUtils {
     public final static String API_BASE_URL = "https://s.qingbiji.cn/";//正式1
 //    public final static String API_BASE_URL = "http://new.qingbiji.cn/";//正式2
 
+    //TODO
     public final static String WEICHAT_BASE_URL = "https://api.weixin.qq.com";//微信登陆BaseURL
 
     /**
@@ -31,7 +32,7 @@ public class URLUtils {
 
     /**
      * =============================================================================================
-     * ============================================首页相关=================================================
+     * ============================================登陆验证相关=================================================
      * =============================================================================================
      *
      */
@@ -131,6 +132,13 @@ public class URLUtils {
 
     }
 
+    /**
+     * =============================================================================================
+     * ============================================首页相关=================================================
+     * =============================================================================================
+     */
+
+
     public static class Home {
         /**
          * 检查更新
@@ -161,14 +169,54 @@ public class URLUtils {
         public static final String UPLOAD_FILE = "api/attachment";
 
         /**
-         * get
+         * get /attachment/(id) 下载附件
+         *
+         * <p>
          * 注: 需要登录。
          * <p>
          * 附件的处理和轻笔记之前的处理文件相同，先上传附件，然后将附件信息写到笔记内容中，后 台为自动判断有没有附件并将附件对应到笔记上。
          */
-        public static final String DOWNLOAD_FILE = "api/attachment";
+        public static final String DOWNLOAD_FILE = "/attachment";
 
     }
+    /**
+     * =============================================================================================
+     * ============================================Tags=================================================
+     * =============================================================================================
+     *
+     */
+
+
+    /**
+     * 标签
+     */
+    public static class Tags {
+        /**
+         * 标签
+         * （1）POST  创建标签
+         * 1. name 名字 注: 需要登录
+         * <p>
+         * （2）PUT 修改标签
+         * 参数
+         * 1. name 名字
+         * 2. tag_id 标签 id
+         * <p>
+         * （3）DELETE 删除标签
+         * <p>
+         * 参数
+         * 1. tag_id 标签 id
+         * <p>
+         * 注: 需要登录，删除标签会把所有属于此标签的笔记标签清除，不会删除笔记。
+         */
+        public static final String TAG = "api/tags";
+
+    }
+    /**
+     * =============================================================================================
+     * ============================================文件夹相关=================================================
+     * =============================================================================================
+     *
+     */
 
     /**
      * 文件夹相关
@@ -210,7 +258,7 @@ public class URLUtils {
          * <p>
          * 注: 需要登录，设置笔记的默认文件夹
          */
-        public static final String DEFAULT_FOLDER = "api/folders/default";
+        public static final String FOLDER_DEFAULT = "api/folders/default";
 
         /**
          * 移动文件夹
@@ -225,9 +273,9 @@ public class URLUtils {
 
 
         /**
-         * GetFolderNoteIds
+         * folder_id下的所有note id列表
          */
-        public static final String FOLDER_NOTEIDS = "api/folders/note/ids";
+        public static final String NOTE_ID_LIST_BY_FOLDER = "api/folders/note/ids";
 
         /**
          * 获取文件夹下的笔记列表
@@ -238,8 +286,14 @@ public class URLUtils {
          * 3. pagenum 页码
          * 4. sortord 排序值(create_at, update_at)
          */
-        public static final String FOLDER_NOTE_LIST = "api/folders/note";
+        public static final String NOTE_LIST_BY_FOLDER = "api/folders/note";
     }
+
+    /**
+     * =============================================================================================
+     * ============================================笔记相关=================================================
+     * =============================================================================================
+     */
 
     public static class Note {
 
@@ -318,50 +372,17 @@ public class URLUtils {
         public static final String NOTE_TRASH = "api/note/trash";
 
         /**
-         * getTrashNote
+         * 获取回收站笔记id 列表
          */
-        public static final String TRASH_NOTE = "api/note/trash/ids";//
+        public static final String NOTE_TRASH_ID = "api/note/trash/ids";//
 
         /**
-         * 标签
+         * 获取所有笔记的id
          */
-        public static final String ALLNOTESID = "api/note/ids";
-
-
-        /**
-         * getNote：
-         * https://s.qingbiji.cn/api/attachment?filename=IMG_20180525_132850.jpg&session_token=7E3ECyCspLM7NXPD6wRbBatBV9SKrX4q89fUxmwf
-         */
-        public static final String UPLOAD_FILE = "api/attachment";//
-
+        public static final String NOTE_ALL_ID = "api/note/ids";
 
     }
 
-    /**
-     * 标签
-     */
-    public static class Tags {
-
-        /**
-         * 标签
-         * （1）POST  创建标签
-         * 1. name 名字 注: 需要登录
-         * <p>
-         * （2）PUT 修改标签
-         * 参数
-         * 1. name 名字
-         * 2. tag_id 标签 id
-         * <p>
-         * （3）DELETE 删除标签
-         * <p>
-         * 参数
-         * 1. tag_id 标签 id
-         * <p>
-         * 注: 需要登录，删除标签会把所有属于此标签的笔记标签清除，不会删除笔记。
-         */
-        public static final String TAG = "api/tags";
-
-    }
 
     /**
      * 设置相关

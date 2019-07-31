@@ -1,18 +1,13 @@
 package com.thinkernote.ThinkerNote._constructer.presenter;
 
-import android.app.Dialog;
 import android.content.Context;
 
 import com.thinkernote.ThinkerNote.Data.TNNote;
 import com.thinkernote.ThinkerNote.Data.TNNoteAtt;
 import com.thinkernote.ThinkerNote.General.TNSettings;
-import com.thinkernote.ThinkerNote._constructer.module.MainModuleImpl;
 import com.thinkernote.ThinkerNote._constructer.module.SynchronizeDataModuleImpl;
-import com.thinkernote.ThinkerNote._interface.m.IMainModule;
 import com.thinkernote.ThinkerNote._interface.m.ISynchronizeDataModule;
-import com.thinkernote.ThinkerNote._interface.p.IMainPresenter;
 import com.thinkernote.ThinkerNote._interface.p.ISynchronizeDataPresenter;
-import com.thinkernote.ThinkerNote._interface.v.OnMainListener;
 import com.thinkernote.ThinkerNote._interface.v.OnSynchronizeDataListener;
 import com.thinkernote.ThinkerNote.bean.main.AllFolderItemBean;
 

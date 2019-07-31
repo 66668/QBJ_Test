@@ -9,11 +9,11 @@ import java.io.Serializable;
  * 格式{code msg xx}
  */
 
-public class OldNoteAddBean extends CommonBean implements Serializable {
+public class NewNoteBean extends CommonBean implements Serializable {
     String md5;
     long id;
 
-    public OldNoteAddBean(int code, String msg) {
+    public NewNoteBean(int code, String msg) {
         super(code, msg);
     }
 

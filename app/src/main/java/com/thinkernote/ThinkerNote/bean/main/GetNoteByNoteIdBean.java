@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * 支付结果返回
+ * 获取笔记
  * 格式{code msg data {}}
  */
 

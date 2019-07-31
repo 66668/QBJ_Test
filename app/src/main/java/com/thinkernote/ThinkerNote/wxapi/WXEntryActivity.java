@@ -1,6 +1,5 @@
 package com.thinkernote.ThinkerNote.wxapi;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -14,7 +13,6 @@ import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.thinkernote.ThinkerNote.Action.TNAction;
-import com.thinkernote.ThinkerNote.Activity.TNLoginAct;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Utils.SPUtil;
 import com.thinkernote.ThinkerNote.base.TNActBase;
@@ -28,7 +26,7 @@ import java.net.URLEncoder;
 
 /**
  * 微信登录 设置
- * TODO 登录回调 未做
+ * TODO 登录回调 改成rx模式
  */
 public class WXEntryActivity extends TNActBase implements IWXAPIEventHandler {
     private static final int BACK_RESULT_CODE = 11;
