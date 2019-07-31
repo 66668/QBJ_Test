@@ -29,9 +29,8 @@ import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Utils.SPUtil;
 import com.thinkernote.ThinkerNote.Utils.TNActivityManager;
-import com.thinkernote.ThinkerNote._constructer.presenter.LogPresenterImpl;
-import com.thinkernote.ThinkerNote._interface.p.ILogPresenter;
-import com.thinkernote.ThinkerNote._interface.v.OnLogListener;
+import com.thinkernote.ThinkerNote._constructer.p.LogPresenter;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnLogListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.login.LoginBean;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
@@ -79,7 +78,7 @@ public class TNLoginAct extends TNActBase implements OnClickListener, OnLogListe
     private String mLoginId;
 
     //p层相关
-    private ILogPresenter logPresener;
+    private LogPresenter logPresener;
     private LoginBean loginBean;
     private ProfileBean profileBean;//登录更新
 
@@ -92,7 +91,7 @@ public class TNLoginAct extends TNActBase implements OnClickListener, OnLogListe
         TNActivityManager.getInstance().finishOtherActivity(this);
         initView();
         //初始化 p
-        logPresener = new LogPresenterImpl(this, this);
+        logPresener = new LogPresenter(this, this);
     }
 
     private void initView() {

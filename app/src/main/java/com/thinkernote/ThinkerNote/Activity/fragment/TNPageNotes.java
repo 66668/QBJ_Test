@@ -43,9 +43,8 @@ import com.thinkernote.ThinkerNote.PullToRefresh.PullToRefreshListView;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Utils.SPUtil;
-import com.thinkernote.ThinkerNote._constructer.presenter.SynchronizeDataPresenterImpl;
-import com.thinkernote.ThinkerNote._interface.p.ISynchronizeDataPresenter;
-import com.thinkernote.ThinkerNote._interface.v.OnSynchronizeDataListener;
+import com.thinkernote.ThinkerNote._constructer.p.SynchronizeDataPresenter;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnSynchronizeDataListener;
 import com.thinkernote.ThinkerNote.base.TNChildViewBase;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
 import com.thinkernote.ThinkerNote.bean.main.AllFolderBean;
@@ -99,7 +98,7 @@ public class TNPageNotes extends TNChildViewBase implements OnItemLongClickListe
     private TNNotesAdapter mAdapter = null;
 
     //p
-    private ISynchronizeDataPresenter presenter;
+    private SynchronizeDataPresenter presenter;
 
     private TNSettings mSettings = TNSettings.getInstance();
 
@@ -139,7 +138,7 @@ public class TNPageNotes extends TNChildViewBase implements OnItemLongClickListe
         pageId = R.id.page_notes;
 
         //p
-        presenter = new SynchronizeDataPresenterImpl(mActivity, this);
+        presenter = new SynchronizeDataPresenter(mActivity, this);
 
         init();
     }

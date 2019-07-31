@@ -23,9 +23,8 @@ import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.PayResult;
-import com.thinkernote.ThinkerNote._constructer.presenter.PayPresenterImpl;
-import com.thinkernote.ThinkerNote._interface.p.IPayPresenter;
-import com.thinkernote.ThinkerNote._interface.v.OnPayListener;
+import com.thinkernote.ThinkerNote._constructer.p.PayPresenter;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnPayListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.main.AlipayBean;
 import com.thinkernote.ThinkerNote.bean.main.WxpayBean;
@@ -66,7 +65,7 @@ public class TNPayTipAct extends TNActBase implements OnClickListener, android.w
     private String info = "";
 
     //p
-    private IPayPresenter presener;
+    private PayPresenter presener;
     private AlipayBean alipayBean;
     private WxpayBean wxpayBean;
 
@@ -107,7 +106,7 @@ public class TNPayTipAct extends TNActBase implements OnClickListener, android.w
         setContentView(R.layout.pay_tip);
         api = WXAPIFactory.createWXAPI(this, TNConst.WX_APP_ID);
 
-        presener = new PayPresenterImpl(this, this);
+        presener = new PayPresenter(this, this);
         setViews();
         initView();
         initListener();

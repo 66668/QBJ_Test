@@ -15,13 +15,11 @@ import com.thinkernote.ThinkerNote.DBHelper.UserDbHelper;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
-import com.thinkernote.ThinkerNote.General.TNUtilsDialog;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote._constructer.presenter.BindAccountPresenterImpl;
-import com.thinkernote.ThinkerNote._interface.p.IBindAccountPresenter;
-import com.thinkernote.ThinkerNote._interface.v.OnBindAccountListener;
+import com.thinkernote.ThinkerNote._constructer.p.BindAccountPresenter;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnBindAccountListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.login.LoginBean;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
@@ -44,7 +42,7 @@ public class TNBindAccountAct extends TNActBase implements OnClickListener, OnBi
 
 
     //
-    private IBindAccountPresenter presener;
+    private BindAccountPresenter presener;
     private LoginBean loginBean;
     private ProfileBean profileBean;
 
@@ -58,7 +56,7 @@ public class TNBindAccountAct extends TNActBase implements OnClickListener, OnBi
 
         initView();
 
-        presener = new BindAccountPresenterImpl(this, this);
+        presener = new BindAccountPresenter(this, this);
     }
 
     private void initView() {

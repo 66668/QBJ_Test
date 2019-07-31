@@ -18,13 +18,11 @@ import com.thinkernote.ThinkerNote.DBHelper.UserDbHelper;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
-import com.thinkernote.ThinkerNote.General.TNUtilsDialog;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote._constructer.presenter.RegistPresenterImpl;
-import com.thinkernote.ThinkerNote._interface.p.IRegistPresenter;
-import com.thinkernote.ThinkerNote._interface.v.OnRegistListener;
+import com.thinkernote.ThinkerNote._constructer.p.RegistPresenter;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnRegistListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.CommonBean;
 import com.thinkernote.ThinkerNote.bean.login.LoginBean;
@@ -53,7 +51,7 @@ public class TNRegistAct extends TNActBase implements OnClickListener, OnRegistL
     private String mAnswer;
 
     //
-    private IRegistPresenter presener;
+    private RegistPresenter presener;
     private VerifyPicBean verifyPicBean;
     private LoginBean loginBean;
     private ProfileBean profileBean;
@@ -77,7 +75,7 @@ public class TNRegistAct extends TNActBase implements OnClickListener, OnRegistL
 
         initView();
 
-        presener = new RegistPresenterImpl(this, this);
+        presener = new RegistPresenter(this, this);
 
         getVerifyPic();
 

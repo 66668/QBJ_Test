@@ -5,16 +5,13 @@ import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.Database.TNSQLString;
 import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote.Action.TNAction;
-import com.thinkernote.ThinkerNote.General.TNActionType;
 import com.thinkernote.ThinkerNote.General.TNHandleError;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote._constructer.presenter.ChangeUserInfoPresenterImpl;
-import com.thinkernote.ThinkerNote._interface.p.IChangeUserInfoPresenter;
-import com.thinkernote.ThinkerNote._interface.v.OnChangeUserInfoListener;
+import com.thinkernote.ThinkerNote._constructer.p.ChangeUserInfoPresenter;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnChangeUserInfoListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
 
@@ -44,7 +41,7 @@ public class TNChangeUserInfoAct extends TNActBase implements OnClickListener, O
     private Dialog mProgressDialog = null;
 
     //p
-    IChangeUserInfoPresenter presener;
+    ChangeUserInfoPresenter presener;
     ProfileBean profileBean;
 
     @Override
@@ -52,7 +49,7 @@ public class TNChangeUserInfoAct extends TNActBase implements OnClickListener, O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_change_userinfo);
         //p
-        presener = new ChangeUserInfoPresenterImpl(this, this);
+        presener = new ChangeUserInfoPresenter(this, this);
         initView();
     }
 

@@ -36,9 +36,8 @@ import com.thinkernote.ThinkerNote.General.TNUtilsTag;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote._constructer.presenter.TagListPresenterImpl;
-import com.thinkernote.ThinkerNote._interface.p.ITagListPresenter;
-import com.thinkernote.ThinkerNote._interface.v.OnTagListListener;
+import com.thinkernote.ThinkerNote._constructer.p.TagListPresenter;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnTagListListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.main.TagItemBean;
 
@@ -69,7 +68,7 @@ public class TNTagListAct extends TNActBase implements OnClickListener, OnItemCl
     private ProgressDialog mProgressDialog = null;
 
     // p
-    private ITagListPresenter presener;
+    private TagListPresenter presener;
 
     // Activity methods
     //-------------------------------------------------------------------------------
@@ -81,7 +80,7 @@ public class TNTagListAct extends TNActBase implements OnClickListener, OnItemCl
         mProgressDialog = TNUtilsUi.progressDialog(this, R.string.in_progress);
         mTags = new Vector<TNTag>();
 
-        presener = new TagListPresenterImpl(this, this);
+        presener = new TagListPresenter(this, this);
 
         findViewById(R.id.taglist_back).setOnClickListener(this);
         findViewById(R.id.taglist_new).setOnClickListener(this);

@@ -68,10 +68,9 @@ import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.Other.PoPuMenuView;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote._constructer.presenter.NoteViewDownloadPresenter;
-import com.thinkernote.ThinkerNote._constructer.presenter.NoteViewPresenterImpl;
-import com.thinkernote.ThinkerNote._interface.p.INoteViewPresenter;
-import com.thinkernote.ThinkerNote._interface.v.OnNoteViewListener;
+import com.thinkernote.ThinkerNote._constructer.p.NoteViewDownloadPresenter;
+import com.thinkernote.ThinkerNote._constructer.p.NoteViewPresenter;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnNoteViewListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.main.GetNoteByNoteIdBean;
 
@@ -131,7 +130,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
 
     private AlertDialog dialog;
     //p
-    private INoteViewPresenter presenter;
+    private NoteViewPresenter presenter;
     NoteViewDownloadPresenter download;
 
     //讯飞语音合成
@@ -226,7 +225,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
         TNAction.regResponder(TNActionType.NoteLocalRecovery, this, "respondNoteHandle");
         TNAction.regResponder(TNActionType.GetAllDataByNoteId, this, "respondGetAllDataByNoteId");
 
-        presenter = new NoteViewPresenterImpl(this, this);
+        presenter = new NoteViewPresenter(this, this);
 
         mTencent = Tencent.createInstance(TNConst.QQ_APP_ID, this.getApplicationContext());
         mListener = new IUiListener() {

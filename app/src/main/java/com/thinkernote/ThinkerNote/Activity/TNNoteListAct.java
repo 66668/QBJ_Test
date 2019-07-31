@@ -50,11 +50,10 @@ import com.thinkernote.ThinkerNote.PullToRefresh.PullToRefreshBase.OnRefreshList
 import com.thinkernote.ThinkerNote.PullToRefresh.PullToRefreshListView;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote._constructer.presenter.NoteListPresenterImpl;
-import com.thinkernote.ThinkerNote._interface.p.INoteListPresenter;
-import com.thinkernote.ThinkerNote._interface.v.OnNoteListListener;
-import com.thinkernote.ThinkerNote._interface.v.OnSynchronizeDataListener;
-import com.thinkernote.ThinkerNote._interface.v.OnSynchronizeEditListener;
+import com.thinkernote.ThinkerNote._constructer.p.NoteListPresenter;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnNoteListListener;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnSynchronizeDataListener;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnSynchronizeEditListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
 import com.thinkernote.ThinkerNote.bean.main.AllFolderBean;
@@ -167,7 +166,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
     private List<AllNotesIdsBean.NoteIdItemBean> cloudIds;//2-10接口返回
     List<AllNotesIdsBean.NoteIdItemBean> trashNoteArr;//(2-12)接口返回，，第13个调用数据
     //p
-    private INoteListPresenter presenter;
+    private NoteListPresenter presenter;
 
     // Activity methods
     // -------------------------------------------------------------------------------
@@ -196,7 +195,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
         TNAction.regResponder(TNActionType.GetNoteListBySearch, this, "respondGetNoteListBySearch");
         TNAction.regResponder(TNActionType.GetAllData, this, "respondGetAllData");
         //
-        presenter = new NoteListPresenterImpl(this, this, dataListener, editListener);
+        presenter = new NoteListPresenter(this, this, dataListener, editListener);
         //获取跳转值
         getIntentData();
 

@@ -31,14 +31,12 @@ import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsAtt;
-import com.thinkernote.ThinkerNote.General.TNUtilsDialog;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote._constructer.presenter.SettingsPresenterImpl;
-import com.thinkernote.ThinkerNote._interface.p.ISettingsPresenter;
-import com.thinkernote.ThinkerNote._interface.v.OnSettingsListener;
+import com.thinkernote.ThinkerNote._constructer.p.SettingsPresenter;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnSettingsListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 
 import org.json.JSONObject;
@@ -65,7 +63,7 @@ public class TNSettingsAct extends TNActBase implements OnClickListener, OnChild
     private Dialog mProgressDialog = null;
     private TNSettings mSettings;
     //p
-    private ISettingsPresenter presener;
+    private SettingsPresenter presener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +71,7 @@ public class TNSettingsAct extends TNActBase implements OnClickListener, OnChild
         setContentView(R.layout.settings);
         initMyView();
 
-        presener = new SettingsPresenterImpl(this, this);
+        presener = new SettingsPresenter(this, this);
     }
 
     private void initMyView() {

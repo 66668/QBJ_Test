@@ -22,12 +22,10 @@ import com.thinkernote.ThinkerNote.DBHelper.UserDbHelper;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
-import com.thinkernote.ThinkerNote.General.TNUtilsDialog;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote._constructer.presenter.FindPsPresenterImpl;
-import com.thinkernote.ThinkerNote._interface.p.IFindPsPresenter;
-import com.thinkernote.ThinkerNote._interface.v.OnFindPsListener;
+import com.thinkernote.ThinkerNote._constructer.p.FindPsPresenter;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnFindPsListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.CommonBean;
 import com.thinkernote.ThinkerNote.bean.login.LoginBean;
@@ -58,7 +56,7 @@ public class TNFindPasswordAct extends TNActBase implements OnClickListener, OnC
     private LinearLayout mImageCodeView;
 
     //
-    private IFindPsPresenter presener;
+    private FindPsPresenter presener;
     private VerifyPicBean verifyPicBean;//验证码数据
     private LoginBean loginBean;
     private ProfileBean profileBean;
@@ -73,7 +71,7 @@ public class TNFindPasswordAct extends TNActBase implements OnClickListener, OnC
         initView();
 
         // p
-        presener = new FindPsPresenterImpl(this, this);
+        presener = new FindPsPresenter(this, this);
 
         //图片
         getVerifyPic();

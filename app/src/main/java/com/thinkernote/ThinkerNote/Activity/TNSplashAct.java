@@ -20,9 +20,8 @@ import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote._constructer.presenter.SplashPresenterImpl;
-import com.thinkernote.ThinkerNote._interface.p.ISplashPresenter;
-import com.thinkernote.ThinkerNote._interface.v.OnSplashListener;
+import com.thinkernote.ThinkerNote._constructer.p.SplashPresenter;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnSplashListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.login.LoginBean;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
@@ -45,7 +44,7 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
     private String passWord;
 
     // p
-    private ISplashPresenter presener;
+    private SplashPresenter presener;
     private LoginBean loginBean;
     private ProfileBean profileBean;
 
@@ -121,7 +120,7 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
 
         setViews();
         //
-        presener = new SplashPresenterImpl(this, this);
+        presener = new SplashPresenter(this, this);
 //		if(!TNSettings.getInstance().serviceRuning){
 //			Intent serviceIntent = new Intent(TNSplashAct.this, TNPushService.class);
 //			startService(serviceIntent);

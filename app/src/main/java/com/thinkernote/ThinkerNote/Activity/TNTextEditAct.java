@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -13,21 +12,17 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.thinkernote.ThinkerNote.Action.TNAction;
 import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.Database.TNSQLString;
-import com.thinkernote.ThinkerNote.General.TNActionType;
-import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsTag;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote._constructer.presenter.TextEditPresenterImpl;
-import com.thinkernote.ThinkerNote._interface.p.ITextEditPresenter;
-import com.thinkernote.ThinkerNote._interface.v.OnTextEditListener;
+import com.thinkernote.ThinkerNote._constructer.p.TextEditPresenter;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnTextEditListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 
 import org.json.JSONObject;
@@ -58,7 +53,7 @@ public class TNTextEditAct extends TNActBase implements OnClickListener, OnKeyLi
     private EditText textedit = null;
 
     //
-    ITextEditPresenter presener;
+    TextEditPresenter presener;
 
     // Activity methods
     //-------------------------------------------------------------------------------
@@ -72,7 +67,7 @@ public class TNTextEditAct extends TNActBase implements OnClickListener, OnKeyLi
         findViewById(R.id.textedit_save).setOnClickListener(this);
 
         //
-        presener = new TextEditPresenterImpl(this, this);
+        presener = new TextEditPresenter(this, this);
 
         mSyncProjectDialog = TNUtilsUi.progressDialog(this, R.string.in_progress);
         textedit = (EditText) findViewById(R.id.textedit_text);

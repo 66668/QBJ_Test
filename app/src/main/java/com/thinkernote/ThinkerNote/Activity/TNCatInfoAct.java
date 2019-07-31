@@ -12,7 +12,6 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.thinkernote.ThinkerNote.Action.TNAction.TNRunner;
@@ -26,15 +25,12 @@ import com.thinkernote.ThinkerNote.Database.TNSQLString;
 import com.thinkernote.ThinkerNote.General.TNActionUtils;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
-import com.thinkernote.ThinkerNote.General.TNUtilsDialog;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote._constructer.presenter.CatInfoPresenterImpl;
-import com.thinkernote.ThinkerNote._interface.p.ICatInfoPresenter;
-import com.thinkernote.ThinkerNote._interface.v.OnCatInfoListener;
-import com.thinkernote.ThinkerNote._interface.v.OnCommonListener;
+import com.thinkernote.ThinkerNote._constructer.p.CatInfoPresenter;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnCatInfoListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 
 import org.json.JSONObject;
@@ -44,7 +40,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * sjy 0625
+ * 文件夹信息
  */
 public class TNCatInfoAct extends TNActBase
         implements OnClickListener, OnChildClickListener, OnGroupClickListener, OnCatInfoListener {
@@ -62,7 +58,7 @@ public class TNCatInfoAct extends TNActBase
     private AlertDialog dialog;//GetDataByNoteId的弹窗；
 
     //p
-    ICatInfoPresenter presenter;
+    CatInfoPresenter presenter;
 
     // Activity methods
     //-------------------------------------------------------------------------------
@@ -71,7 +67,7 @@ public class TNCatInfoAct extends TNActBase
         super.onCreate(savedInstanceState);
         setContentView(R.layout.catinfo);
         setViews();
-        presenter = new CatInfoPresenterImpl(this, this);
+        presenter = new CatInfoPresenter(this, this);
         mCatId = getIntent().getLongExtra("CatId", -1);
 
         mGroups = new Vector<TNPreferenceGroup>();

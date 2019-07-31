@@ -66,9 +66,8 @@ import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Service.LocationService;
 import com.thinkernote.ThinkerNote.Utils.JsonParser;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote._constructer.presenter.NoteEditPresenterImpl;
-import com.thinkernote.ThinkerNote._interface.p.INoteEditPresenter;
-import com.thinkernote.ThinkerNote._interface.v.OnNoteEditListener;
+import com.thinkernote.ThinkerNote._constructer.p.NoteEditPresenter;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnNoteEditListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.base.TNApplication;
 import com.thinkernote.ThinkerNote.bean.main.AllFolderItemBean;
@@ -140,7 +139,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
 
     private TNSettings mSettings = TNSettings.getInstance();
     //p
-    INoteEditPresenter presener;
+    NoteEditPresenter presener;
 
     //
     private Vector<TNNote> addNewNotes;//（2-5）正常同步，第5个调用数据
@@ -162,7 +161,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.note_edit);
         initAct();
-        presener = new NoteEditPresenterImpl(this, this);
+        presener = new NoteEditPresenter(this, this);
         //开启百度定位
         if (savedInstanceState == null) {
 //            TNLBSService.getInstance().startLocation();

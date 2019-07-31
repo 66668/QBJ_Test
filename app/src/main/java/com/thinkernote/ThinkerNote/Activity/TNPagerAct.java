@@ -40,9 +40,8 @@ import com.thinkernote.ThinkerNote.Other.HorizontalPager;
 import com.thinkernote.ThinkerNote.Other.HorizontalPager.OnScreenSwitchListener;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote._constructer.presenter.PagerPresenterImpl;
-import com.thinkernote.ThinkerNote._interface.p.IPagerPresenter;
-import com.thinkernote.ThinkerNote._interface.v.OnPagerListener;
+import com.thinkernote.ThinkerNote._constructer.p.PagerPresenter;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnPagerListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.base.TNChildViewBase;
 import com.thinkernote.ThinkerNote.bean.main.AllNotesIdsBean;
@@ -94,7 +93,7 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
     private AlertDialog dialog;//GetDataByNoteId的弹窗；
     private long catId;//syncCats使用的全局数据
     //p
-    IPagerPresenter presenter;
+    PagerPresenter presenter;
 
     private Vector<TNNote> addNewNotes;//（2-5）正常同步，第5个调用数据
 //    private Vector<TNNoteAtt> newNotesAtts;//（2-5）正常同步，第5个调用数据中第一调用的数据 不可使用全局，易错
@@ -116,7 +115,7 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.table_layout);
         //p
-        presenter = new PagerPresenterImpl(this, this);
+        presenter = new PagerPresenter(this, this);
 
         initAct();
         //

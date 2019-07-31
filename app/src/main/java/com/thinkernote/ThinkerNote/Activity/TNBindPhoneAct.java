@@ -19,13 +19,11 @@ import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.Database.TNSQLString;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
-import com.thinkernote.ThinkerNote.General.TNUtilsDialog;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote._constructer.presenter.BindPhonePresenterImpl;
-import com.thinkernote.ThinkerNote._interface.p.IBindPhonePresenter;
-import com.thinkernote.ThinkerNote._interface.v.OnBindPhoneListener;
+import com.thinkernote.ThinkerNote._constructer.p.BindPhonePresenter;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnBindPhoneListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.CommonBean;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
@@ -53,7 +51,7 @@ public class TNBindPhoneAct extends TNActBase implements OnClickListener,OnBindP
 	private String mAnswer;
 
 	//
-	private IBindPhonePresenter presener;
+	private BindPhonePresenter presener;
 	private VerifyPicBean verifyPicBean;//验证码数据
 
 	@Override
@@ -63,7 +61,7 @@ public class TNBindPhoneAct extends TNActBase implements OnClickListener,OnBindP
 		setViews();	
 		
 		initView();
-		presener = new BindPhonePresenterImpl(this, this);
+		presener = new BindPhonePresenter(this, this);
 
 		getVerifyPic();
 

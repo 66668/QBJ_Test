@@ -54,10 +54,9 @@ import com.thinkernote.ThinkerNote.Other.PullToRefreshExpandableListView;
 import com.thinkernote.ThinkerNote.Other.PullToRefreshExpandableListView.OnRefreshListener;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote._constructer.presenter.CatFragPresenterImpl;
-import com.thinkernote.ThinkerNote._interface.p.ICatFragPresenter;
-import com.thinkernote.ThinkerNote._interface.v.OnCatFragListener;
-import com.thinkernote.ThinkerNote._interface.v.OnSynchronizeDataListener;
+import com.thinkernote.ThinkerNote._constructer.p.CatFragPresenter;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnCatFragListener;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnSynchronizeDataListener;
 import com.thinkernote.ThinkerNote.base.TNChildViewBase;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
 import com.thinkernote.ThinkerNote.bean.main.AllFolderBean;
@@ -110,7 +109,7 @@ public class TNPageCats extends TNChildViewBase implements
     private TNSettings mSettings;
     private LinearLayout mLoadingView;
     //p
-    ICatFragPresenter presenter;
+    CatFragPresenter presenter;
 
     /**
      * 如下数据，当最后一个接口调用完成后，一定好清空数据
@@ -151,7 +150,7 @@ public class TNPageCats extends TNChildViewBase implements
         mSettings = TNSettings.getInstance();
 
         //p
-        presenter = new CatFragPresenterImpl(mActivity, this, dataListener);
+        presenter = new CatFragPresenter(mActivity, this, dataListener);
 
         init();
     }

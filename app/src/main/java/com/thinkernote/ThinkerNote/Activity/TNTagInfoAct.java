@@ -21,9 +21,8 @@ import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote._constructer.presenter.TagInfoPresenterImpl;
-import com.thinkernote.ThinkerNote._interface.p.ITagInfoPresenter;
-import com.thinkernote.ThinkerNote._interface.v.OnTagInfoListener;
+import com.thinkernote.ThinkerNote._constructer.p.TagInfoPresenter;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnTagInfoListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 
 import org.json.JSONObject;
@@ -47,7 +46,7 @@ public class TNTagInfoAct extends TNActBase
     private TNTag mTag;
 
     //p
-    private ITagInfoPresenter presener;
+    private TagInfoPresenter presener;
 
     // Activity methods
     //-------------------------------------------------------------------------------
@@ -56,7 +55,7 @@ public class TNTagInfoAct extends TNActBase
         super.onCreate(savedInstanceState);
         setContentView(R.layout.taginfo);
 
-        presener = new TagInfoPresenterImpl(this, this);
+        presener = new TagInfoPresenter(this, this);
         setViews();
         mTagId = getIntent().getLongExtra("TagId", -1);
         // initialize

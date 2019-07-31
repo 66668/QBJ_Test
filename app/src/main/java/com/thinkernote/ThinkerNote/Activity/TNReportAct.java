@@ -30,14 +30,11 @@ import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.KeyBoardManager;
-import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Utils.UiUtils;
 import com.thinkernote.ThinkerNote.Views.MyGridView;
-import com.thinkernote.ThinkerNote._constructer.presenter.ReportPresenterImpl;
-import com.thinkernote.ThinkerNote._interface.p.IReportPresenter;
-import com.thinkernote.ThinkerNote._interface.v.OnReportListener;
+import com.thinkernote.ThinkerNote._constructer.p.ReportPresenter;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnReportListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
-import com.thinkernote.ThinkerNote.bean.main.OldNotePicBean;
 import com.thinkernote.ThinkerNote.bean.settings.FeedBackBean;
 
 import java.io.File;
@@ -66,7 +63,7 @@ public class TNReportAct extends TNActBase
 //	private Uri mOutUri;
 
     //p
-    IReportPresenter presener;
+    ReportPresenter presener;
 
 
     // Activity methods
@@ -78,7 +75,7 @@ public class TNReportAct extends TNActBase
         mProgressDialog = TNUtilsUi.progressDialog(this, R.string.in_progress);
         setViews();
         //
-        presener = new ReportPresenterImpl(this, this);
+        presener = new ReportPresenter(this, this);
 
         mEmailView = (EditText) findViewById(R.id.report_email);
         if (!TextUtils.isEmpty(TNSettings.getInstance().email)) {
