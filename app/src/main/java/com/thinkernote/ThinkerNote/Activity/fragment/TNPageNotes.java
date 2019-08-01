@@ -970,7 +970,7 @@ public class TNPageNotes extends TNChildViewBase implements OnItemLongClickListe
                 //先执行最外层的数据
                 syncTNCat(0, cats.size());
             }
-        }else{
+        } else {
             //执行下一个接口
             pGetTagList();
         }
@@ -1380,6 +1380,7 @@ public class TNPageNotes extends TNChildViewBase implements OnItemLongClickListe
             long id = cloudIds.get(position).getId();
             int lastUpdate = cloudIds.get(position).getUpdate_at();
             if (editNotes != null && editNotes.size() > 0) {
+                MLog.d("frag同步--全部笔记--editNotes.size=" + editNotes.size());
                 if (editNotes == null || editNotes.size() <= 0) {
                     //执行下一个接口
                     pUpdataNote(0, false);
@@ -2165,6 +2166,7 @@ public class TNPageNotes extends TNChildViewBase implements OnItemLongClickListe
 
         //与云端同步数据 sjy-0623
         allNotes = TNDbUtils.getAllNoteList(TNSettings.getInstance().userId);
+        MLog.d("同步云端笔记--size=" + cloudIds.size() + "--本地笔记--size=" + allNotes.size());
         for (int i = 0; i < allNotes.size(); i++) {
             boolean isExit = false;
             final TNNote note = allNotes.get(i);
@@ -2186,6 +2188,7 @@ public class TNPageNotes extends TNChildViewBase implements OnItemLongClickListe
                         TNDb.beginTransaction();
                         try {
                             //
+                            MLog.d("删除本地笔记--" + note.title);
                             TNDb.getInstance().deleteSQL(TNSQLString.NOTE_DELETE_BY_NOTEID, new Object[]{note.noteId});
 
                             TNDb.setTransactionSuccessful();

@@ -44,8 +44,8 @@ public class MainPresenter implements IFolderModuleListener, IMainModuleListener
     //具体操作所需参数
     private String[] arrayFolderName;//第一次登录，要同步的数据，（1-1）
     private String[] arrayTagName;//第一次登录，要同步的数据，（1-2）
-    private List<AllNotesIdsBean.NoteIdItemBean> all_note_ids;//获取所有笔记id（12）
-    private List<AllNotesIdsBean.NoteIdItemBean> trash_note_ids;//获取所有笔记id（15）
+    private List<AllNotesIdsBean.NoteIdItemBean> all_note_ids;//获取所有笔记的id（12）
+    private List<AllNotesIdsBean.NoteIdItemBean> trash_note_ids;//获取所有回收站笔记id（15）
 
     public MainPresenter(Context context, OnMainViewListener logListener) {
         this.context = context;
@@ -159,11 +159,10 @@ public class MainPresenter implements IFolderModuleListener, IMainModuleListener
     }
 
     /**
-     * （8）笔记更新：上传本地新增笔记
+     * （8）笔记更新：上传本地新增笔记 TODO
      * syncState ：1表示未完全同步，2表示完全同步，3表示本地新增，4表示本地编辑，5表示彻底删除，6表示删除到回收站，7表示从回收站还原
      */
     private void updateLocalNotes() {
-        MLog.d(TAG, "同步--上传本地新增笔记");
         Vector<TNNote> localNewNotes = TNDbUtils.getNoteListBySyncState(TNSettings.getInstance().userId, 3);
         if (localNewNotes != null && localNewNotes.size() > 0) {
             noteModule.updateLocalNewNotes(localNewNotes, this);
@@ -248,7 +247,14 @@ public class MainPresenter implements IFolderModuleListener, IMainModuleListener
      */
     private void updateCloudNote() {
         MLog.d(TAG, "同步--云端笔记同步到本地");
-        noteModule.getCloudNote(all_note_ids, this);
+        final Vector<TNNote> allNotes = TNDbUtils.getAllNoteList(TNSettings.getInstance().userId);
+        if (all_note_ids != null && all_note_ids.size() > 0 && allNotes != null && allNotes.size() > 0) {
+            noteModule.getCloudNote(all_note_ids, allNotes, this);
+        } else {
+            //（15）
+            getTrashNotesId();
+        }
+
     }
 
     /**
@@ -267,6 +273,9 @@ public class MainPresenter implements IFolderModuleListener, IMainModuleListener
         Vector<TNNote> trashNotes = TNDbUtils.getNoteListByTrash(settings.userId, TNConst.CREATETIME);
         if (trashNotes != null && trashNotes.size() > 0 && trash_note_ids != null && trash_note_ids.size() > 0) {
             noteModule.upateTrashNotes(trash_note_ids, trashNotes, this);
+        } else {
+            //返回成功
+            onView.onSyncSuccess("数据同步成功");
         }
 
     }

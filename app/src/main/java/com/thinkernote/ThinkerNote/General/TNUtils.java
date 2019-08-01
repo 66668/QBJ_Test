@@ -194,11 +194,9 @@ public class TNUtils {
     public static JSONObject makeJSON(Object... aArray) {
         JSONObject jsonObject = new JSONObject();
         try {
-            MLog.d("makeJSON()开始--aArray.length="+aArray.length );
             for (int i = 0; i < aArray.length; i += 2) {
                 jsonObject.put((String) aArray[i], aArray[i + 1]);
             }
-            MLog.d("makeJSON()结束--aArray.length="+aArray.length );
         } catch (JSONException e) {
             e.printStackTrace();
             MLog.e("makeJSON()异常:" + e.toString());

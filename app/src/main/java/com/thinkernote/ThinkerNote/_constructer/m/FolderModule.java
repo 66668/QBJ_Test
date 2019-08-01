@@ -420,32 +420,38 @@ public class FolderModule {
      * @param allFolderBean
      * @param catId
      */
-    private void insertCatsSQL(AllFolderBean allFolderBean, long catId) {
+    private void insertCatsSQL(final AllFolderBean allFolderBean, final long catId) {
         //耗时操作
-        CatDbHelper.clearCatsByParentId(catId);
-        List<AllFolderItemBean> beans = allFolderBean.getFolders();
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                CatDbHelper.clearCatsByParentId(catId);
+                List<AllFolderItemBean> beans = allFolderBean.getFolders();
 
-        for (int i = 0; i < beans.size(); i++) {
-            AllFolderItemBean bean = beans.get(i);
-            JSONObject tempObj = TNUtils.makeJSON(
-                    "catName", bean.getName(),
-                    "userId", settings.userId,
-                    "trash", 0,
-                    "catId", bean.getId(),
-                    "noteCounts", bean.getCount(),
-                    "catCounts", bean.getFolder_count(),
-                    "deep", bean.getFolder_count() > 0 ? 1 : 0,
-                    "pCatId", catId,
-                    "isNew", -1,
-                    "createTime", TNUtils.formatStringToTime(bean.getCreate_at()),
-                    "lastUpdateTime", TNUtils.formatStringToTime(bean.getUpdate_at()),
-                    "strIndex", TNUtils.getPingYinIndex(bean.getName())
-            );
-            //更新数据库
-            Log.d("SJY", tempObj.toString());
-            CatDbHelper.addOrUpdateCat(tempObj);
-            Log.d("SJY", "添加文件夹数据--完成：" + bean.getName());
-        }
+                for (int i = 0; i < beans.size(); i++) {
+                    AllFolderItemBean bean = beans.get(i);
+                    JSONObject tempObj = TNUtils.makeJSON(
+                            "catName", bean.getName(),
+                            "userId", settings.userId,
+                            "trash", 0,
+                            "catId", bean.getId(),
+                            "noteCounts", bean.getCount(),
+                            "catCounts", bean.getFolder_count(),
+                            "deep", bean.getFolder_count() > 0 ? 1 : 0,
+                            "pCatId", catId,
+                            "isNew", -1,
+                            "createTime", TNUtils.formatStringToTime(bean.getCreate_at()),
+                            "lastUpdateTime", TNUtils.formatStringToTime(bean.getUpdate_at()),
+                            "strIndex", TNUtils.getPingYinIndex(bean.getName())
+                    );
+                    //更新数据库
+                    Log.d("SJY", tempObj.toString());
+                    CatDbHelper.addOrUpdateCat(tempObj);
+                    Log.d("SJY", "添加文件夹数据--完成：" + bean.getName());
+                }
+            }
+        });
+
     }
 
     /**
@@ -456,7 +462,6 @@ public class FolderModule {
     private void setFolderResult(AllFolderBean bean, long cat_Note_Folder_Id) {
         if ("login required".equals(bean.getMsg())) {
             MLog.e(TAG, bean.getMsg());
-            //TODO
             TNUtilsUi.showToast(bean.getMsg());
             TNUtils.goToLogin(context.getApplicationContext());
         } else if ("笔记不存在".equals(bean.getMsg())) {
@@ -481,7 +486,6 @@ public class FolderModule {
                 MLog.e(TAG, "文件夹不存在：" + e.toString());
             }
         } else {
-            MLog.e(TAG, "setFolderResult:" + bean.getCode() + "--" + bean.getMsg());
         }
 
     }
