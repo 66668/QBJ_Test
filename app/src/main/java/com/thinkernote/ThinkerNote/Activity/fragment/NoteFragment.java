@@ -192,34 +192,35 @@ public class NoteFragment extends TNChildViewBase implements OnItemLongClickList
      *
      * @param state 0 = 成功/1=back取消同步/2-异常触发同步终止
      */
-    private void endSynchronize(int state) {
-        //TODO 主线程更新
-        MLog.d("frag同步--全部笔记--同步结束");
-        mPullListview.onRefreshComplete();
-        if (state == 0) {
-            //正常结束
-            TNUtilsUi.showNotification(mActivity, R.string.alert_MainCats_Synchronized, true);
-            //
-            TNSettings settings = TNSettings.getInstance();
-            settings.originalSyncTime = System.currentTimeMillis();
-            settings.savePref(false);
-        } else if (state == 1) {
-            TNUtilsUi.showNotification(mActivity, R.string.alert_Synchronize_Stoped, true);
-        } else {
-            TNUtilsUi.showNotification(mActivity, R.string.alert_SynchronizeCancell, true);
-        }
-        getNativeData();
+    private void endSynchronize(final int state) {
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                MLog.d("frag同步--全部笔记--同步结束");
+                mPullListview.onRefreshComplete();
+                if (state == 0) {
+                    //正常结束
+                    TNUtilsUi.showNotification(mActivity, R.string.alert_MainCats_Synchronized, true);
+                    //
+                    TNSettings settings = TNSettings.getInstance();
+                    settings.originalSyncTime = System.currentTimeMillis();
+                    settings.savePref(false);
+                } else if (state == 1) {
+                    TNUtilsUi.showNotification(mActivity, R.string.alert_Synchronize_Stoped, true);
+                } else {
+                    TNUtilsUi.showNotification(mActivity, R.string.alert_SynchronizeCancell, true);
+                }
+                getNativeData();
+            }
+        });
+
     }
 
     //如下回调不使用
     @Override
-    public void onSyncEditSuccess(String obj) {
+    public void onSyncEditSuccess() {
 
     }
 
-    @Override
-    public void onSyncEditFailed(Exception e, String msg) {
-
-    }
 
 }

@@ -7,8 +7,5 @@ public interface OnSyncListener {
     void onSyncFailed(Exception e, String msg);
 
     //编辑界面才使用
-    void onSyncEditSuccess(String obj);
-
-    void onSyncEditFailed(Exception e, String msg);
-
+    void onSyncEditSuccess();
 }

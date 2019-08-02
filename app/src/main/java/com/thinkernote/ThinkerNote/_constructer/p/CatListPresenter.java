@@ -34,7 +34,6 @@ public class CatListPresenter implements  OnCatListListener {
         module.mmoveFolder(this, catId, selectId);
     }
 
-
     //==========================结果回调==============================
 
     @Override

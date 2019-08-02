@@ -37,8 +37,8 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * <p>
      * type = HOME   全执行
      * type = TRASH  不执行（4）（5）（6）（7）
-     * type = FOLDER 不执行（4）（5）（6）（7）
-     * type = NOTE   不执行（4）（5）（6）
+     * type = FOLDER 不执行（7）
+     * type = NOTE   不执行（4）（5）（6）(7)
      * type = TAG    不执行（4）（5）（6）
      * type = EDIT   从（8）开始,不执行（15）（16）
      */
@@ -84,7 +84,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
         this.type = type;
         if (type.equals("EDIT")) {
             isAllSync = false;
-            //从（8）开始
+            // 从（8）开始,不执行（15）（16）
             updateLocalNotes();
         } else {
             isAllSync = true;
@@ -142,7 +142,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      */
     private void getProFiles() {
         Vector<TNCat> cats = TNDbUtils.getAllCatList(settings.userId);
-        if (cats != null && cats.size() > 0 && (type.equals("NOTE") || type.equals("HOME"))) {
+        if (cats != null && cats.size() > 0 && (type.equals("FLODER") || type.equals("NOTE") || type.equals("TAG"))) {//不执行的type
             getTags();
         } else {
             MLog.d(TAG, "同步--预先获取用户所有数据");
@@ -188,7 +188,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
     private void getTags() {
         MLog.d(TAG, "同步--标签");
         Vector<TNTag> tags = TNDbUtils.getTagList(settings.userId);
-        if (tags != null && tags.size() > 0 && (type.equals("NOTE") || type.equals("HOME"))) {
+        if (tags != null && tags.size() > 0 && (type.equals("NOTE") || type.equals("TRASH") || type.equals("FOLDER"))) {//不执行
             //(8)执行下一个接口
             updateLocalNotes();
         } else {
@@ -300,8 +300,14 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * （15）获取所有回收站笔记
      */
     private void getTrashNotesId() {
-        MLog.d(TAG, "同步--获取所有回收站笔记id");
-        noteModule.getTrashNotesId(this);
+        if (type.equals("EDIT")) {
+            //结束
+            onView.onSyncEditSuccess();
+        } else {
+            MLog.d(TAG, "同步--获取所有回收站笔记id");
+            noteModule.getTrashNotesId(this);
+        }
+
     }
 
     /**
@@ -334,7 +340,6 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
     public void onAddDefaultFolderSuccess() {
         //（2）处理tag标签
         createTagByFirstLaunch();
-
     }
 
     //(6)更新默认子文件夹
@@ -358,10 +363,6 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
         getAllFolder();
     }
 
-    @Override
-    public void onProfileFailed(String msg, Exception e) {
-
-    }
 
     //（5）获取所有文件夹数据
     @Override
@@ -547,6 +548,32 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
     }
 
     //=====================同步块不走如下回调============================
+
+    @Override
+    public void onProfileFailed(String msg, Exception e) {
+
+    }
+
+    @Override
+    public void onDeleteFolderSuccess() {
+
+    }
+
+    @Override
+    public void onDeleteFolderFailed(String msg, Exception e) {
+
+    }
+
+    @Override
+    public void onDefaultFolderSuccess() {
+
+    }
+
+    @Override
+    public void onDefaultFolderFailed(String msg, Exception e) {
+
+    }
+
     @Override
     public void onAddFolderSuccess() {
 
@@ -567,6 +594,16 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
 
     @Override
     public void onGetTagListFailed(Exception e, String msg) {
+
+    }
+
+    @Override
+    public void onDeleteTagSuccess() {
+
+    }
+
+    @Override
+    public void onDeleteTagFailed(Exception e, String msg) {
 
     }
 

@@ -523,6 +523,15 @@ public interface MyHttpService {
             , @Query("session_token") String session_token);
 
     /**
+     * /**
+     * 同步 syncTagList
+     *
+     * @return
+     */
+    @GET(URLUtils.Tags.TAG)
+    Observable<TagListBean> syncTagList(@Query("session_token") String session_token);
+
+    /**
      * 获取回收站所有的笔记id
      *
      * @return
@@ -542,25 +551,15 @@ public interface MyHttpService {
 
 
     /**
-     * /**
-     * 同步 syncTagList
-     *
-     * @return
-     */
-    @GET(URLUtils.Tags.TAG)
-    Observable<TagListBean> syncTagList(@Query("session_token") String session_token);
-
-
-    /**
-     * 同步 getAllNotsId
+     * 获取所有笔记id
      *
      * @return
      */
     @GET(URLUtils.Note.NOTE_ALL_ID)
-    Observable<AllNotesIdsBean> syncAllNotsId(@Query("session_token") String session_token);
+    Observable<AllNotesIdsBean> syncAllNotesId(@Query("session_token") String session_token);
 
     /**
-     * 同步 GetFolderNoteIds
+     * 获取folder下的所有笔记
      *
      * @return
      */

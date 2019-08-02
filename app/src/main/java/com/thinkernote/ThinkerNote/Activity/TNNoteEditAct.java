@@ -1369,12 +1369,12 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
     //========================================回调========================================
 
     @Override
-    public void onSyncEditSuccess(String obj) {
+    public void onSyncEditSuccess() {
         endSynchronize();
     }
 
     @Override
-    public void onSyncEditFailed(Exception e, String msg) {
+    public void onSyncFailed(Exception e, String msg) {
         endSynchronize();
     }
 
@@ -1384,8 +1384,5 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
 
     }
 
-    @Override
-    public void onSyncFailed(Exception e, String msg) {
 
-    }
 }

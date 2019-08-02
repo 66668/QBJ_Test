@@ -24,4 +24,9 @@ public interface ITagModuleListener {
     void onGetTagListSuccess();
 
     void onGetTagListFailed( Exception e,String msg);
+    //
+    void onDeleteTagSuccess();
+
+    void onDeleteTagFailed( Exception e,String msg);
+
 }

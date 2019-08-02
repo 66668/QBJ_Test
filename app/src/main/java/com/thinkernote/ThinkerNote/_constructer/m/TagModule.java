@@ -225,7 +225,7 @@ public class TagModule {
                 });
     }
 
-    public void deleteTag(final OnTagInfoListener listener, final long pid) {
+    public void deleteTag(final long pid, final ITagModuleListener listener) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .deleteTag(pid, settings.token)//接口方法
@@ -241,24 +241,19 @@ public class TagModule {
                     @Override
                     public void onCompleted() {
                         MLog.d(TAG, "deleteTag--onCompleted");
-                        listener.onSuccess();
+                        listener.onDeleteTagSuccess();
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         MLog.e("deleteTag--onError:" + e.toString());
-                        listener.onFailed("异常", new Exception("接口异常！"));
+                        listener.onDeleteTagFailed(new Exception("接口异常！"), "异常");
                     }
 
                     @Override
                     public void onNext(CommonBean bean) {
-                        MLog.d(TAG, "deleteTag-onNext");
+                        MLog.d(TAG, "deleteTag-onNext" + bean.getCode());
 
-                        //处理返回结果
-                        if (bean.getCode() == 0) {
-                        } else {
-                            listener.onFailed(bean.getMessage(), null);
-                        }
                     }
                 });
     }
@@ -291,7 +286,7 @@ public class TagModule {
                     "count", itemBean.getCount()
             );
             TagDbHelper.addOrUpdateTag(tempObj);
-            MLog.e(TAG, "标签存储成功：" + tagName);
+            MLog.d(TAG, "标签存储成功：" + tagName);
         }
 
     }

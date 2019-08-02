@@ -30,5 +30,15 @@ public interface IFolderModuleListener {
 
     void onProfileFailed(String msg, Exception e);
 
+    //删除文件夹
+    void onDeleteFolderSuccess();
+
+    void onDeleteFolderFailed(String msg, Exception e);
+
+    //
+    void onDefaultFolderSuccess();
+
+    void onDefaultFolderFailed(String msg, Exception e);
+
 }
 

@@ -2,13 +2,14 @@ package com.thinkernote.ThinkerNote._constructer.p;
 
 import android.content.Context;
 
+import com.thinkernote.ThinkerNote._constructer.listener.m.ITagModuleListener;
 import com.thinkernote.ThinkerNote._constructer.listener.v.OnTagInfoListener;
 import com.thinkernote.ThinkerNote._constructer.m.TagModule;
 
 /**
- *  p层 具体实现
+ * p层 具体实现
  */
-public class TagInfoPresenter implements OnTagInfoListener {
+public class TagInfoPresenter implements ITagModuleListener {
     private Context context;
     private OnTagInfoListener onView;
     //p层调用M层方法
@@ -21,22 +22,57 @@ public class TagInfoPresenter implements OnTagInfoListener {
         module = new TagModule(context);
     }
 
-
     //============================p层重写，用于调用m层方法============================
     public void pTagDelete(long pid) {
-        module.deleteTag(this,pid);
+        module.deleteTag(pid, this);
     }
-
-    //==========================结果回调==============================
-
+    //==========================回调============================
     @Override
-    public void onSuccess() {
+    public void onDeleteTagSuccess() {
         onView.onSuccess();
     }
 
     @Override
-    public void onFailed(String msg, Exception e) {
+    public void onDeleteTagFailed(Exception e, String msg) {
         onView.onFailed(msg, e);
+    }
+
+    //==========================如下回调不使用==============================
+
+
+    @Override
+    public void onAddDefaultTagSuccess() {
+
+    }
+
+    @Override
+    public void onAddTagSuccess() {
+
+    }
+
+    @Override
+    public void onAddTagFailed(Exception e, String msg) {
+
+    }
+
+    @Override
+    public void onGetTagSuccess() {
+
+    }
+
+    @Override
+    public void onGetTagFailed(Exception e, String msg) {
+
+    }
+
+    @Override
+    public void onGetTagListSuccess() {
+
+    }
+
+    @Override
+    public void onGetTagListFailed(Exception e, String msg) {
+
     }
 
 

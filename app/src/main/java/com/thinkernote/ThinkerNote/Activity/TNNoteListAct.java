@@ -524,10 +524,10 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
                 getNoteListByFolderId(mListDetail, mPageNum, TNConst.PAGE_SIZE, mSettings.sort);
 
                 break;
-            case 3:
-                //CatFrag跳转值
+            case 3://同步回收站
+                //
                 if (mPageNum == 1) {
-                    syncData();
+                    syncTrash();
                 }
                 break;
             case 4://tag下笔记
@@ -590,22 +590,28 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
      *
      * @param state 0 = 成功/1=back取消同步/2-异常触发同步终止
      */
-    private void endSynchronize1(int state) {
-        MLog.d("NoteList同步---结束");
+    private void endSynchronize1(final int state) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                MLog.d("NoteList同步---结束");
 
-        mLoadingView.setVisibility(View.GONE);
-        mPullListview.onRefreshComplete();
-        mNotes = TNDbUtils.getNoteListByTrash(mSettings.userId, mSettings.sort);
-        mNotesAdapter.updateNotes(mNotes);
-        mNotesAdapter.notifyDataSetChanged();
-        setButtonsAndNoteList();
-        if (state == 0) {
-            // 正常流程完成
-        } else if (state == 1) {
-            TNUtilsUi.showNotification(this, R.string.alert_Synchronize_Stoped, true);
-        } else {
-            TNUtilsUi.showNotification(this, R.string.alert_SynchronizeCancell, true);
-        }
+                mLoadingView.setVisibility(View.GONE);
+                mPullListview.onRefreshComplete();
+                mNotes = TNDbUtils.getNoteListByTrash(mSettings.userId, mSettings.sort);
+                mNotesAdapter.updateNotes(mNotes);
+                mNotesAdapter.notifyDataSetChanged();
+                setButtonsAndNoteList();
+                if (state == 0) {
+                    // 正常流程完成
+                } else if (state == 1) {
+                    TNUtilsUi.showNotification(TNNoteListAct.this, R.string.alert_Synchronize_Stoped, true);
+                } else {
+                    TNUtilsUi.showNotification(TNNoteListAct.this, R.string.alert_SynchronizeCancell, true);
+                }
+            }
+        });
+
     }
 
     /**
@@ -613,8 +619,11 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
      *
      * @param state 0 = 成功/1=back取消同步/2-异常触发同步终止
      */
-    private void endSynchronize2(int state) {
-        MLog.d("SynchronizeEdit结束");
+    private void endSynchronize2(final int state) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                MLog.d("SynchronizeEdit结束");
 //        mLoadingView.setVisibility(View.GONE);
 //        mPullListview.onRefreshComplete();
 //        mNotes = TNDbUtils.getNoteListByTrash(mSettings.userId, mSettings.sort);
@@ -622,14 +631,17 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
 //        mNotesAdapter.notifyDataSetChanged();
 //        setButtonsAndNoteList();
 
-        if (state == 0) {
-            // 正常流程完成
-            TNUtilsUi.showNotification(this, R.string.alert_MainCats_Synchronized, true);
-        } else if (state == 1) {
-            TNUtilsUi.showNotification(this, R.string.alert_Synchronize_Stoped, true);
-        } else {
-            TNUtilsUi.showNotification(this, R.string.alert_SynchronizeCancell, true);
-        }
+                if (state == 0) {
+                    // 正常流程完成
+                    TNUtilsUi.showNotification(TNNoteListAct.this, R.string.alert_MainCats_Synchronized, true);
+                } else if (state == 1) {
+                    TNUtilsUi.showNotification(TNNoteListAct.this, R.string.alert_Synchronize_Stoped, true);
+                } else {
+                    TNUtilsUi.showNotification(TNNoteListAct.this, R.string.alert_SynchronizeCancell, true);
+                }
+            }
+        });
+
     }
     // ---------------------------------------弹窗----------------------------------------
 
@@ -992,7 +1004,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
     /**
      * 同步edit
      */
-    private void syncData() {
+    private void syncTrash() {
         syncPresenter.synchronizeData("TRASH");
         isAllSync = syncPresenter.isAllSync();
     }
@@ -1020,14 +1032,10 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
 
     //
     @Override
-    public void onSyncEditSuccess(String obj) {
+    public void onSyncEditSuccess() {
         endSynchronize2(0);
     }
 
-    @Override
-    public void onSyncEditFailed(Exception e, String msg) {
-        endSynchronize2(2);
-    }
 
     //获取tag下笔记/获取文件夹下笔记（走相同回调返回）
     @Override

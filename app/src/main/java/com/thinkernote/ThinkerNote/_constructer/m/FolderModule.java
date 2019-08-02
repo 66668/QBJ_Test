@@ -394,7 +394,89 @@ public class FolderModule {
     }
 
 
+    /**
+     * 删除文件夹
+     *
+     * @param listener
+     */
+    public void deleteFolder(final long fodlerId, final IFolderModuleListener listener) {
+
+        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                .deleteFolder(fodlerId, settings.token)
+                .subscribeOn(Schedulers.io())//固定样式
+                .doOnNext(new Action1<CommonBean>() {
+                    @Override
+                    public void call(CommonBean commonBean) {
+                        if (commonBean.getCode() == 0) {
+                            deleteFolderSQL(fodlerId);
+                        }
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())//固定样式
+                .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
+                    @Override
+                    public void onCompleted() {
+                        MLog.d(TAG, "deleteFolder--onCompleted");
+                        listener.onDeleteFolderSuccess();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        MLog.e("deleteFolder--onError:" + e.toString());
+                        listener.onDeleteFolderFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onNext(CommonBean bean) {
+                        MLog.d(TAG, "deleteFolder-onNext");
+                    }
+                });
+    }
+
+    /**
+     * 设置默认文件夹
+     *
+     * @param listener
+     */
+    public void setDefaultFolder(final long fodlerId, final IFolderModuleListener listener) {
+
+        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                .setDefaultFolder(fodlerId, settings.token)//接口方法
+                .subscribeOn(Schedulers.io())//固定样式
+                .observeOn(AndroidSchedulers.mainThread())//固定样式
+                .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
+                    @Override
+                    public void onCompleted() {
+                        MLog.d(TAG, "setDefaultFolder--onCompleted");
+                        listener.onDefaultFolderSuccess();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        MLog.e("setDefaultFolder--onError:" + e.toString());
+                        listener.onDefaultFolderFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onNext(CommonBean bean) {
+                        MLog.d(TAG, "setDefaultFolder-onNext--" + bean.getCode());
+
+                    }
+                });
+    }
+
     //================================================处理相关================================================
+
+    private void deleteFolderSQL(long folderId) {
+        TNDb.beginTransaction();
+        try {
+            TNDb.getInstance().execSQL(TNSQLString.CAT_DELETE_CAT, folderId);
+            TNDb.getInstance().execSQL(TNSQLString.NOTE_TRASH_CATID, 2, System.currentTimeMillis() / 1000, TNSettings.getInstance().defaultCatId, folderId);
+            TNDb.setTransactionSuccessful();
+        } finally {
+            TNDb.endTransaction();
+        }
+    }
 
     /**
      * 更新user表

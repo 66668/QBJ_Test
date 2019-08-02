@@ -40,12 +40,33 @@ public class FragmentTagPresenter implements ITagModuleListener {
     }
     //============================p层（非同步块）============================
 
-    public void getTagsBySingle() {
+    public void getTagList() {
         tagsModule.getAllTagsBySingle(this);
     }
 
     //==========================如下回调不使用==============================
 
+
+    @Override
+    public void onGetTagListSuccess() {
+        onView.onGetTagListSuccess();
+    }
+
+    @Override
+    public void onGetTagListFailed(Exception e, String msg) {
+        onView.onGetTagListFailed(msg, e);
+    }
+
+
+
+
+
+
+
+
+
+
+    // ======================如下回调不用======================
     @Override
     public void onAddDefaultTagSuccess() {
 
@@ -72,13 +93,13 @@ public class FragmentTagPresenter implements ITagModuleListener {
     }
 
     @Override
-    public void onGetTagListSuccess() {
-        onView.onGetTagListSuccess();
+    public void onDeleteTagSuccess() {
+
     }
 
     @Override
-    public void onGetTagListFailed(Exception e, String msg) {
-        onView.onGetTagListFailed(msg, e);
+    public void onDeleteTagFailed(Exception e, String msg) {
+
     }
 
 

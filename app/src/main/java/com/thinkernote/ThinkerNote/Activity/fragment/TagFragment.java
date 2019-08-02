@@ -352,186 +352,31 @@ public class TagFragment extends TNChildViewBase implements
      *
      * @param state 0 = 成功/1=back取消同步/2-异常触发同步终止
      */
-    private void endSynchronize(int state) {
-        mListview.onRefreshComplete();
-        if (state == 0) {
-            //正常结束
-            TNUtilsUi.showNotification(mActivity, R.string.alert_MainCats_Synchronized, true);
-            //
-            TNSettings settings = TNSettings.getInstance();
-            settings.originalSyncTime = System.currentTimeMillis();
-            settings.savePref(false);
-        } else if (state == 1) {
-            TNUtilsUi.showNotification(mActivity, R.string.alert_Synchronize_Stoped, true);
-        } else {
-            TNUtilsUi.showNotification(mActivity, R.string.alert_SynchronizeCancell, true);
-        }
-    }
-
-    // ------------------------------------数据库-------------------------------------------
-
-
-    /**
-     * 2-11-2
-     * 该处工作环境最恶劣，上千跳接口返回数据走该处执行耗时任务，有必要手动gc处理内存
-     *
-     * @param bean
-     */
-    public static void updateNote(GetNoteByNoteIdBean bean) {
-        //
-        System.gc();
-        //
-        try {
-            long noteId = bean.getId();
-            String contentDigest = bean.getContent_digest();
-            TNNote note = TNDbUtils.getNoteByNoteId(noteId);//在全部笔记页同步，会走这里，没在首页同步过的返回为null
-
-            int syncState = note == null ? 1 : note.syncState;
-            List<GetNoteByNoteIdBean.TagBean> tags = bean.getTags();
-
-            String tagStr = "";
-            for (int k = 0; k < tags.size(); k++) {
-                GetNoteByNoteIdBean.TagBean tempTag = tags.get(k);
-                String tag = tempTag.getName();
-                if ("".equals(tag)) {
-                    continue;
-                }
-                if (tags.size() == 1) {
-                    tagStr = tag;
+    private void endSynchronize(final int state) {
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mListview.onRefreshComplete();
+                if (state == 0) {
+                    //正常结束
+                    TNUtilsUi.showNotification(mActivity, R.string.alert_MainCats_Synchronized, true);
+                    //
+                    TNSettings settings = TNSettings.getInstance();
+                    settings.originalSyncTime = System.currentTimeMillis();
+                    settings.savePref(false);
+                } else if (state == 1) {
+                    TNUtilsUi.showNotification(mActivity, R.string.alert_Synchronize_Stoped, true);
                 } else {
-                    if (k == (tags.size() - 1)) {
-                        tagStr = tagStr + tag;
-                    } else {
-                        tagStr = tagStr + tag + ",";
-                    }
+                    TNUtilsUi.showNotification(mActivity, R.string.alert_SynchronizeCancell, true);
                 }
             }
+        });
 
-            String thumbnail = "";
-            if (note != null) {
-                thumbnail = note.thumbnail;
-                Vector<TNNoteAtt> localAtts = TNDbUtils.getAttrsByNoteLocalId(note.noteLocalId);
-                List<GetNoteByNoteIdBean.Attachments> atts = bean.getAttachments();
-                if (localAtts.size() != 0) {
-                    //循环判断是否与线上同步，线上没有就删除本地
-                    for (int k = 0; k < localAtts.size(); k++) {
-                        boolean exit = false;
-                        TNNoteAtt tempLocalAtt = localAtts.get(k);
-                        for (int i = 0; i < atts.size(); i++) {
-                            GetNoteByNoteIdBean.Attachments tempAtt = atts.get(i);
-                            long attId = tempAtt.getId();
-                            if (tempLocalAtt.attId == attId) {
-                                exit = true;
-                            }
-                        }
-                        if (!exit) {
-                            if (thumbnail.indexOf(String.valueOf(tempLocalAtt.attId)) != 0) {
-                                thumbnail = "";
-                            }
-                            NoteAttrDbHelper.deleteAttById(tempLocalAtt.attId);
-                        }
-                    }
-                    //循环判断是否与线上同步，本地没有就插入数据
-                    for (int k = 0; k < atts.size(); k++) {
-                        GetNoteByNoteIdBean.Attachments tempAtt = atts.get(k);
-                        long attId = tempAtt.getId();
-                        boolean exit = false;
-                        for (int i = 0; i < localAtts.size(); i++) {
-                            TNNoteAtt tempLocalAtt = localAtts.get(i);
-                            if (tempLocalAtt.attId == attId) {
-                                exit = true;
-                            }
-                        }
-                        if (!exit) {
-                            syncState = 1;
-                            insertAttr(tempAtt, note.noteLocalId);
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < atts.size(); i++) {
-                        GetNoteByNoteIdBean.Attachments tempAtt = atts.get(i);
-                        syncState = 1;
-                        insertAttr(tempAtt, note.noteLocalId);
-                    }
-                }
-
-                //如果本地的更新时间晚就以本地的为准
-                if (note.lastUpdate > (com.thinkernote.ThinkerNote.Utils.TimeUtils.getMillsOfDate(bean.getUpdate_at()) / 1000)) {
-                    return;
-                }
-
-                if (atts.size() == 0) {
-                    syncState = 2;
-                }
-            }
-
-            int catId = -1;
-            //TODO getFolder_id可以为负值么
-            if (bean.getFolder_id() > 0) {
-                catId = bean.getFolder_id();
-            }
-
-            JSONObject tempObj = TNUtils.makeJSON(
-                    "title", bean.getTitle(),
-                    "userId", TNSettings.getInstance().userId,
-                    "trash", bean.getTrash(),
-                    "source", "android",
-                    "catId", catId,
-                    "content", TNUtilsHtml.codeHtmlContent(bean.getContent(), true),
-                    "createTime", com.thinkernote.ThinkerNote.Utils.TimeUtils.getMillsOfDate(bean.getCreate_at()) / 1000,
-                    "lastUpdate", com.thinkernote.ThinkerNote.Utils.TimeUtils.getMillsOfDate(bean.getUpdate_at()) / 1000,
-                    "syncState", syncState,
-                    "noteId", noteId,
-                    "shortContent", TNUtils.getBriefContent(bean.getContent()),
-                    "tagStr", tagStr,
-                    "lbsLongitude", bean.getLongitude() <= 0 ? 0 : bean.getLongitude(),
-                    "lbsLatitude", bean.getLatitude() <= 0 ? 0 : bean.getLatitude(),
-                    "lbsRadius", bean.getRadius() <= 0 ? 0 : bean.getRadius(),
-                    "lbsAddress", bean.getAddress(),
-                    "nickName", TNSettings.getInstance().username,
-                    "thumbnail", thumbnail,
-                    "contentDigest", contentDigest
-            );
-            if (note == null)
-                NoteDbHelper.addOrUpdateNote(tempObj);
-            else
-                NoteDbHelper.updateNote(tempObj);
-        } catch (Exception e) {
-            MLog.e("操作有异常：" + e.toString());
-            //该异常只在TNMainAct的2-11-2的数据处理函数使用，这里只使用try catch 不处理即可 sjy
-            MLog.e("TNPagerTags--updateNote:" + e.toString());
-        }
     }
-
-    public static void insertAttr(GetNoteByNoteIdBean.Attachments tempAtt, long noteLocalId) {
-        long attId = tempAtt.getId();
-        String digest = tempAtt.getDigest();
-        //
-        TNNoteAtt noteAtt = TNDbUtils.getAttrById(attId);
-        noteAtt.attName = tempAtt.getName();
-        noteAtt.type = tempAtt.getType();
-        noteAtt.size = tempAtt.getSize();
-        noteAtt.syncState = 1;
-
-        JSONObject tempObj = TNUtils.makeJSON(
-                "attName", noteAtt.attName,
-                "type", noteAtt.type,
-                "path", noteAtt.path,
-                "noteLocalId", noteLocalId,
-                "size", noteAtt.size,
-                "syncState", noteAtt.syncState,
-                "digest", digest,
-                "attId", attId,
-                "width", noteAtt.width,
-                "height", noteAtt.height
-        );
-        NoteAttrDbHelper.addOrUpdateAttr(tempObj);
-    }
-
 // ------------------------------------p层调用-------------------------------------------
 
     private void pTagList() {
-        presenter.getTagsBySingle();
+        presenter.getTagList();
     }
 
     //====================================结果回调============================================
@@ -559,14 +404,11 @@ public class TagFragment extends TNChildViewBase implements
         endSynchronize(2);
         MLog.e(msg);
     }
+
     //如下回调不使用
     @Override
-    public void onSyncEditSuccess(String obj) {
+    public void onSyncEditSuccess() {
 
     }
 
-    @Override
-    public void onSyncEditFailed(Exception e, String msg) {
-
-    }
 }

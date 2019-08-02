@@ -575,13 +575,9 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewL
 
     //如下回调不使用
     @Override
-    public void onSyncEditSuccess(String obj) {
+    public void onSyncEditSuccess() {
 
     }
 
-    @Override
-    public void onSyncEditFailed(Exception e, String msg) {
-
-    }
 
 }
