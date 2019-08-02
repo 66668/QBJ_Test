@@ -104,7 +104,7 @@ public class TNUserInfoAct extends TNActBase implements OnClickListener,
         TNPreferenceChild child = null;
 
         // 软件更新
-        child = new TNPreferenceChild(getString(R.string.userinfo_update), getString(R.string.userinfo_update_info), true, new TNRunner(this, "updateSoftware"));
+        child = new TNPreferenceChild(getString(R.string.userinfo_update), "当前版本：" + getAppVersionName(this), true, new TNRunner(this, "updateSoftware"));
         mChilds.add(child);
 
         // 用户信息
@@ -151,6 +151,19 @@ public class TNUserInfoAct extends TNActBase implements OnClickListener,
             child.setOther("PAY_TIP");
             mChilds.add(child);
         }
+    }
+
+    public String getAppVersionName(Context context) {
+        String appVersionName = "";
+        try {
+            PackageInfo packageInfo = context.getApplicationContext()
+                    .getPackageManager()
+                    .getPackageInfo(context.getPackageName(), 0);
+            appVersionName = packageInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            MLog.e(e.getMessage());
+        }
+        return appVersionName;
     }
 
 
