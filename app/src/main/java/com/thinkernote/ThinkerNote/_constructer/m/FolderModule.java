@@ -174,7 +174,7 @@ public class FolderModule {
      *
      * @param listener
      */
-    public void getProfiles(final IMainModuleListener listener) {
+    public void getProfiles(final IFolderModuleListener listener) {
 
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .LogNormalProfile(settings.token)//接口方法
@@ -231,10 +231,11 @@ public class FolderModule {
                 .doOnNext(new Action1<AllFolderBean>() {
                     @Override
                     public void call(AllFolderBean bean) {
-                        MLog.d(TAG, "开始--getAllFolder--getFolder" + bean.getCode() + "--" + bean.getMsg() + "--size=" + bean.getFolders());
+
                         setFolderResult(bean, -1L);
                         if (bean.getCode() == 0) {
                             //更新文件夹数据库(第一级处理)
+                            MLog.d(TAG, "1级文件夹--size=" + bean.getFolders());
                             insertCatsSQL(bean, -1L);
                         }
                     }
@@ -242,7 +243,13 @@ public class FolderModule {
                 .concatMap(new Func1<AllFolderBean, Observable<AllFolderItemBean>>() {//（2）拿到第一个总接口数据，将list转item处理
                     @Override
                     public Observable<AllFolderItemBean> call(AllFolderBean allFolderBean) {
-                        return Observable.from(allFolderBean.getFolders());
+                        if (allFolderBean.getFolders() != null && allFolderBean.getFolders().size() > 0) {
+                            return Observable.from(allFolderBean.getFolders());
+                        } else {
+                            //下一个循环
+                            return Observable.empty();
+                        }
+
                     }
                 })
                 .concatMap(new Func1<AllFolderItemBean, Observable<AllFolderBean>>() {//处理每个item下的文件夹
@@ -255,9 +262,10 @@ public class FolderModule {
                                 .doOnNext(new Action1<AllFolderBean>() {
                                     @Override
                                     public void call(AllFolderBean bean) {
-                                        MLog.d(TAG, "二级文件夹--getAllFolder--getFolderByFolderID" + itemBean.getName() + bean.getCode() + "--" + bean.getMsg() + "--size=" + bean.getFolders());
+
                                         if (bean.getCode() == 0) {
                                             //第二级处理：更新文件夹数据库
+                                            MLog.d(TAG, "2级文件夹--" + itemBean.getName());
                                             insertCatsSQL(bean, itemBean.getId());
                                         }
                                     }
@@ -268,7 +276,12 @@ public class FolderModule {
                 .concatMap(new Func1<AllFolderBean, Observable<AllFolderItemBean>>() {//（3）item下拿到新的list，将list再转item处理
                     @Override
                     public Observable<AllFolderItemBean> call(AllFolderBean allFolderBean) {
-                        return Observable.from(allFolderBean.getFolders());
+                        if (allFolderBean.getFolders() != null && allFolderBean.getFolders().size() > 0) {
+                            return Observable.from(allFolderBean.getFolders());
+                        } else {
+                            //下一个循环
+                            return Observable.empty();
+                        }
                     }
                 })
                 .concatMap(new Func1<AllFolderItemBean, Observable<AllFolderBean>>() {//处理每个item下的文件夹
@@ -281,9 +294,9 @@ public class FolderModule {
                                 .doOnNext(new Action1<AllFolderBean>() {
                                     @Override
                                     public void call(AllFolderBean bean) {
-                                        MLog.d(TAG, "3级文件夹--getAllFolder--getFolderByFolderID" + itemBean.getName() + bean.getCode() + "--" + bean.getMsg() + "--size=" + bean.getFolders());
                                         if (bean.getCode() == 0) {
                                             //第3级处理：更新文件夹数据库
+                                            MLog.d(TAG, "3级文件夹--" + itemBean.getName());
                                             insertCatsSQL(bean, itemBean.getId());
                                         }
                                     }
@@ -294,7 +307,12 @@ public class FolderModule {
                 .concatMap(new Func1<AllFolderBean, Observable<AllFolderItemBean>>() {//（4）item下拿到新的list，将list再转item处理
                     @Override
                     public Observable<AllFolderItemBean> call(AllFolderBean allFolderBean) {
-                        return Observable.from(allFolderBean.getFolders());
+                        if (allFolderBean.getFolders() != null && allFolderBean.getFolders().size() > 0) {
+                            return Observable.from(allFolderBean.getFolders());
+                        } else {
+                            //下一个循环
+                            return Observable.empty();
+                        }
                     }
                 })
                 .concatMap(new Func1<AllFolderItemBean, Observable<AllFolderBean>>() {//处理每个item下的文件夹
@@ -307,9 +325,9 @@ public class FolderModule {
                                 .doOnNext(new Action1<AllFolderBean>() {
                                     @Override
                                     public void call(AllFolderBean bean) {
-                                        MLog.d(TAG, "4级文件夹--getAllFolder--getFolderByFolderID" + itemBean.getName() + bean.getCode() + "--" + bean.getMsg() + "--size=" + bean.getFolders());
                                         if (bean.getCode() == 0) {
                                             //第4级处理：更新文件夹数据库
+                                            MLog.d(TAG, "4级文件夹--" + itemBean.getName());
                                             insertCatsSQL(bean, itemBean.getId());
                                         }
                                     }
@@ -320,7 +338,12 @@ public class FolderModule {
                 .concatMap(new Func1<AllFolderBean, Observable<AllFolderItemBean>>() {//（5）item下拿到新的list，将list再转item处理
                     @Override
                     public Observable<AllFolderItemBean> call(AllFolderBean allFolderBean) {
-                        return Observable.from(allFolderBean.getFolders());
+                        if (allFolderBean.getFolders() != null && allFolderBean.getFolders().size() > 0) {
+                            return Observable.from(allFolderBean.getFolders());
+                        } else {
+                            //下一个循环
+                            return Observable.empty();
+                        }
                     }
                 })
                 .concatMap(new Func1<AllFolderItemBean, Observable<AllFolderBean>>() {//处理每个item下的文件夹
@@ -333,9 +356,9 @@ public class FolderModule {
                                 .doOnNext(new Action1<AllFolderBean>() {
                                     @Override
                                     public void call(AllFolderBean bean) {
-                                        MLog.d(TAG, "5级文件夹--getAllFolder--getFolderByFolderID" + itemBean.getName() + bean.getCode() + "--" + bean.getMsg() + "--size=" + bean.getFolders());
                                         if (bean.getCode() == 0) {
                                             //第5级处理：更新文件夹数据库
+                                            MLog.d(TAG, "5级文件夹--" + itemBean.getName());
                                             insertCatsSQL(bean, itemBean.getId());
                                         }
                                     }
@@ -445,9 +468,8 @@ public class FolderModule {
                             "strIndex", TNUtils.getPingYinIndex(bean.getName())
                     );
                     //更新数据库
-                    Log.d("SJY", tempObj.toString());
                     CatDbHelper.addOrUpdateCat(tempObj);
-                    Log.d("SJY", "添加文件夹数据--完成：" + bean.getName());
+                    Log.d("SJY", "添加文件夹:" + bean.getName());
                 }
             }
         });

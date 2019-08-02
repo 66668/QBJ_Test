@@ -39,8 +39,10 @@ import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Utils.SPUtil;
 import com.thinkernote.ThinkerNote.Utils.TNActivityManager;
 import com.thinkernote.ThinkerNote.Views.CustomDialog;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnSyncListener;
 import com.thinkernote.ThinkerNote._constructer.p.MainPresenter;
 import com.thinkernote.ThinkerNote._constructer.listener.v.OnMainViewListener;
+import com.thinkernote.ThinkerNote._constructer.p.SyncPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.main.MainUpgradeBean;
 import com.thinkernote.ThinkerNote.http.fileprogress.FileProgressListener;
@@ -55,7 +57,7 @@ import java.io.File;
  * 同步功能说明：由10多个接口串行调用，比较复杂，所以要注意调用顺序
  * sjy 0702
  */
-public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewListener {
+public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewListener, OnSyncListener {
 
     //==================================变量=======================================
     private long mLastClickBackTime = 0;
@@ -65,6 +67,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewL
     private boolean isSynchronizing = false;//
     //
     private MainPresenter mainPresenter;//新版本
+    private SyncPresenter syncPresenter;//新版本
     File installFile;//安装包file
 
     @Override
@@ -73,7 +76,8 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewL
         setContentView(R.layout.main);
         //关闭其他界面
         TNActivityManager.getInstance().finishOtherActivity(this);
-        mainPresenter = new MainPresenter(this, this);//TODO
+        mainPresenter = new MainPresenter(this, this);
+        syncPresenter = new SyncPresenter(this, this);
         setViews();
 
         //第一次进入，打开帮助界面
@@ -416,7 +420,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewL
      */
     private void synchronizeData() {
         // 由p层 处理交互问题
-        mainPresenter.synchronizeData();
+        syncPresenter.synchronizeData("HOME");
     }
 
     //检查更新
@@ -567,6 +571,17 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewL
     @Override
     public void onSyncFailed(Exception e, String msg) {
         endSynchronize(2);
+    }
+
+    //如下回调不使用
+    @Override
+    public void onSyncEditSuccess(String obj) {
+
+    }
+
+    @Override
+    public void onSyncEditFailed(Exception e, String msg) {
+
     }
 
 }

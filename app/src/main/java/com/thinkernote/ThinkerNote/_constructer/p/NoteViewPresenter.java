@@ -12,8 +12,7 @@ public class NoteViewPresenter implements OnNoteViewListener {
     private Context context;
     private OnNoteViewListener onView;
     //p层调用M层方法
-    private NoteViewModule
-            module;
+    private NoteViewModule module;
 
     public NoteViewPresenter(Context context, OnNoteViewListener logListener) {
         this.context = context;

@@ -17,9 +17,4 @@ public interface IMainModuleListener {
 
     void onDownloadFailed(String msg, Exception e);
 
-    //
-    void onProfileSuccess(ProfileBean bean);
-
-    void onProfileFailed(String msg, Exception e);
-
 }

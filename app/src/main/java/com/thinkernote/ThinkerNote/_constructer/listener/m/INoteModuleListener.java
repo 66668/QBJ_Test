@@ -1,6 +1,7 @@
 package com.thinkernote.ThinkerNote._constructer.listener.m;
 
 import com.thinkernote.ThinkerNote.bean.main.AllNotesIdsBean;
+import com.thinkernote.ThinkerNote.bean.main.NoteListBean;
 
 /**
  * m层interface
@@ -61,10 +62,23 @@ public interface INoteModuleListener {
 
     void onGetTrashNoteFailed(Exception e, String msg);
 
+
     // 加载云端笔记
     void onCloudNoteSuccess();
 
     void onCloudNoteFailed(Exception e, String msg);
+
+    //获取tag下所有笔记
+    void onNoteListByIdSuccess();
+
+    void onNoteListByIdNext(NoteListBean bean);
+
+    void onNoteListByIdFailed(Exception e, String msg);
+
+    // 加载笔记详情
+    void onDownloadNoteSuccess();
+
+    void onDownloadNoteFailed(Exception e, String msg);
 
 
 }

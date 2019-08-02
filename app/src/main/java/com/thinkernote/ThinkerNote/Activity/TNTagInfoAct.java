@@ -175,8 +175,7 @@ public class TNTagInfoAct extends TNActBase
 
 
     @Override
-    public void onSuccess(Object obj, long pid) {
-        TNDb.getInstance().execSQL(TNSQLString.TAG_REAL_DELETE, pid);
+    public void onSuccess() {
         finish();
     }
 

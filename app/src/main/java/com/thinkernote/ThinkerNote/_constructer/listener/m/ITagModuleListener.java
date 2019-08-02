@@ -19,4 +19,9 @@ public interface ITagModuleListener {
     void onGetTagSuccess();
 
     void onGetTagFailed(Exception e, String msg);
+
+    //获取列表数据（非同步块回调）
+    void onGetTagListSuccess();
+
+    void onGetTagListFailed( Exception e,String msg);
 }

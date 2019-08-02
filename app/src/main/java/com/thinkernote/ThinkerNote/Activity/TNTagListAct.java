@@ -356,28 +356,9 @@ public class TNTagListAct extends TNActBase implements OnClickListener, OnItemCl
     //---------------------------------------------------接口结果回调-------------------------------------------------
 
     @Override
-    public void onTagListSuccess(Object obj) {
-        List<TagItemBean> foldersObj = (List<TagItemBean>) obj;
-        TagDbHelper.clearTags();
-        for (int i = 0; i < foldersObj.size(); i++) {
-            TagItemBean bean = foldersObj.get(i);
-            String tagName = bean.getName();
-            if (TextUtils.isEmpty(tagName)) {
-                tagName = "无";
-            }
-            JSONObject tempObj = TNUtils.makeJSON(
-                    "tagName", tagName,
-                    "userId", TNSettings.getInstance().userId,
-                    "trash", 0,
-                    "tagId", bean.getId(),
-                    "strIndex", TNUtils.getPingYinIndex(tagName),
-                    "count", bean.getCount()
-            );
-            TagDbHelper.addOrUpdateTag(tempObj);
-            //
-            mTags = TNDbUtils.getTagList(TNSettings.getInstance().userId);
-            mAdapter.notifyDataSetChanged();
-        }
+    public void onTagListSuccess() {
+        mTags = TNDbUtils.getTagList(TNSettings.getInstance().userId);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override

@@ -43,7 +43,6 @@ public class NoteViewDownloadModule  {
 
     public void listDownload(final TNNoteAtt att, final TNNote tnNote, final int position) {
 
-
         // check file downloadSize
         File file = null;
         if (!TextUtils.isEmpty(att.path)) {

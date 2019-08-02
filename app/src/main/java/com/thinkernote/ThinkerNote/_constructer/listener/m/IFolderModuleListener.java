@@ -1,5 +1,7 @@
 package com.thinkernote.ThinkerNote._constructer.listener.m;
 
+import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
+
 /**
  * m层interface
  * 文件夹回调给p层相关
@@ -22,4 +24,11 @@ public interface IFolderModuleListener {
     void onGetFolderSuccess();
 
     void onGetFolderFailed(Exception e, String msg);
+
+    //获取所有数据
+    void onProfileSuccess(ProfileBean bean);
+
+    void onProfileFailed(String msg, Exception e);
+
 }
+

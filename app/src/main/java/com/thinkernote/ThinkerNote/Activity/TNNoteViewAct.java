@@ -131,7 +131,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
     private AlertDialog dialog;
     //p
     private NoteViewPresenter presenter;
-    NoteViewDownloadPresenter download;
+    private NoteViewDownloadPresenter download;
 
     //讯飞语音合成
     // 语音合成对象

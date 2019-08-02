@@ -12,11 +12,14 @@ import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.Database.TNSQLString;
 import com.thinkernote.ThinkerNote.General.TNActionType;
+import com.thinkernote.ThinkerNote.General.TNActionUtils;
 import com.thinkernote.ThinkerNote.General.TNConst;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
+import com.thinkernote.ThinkerNote.General.TNUtilsAtt;
 import com.thinkernote.ThinkerNote.General.TNUtilsHtml;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
+import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote._constructer.listener.m.INoteModuleListener;
 import com.thinkernote.ThinkerNote.base.TNApplication;
@@ -25,6 +28,7 @@ import com.thinkernote.ThinkerNote.bean.CommonBean3;
 import com.thinkernote.ThinkerNote.bean.main.AllNotesIdsBean;
 import com.thinkernote.ThinkerNote.bean.main.GetNoteByNoteIdBean;
 import com.thinkernote.ThinkerNote.bean.main.NewNoteBean;
+import com.thinkernote.ThinkerNote.bean.main.NoteListBean;
 import com.thinkernote.ThinkerNote.bean.main.OldNotePicBean;
 import com.thinkernote.ThinkerNote.http.MyHttpService;
 import com.thinkernote.ThinkerNote.http.RequestBodyUtil;
@@ -33,6 +37,10 @@ import com.thinkernote.ThinkerNote.http.URLUtils;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -41,6 +49,7 @@ import java.util.concurrent.Executors;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
@@ -280,10 +289,10 @@ public class NoteModule {
                         });
                         //判断是否有文件要上传
                         if (oldNotesAtts != null && oldNotesAtts.size() > 0) {
-                            MLog.d("先上传文件");
+                            MLog.d("先本地笔记的文件");
                             return fileBeanObservable;
                         } else {
-                            MLog.d("直接上传笔记");
+                            MLog.d("直接上传本地笔记");
                             return Observable.just(tnNote);
                         }
 
@@ -1152,7 +1161,285 @@ public class NoteModule {
 
     }
 
+    /**
+     * 获取文件夹id下的所有笔记（同getNoteListByTagId）
+     * <p>
+     */
+    public void getNoteListByFolderId(final long tagId, final int mPageNum, final int pageSize, final String sort, final INoteModuleListener listener) {
+        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                .getNoteListByFolderId(tagId, mPageNum, pageSize, sort, settings.token)//接口方法
+                .subscribeOn(Schedulers.io())
+                .doOnNext(new Action1<NoteListBean>() {
+                    @Override
+                    public void call(NoteListBean bean) {
+                        //数据处理
+                        if (bean.getCode() == 0) {
+                            insertDbNotes(bean, false);//异步
+                        }
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())//固定样式
+                .subscribe(new Observer<NoteListBean>() {//固定样式，可自定义其他处理
+                    @Override
+                    public void onCompleted() {
+                        MLog.d(TAG, "getNoteListByFolderId--onCompleted");
+                        listener.onNoteListByIdSuccess();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        MLog.e("getNoteListByTagId--onError:" + e.toString());
+                        listener.onNoteListByIdFailed(new Exception(e.toString()), null);
+                    }
+
+                    @Override
+                    public void onNext(NoteListBean bean) {
+                        MLog.d(TAG, "getNoteListByFolderId-onNext");
+                        //处理返回结果
+                        if (bean.getCode() == 0) {
+                            if (pageSize == TNConst.MAX_PAGE_SIZE) {
+                                int currentCount = mPageNum * TNConst.PAGE_SIZE;
+                                int count = bean.getCount();
+                                if (count > currentCount) {
+                                    int newPageNum = mPageNum;
+                                    long newTagid = tagId;
+                                    int newPageSize = TNConst.MAX_PAGE_SIZE;
+                                    String newSort = sort;
+                                    newPageNum++;
+                                    //TODO 需要重新验证
+                                    getNoteListByFolderId(newTagid, newPageNum, newPageSize, newSort, listener);
+                                }
+                            }
+                            listener.onNoteListByIdNext(bean);
+                        }
+                    }
+                });
+    }
+
+    /**
+     * 获取标签id下的所有笔记(同getNoteListByFolderId)
+     * <p>
+     */
+    public void getNoteListByTagId(final long tagId, final int mPageNum, final int pageSize, final String sort, final INoteModuleListener listener) {
+        MyHttpService.Builder.getHttpServer()
+                .getNoteListByTagId(tagId, mPageNum, pageSize, sort, settings.token)
+                .doOnNext(new Action1<NoteListBean>() {
+                    @Override
+                    public void call(NoteListBean bean) {
+                        //数据处理
+                        if (bean.getCode() == 0) {
+                            insertDbNotes(bean, false);//异步
+                        }
+                    }
+                })
+                .subscribeOn(Schedulers.io())//固定样式
+                .unsubscribeOn(Schedulers.io())//固定样式
+                .observeOn(AndroidSchedulers.mainThread())//固定样式
+                .subscribe(new Observer<NoteListBean>() {//固定样式，可自定义其他处理
+                    @Override
+                    public void onCompleted() {
+                        MLog.d(TAG, "getNoteListByTagId--onCompleted");
+                        listener.onNoteListByIdSuccess();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        MLog.e("getNoteListByTagId--onError:" + e.toString());
+                        listener.onNoteListByIdFailed(new Exception(e.toString()), null);
+                    }
+
+                    @Override
+                    public void onNext(NoteListBean bean) {
+                        MLog.d(TAG, "getNoteListByTagId-onNext");
+                        //处理返回结果
+                        if (bean.getCode() == 0) {
+                            if (pageSize == TNConst.MAX_PAGE_SIZE) {
+                                int currentCount = mPageNum * TNConst.PAGE_SIZE;
+                                int count = bean.getCount();
+                                if (count > currentCount) {
+                                    int newPageNum = mPageNum;
+                                    long newTagid = tagId;
+                                    int newPageSize = TNConst.MAX_PAGE_SIZE;
+                                    String newSort = sort;
+                                    newPageNum++;
+                                    //TODO 需要重新验证
+                                    getNoteListByTagId(newTagid, newPageNum, newPageSize, newSort, listener);
+                                }
+                            }
+                            listener.onNoteListByIdNext(bean);
+                        }
+                    }
+                });
+    }
+
+    /**
+     * 一条笔记下载详情
+     * 两个接口串行，for循环接口调用
+     * <p>
+     */
+    public void getDetailByNoteId(final long noteId, final INoteModuleListener listener) {
+
+        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                .getNoteByNoteId(noteId, settings.token)
+                .subscribeOn(Schedulers.io())
+                .doOnNext(new Action1<CommonBean3<GetNoteByNoteIdBean>>() {
+                    @Override
+                    public void call(CommonBean3<GetNoteByNoteIdBean> bean) {
+                        //更新数据库
+                        if (bean.getCode() == 0) {
+                            MLog.e("getDetailByNoteId--获取笔记详情--doOnError");
+                            updataCloudNoteSQL(bean.getNote());
+                        }
+                    }
+                })
+                .doOnError(new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable e) {
+                        MLog.e("getDetailByNoteId--获取笔记详情--doOnError");
+                    }
+                })
+                .concatMap(new Func1<CommonBean3<GetNoteByNoteIdBean>, Observable<Boolean>>() {
+                    @Override
+                    public Observable<Boolean> call(CommonBean3<GetNoteByNoteIdBean> dataBean) {
+                        if (dataBean.getCode() == 0) {
+                            TNNote note = TNDbUtils.getNoteByNoteId(noteId);
+                            Vector<TNNoteAtt> atts = note.atts;
+
+                            if (atts != null && atts.size() > 0) {
+                                //下载文件数据
+                                return Observable.from(atts)
+                                        .concatMap(new Func1<TNNoteAtt, Observable<InputStream>>() {
+                                            @Override
+                                            public Observable<InputStream> call(TNNoteAtt att) {
+                                                if (TNActionUtils.isDownloadingAtt(att.attId)) {
+                                                    //下一个循环
+                                                    return Observable.empty();
+                                                }
+                                                final String path = TNUtilsAtt.getAttPath(att.attId, att.type);
+                                                MLog.d("下载附件路径：" + path);
+                                                if (path == null) {
+                                                    //下一个循环
+                                                    return Observable.empty();
+                                                }
+                                                //方式从服务器下载附件
+                                                //url绝对路径
+                                                String url = URLUtils.API_BASE_URL + "attachment/" + att.attId + "?session_token=" + TNSettings.getInstance().token;
+                                                return MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                                                        .downloadFile(url)//接口方法
+                                                        .subscribeOn(Schedulers.io())
+                                                        .unsubscribeOn(Schedulers.io())
+                                                        .map(new Func1<ResponseBody, InputStream>() {//第一次转换，将流数据转成InputStream类数据
+                                                            @Override
+                                                            public InputStream call(ResponseBody responseBody) {
+                                                                return responseBody.byteStream();
+                                                            }
+                                                        })
+                                                        .observeOn(Schedulers.computation())
+                                                        .doOnNext(new Action1<InputStream>() {
+                                                            @Override
+                                                            public void call(InputStream inputStream) {
+                                                                //保存下载文件
+                                                                MLog.e("getDetailByNoteId--保存文件--doOnNext");
+                                                                writeFile(inputStream, new File(path));
+                                                            }
+                                                        })
+                                                        .doOnError(new Action1<Throwable>() {
+                                                            @Override
+                                                            public void call(Throwable e) {
+                                                                MLog.e("getDetailByNoteId--下载文件--onError--" + e.toString());
+                                                            }
+                                                        });
+                                            }
+                                        }).concatMap(new Func1<InputStream, Observable<Boolean>>() {
+                                            @Override
+                                            public Observable<Boolean> call(InputStream inputStream) {
+                                                return Observable.just(true);
+                                            }
+                                        });
+
+                            } else {
+                                //无文件，返回
+                                return Observable.empty();
+                            }
+                        } else {
+                            return Observable.empty();
+                        }
+                    }
+                })
+                .doOnNext(new Action1<Boolean>() {
+                    @Override
+                    public void call(Boolean aBoolean) {
+                        MLog.d(TAG, "getDetailByNoteId--onNext=" + aBoolean);
+                        if (aBoolean) {
+                            upDataDetailNoteSQL(noteId);
+                        }
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())//固定样式
+                .subscribe(new Subscriber<Boolean>() {
+                    @Override
+                    public void onCompleted() {
+                        MLog.d(TAG, "getDetailByNoteId--onCompleted");
+                        listener.onDownloadNoteSuccess();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        MLog.d(TAG, "getDetailByNoteId--onError");
+                        listener.onDownloadNoteFailed(new Exception(e.toString()), null);
+                    }
+
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+                        MLog.d(TAG, "getDetailByNoteId--onNext=" + aBoolean);
+
+                    }
+                });
+
+    }
+
+
     //================================================处理相关（数据库处理已经是异步状态）================================================
+
+
+    /**
+     * 将输入流写入文件
+     *
+     * @param inputString
+     * @param file
+     */
+    private void writeFile(InputStream inputString, File file) {
+
+        if (file.exists()) {
+            file.delete();
+        } else {
+            //创建新文件
+            try {
+                file.getParentFile().mkdirs();
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(file);
+
+            byte[] b = new byte[1024];
+
+            int len;
+            while ((len = inputString.read(b)) != -1) {
+                fos.write(b, 0, len);
+            }
+            inputString.close();
+            fos.close();
+
+        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
+        }
+
+    }
 
     /**
      * 图片保存，就触发更新db
@@ -1167,6 +1454,32 @@ public class NoteModule {
         } finally {
             TNDb.endTransaction();
         }
+    }
+
+    /**
+     * 笔记详情，更新保存
+     */
+    private void upDataDetailNoteSQL(final long noteId) {
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                TNNote note = TNDbUtils.getNoteByNoteId(noteId);
+                note.syncState = 2;
+                if (note.attCounts > 0) {
+                    for (int i = 0; i < note.atts.size(); i++) {
+                        TNNoteAtt tempAtt = note.atts.get(i);
+                        if (i == 0 && tempAtt.type > 10000 && tempAtt.type < 20000) {
+                            TNDb.getInstance().execSQL(TNSQLString.NOTE_UPDATE_THUMBNAIL, tempAtt.path, note.noteLocalId);
+                        }
+                        if (TextUtils.isEmpty(tempAtt.path) || "null".equals(tempAtt.path)) {
+                            note.syncState = 1;
+                        }
+                    }
+                }
+                TNDb.getInstance().execSQL(TNSQLString.NOTE_UPDATE_SYNCSTATE, note.syncState, note.noteLocalId);
+            }
+        });
+
     }
 
     /**
@@ -1525,7 +1838,6 @@ public class NoteModule {
             else
                 NoteDbHelper.updateNote(tempObj);
         } catch (Exception e) {
-            MLog.e("2-11-2--updateNote异常：" + e.toString());
             TNApplication.getInstance().htmlError("笔记:" + bean.getTitle() + "  " + bean.getCreate_at() + "需要到网页版中" + "\n" + "+修改成新版app支持的格式,新版app不支持网页抓去 \n或者删除该笔记");
 
         }
@@ -1589,5 +1901,82 @@ public class NoteModule {
             MLog.d(TAG, "setNoteResult--" + msg);
         }
 
+    }
+
+    /**
+     * 某id下笔记存储（tag下笔记，回收站笔记）
+     *
+     * @param bean
+     * @param isTrash
+     */
+    public static void insertDbNotes(final NoteListBean bean, final boolean isTrash) {
+        List<NoteListBean.NoteItemBean> notesObj = bean.getNotes();
+        if (notesObj == null || notesObj.size() <= 0) {
+            return;
+        }
+        int trash = isTrash ? 2 : 0;
+        for (int i = 0; i < notesObj.size(); i++) {
+            NoteListBean.NoteItemBean obj = notesObj.get(i);
+            long noteId = obj.getId();
+            long lastUpdate = TNUtils.formatStringToTime((obj.getUpdate_at()) + "") / 1000;
+
+            List<NoteListBean.NoteItemBean.TagItemBean> tags = obj.getTags();
+            String tagStr = "";
+            for (int k = 0; k < tags.size(); k++) {
+                NoteListBean.NoteItemBean.TagItemBean tempTag = tags.get(k);
+                String tag = tempTag.getName();
+                if ("".equals(tag)) {
+                    continue;
+                }
+                if (tags.size() == 1) {
+                    tagStr = tag;
+                } else {
+                    if (k == (tags.size() - 1)) {
+                        tagStr = tagStr + tag;
+                    } else {
+                        tagStr = tagStr + tag + ",";
+                    }
+                }
+            }
+
+            int catId = -1;
+            if (obj.getFolder_id() > 0) {
+                catId = obj.getFolder_id();
+            } else {
+                catId = -1;
+            }
+
+            int syncState = 1;
+            TNNote note = TNDbUtils.getNoteByNoteId(noteId);
+            if (note != null) {
+                if (note.lastUpdate > lastUpdate) {
+                    continue;
+                } else {
+                    syncState = note.syncState;
+                }
+            }
+            JSONObject tempObj = TNUtils.makeJSON(
+                    "title", obj.getTitle(),
+                    "userId", TNSettings.getInstance().userId,
+                    "trash", trash,
+                    "source", "android",
+                    "catId", catId,
+                    "content", obj.getSummary(),
+                    "createTime", com.thinkernote.ThinkerNote.Utils.TimeUtils.getMillsOfDate(obj.getCreate_at()) / 1000,
+                    "lastUpdate", lastUpdate,
+                    "syncState", syncState,
+                    "noteId", noteId,
+                    "shortContent", obj.getSummary(),
+                    "tagStr", tagStr,
+                    "lbsLongitude", 0,
+                    "lbsLatitude", 0,
+                    "lbsRadius", 0,
+                    "lbsAddress", "",
+                    "nickName", TNSettings.getInstance().username,
+                    "thumbnail", "",
+                    "contentDigest", obj.getContent_digest()
+            );
+            NoteDbHelper.addOrUpdateNote(tempObj);
+        }
     }
 }

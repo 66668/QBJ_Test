@@ -16,9 +16,9 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.thinkernote.ThinkerNote.Activity.fragment.TNPageCats;
-import com.thinkernote.ThinkerNote.Activity.fragment.TNPageNotes;
-import com.thinkernote.ThinkerNote.Activity.fragment.TNPageTags;
+import com.thinkernote.ThinkerNote.Activity.fragment.FolderFragment;
+import com.thinkernote.ThinkerNote.Activity.fragment.NoteFragment;
+import com.thinkernote.ThinkerNote.Activity.fragment.TagFragment;
 import com.thinkernote.ThinkerNote.DBHelper.NoteAttrDbHelper;
 import com.thinkernote.ThinkerNote.DBHelper.NoteDbHelper;
 import com.thinkernote.ThinkerNote.Data.TNCat;
@@ -152,13 +152,13 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
 
         mChildPages = new Vector<TNChildViewBase>();
         //frag--pager1
-        TNPageNotes notesView = new TNPageNotes(this);
+        NoteFragment notesView = new NoteFragment(this);
         mChildPages.add(notesView);
         //frag--pager2
-        TNPageCats catsView = new TNPageCats(this);
+        FolderFragment catsView = new FolderFragment(this);
         mChildPages.add(catsView);
         //frag--pager3
-        TNPageTags tagsView = new TNPageTags(this);
+        TagFragment tagsView = new TagFragment(this);
         mChildPages.add(tagsView);
 
         //显示
@@ -202,16 +202,16 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
                     TNUtilsUi.showShortToast("按创建时间排序");
                 }
                 mSettings.savePref(false);
-                ((TNPageNotes) mCurrChild).isNewSortord = true;
+                ((NoteFragment) mCurrChild).isNewSortord = true;
                 configView();
                 break;
             }
             case R.id.table_cats_newfolder: {//新建 文件夹
-                ((TNPageCats) mCurrChild).newFolder();
+                ((FolderFragment) mCurrChild).newFolder();
                 break;
             }
             case R.id.table_cats_newnote://新建 标签
-                ((TNPageCats) mCurrChild).newNote();
+                ((FolderFragment) mCurrChild).newNote();
                 break;
             case R.id.table_cats_serch: {//搜索
                 Bundle b = new Bundle();
@@ -875,7 +875,7 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
             if (mCurrChild.pageId == R.id.page_cats) {
-                if (((TNPageCats) mCurrChild).onKeyDown()) {
+                if (((FolderFragment) mCurrChild).onKeyDown()) {
                     return true;
                 }
             }
