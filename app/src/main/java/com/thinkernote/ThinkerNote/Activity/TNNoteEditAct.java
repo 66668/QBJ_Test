@@ -62,6 +62,7 @@ import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Service.LocationService;
 import com.thinkernote.ThinkerNote.Utils.JsonParser;
 import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.Views.CommonDialog;
 import com.thinkernote.ThinkerNote._constructer.listener.v.OnSyncListener;
 import com.thinkernote.ThinkerNote._constructer.p.SyncPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
@@ -915,29 +916,26 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
             toFinish();
             return;
         }
-        DialogInterface.OnClickListener pbtn_Click = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                isAutoSave = false;//退出不属于自动保存
-                saveNote();
-            }
-        };
-        DialogInterface.OnClickListener nbtn_Click = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (mRecord != null && !mRecord.isStop()) {
-                    mRecord.cancle();
-                }
-                toFinish();
-            }
-        };
-        JSONObject jsonData = TNUtils.makeJSON("CONTEXT", this, "TITLE",
-                R.string.alert_Title, "MESSAGE",
-                R.string.alert_NoteEdit_SaveMsg, "POS_BTN",
-                R.string.alert_Save, "POS_BTN_CLICK", pbtn_Click, "NEU_BTN",
-                R.string.alert_NoSave, "NEU_BTN_CLICK", nbtn_Click, "NEG_BTN",
-                R.string.alert_Cancel);
-        TNUtilsUi.alertDialogBuilder(jsonData).show();
+        CommonDialog dialog = new CommonDialog(this, R.string.alert_NoteEdit_SaveMsg,
+                "保存",
+                "不保存",
+                new CommonDialog.DialogCallBack() {
+                    @Override
+                    public void sureBack() {
+                        isAutoSave = false;//退出不属于自动保存
+                        saveNote();
+                    }
+
+                    @Override
+                    public void cancelBack() {
+                        if (mRecord != null && !mRecord.isStop()) {
+                            mRecord.cancle();
+                        }
+                        toFinish();
+                    }
+
+                });
+        dialog.show();
     }
 
     /**

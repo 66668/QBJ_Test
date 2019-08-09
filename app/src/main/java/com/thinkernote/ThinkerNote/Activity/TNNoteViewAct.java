@@ -2,9 +2,7 @@ package com.thinkernote.ThinkerNote.Activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -21,7 +19,6 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -33,7 +30,6 @@ import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.content.FileProvider;
@@ -68,9 +64,10 @@ import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.Other.PoPuMenuView;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.Views.CommonDialog;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnNoteViewListener;
 import com.thinkernote.ThinkerNote._constructer.p.NoteViewDownloadPresenter;
 import com.thinkernote.ThinkerNote._constructer.p.NoteViewPresenter;
-import com.thinkernote.ThinkerNote._constructer.listener.v.OnNoteViewListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.main.GetNoteByNoteIdBean;
 
@@ -128,7 +125,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
 
     private WebView mWebView;
 
-    private AlertDialog dialog;
+    private CommonDialog dialog;
     //p
     private NoteViewPresenter presenter;
     private NoteViewDownloadPresenter download;
@@ -1124,59 +1121,39 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
      * @param noteLocalId
      */
     private void resetNoteDialog(final long noteLocalId) {
-        mProgressDialog.show();
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        //title
-        LayoutInflater lf1 = LayoutInflater.from(this);
-        View title = lf1.inflate(R.layout.dialog, null);
-        TNUtilsSkin.setViewBackground(this, title, R.id.dialog_layout, R.drawable.page_color);
-        TNUtilsSkin.setViewBackground(this, title, R.id.dialog_top_bar, R.drawable.dialog_top_bg);
-        TNUtilsSkin.setImageViewDrawable(this, title, R.id.dialog_icon, R.drawable.dialog_icon);
-        builder.setCustomTitle(title);
+        dialog = new CommonDialog(this, R.string.alert_NoteView_RestoreHint,
+                new CommonDialog.DialogCallBack() {
+                    @Override
+                    public void sureBack() {
+                        if (!TNActionUtils.isSynchronizing()) {
+                            TNUtilsUi.showNotification(TNNoteViewAct.this, R.string.alert_NoteView_Synchronizing, false);
+                            //具体执行
+                            mProgressDialog.show();
+                            ExecutorService service = Executors.newSingleThreadExecutor();
+                            service.execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    TNDb.beginTransaction();
+                                    try {
+                                        TNDb.getInstance().execSQL(TNSQLString.NOTE_SET_TRASH, 0, 7, System.currentTimeMillis() / 1000, noteLocalId);
 
-        ((TextView) title.findViewById(R.id.dialog_title)).setText(R.string.alert_Title);//title
+                                        TNDb.setTransactionSuccessful();
+                                    } finally {
+                                        TNDb.endTransaction();
+                                    }
+                                    handler.sendEmptyMessage(DIALOG_DELETE);
+                                }
+                            });
 
-        ((TextView) title.findViewById(R.id.dialog_msg)).setText((Integer) R.string.alert_NoteView_RestoreHint);
-
-        //
-        final DialogInterface.OnClickListener posListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (!TNActionUtils.isSynchronizing()) {
-                    TNUtilsUi.showNotification(TNNoteViewAct.this, R.string.alert_NoteView_Synchronizing, false);
-                    //具体执行
-                    mProgressDialog.show();
-                    ExecutorService service = Executors.newSingleThreadExecutor();
-                    service.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            TNDb.beginTransaction();
-                            try {
-                                TNDb.getInstance().execSQL(TNSQLString.NOTE_SET_TRASH, 0, 7, System.currentTimeMillis() / 1000, noteLocalId);
-
-                                TNDb.setTransactionSuccessful();
-                            } finally {
-                                TNDb.endTransaction();
-                            }
-                            handler.sendEmptyMessage(DIALOG_DELETE);
                         }
-                    });
+                    }
 
-                }
-            }
-        };
-        builder.setPositiveButton(R.string.alert_OK, posListener);
+                    @Override
+                    public void cancelBack() {
+                        mProgressDialog.hide();
+                    }
 
-        //
-        DialogInterface.OnClickListener negListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //
-                dialog.dismiss();
-            }
-        };
-        builder.setNegativeButton(R.string.alert_Cancel, negListener);
-        dialog = builder.create();
+                });
         dialog.show();
     }
 
@@ -1186,59 +1163,40 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
      * @param noteLocalId
      */
     private void showRealDeleteDialog(final long noteLocalId) {
-        mProgressDialog.show();
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        //title
-        LayoutInflater lf1 = LayoutInflater.from(this);
-        View title = lf1.inflate(R.layout.dialog, null);
-        TNUtilsSkin.setViewBackground(this, title, R.id.dialog_layout, R.drawable.page_color);
-        TNUtilsSkin.setViewBackground(this, title, R.id.dialog_top_bar, R.drawable.dialog_top_bg);
-        TNUtilsSkin.setImageViewDrawable(this, title, R.id.dialog_icon, R.drawable.dialog_icon);
-        builder.setCustomTitle(title);
+        dialog = new CommonDialog(this, R.string.alert_NoteView_RealDeleteNoteMsg,
+                new CommonDialog.DialogCallBack() {
+                    @Override
+                    public void sureBack() {
+                        if (!TNActionUtils.isSynchronizing()) {
+                            mProgressDialog.show();
+                            TNUtilsUi.showNotification(TNNoteViewAct.this, R.string.alert_NoteView_Synchronizing, false);
+                            mProgressDialog.show();
+                            //具体执行
+                            ExecutorService service = Executors.newSingleThreadExecutor();
+                            service.execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    TNDb.beginTransaction();
+                                    try {
+                                        TNDb.getInstance().execSQL(TNSQLString.NOTE_UPDATE_SYNCSTATE, 5, noteLocalId);
 
-        ((TextView) title.findViewById(R.id.dialog_title)).setText(R.string.alert_Title);//title
+                                        TNDb.setTransactionSuccessful();
+                                    } finally {
+                                        TNDb.endTransaction();
+                                    }
+                                    handler.sendEmptyMessage(DIALOG_DELETE);
+                                }
+                            });
 
-        ((TextView) title.findViewById(R.id.dialog_msg)).setText((Integer) R.string.alert_NoteView_RealDeleteNoteMsg);
-
-        //
-        final DialogInterface.OnClickListener posListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (!TNActionUtils.isSynchronizing()) {
-                    TNUtilsUi.showNotification(TNNoteViewAct.this, R.string.alert_NoteView_Synchronizing, false);
-                    mProgressDialog.show();
-                    //具体执行
-                    ExecutorService service = Executors.newSingleThreadExecutor();
-                    service.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            TNDb.beginTransaction();
-                            try {
-                                TNDb.getInstance().execSQL(TNSQLString.NOTE_UPDATE_SYNCSTATE, 5, noteLocalId);
-
-                                TNDb.setTransactionSuccessful();
-                            } finally {
-                                TNDb.endTransaction();
-                            }
-                            handler.sendEmptyMessage(DIALOG_DELETE);
                         }
-                    });
+                    }
 
-                }
-            }
-        };
-        builder.setPositiveButton(R.string.alert_OK, posListener);
+                    @Override
+                    public void cancelBack() {
+                        mProgressDialog.hide();
+                    }
 
-        //
-        DialogInterface.OnClickListener negListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //
-                dialog.dismiss();
-            }
-        };
-        builder.setNegativeButton(R.string.alert_Cancel, negListener);
-        dialog = builder.create();
+                });
         dialog.show();
     }
 
@@ -1247,30 +1205,29 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
             TNUtilsUi.alert(this, R.string.alert_NoSDCard);
             return;
         }
+        dialog = new CommonDialog(this, R.string.alert_NoteView_RealDeleteNoteMsg,
+                "保存",
+                "取消",
+                new CommonDialog.DialogCallBack() {
+                    @Override
+                    public void sureBack() {
+                        try {
+                            TNUtilsAtt.copyFile(mCurAtt.path, Environment
+                                    .getExternalStorageDirectory().getPath()
+                                    + "/ThinkerNote/" + mCurAtt.attName);
+                            TNUtilsUi.showToast(R.string.alert_NoteView_AttSaved);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
 
-        DialogInterface.OnClickListener pbtn_Click = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                try {
-                    TNUtilsAtt.copyFile(mCurAtt.path, Environment
-                            .getExternalStorageDirectory().getPath()
-                            + "/ThinkerNote/" + mCurAtt.attName);
-                    TNUtilsUi.showToast(R.string.alert_NoteView_AttSaved);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        };
+                    @Override
+                    public void cancelBack() {
+                        mProgressDialog.hide();
+                    }
 
-        String hint = String.format(
-                getString(R.string.alert_NoteView_SaveAttHint), "/ThinkerNote/"
-                        + mCurAtt.attName);
-
-        JSONObject jsonData = TNUtils.makeJSON("CONTEXT", this, "TITLE",
-                R.string.alert_Title, "MESSAGE", hint, "POS_BTN",
-                R.string.alert_Save, "POS_BTN_CLICK", pbtn_Click, "NEG_BTN",
-                R.string.alert_Cancel);
-        TNUtilsUi.alertDialogBuilder(jsonData).show();
+                });
+        dialog.show();
 
     }
 
@@ -1280,125 +1237,48 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
      * @param noteLocalId
      */
     private void showDeleteDialog(final long noteLocalId) {
-        mProgressDialog.show();
-        //
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        //title
-        LayoutInflater lf1 = LayoutInflater.from(this);
-        View title = lf1.inflate(R.layout.dialog, null);
-        TNUtilsSkin.setViewBackground(this, title, R.id.dialog_layout, R.drawable.page_color);
-        TNUtilsSkin.setViewBackground(this, title, R.id.dialog_top_bar, R.drawable.dialog_top_bg);
-        TNUtilsSkin.setImageViewDrawable(this, title, R.id.dialog_icon, R.drawable.dialog_icon);
-        builder.setCustomTitle(title);
-
-        ((TextView) title.findViewById(R.id.dialog_title)).setText(R.string.alert_Title);//title
-
         int msg = R.string.alert_NoteView_DeleteNoteMsg;
         if (TNSettings.getInstance().isInProject()) {
             msg = R.string.alert_NoteView_DeleteNoteMsg_InGroup;
         }
-        ((TextView) title.findViewById(R.id.dialog_msg)).setText((Integer) msg);
+        dialog = new CommonDialog(this, msg,
+                new CommonDialog.DialogCallBack() {
+                    @Override
+                    public void sureBack() {
+                        if (!TNActionUtils.isSynchronizing()) {
+                            TNUtilsUi.showNotification(TNNoteViewAct.this, R.string.alert_NoteView_Synchronizing, false);
+                            mProgressDialog.show();
+                            //具体执行
+                            ExecutorService service = Executors.newSingleThreadExecutor();
+                            service.execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    TNDb.beginTransaction();
+                                    try {
+                                        TNDb.getInstance().execSQL(TNSQLString.NOTE_SET_TRASH, 2, 6, System.currentTimeMillis() / 1000, noteLocalId);
 
-        //
-        final DialogInterface.OnClickListener posListener = new DialogInterface.OnClickListener() {
+                                        TNNote note = TNDbUtils.getNoteByNoteLocalId(noteLocalId);
+                                        TNDb.getInstance().execSQL(TNSQLString.CAT_UPDATE_LASTUPDATETIME, System.currentTimeMillis() / 1000, note.catId);
+                                        TNDb.setTransactionSuccessful();
+                                    } finally {
+                                        TNDb.endTransaction();
+                                    }
+                                    handler.sendEmptyMessage(DIALOG_DELETE);
+                                }
+                            });
 
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (!TNActionUtils.isSynchronizing()) {
-                    TNUtilsUi.showNotification(TNNoteViewAct.this, R.string.alert_NoteView_Synchronizing, false);
-                    mProgressDialog.show();
-                    //具体执行
-                    ExecutorService service = Executors.newSingleThreadExecutor();
-                    service.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            TNDb.beginTransaction();
-                            try {
-                                TNDb.getInstance().execSQL(TNSQLString.NOTE_SET_TRASH, 2, 6, System.currentTimeMillis() / 1000, noteLocalId);
-
-                                TNNote note = TNDbUtils.getNoteByNoteLocalId(noteLocalId);
-                                TNDb.getInstance().execSQL(TNSQLString.CAT_UPDATE_LASTUPDATETIME, System.currentTimeMillis() / 1000, note.catId);
-                                TNDb.setTransactionSuccessful();
-                            } finally {
-                                TNDb.endTransaction();
-                            }
-                            handler.sendEmptyMessage(DIALOG_DELETE);
                         }
-                    });
+                    }
 
-                }
-            }
-        };
-        builder.setPositiveButton(R.string.alert_OK, posListener);
+                    @Override
+                    public void cancelBack() {
+                        mProgressDialog.hide();
+                    }
 
-        //
-        DialogInterface.OnClickListener negListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //
-                dialog.dismiss();
-            }
-        };
-        builder.setNegativeButton(R.string.alert_Cancel, negListener);
-        dialog = builder.create();
+                });
         dialog.show();
     }
 
-    // Implement SynthesizerPlayerListener
-    // -------------------------------------------------------------------------------
-//    @Override
-//    public void onEnd(SpeechError error) {
-//        MLog.i(TAG, "onEnd error:" + error);
-//
-//        if (error == null) {
-//            mStartPos = mEndPos;
-//            if (mEndPos < mPlainText.length()) {
-//                mSynthesizerPlayer.playText(getNextReadStr(), null, this);
-//            } else {
-//                mStartPos = 0;
-//                setReadBarVisible(false);
-//            }
-//        } else {
-//            TNUtilsUi.showToast(error.toString());
-//            setReadBarVisible(false);
-//        }
-//    }
-//
-//
-//    @Override
-//    public void onBufferPercent(int percent, int beginPos, int endPos) {
-//        MLog.i(TAG, "onBufferPercent:" + percent + "," + beginPos + "," + endPos);
-//        ProgressBar pb = (ProgressBar) findViewById(R.id.noteview_read_progressbar);
-//        pb.setSecondaryProgress(percent);
-//
-//    }
-//
-//
-//    @Override
-//    public void onPlayBegin() {
-//        MLog.i(TAG, "onPlayBegin:" + mSynthesizerPlayer.getState());
-//    }
-//
-//
-//    @Override
-//    public void onPlayPaused() {
-//        MLog.i(TAG, "onPlayPaused:" + mSynthesizerPlayer.getState());
-//    }
-//
-//
-//    @Override
-//    public void onPlayPercent(int percent, int beginPos, int endPos) {
-//        MLog.i(TAG, "onPlayPercent:" + percent + "," + beginPos + "," + endPos);
-//        ProgressBar pb = (ProgressBar) findViewById(R.id.noteview_read_progressbar);
-//        pb.setProgress(percent);
-//    }
-//
-//
-//    @Override
-//    public void onPlayResumed() {
-//        MLog.i(TAG, "onPlayResumed:" + mSynthesizerPlayer.getState());
-//
-//    }
 
     //=================================js交互========================================
 

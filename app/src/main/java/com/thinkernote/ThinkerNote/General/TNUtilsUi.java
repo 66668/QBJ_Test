@@ -54,6 +54,7 @@ import com.thinkernote.ThinkerNote.BuildConfig;
 import com.thinkernote.ThinkerNote.Data.TNNote;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.Views.CommonDialog;
 import com.thinkernote.ThinkerNote.base.TNApplication;
 
 import org.json.JSONObject;
@@ -148,185 +149,40 @@ public class TNUtilsUi {
         return dialog;
     }
 
-    public static void alert(Context context, Object str) {
+    public static void alert(Context context, int str) {
         if (((Activity) context).isFinishing())
             return;
-        JSONObject jsonData = TNUtils.makeJSON("CONTEXT", context, "TITLE",
-                R.string.alert_Title, "MESSAGE", str, "POS_BTN",
-                R.string.alert_OK);
-        TNUtilsUi.alertDialogBuilder(jsonData).show();
+        CommonDialog dialog = new CommonDialog(context, str,
+                new CommonDialog.DialogCallBack() {
+                    @Override
+                    public void sureBack() {
+
+                    }
+
+                    @Override
+                    public void cancelBack() {
+                    }
+
+                });
+        dialog.show();
     }
 
-    public static void alert(final Activity act, Object str,
-                             final boolean finish, boolean canCancel) {
-        if (act.isFinishing())
+    public static void alert(Context context, String str) {
+        if (((Activity) context).isFinishing())
             return;
+        CommonDialog dialog = new CommonDialog(context, str,
+                new CommonDialog.DialogCallBack() {
+                    @Override
+                    public void sureBack() {
 
-        DialogInterface.OnClickListener pbtn_Click = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (finish) {
-                    act.finish();
-                }
-            }
-        };
-        JSONObject jsonData = TNUtils.makeJSON("CONTEXT", act, "TITLE",
-                R.string.alert_Title, "MESSAGE", str, "POS_BTN",
-                R.string.alert_OK, "POS_BTN_CLICK", pbtn_Click);
-        AlertDialog ad = TNUtilsUi.alertDialogBuilder(jsonData);
-        ad.show();
-        if (!canCancel) {
-            ad.setCancelable(false);
-            ad.setCanceledOnTouchOutside(false);
-        }
-    }
+                    }
 
-    public static AlertDialog.Builder alertDialogBuilder1(JSONObject aJson) {
-        Context context = (Context) TNUtils.getFromJSON(aJson, "CONTEXT");
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        // 如果context已有Alert，则不成功，暂未处理
+                    @Override
+                    public void cancelBack() {
+                    }
 
-        // Title
-        Object title = TNUtils.getFromJSON(aJson, "TITLE");
-
-        View v;
-        if (View.class.isInstance(title)) {
-            v = (View) title;
-        } else {
-            LayoutInflater lf = LayoutInflater
-                    .from(TNSettings.getInstance().appContext);
-            v = lf.inflate(R.layout.dialog, null);
-        }
-
-        TNUtilsSkin.setViewBackground((Activity) context, v,
-                R.id.dialog_layout, R.drawable.page_color);
-        TNUtilsSkin.setViewBackground((Activity) context, v,
-                R.id.dialog_top_bar, R.drawable.dialog_top_bg);
-        TNUtilsSkin.setImageViewDrawable((Activity) context, v,
-                R.id.dialog_icon, R.drawable.dialog_icon);
-
-        builder.setCustomTitle(v);
-        ((TextView) v.findViewById(R.id.dialog_title))
-                .setText(R.string.alert_Title);
-
-        Object msg = TNUtils.getFromJSON(aJson, "MESSAGE");
-        if (msg == null)
-            v.findViewById(R.id.dialog_msg).setVisibility(View.GONE);
-        else if (Integer.class.isInstance(msg))
-            ((TextView) v.findViewById(R.id.dialog_msg)).setText((Integer) msg);
-        else if (CharSequence.class.isInstance(msg))
-            ((TextView) v.findViewById(R.id.dialog_msg))
-                    .setText((CharSequence) msg);
-        // View
-        Object view = TNUtils.getFromJSON(aJson, "VIEW");
-        if (View.class.isInstance(view))
-            builder.setView((View) view);
-
-        // PositiveButton
-        OnClickListener posListener = (OnClickListener) TNUtils.getFromJSON(
-                aJson, "POS_BTN_CLICK");
-        Object posBtn = TNUtils.getFromJSON(aJson, "POS_BTN");
-        if (Integer.class.isInstance(posBtn)) {
-            builder.setPositiveButton((Integer) posBtn, posListener);
-        } else if (CharSequence.class.isInstance(posBtn)) {
-            builder.setPositiveButton((CharSequence) posBtn, posListener);
-        }
-
-        // NeutralButton
-        OnClickListener neuListener = (OnClickListener) TNUtils.getFromJSON(
-                aJson, "NEU_BTN_CLICK");
-        Object neuBtn = TNUtils.getFromJSON(aJson, "NEU_BTN");
-        if (Integer.class.isInstance(neuBtn)) {
-            builder.setNeutralButton((Integer) neuBtn, neuListener);
-        } else if (CharSequence.class.isInstance(neuBtn)) {
-            builder.setNeutralButton((CharSequence) neuBtn, neuListener);
-        }
-
-        // NegativeButton
-        OnClickListener negListener = (OnClickListener) TNUtils.getFromJSON(
-                aJson, "NEG_BTN_CLICK");
-        Object negBtn = TNUtils.getFromJSON(aJson, "NEG_BTN");
-        if (Integer.class.isInstance(negBtn)) {
-            builder.setNegativeButton((Integer) negBtn, negListener);
-        } else if (CharSequence.class.isInstance(negBtn)) {
-            builder.setNegativeButton((CharSequence) negBtn, negListener);
-        }
-
-        return builder;
-    }
-
-    //TODO 可修改优化 delete
-    public static AlertDialog alertDialogBuilder(JSONObject aJson) {
-        Context context = (Context) TNUtils.getFromJSON(aJson, "CONTEXT");
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        // 如果context已有Alert，则不成功，暂未处理
-
-        // Title
-        Object title = TNUtils.getFromJSON(aJson, "TITLE");
-
-        View v;
-        if (View.class.isInstance(title)) {
-            v = (View) title;
-        } else {
-            LayoutInflater lf = LayoutInflater
-                    .from(TNSettings.getInstance().appContext);
-            v = lf.inflate(R.layout.dialog, null);
-        }
-
-        TNUtilsSkin.setViewBackground((Activity) context, v, R.id.dialog_layout, R.drawable.page_color);
-        TNUtilsSkin.setViewBackground((Activity) context, v, R.id.dialog_top_bar, R.drawable.dialog_top_bg);
-        TNUtilsSkin.setImageViewDrawable((Activity) context, v, R.id.dialog_icon, R.drawable.dialog_icon);
-
-        builder.setCustomTitle(v);
-        ((TextView) v.findViewById(R.id.dialog_title))
-                .setText(R.string.alert_Title);
-
-        Object msg = TNUtils.getFromJSON(aJson, "MESSAGE");
-        if (msg == null)
-            v.findViewById(R.id.dialog_msg).setVisibility(View.GONE);
-        else if (Integer.class.isInstance(msg))
-            ((TextView) v.findViewById(R.id.dialog_msg)).setText((Integer) msg);
-        else if (CharSequence.class.isInstance(msg))
-            ((TextView) v.findViewById(R.id.dialog_msg))
-                    .setText((CharSequence) msg);
-        // View
-        Object view = TNUtils.getFromJSON(aJson, "VIEW");
-        if (View.class.isInstance(view))
-            builder.setView((View) view);
-
-        // PositiveButton
-        OnClickListener posListener = (OnClickListener) TNUtils.getFromJSON(
-                aJson, "POS_BTN_CLICK");
-        Object posBtn = TNUtils.getFromJSON(aJson, "POS_BTN");
-        if (Integer.class.isInstance(posBtn)) {
-            builder.setPositiveButton((Integer) posBtn, posListener);
-        } else if (CharSequence.class.isInstance(posBtn)) {
-            builder.setPositiveButton((CharSequence) posBtn, posListener);
-        }
-
-        // NeutralButton
-        OnClickListener neuListener = (OnClickListener) TNUtils.getFromJSON(
-                aJson, "NEU_BTN_CLICK");
-        Object neuBtn = TNUtils.getFromJSON(aJson, "NEU_BTN");
-        if (Integer.class.isInstance(neuBtn)) {
-            builder.setNeutralButton((Integer) neuBtn, neuListener);
-        } else if (CharSequence.class.isInstance(neuBtn)) {
-            builder.setNeutralButton((CharSequence) neuBtn, neuListener);
-        }
-
-        // NegativeButton
-        OnClickListener negListener = (OnClickListener) TNUtils.getFromJSON(
-                aJson, "NEG_BTN_CLICK");
-        Object negBtn = TNUtils.getFromJSON(aJson, "NEG_BTN");
-        if (Integer.class.isInstance(negBtn)) {
-            builder.setNegativeButton((Integer) negBtn, negListener);
-        } else if (CharSequence.class.isInstance(negBtn)) {
-            builder.setNegativeButton((CharSequence) negBtn, negListener);
-        }
-        AlertDialog ad = builder.create();
-        TNRunner run = new TNRunner(context, "addDialog", AlertDialog.class);
-        run.run(ad);
-        return ad;
+                });
+        dialog.show();
     }
 
     public static void showToast(Object msg) {

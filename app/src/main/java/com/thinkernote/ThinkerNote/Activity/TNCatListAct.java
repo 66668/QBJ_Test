@@ -32,6 +32,7 @@ import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.Views.CommonDialog;
 import com.thinkernote.ThinkerNote._constructer.p.CatListPresenter;
 import com.thinkernote.ThinkerNote._constructer.listener.v.OnCatListListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
@@ -204,33 +205,24 @@ public class TNCatListAct extends TNActBase
     // private methods
     //-------------------------------------------------------------------------------
     private void confirmSaveDialog() {
-        DialogInterface.OnClickListener pbtn_Click = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                save();
-                finish();
-            }
-        };
+        CommonDialog dialog = new CommonDialog(this, R.string.alert_CatList_BackMsg,
+                "保存",
+                "不保存",
+                new CommonDialog.DialogCallBack() {
+                    @Override
+                    public void sureBack() {
+                        save();
+                        finish();
+                    }
 
-        DialogInterface.OnClickListener nbtn_Click = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                setResult(Activity.RESULT_CANCELED, null);
-                finish();
-            }
-        };
+                    @Override
+                    public void cancelBack() {
+                        setResult(Activity.RESULT_CANCELED, null);
+                        finish();
+                    }
 
-        JSONObject jsonData = TNUtils.makeJSON(
-                "CONTEXT", this,
-                "TITLE", R.string.alert_Title,
-                "MESSAGE", R.string.alert_CatList_BackMsg,
-                "POS_BTN", R.string.alert_Save,
-                "POS_BTN_CLICK", pbtn_Click,
-                "NEU_BTN", R.string.alert_NoSave,
-                "NEU_BTN_CLICK", nbtn_Click,
-                "NEG_BTN", R.string.alert_Cancel
-        );
-        TNUtilsUi.alertDialogBuilder(jsonData).show();
+                });
+        dialog.show();
     }
 
     private void save() {
@@ -397,8 +389,8 @@ public class TNCatListAct extends TNActBase
                 int syncState = note.noteId == -1 ? 3 : 4;
                 TNDb.beginTransaction();
                 try {
-                    TNDb.getInstance().execSQL(TNSQLString.NOTE_MOVE_CAT, catId , syncState , lastUpdate, noteLocalId );
-                    TNDb.getInstance().execSQL(TNSQLString.CAT_UPDATE_LASTUPDATETIME, System.currentTimeMillis() / 1000, note.catId );
+                    TNDb.getInstance().execSQL(TNSQLString.NOTE_MOVE_CAT, catId, syncState, lastUpdate, noteLocalId);
+                    TNDb.getInstance().execSQL(TNSQLString.CAT_UPDATE_LASTUPDATETIME, System.currentTimeMillis() / 1000, note.catId);
 
                     TNDb.setTransactionSuccessful();
                 } finally {

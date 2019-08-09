@@ -1,16 +1,12 @@
 package com.thinkernote.ThinkerNote.Activity;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.RadioButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thinkernote.ThinkerNote.Activity.fragment.FolderFragment;
@@ -26,21 +22,18 @@ import com.thinkernote.ThinkerNote.General.TNActionUtils;
 import com.thinkernote.ThinkerNote.General.TNConst;
 import com.thinkernote.ThinkerNote.General.TNHandleError;
 import com.thinkernote.ThinkerNote.General.TNSettings;
-import com.thinkernote.ThinkerNote.General.TNUtils;
-import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.Other.HorizontalPager;
 import com.thinkernote.ThinkerNote.Other.HorizontalPager.OnScreenSwitchListener;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.Views.CommonDialog;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnPagerListener;
 import com.thinkernote.ThinkerNote._constructer.listener.v.OnSyncListener;
 import com.thinkernote.ThinkerNote._constructer.p.MainFragPresenter;
-import com.thinkernote.ThinkerNote._constructer.listener.v.OnPagerListener;
 import com.thinkernote.ThinkerNote._constructer.p.SyncFolderPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.base.TNChildViewBase;
-
-import org.json.JSONObject;
 
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
@@ -71,7 +64,7 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
     private TNNote mCurrNote;
     private TNCat mCurrCat;
     private TNTag mCurTag;
-    private AlertDialog dialog;//GetDataByNoteId的弹窗；
+    private CommonDialog dialog;//GetDataByNoteId的弹窗；
     //p
     MainFragPresenter presenter;
     SyncFolderPresenter folderPresenter;
@@ -457,61 +450,41 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
      * clearrecycler 弹窗
      */
     private void clearrecyclerDialog() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        //title
-        LayoutInflater lf1 = LayoutInflater.from(this);
-        View title = lf1.inflate(R.layout.dialog, null);
-        TNUtilsSkin.setViewBackground(this, title, R.id.dialog_layout, R.drawable.page_color);
-        TNUtilsSkin.setViewBackground(this, title, R.id.dialog_top_bar, R.drawable.dialog_top_bg);
-        TNUtilsSkin.setImageViewDrawable(this, title, R.id.dialog_icon, R.drawable.dialog_icon);
-        builder.setCustomTitle(title);
+        dialog = new CommonDialog(this, R.string.alert_NoteList_ClearRecycle,
+                new CommonDialog.DialogCallBack() {
+                    @Override
+                    public void sureBack() {
+                        if (!TNActionUtils.isSynchronizing()) {
+                            //具体执行
+                            ExecutorService service = Executors.newSingleThreadExecutor();
+                            service.execute(new Runnable() {
+                                @Override
+                                public void run() {
 
-        ((TextView) title.findViewById(R.id.dialog_title)).setText(R.string.alert_Title);//title
+                                    Vector<TNNote> notes = TNDbUtils.getNoteListByTrash(TNSettings.getInstance().userId, TNConst.CREATETIME);
+                                    TNDb.beginTransaction();
+                                    try {
+                                        for (int i = 0; i < notes.size(); i++) {
+                                            TNDb.getInstance().execSQL(TNSQLString.NOTE_UPDATE_SYNCSTATE, 5, notes.get(i).noteLocalId);
+                                        }
+                                        TNDb.setTransactionSuccessful();
+                                    } finally {
+                                        TNDb.endTransaction();
+                                    }
 
-        ((TextView) title.findViewById(R.id.dialog_msg)).setText((Integer) R.string.alert_NoteList_ClearRecycle);//content
-
-        //
-        final DialogInterface.OnClickListener posListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (!TNActionUtils.isSynchronizing()) {
-                    //具体执行
-                    ExecutorService service = Executors.newSingleThreadExecutor();
-                    service.execute(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            Vector<TNNote> notes = TNDbUtils.getNoteListByTrash(TNSettings.getInstance().userId, TNConst.CREATETIME);
-                            TNDb.beginTransaction();
-                            try {
-                                for (int i = 0; i < notes.size(); i++) {
-                                    TNDb.getInstance().execSQL(TNSQLString.NOTE_UPDATE_SYNCSTATE, 5, notes.get(i).noteLocalId);
+                                    handler.sendEmptyMessage(CC_DELETE);
                                 }
-                                TNDb.setTransactionSuccessful();
-                            } finally {
-                                TNDb.endTransaction();
-                            }
+                            });
 
-                            handler.sendEmptyMessage(CC_DELETE);
                         }
-                    });
+                    }
 
-                }
-            }
-        };
-        builder.setPositiveButton(R.string.alert_OK, posListener);
+                    @Override
+                    public void cancelBack() {
+                        mProgressDialog.hide();
+                    }
 
-        //
-        DialogInterface.OnClickListener negListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //
-                mProgressDialog.hide();
-                dialog.dismiss();
-            }
-        };
-        builder.setNegativeButton(R.string.alert_Cancel, negListener);
-        dialog = builder.create();
+                });
         dialog.show();
     }
 
@@ -521,44 +494,23 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
      * @param cat
      */
     private void showCatDeleteDialog(final TNCat cat) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        //title
-        LayoutInflater lf1 = LayoutInflater.from(this);
-        View title = lf1.inflate(R.layout.dialog, null);
-        TNUtilsSkin.setViewBackground(this, title, R.id.dialog_layout, R.drawable.page_color);
-        TNUtilsSkin.setViewBackground(this, title, R.id.dialog_top_bar, R.drawable.dialog_top_bg);
-        TNUtilsSkin.setImageViewDrawable(this, title, R.id.dialog_icon, R.drawable.dialog_icon);
-        builder.setCustomTitle(title);
+        dialog = new CommonDialog(this, R.string.alert_CatInfo_Delete_HasChild,
+                new CommonDialog.DialogCallBack() {
+                    @Override
+                    public void sureBack() {
+                        if (!TNActionUtils.isSynchronizing()) {
+                            TNUtilsUi.showNotification(TNMainFragAct.this, R.string.alert_NoteView_Synchronizing, false);
+                            //具体执行
+                            pCatDelete(cat);
+                        }
+                    }
 
-        ((TextView) title.findViewById(R.id.dialog_title)).setText(R.string.alert_Title);//title
+                    @Override
+                    public void cancelBack() {
+                        mProgressDialog.hide();
+                    }
 
-        ((TextView) title.findViewById(R.id.dialog_msg)).setText((Integer) R.string.alert_CatInfo_Delete_HasChild);//content
-
-        //
-        final DialogInterface.OnClickListener posListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (!TNActionUtils.isSynchronizing()) {
-                    TNUtilsUi.showNotification(TNMainFragAct.this, R.string.alert_NoteView_Synchronizing, false);
-                    //具体执行
-                    pCatDelete(cat);
-                }
-            }
-        };
-        builder.setPositiveButton(R.string.alert_OK, posListener);
-
-        //
-        DialogInterface.OnClickListener negListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //
-                MLog.d("取消");
-                mProgressDialog.hide();
-                dialog.dismiss();
-            }
-        };
-        builder.setNegativeButton(R.string.alert_Cancel, negListener);
-        dialog = builder.create();
+                });
         dialog.show();
     }
 
@@ -568,51 +520,29 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
      * @param noteLocalId
      */
     private void showDeleteDialog(final long noteLocalId) {
-
-        TNNote note = TNDbUtils.getNoteByNoteLocalId(noteLocalId);
-        MLog.d("删除笔记--noteLocalId=" + noteLocalId + "--TNNote：" + note.toString());
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        //title
-        LayoutInflater lf1 = LayoutInflater.from(this);
-        View title = lf1.inflate(R.layout.dialog, null);
-        TNUtilsSkin.setViewBackground(this, title, R.id.dialog_layout, R.drawable.page_color);
-        TNUtilsSkin.setViewBackground(this, title, R.id.dialog_top_bar, R.drawable.dialog_top_bg);
-        TNUtilsSkin.setImageViewDrawable(this, title, R.id.dialog_icon, R.drawable.dialog_icon);
-        builder.setCustomTitle(title);
-
-        ((TextView) title.findViewById(R.id.dialog_title)).setText(R.string.alert_Title);//title
-        //content
         int msg = R.string.alert_NoteView_DeleteNoteMsg;
         if (TNSettings.getInstance().isInProject()) {
             msg = R.string.alert_NoteView_DeleteNoteMsg_InGroup;
         }
-        ((TextView) title.findViewById(R.id.dialog_msg)).setText((Integer) msg);//content
+        dialog = new CommonDialog(this,
+                msg,
+                new CommonDialog.DialogCallBack() {
+                    @Override
+                    public void sureBack() {
+                        if (!TNActionUtils.isSynchronizing()) {
+                            TNUtilsUi.showNotification(TNMainFragAct.this, R.string.alert_NoteView_Synchronizing, false);
+                            //具体执行
+                            pDialogDelete(noteLocalId);
 
-        //
-        final DialogInterface.OnClickListener posListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (!TNActionUtils.isSynchronizing()) {
-                    TNUtilsUi.showNotification(TNMainFragAct.this, R.string.alert_NoteView_Synchronizing, false);
-                    //具体执行
-                    pDialogDelete(noteLocalId);
+                        }
+                    }
 
-                }
-            }
-        };
-        builder.setPositiveButton(R.string.alert_OK, posListener);
+                    @Override
+                    public void cancelBack() {
+                        mProgressDialog.hide();
+                    }
 
-        //
-        DialogInterface.OnClickListener negListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //
-                mProgressDialog.hide();
-                dialog.dismiss();
-            }
-        };
-        builder.setNegativeButton(R.string.alert_Cancel, negListener);
-        dialog = builder.create();
+                });
         dialog.show();
     }
 
@@ -620,42 +550,26 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
      * 完全同步SynceDataByNoteId
      */
     private void showSyncDialog(final long noteId) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        //title
-        LayoutInflater lf1 = LayoutInflater.from(this);
-        View title = lf1.inflate(R.layout.dialog, null);
-        TNUtilsSkin.setViewBackground(this, title, R.id.dialog_layout, R.drawable.page_color);
-        TNUtilsSkin.setViewBackground(this, title, R.id.dialog_top_bar, R.drawable.dialog_top_bg);
-        TNUtilsSkin.setImageViewDrawable(this, title, R.id.dialog_icon, R.drawable.dialog_icon);
-        builder.setCustomTitle(title);
-        ((TextView) title.findViewById(R.id.dialog_title)).setText(R.string.alert_Title);//title
-        ((TextView) title.findViewById(R.id.dialog_msg)).setText((Integer) R.string.alert_MainCats_SynchronizeNoteAll);//content
+        dialog = new CommonDialog(this, R.string.alert_MainCats_SynchronizeNoteAll,
+                "完全同步",
+                "取消",
+                new CommonDialog.DialogCallBack() {
+                    @Override
+                    public void sureBack() {
+                        if (!TNActionUtils.isSynchronizing()) {
+                            TNUtilsUi.showNotification(TNMainFragAct.this, R.string.alert_NoteView_Synchronizing, false);
+                            //监听
+                            MLog.d("同步GetDataByNoteId");
+                            presenter.getDetailByNoteId(noteId);
+                        }
+                    }
 
-        //
-        final DialogInterface.OnClickListener posListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (!TNActionUtils.isSynchronizing()) {
-                    TNUtilsUi.showNotification(TNMainFragAct.this, R.string.alert_NoteView_Synchronizing, false);
-                    //监听
-                    MLog.d("同步GetDataByNoteId");
-                    presenter.getDetailByNoteId(noteId);
-                }
-            }
-        };
-        builder.setPositiveButton(R.string.maincats_menu_syncall, posListener);
+                    @Override
+                    public void cancelBack() {
+                        mProgressDialog.hide();
+                    }
 
-        //
-        DialogInterface.OnClickListener negListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //
-                mProgressDialog.hide();
-                dialog.dismiss();
-            }
-        };
-        builder.setNegativeButton(R.string.alert_Cancel, negListener);
-        dialog = builder.create();
+                });
         dialog.show();
     }
 
@@ -663,42 +577,26 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
      * 完全同步syncCats
      */
     private void showSyncCatDialog(final long noteId) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        //title
-        LayoutInflater lf1 = LayoutInflater.from(this);
-        View title = lf1.inflate(R.layout.dialog, null);
-        TNUtilsSkin.setViewBackground(this, title, R.id.dialog_layout, R.drawable.page_color);
-        TNUtilsSkin.setViewBackground(this, title, R.id.dialog_top_bar, R.drawable.dialog_top_bg);
-        TNUtilsSkin.setImageViewDrawable(this, title, R.id.dialog_icon, R.drawable.dialog_icon);
-        builder.setCustomTitle(title);
-        ((TextView) title.findViewById(R.id.dialog_title)).setText(R.string.alert_Title);//title
-        ((TextView) title.findViewById(R.id.dialog_msg)).setText((Integer) R.string.alert_MainCats_SynchronizeNoteAll);//content
+        dialog = new CommonDialog(this, R.string.alert_MainCats_SynchronizeNoteAll,
+                "完全同步",
+                "取消",
+                new CommonDialog.DialogCallBack() {
+                    @Override
+                    public void sureBack() {
+                        if (!TNActionUtils.isSynchronizing()) {
+                            TNUtilsUi.showNotification(TNMainFragAct.this, R.string.alert_NoteView_Synchronizing, false);
+                            //监听
+                            MLog.d("同步Cats");
+                            pSynceCat(noteId);
+                        }
+                    }
 
-        //
-        final DialogInterface.OnClickListener posListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (!TNActionUtils.isSynchronizing()) {
-                    TNUtilsUi.showNotification(TNMainFragAct.this, R.string.alert_NoteView_Synchronizing, false);
-                    //监听
-                    MLog.d("同步Cats");
-                    pSynceCat(noteId);
-                }
-            }
-        };
-        builder.setPositiveButton(R.string.maincats_menu_syncall, posListener);
+                    @Override
+                    public void cancelBack() {
+                        mProgressDialog.hide();
+                    }
 
-        //
-        DialogInterface.OnClickListener negListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //
-                mProgressDialog.hide();
-                dialog.dismiss();
-            }
-        };
-        builder.setNegativeButton(R.string.alert_Cancel, negListener);
-        dialog = builder.create();
+                });
         dialog.show();
     }
 
@@ -800,43 +698,40 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
     }
 
     private void deleteTag(final TNTag tag) {
-        DialogInterface.OnClickListener pbtn_Click =
-                new DialogInterface.OnClickListener() {
+        dialog = new CommonDialog(this, R.string.alert_TagInfo_DeleteMsg,
+                new CommonDialog.DialogCallBack() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void sureBack() {
                         mProgressDialog.show();
                         pDeleteTag(tag.tagId);
-
                     }
-                };
 
-        JSONObject jsonData = TNUtils.makeJSON(
-                "CONTEXT", this,
-                "TITLE", R.string.alert_Title,
-                "MESSAGE", R.string.alert_TagInfo_DeleteMsg,
-                "POS_BTN", R.string.alert_OK,
-                "POS_BTN_CLICK", pbtn_Click,
-                "NEG_BTN", R.string.alert_Cancel
-        );
-        TNUtilsUi.alertDialogBuilder(jsonData).show();
+                    @Override
+                    public void cancelBack() {
+                        mProgressDialog.hide();
+                    }
+
+                });
+        dialog.show();
     }
 
     private void setDefaultCatDialog(final TNCat cat) {
-        DialogInterface.OnClickListener pbtn_Click = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //
-                setDefaultFolder(cat.catId);
-                configView();
-            }
-        };
+        dialog = new CommonDialog(this, R.string.alert_CatInfo_SetDefaultMsg,
+                new CommonDialog.DialogCallBack() {
+                    @Override
+                    public void sureBack() {
+                        setDefaultFolder(cat.catId);
+                        configView();
+                    }
 
-        JSONObject jsonData = TNUtils.makeJSON("CONTEXT", this, "TITLE",
-                R.string.alert_Title, "MESSAGE",
-                R.string.alert_CatInfo_SetDefaultMsg, "POS_BTN",
-                R.string.alert_OK, "POS_BTN_CLICK", pbtn_Click, "NEG_BTN",
-                R.string.alert_Cancel);
-        TNUtilsUi.alertDialogBuilder(jsonData).show();
+                    @Override
+                    public void cancelBack() {
+                        mProgressDialog.hide();
+                    }
+
+                });
+        dialog.show();
+
     }
 
     @Override

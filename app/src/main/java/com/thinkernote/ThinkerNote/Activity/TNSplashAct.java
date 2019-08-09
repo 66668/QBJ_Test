@@ -1,8 +1,6 @@
 package com.thinkernote.ThinkerNote.Activity;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,11 +15,11 @@ import com.thinkernote.ThinkerNote.Database.TNDb2;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
-import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote._constructer.p.SplashPresenter;
+import com.thinkernote.ThinkerNote.Views.CommonDialog;
 import com.thinkernote.ThinkerNote._constructer.listener.v.OnSplashListener;
+import com.thinkernote.ThinkerNote._constructer.p.SplashPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.login.LoginBean;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
@@ -134,12 +132,10 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
 
 
         if (TNSettings.getInstance().hasDbError) {
-            //监听
-            DialogInterface.OnClickListener onClickListener =
-                    new DialogInterface.OnClickListener() {
+            CommonDialog dialog = new CommonDialog(this, R.string.alert_DBErrorHint,
+                    new CommonDialog.DialogCallBack() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
+                        public void sureBack() {
                             //重置 数据库
 
                             resetDb();
@@ -147,18 +143,13 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
                             TNSettings.getInstance().hasDbError = false;
                             TNSettings.getInstance().savePref(false);
                         }
-                    };
 
-            JSONObject jsonData = TNUtils.makeJSON(
-                    "CONTEXT", this,
-                    "TITLE", R.string.alert_Title,
-                    "MESSAGE", R.string.alert_DBErrorHint,
-                    "POS_BTN", R.string.alert_Uninstall,
-                    "POS_BTN_CLICK", onClickListener);
-            AlertDialog ad = TNUtilsUi.alertDialogBuilder(jsonData);
-            ad.setCanceledOnTouchOutside(false);
-            ad.setCancelable(false);
-            ad.show();
+                        @Override
+                        public void cancelBack() {
+                        }
+
+                    });
+            dialog.show();
         } else {
             startRun();
         }

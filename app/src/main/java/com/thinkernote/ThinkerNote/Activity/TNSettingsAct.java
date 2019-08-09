@@ -27,7 +27,10 @@ import com.thinkernote.ThinkerNote.Data.TNCat;
 import com.thinkernote.ThinkerNote.Data.TNPreferenceChild;
 import com.thinkernote.ThinkerNote.Data.TNPreferenceGroup;
 import com.thinkernote.ThinkerNote.Data.TNUser;
+import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
+import com.thinkernote.ThinkerNote.Database.TNSQLString;
+import com.thinkernote.ThinkerNote.General.TNActionUtils;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsAtt;
@@ -35,6 +38,9 @@ import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.Views.CommonDialog;
+import com.thinkernote.ThinkerNote.Views.InviteCodeDialog;
+import com.thinkernote.ThinkerNote.Views.VolumeDialog;
 import com.thinkernote.ThinkerNote._constructer.p.SettingsPresenter;
 import com.thinkernote.ThinkerNote._constructer.listener.v.OnSettingsListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
@@ -42,6 +48,8 @@ import com.thinkernote.ThinkerNote.base.TNActBase;
 import org.json.JSONObject;
 
 import java.util.Vector;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * 主页--设置--多个功能共用界面：用户信息/个性化设置/空间信息
@@ -349,31 +357,6 @@ public class TNSettingsAct extends TNActBase implements OnClickListener, OnChild
         startActForResult(TNCatListAct.class, b, R.string.userinfo_defaultfolder);// TODO
     }
 
-    //
-    public void changeSyncMode() {
-        DialogInterface.OnClickListener pbtn_Click = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                TNSettings settings = TNSettings.getInstance();
-                settings.sync = mSyncType;
-                settings.savePref(true);
-                configView();
-            }
-        };
-
-        JSONObject jsonData = TNUtils.makeJSON("CONTEXT", this, "TITLE",
-                R.string.alert_Title, "POS_BTN", R.string.alert_OK,
-                "POS_BTN_CLICK", pbtn_Click, "NEG_BTN", R.string.alert_Cancel);
-        AlertDialog.Builder builder = TNUtilsUi.alertDialogBuilder1(jsonData);
-        mSyncType = TNSettings.getInstance().sync;
-        builder.setSingleChoiceItems(R.array.sync, mSyncType,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        mSyncType = which;
-                    }
-                });
-        addDialog(builder.show());
-    }
 
     //修改锁
     public void ChangeLockpattern() {
@@ -381,7 +364,7 @@ public class TNSettingsAct extends TNActBase implements OnClickListener, OnChild
         b.putInt("Type", 0);
         b.putString("OriginalPath", "[]");
 
-        Intent intent = new Intent(this,TNLockAct.class);
+        Intent intent = new Intent(this, TNLockAct.class);
         intent.putExtras(b);
         startActivity(intent);
     }
@@ -418,36 +401,6 @@ public class TNSettingsAct extends TNActBase implements OnClickListener, OnChild
         configView();
     }
 
-    //
-    public void ChangePictureCompressionmode() {
-        DialogInterface.OnClickListener pbtn_Click = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                TNSettings settings = TNSettings.getInstance();
-                settings.pictureCompressionMode = pictureCompressionMode;
-                MLog.i(TAG, pictureCompressionMode + "");
-                settings.savePref(true);
-                configView();
-            }
-        };
-
-        JSONObject jsonData = TNUtils.makeJSON("CONTEXT", this, "TITLE",
-                R.string.alert_Title, "POS_BTN", R.string.alert_OK,
-                "POS_BTN_CLICK", pbtn_Click, "NEG_BTN", R.string.alert_Cancel);
-        AlertDialog.Builder builder = TNUtilsUi.alertDialogBuilder1(jsonData);
-        pictureCompressionMode = TNSettings.getInstance().pictureCompressionMode;
-        MLog.i(TAG, pictureCompressionMode + "");
-        if (pictureCompressionMode == -1) {
-            pictureCompressionMode = 1;
-        }
-        builder.setSingleChoiceItems(R.array.compression,
-                pictureCompressionMode, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        pictureCompressionMode = which;
-                    }
-                });
-        addDialog(builder.show());
-    }
 
     //修改声音
     public void ChangeVoice() {
@@ -463,156 +416,60 @@ public class TNSettingsAct extends TNActBase implements OnClickListener, OnChild
 
     //修改语音
     public void ChangeSpeed() {
-        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final LinearLayout fl = (LinearLayout) layoutInflater.inflate(
-                R.layout.seekbar_dialog, null);
-        LinearLayout root = (LinearLayout) layoutInflater.inflate(
-                R.layout.dialog, null);
-
-        root.addView(fl);
-        root.findFocus();
-
-        final SeekBar seekbar = (SeekBar) fl
-                .findViewById(R.id.seekbar_dialog_seekbar);
-        seekbar.setProgress(TNSettings.getInstance().speed);
-        ((TextView) fl.findViewById(R.id.seekbar_dialog_textview))
-                .setText(TNSettings.getInstance().speed + "");
-        seekbar.setMax(100);
-        seekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-
+        VolumeDialog dialog = new VolumeDialog(this, new VolumeDialog.DialogCallBack() {
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress,
-                                          boolean fromUser) {
-                ((TextView) fl.findViewById(R.id.seekbar_dialog_textview))
-                        .setText(progress + "");
-            }
-        });
-
-        DialogInterface.OnClickListener pbtn_Click = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                TNSettings.getInstance().speed = seekbar.getProgress();
+            public void sureBack(int str) {
+                TNSettings.getInstance().speed = str;
                 TNSettings.getInstance().savePref(true);
                 configView();
             }
-        };
 
-        JSONObject jsonData = TNUtils.makeJSON("CONTEXT", this, "TITLE", root,
-                "POS_BTN", R.string.alert_OK, "POS_BTN_CLICK", pbtn_Click,
-                "NEG_BTN", R.string.alert_Cancel);
-        TNUtilsUi.alertDialogBuilder(jsonData).show();
+            @Override
+            public void cancelBack() {
+
+            }
+        });
+        dialog.show();
     }
 
     //设置音量
     public void ChangeVolume() {
-        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final LinearLayout fl = (LinearLayout) layoutInflater.inflate(
-                R.layout.seekbar_dialog, null);
-        LinearLayout root = (LinearLayout) layoutInflater.inflate(
-                R.layout.dialog, null);
-
-        root.addView(fl);
-        root.findFocus();
-
-        final SeekBar seekbar = (SeekBar) fl
-                .findViewById(R.id.seekbar_dialog_seekbar);
-        seekbar.setProgress(TNSettings.getInstance().volume);
-        ((TextView) fl.findViewById(R.id.seekbar_dialog_textview))
-                .setText(TNSettings.getInstance().volume + "");
-        seekbar.setMax(100);
-        seekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-
+        //
+        VolumeDialog dialog = new VolumeDialog(this, new VolumeDialog.DialogCallBack() {
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress,
-                                          boolean fromUser) {
-                ((TextView) fl.findViewById(R.id.seekbar_dialog_textview))
-                        .setText(progress + "");
-            }
-        });
-
-        DialogInterface.OnClickListener pbtn_Click = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                TNSettings.getInstance().volume = seekbar.getProgress();
+            public void sureBack(int str) {
+                TNSettings.getInstance().volume = str;
                 TNSettings.getInstance().savePref(true);
                 configView();
             }
-        };
 
-        JSONObject jsonData = TNUtils.makeJSON("CONTEXT", this, "TITLE", root,
-                "POS_BTN", R.string.alert_OK, "POS_BTN_CLICK", pbtn_Click,
-                "NEG_BTN", R.string.alert_Cancel);
-        TNUtilsUi.alertDialogBuilder(jsonData).show();
+            @Override
+            public void cancelBack() {
+
+            }
+        });
+        dialog.show();
     }
 
     //清除缓存
     public void clearCache() {
-        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        LinearLayout fl = (LinearLayout) layoutInflater.inflate(
-                R.layout.about_clearcache, null);
+        CommonDialog dialog = new CommonDialog(this, R.string.alert_About_ClearCacheHint,
+                new CommonDialog.DialogCallBack() {
+                    @Override
+                    public void sureBack() {
+                        pClearCache();
+                        NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                        nm.cancelAll();
+                    }
 
-        LinearLayout root = (LinearLayout) layoutInflater.inflate(
-                R.layout.dialog, null);
+                    @Override
+                    public void cancelBack() {
+                        mProgressDialog.hide();
+                    }
 
-        root.addView(fl);
-        root.findFocus();
-
-//		if (!TextUtils.isEmpty(mSettings.password)) {
-//			View input = fl.findViewById(R.id.about_clearcache_pwd);
-//			LinearLayout.LayoutParams inputParams = new LinearLayout.LayoutParams(
-//					LinearLayout.LayoutParams.MATCH_PARENT, 0,
-//					Gravity.NO_GRAVITY);
-//			input.setLayoutParams(inputParams);
-//			View inputHint = fl.findViewById(R.id.about_clearcache_pwdhint);
-//			inputHint.setLayoutParams(inputParams);
-//		}
-
-        DialogInterface.OnClickListener pbtn_Click = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-//				EditText input = (EditText) ((Dialog) dialog)
-//						.findViewById(R.id.about_clearcache_pwd);
-//				String pwd = input.getText().toString();
-//				TNSettings settings = TNSettings.getInstance();
-//				if (pwd.equals(settings.password)) {
-                pClearCache();
-
-                NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                nm.cancelAll();
-//				} else {
-//					TNHandleError.handleErrorCode(TNSettingsAct.this,
-//							TNUtils.getAppContext().getResources().getString(R.string.alert_Login_PasswordWrong));
-//				}
-            }
-        };
-
-        JSONObject jsonData = TNUtils.makeJSON("CONTEXT", this, "TITLE", root,
-                "POS_BTN", R.string.alert_OK, "POS_BTN_CLICK", pbtn_Click,
-                "NEG_BTN", R.string.alert_Cancel);
-
-        AlertDialog ad = TNUtilsUi.alertDialogBuilder(jsonData);
-        ad.show();
-        ad.getWindow().clearFlags(
+                });
+        dialog.show();
+        dialog.getWindow().clearFlags(
                 WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
     }
 
@@ -628,39 +485,26 @@ public class TNSettingsAct extends TNActBase implements OnClickListener, OnChild
         if (!TNUtils.checkNetwork(this))
             return;
 
-        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        LinearLayout fl = (LinearLayout) layoutInflater.inflate(
-                R.layout.dialog_edittext, null);
-        ((TextView) fl.findViewById(R.id.dialog_textview))
-                .setText(R.string.dialog_setInviteCode_msg);
-        ((EditText) fl.findViewById(R.id.dialog_edittext))
-                .setHint(R.string.dialog_setInviteCode_edittext_hint);
+        InviteCodeDialog dialog = new InviteCodeDialog(this,
+                new InviteCodeDialog.DialogCallBack() {
+                    @Override
+                    public void sureBack(String code) {
+                        if (code.length() == 0) {
+                            TNUtilsUi.alert(TNSettingsAct.this,
+                                    R.string.alert_UserInfo_invitecode_blank);
+                            return;
+                        }
+                        mProgressDialog.show();
+                    }
 
-        LinearLayout root = (LinearLayout) layoutInflater.inflate(
-                R.layout.dialog, null);
-        root.addView(fl);
+                    @Override
+                    public void cancelBack() {
+                        mProgressDialog.hide();
+                    }
 
-        DialogInterface.OnClickListener pbtn_Click = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String code = ((EditText) ((Dialog) dialog)
-                        .findViewById(R.id.dialog_edittext)).getText()
-                        .toString().trim().toLowerCase();
-                if (code.length() == 0) {
-                    TNUtilsUi.alert(TNSettingsAct.this,
-                            R.string.alert_UserInfo_invitecode_blank);
-                    return;
-                }
-                mProgressDialog.show();
-            }
-        };
-
-        JSONObject jsonData = TNUtils.makeJSON("CONTEXT", this, "TITLE", root,
-                "POS_BTN", R.string.alert_OK, "POS_BTN_CLICK", pbtn_Click,
-                "NEG_BTN", R.string.alert_Cancel);
-        AlertDialog ad = TNUtilsUi.alertDialogBuilder(jsonData);
-        ad.show();
-        ad.getWindow().clearFlags(
+                });
+        dialog.show();
+        dialog.getWindow().clearFlags(
                 WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
     }
 

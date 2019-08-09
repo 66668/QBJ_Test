@@ -36,6 +36,7 @@ import com.thinkernote.ThinkerNote.General.TNUtilsTag;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.Views.CommonDialog;
 import com.thinkernote.ThinkerNote._constructer.p.TagListPresenter;
 import com.thinkernote.ThinkerNote._constructer.listener.v.OnTagListListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
@@ -243,10 +244,12 @@ public class TNTagListAct extends TNActBase implements OnClickListener, OnItemCl
     //-------------------------------------------------------------------------------
     private void back() {
         if (!mTagStr.equals(mOriginal)) {
-            DialogInterface.OnClickListener pbtn_Click =
-                    new DialogInterface.OnClickListener() {
+            CommonDialog dialog = new CommonDialog(this, R.string.alert_TagList_BackMsg,
+                    "保存",
+                    "不保存",
+                    new CommonDialog.DialogCallBack() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void sureBack() {
                             if (mNote != null) {
                                 noteLocalChangeTag();
                             } else {
@@ -256,27 +259,14 @@ public class TNTagListAct extends TNActBase implements OnClickListener, OnItemCl
                                 finish();
                             }
                         }
-                    };
 
-            DialogInterface.OnClickListener nbtn_Click =
-                    new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void cancelBack() {
                             finish();
                         }
-                    };
 
-            JSONObject jsonData = TNUtils.makeJSON(
-                    "CONTEXT", this,
-                    "TITLE", R.string.alert_Title,
-                    "MESSAGE", R.string.alert_TagList_BackMsg,
-                    "POS_BTN", R.string.alert_Save,
-                    "POS_BTN_CLICK", pbtn_Click,
-                    "NEU_BTN", R.string.alert_NoSave,
-                    "NEU_BTN_CLICK", nbtn_Click,
-                    "NEG_BTN", R.string.alert_Cancel
-            );
-            TNUtilsUi.alertDialogBuilder(jsonData).show();
+                    });
+            dialog.show();
         } else {
             setResult(Activity.RESULT_CANCELED, null);
             finish();

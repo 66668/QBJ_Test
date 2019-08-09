@@ -1,10 +1,7 @@
 package com.thinkernote.ThinkerNote.Activity;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -12,8 +9,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.text.method.ScrollingMovementMethod;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,10 +16,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -39,13 +32,13 @@ import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote._constructer.p.UserInfoPresenter;
+import com.thinkernote.ThinkerNote.Views.CommonDialog;
+import com.thinkernote.ThinkerNote.Views.UpdateDialog;
 import com.thinkernote.ThinkerNote._constructer.listener.v.OnUserinfoListener;
+import com.thinkernote.ThinkerNote._constructer.p.UserInfoPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.main.MainUpgradeBean;
 import com.thinkernote.ThinkerNote.http.fileprogress.FileProgressListener;
-
-import org.json.JSONObject;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -66,6 +59,10 @@ public class TNUserInfoAct extends TNActBase implements OnClickListener,
     File installFile;//安装包file
     //
     private UserInfoPresenter presener;
+
+
+    //更新弹窗的自定义监听（确定按钮的监听）
+    private UpdateDialog upgradeDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -274,62 +271,21 @@ public class TNUserInfoAct extends TNActBase implements OnClickListener,
     }
 
     public void downloadApp() {
-        DialogInterface.OnClickListener pbtn_Click = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                openRecommend();
-            }
-        };
-
-        JSONObject jsonData = TNUtils.makeJSON(
-                "CONTEXT", this,
-                "TITLE", R.string.alert_Title,
-                "MESSAGE", R.string.alert_UserInfo_DownloadApp,
-                "POS_BTN", R.string.alert_OK,
-                "POS_BTN_CLICK", pbtn_Click,
-                "NEG_BTN", R.string.alert_Cancel
-        );
-        TNUtilsUi.alertDialogBuilder(jsonData).show();
-    }
-
-
-    //更新弹窗的自定义监听（确定按钮的监听）
-    private AlertDialog upgradeDialog;
-
-    class CustomListener implements View.OnClickListener {
-
-
-        public CustomListener(AlertDialog dialog) {
-            upgradeDialog = dialog;
-        }
-
-        @Override
-        public void onClick(View v) {
-            upgradeDialog.setCancelable(false);
-            upgradeDialog.setCanceledOnTouchOutside(false);
-            upgradeDialog.setOnKeyListener(new OnKeyListener() {
-                @Override
-                public boolean onKey(DialogInterface dialog, int keyCode,
-                                     KeyEvent event) {
-                    // Search键
-                    if (event.getKeyCode() == KeyEvent.KEYCODE_SEARCH) {
-                        return true;
+        CommonDialog dialog = new CommonDialog(this, R.string.alert_UserInfo_DownloadApp,
+                new CommonDialog.DialogCallBack() {
+                    @Override
+                    public void sureBack() {
+                        openRecommend();
                     }
-                    return false;
-                }
-            });
 
-            Button theButton = upgradeDialog.getButton(DialogInterface.BUTTON_POSITIVE);//开始下载按钮
-            theButton.setText(getString(R.string.update_downloading));
-            theButton.setEnabled(false);
+                    @Override
+                    public void cancelBack() {
+                    }
 
-            Button negButton = upgradeDialog.getButton(DialogInterface.BUTTON_NEGATIVE);//取消下载按钮
-            negButton.setEnabled(false);
-
-            //下载接口
-            download(mDownLoadAPKPath);
-        }
+                });
+        dialog.show();
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -390,12 +346,7 @@ public class TNUserInfoAct extends TNActBase implements OnClickListener,
 
         @Override
         public void onFileProgressing(int progress) {
-            MLog.d("实时progress=" + progress);
-            ProgressBar pb = (ProgressBar) upgradeDialog.findViewById(R.id.update_progressbar);
-            TextView percent = (TextView) upgradeDialog.findViewById(R.id.update_percent);
-
-            pb.setProgress(progress);//进度
-            percent.setText(progress + "%");//显示
+            upgradeDialog.setProgress(progress);
         }
 
     };
@@ -452,39 +403,20 @@ public class TNUserInfoAct extends TNActBase implements OnClickListener,
             MLog.d(TAG, newVersionName + "," + newSize);
 
             if (newVersionCode > info.versionCode) {
-                LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                LinearLayout fl = (LinearLayout) layoutInflater.inflate(
-                        R.layout.update, null);
-                TextView hint = (TextView) fl
-                        .findViewById(R.id.update_hint);
-                hint.setText(String.format(getString(R.string.update_hint),
-                        info.versionName, newVersionName, description));
-                hint.setMovementMethod(ScrollingMovementMethod
-                        .getInstance());
+                upgradeDialog = new UpdateDialog(this, info.versionName, newVersionName, description, new UpdateDialog.DialogCallBack() {
+                    @Override
+                    public void sureBack() {
+                        upgradeDialog.setButtonClick(false);
+                        //下载接口
+                        download(mDownLoadAPKPath);
+                    }
 
-                ProgressBar pb = (ProgressBar) fl
-                        .findViewById(R.id.update_progressbar);
-                pb.setMax(100);//100 /newSize
-                pb.setProgress(0);
-                TextView percent = (TextView) fl
-                        .findViewById(R.id.update_percent);
-                percent.setText(String.format("%.2fM / %.2fM (%.2f%%)",
-                        pb.getProgress() / 1024f / 1024f,
-                        pb.getMax() / 1024f / 1024f,
-                        100f * pb.getProgress() / pb.getMax()));
-
-                JSONObject jsonData = TNUtils.makeJSON("CONTEXT",
-                        TNSettings.getInstance().topAct, "TITLE",
-                        R.string.alert_Title, "VIEW", fl, "POS_BTN",
-                        R.string.update_start, "NEG_BTN",
-                        R.string.alert_Cancel);
-                AlertDialog dialog = TNUtilsUi.alertDialogBuilder(jsonData);
-                dialog.show();
-
-                Button theButton = dialog
-                        .getButton(DialogInterface.BUTTON_POSITIVE);
-
-                theButton.setOnClickListener(new CustomListener(dialog));
+                    @Override
+                    public void cancelBack() {
+                        upgradeDialog.dismiss();
+                    }
+                });
+                upgradeDialog.show();
             } else {
                 TNUtilsUi.showToast("当前版本已是最新");
             }

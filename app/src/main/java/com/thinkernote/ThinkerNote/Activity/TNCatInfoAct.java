@@ -1,18 +1,14 @@
 package com.thinkernote.ThinkerNote.Activity;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
-import android.widget.TextView;
 
 import com.thinkernote.ThinkerNote.Action.TNAction.TNRunner;
 import com.thinkernote.ThinkerNote.Adapter.TNPreferenceAdapter;
@@ -24,16 +20,14 @@ import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.Database.TNSQLString;
 import com.thinkernote.ThinkerNote.General.TNActionUtils;
 import com.thinkernote.ThinkerNote.General.TNSettings;
-import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote._constructer.p.CatInfoPresenter;
+import com.thinkernote.ThinkerNote.Views.CommonDialog;
 import com.thinkernote.ThinkerNote._constructer.listener.v.OnCatInfoListener;
+import com.thinkernote.ThinkerNote._constructer.p.CatInfoPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
-
-import org.json.JSONObject;
 
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
@@ -55,7 +49,7 @@ public class TNCatInfoAct extends TNActBase
     private TNPreferenceChild mCurrChild;
     private long mCatId;
     private TNCat mCurrentCat;
-    private AlertDialog dialog;//GetDataByNoteId的弹窗；
+    private CommonDialog dialog;//GetDataByNoteId的弹窗；
 
     //p
     CatInfoPresenter presenter;
@@ -229,63 +223,39 @@ public class TNCatInfoAct extends TNActBase
      * @param cat
      */
     private void showCatDeleteDialog(final TNCat cat) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        //title
-        LayoutInflater lf1 = LayoutInflater.from(this);
-        View title = lf1.inflate(R.layout.dialog, null);
-        TNUtilsSkin.setViewBackground(this, title, R.id.dialog_layout, R.drawable.page_color);
-        TNUtilsSkin.setViewBackground(this, title, R.id.dialog_top_bar, R.drawable.dialog_top_bg);
-        TNUtilsSkin.setImageViewDrawable(this, title, R.id.dialog_icon, R.drawable.dialog_icon);
-        builder.setCustomTitle(title);
+        dialog = new CommonDialog(this, R.string.alert_CatInfo_Delete_HasChild,
+                new CommonDialog.DialogCallBack() {
+                    @Override
+                    public void sureBack() {
+                        if (!TNActionUtils.isSynchronizing()) {
+                            TNUtilsUi.showNotification(TNCatInfoAct.this, R.string.alert_NoteView_Synchronizing, false);
+                            //具体执行
+                            pCatDelete(cat);
+                        }
+                    }
 
-        ((TextView) title.findViewById(R.id.dialog_title)).setText(R.string.alert_Title);//title
+                    @Override
+                    public void cancelBack() {
+                    }
 
-        ((TextView) title.findViewById(R.id.dialog_msg)).setText((Integer) R.string.alert_CatInfo_Delete_HasChild);//content
-
-        //
-        final DialogInterface.OnClickListener posListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (!TNActionUtils.isSynchronizing()) {
-                    TNUtilsUi.showNotification(TNCatInfoAct.this, R.string.alert_NoteView_Synchronizing, false);
-                    //具体执行
-                    pCatDelete(cat);
-                }
-            }
-        };
-        builder.setPositiveButton(R.string.alert_OK, posListener);
-
-        //
-        DialogInterface.OnClickListener negListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //
-                dialog.dismiss();
-            }
-        };
-        builder.setNegativeButton(R.string.alert_Cancel, negListener);
-        dialog = builder.create();
+                });
         dialog.show();
     }
 
     private void setDefaultCatDialog() {
-        DialogInterface.OnClickListener pbtn_Click =
-                new DialogInterface.OnClickListener() {
+        dialog = new CommonDialog(this, R.string.alert_CatInfo_SetDefaultMsg,
+                new CommonDialog.DialogCallBack() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void sureBack() {
                         setDefaultFoldler();
                     }
-                };
 
-        JSONObject jsonData = TNUtils.makeJSON(
-                "CONTEXT", this,
-                "TITLE", R.string.alert_Title,
-                "MESSAGE", R.string.alert_CatInfo_SetDefaultMsg,
-                "POS_BTN", R.string.alert_OK,
-                "POS_BTN_CLICK", pbtn_Click,
-                "NEG_BTN", R.string.alert_Cancel
-        );
-        TNUtilsUi.alertDialogBuilder(jsonData).show();
+                    @Override
+                    public void cancelBack() {
+                    }
+
+                });
+        dialog.show();
     }
 
     //--------------------------------------p层调用-----------------------------------------
