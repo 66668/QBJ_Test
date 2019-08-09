@@ -2,8 +2,8 @@ package com.thinkernote.ThinkerNote.base;
 
 import android.app.Application;
 import android.os.AsyncTask;
-
 import android.util.Log;
+
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
 import com.thinkernote.ThinkerNote.Action.TNAction;

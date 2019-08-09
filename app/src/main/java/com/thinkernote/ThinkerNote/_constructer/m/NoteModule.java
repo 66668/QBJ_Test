@@ -990,6 +990,52 @@ public class NoteModule {
                         final int lastUpdate = bean.getUpdate_at();
                         //处理 note列表
                         boolean exit = false;
+                        if (allNotes != null && allNotes.size() > 0) {
+                            for (TNNote editNote : allNotes) {
+                                if (cloudNoteId == editNote.noteId) {
+                                    exit = true;
+                                    if (editNote.lastUpdate > lastUpdate) {
+                                        //更新笔记
+                                        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                                                .getNoteByNoteId(cloudNoteId, settings.token)
+                                                .subscribeOn(Schedulers.io())
+                                                .doOnNext(new Action1<CommonBean3<GetNoteByNoteIdBean>>() {
+                                                    @Override
+                                                    public void call(CommonBean3<GetNoteByNoteIdBean> bean) {
+                                                        //结果处理
+                                                        setNoteResult(bean.getMsg(), cloudNoteId);
+                                                        //数据处理
+                                                        if (bean.getCode() == 0) {
+                                                            GetNoteByNoteIdBean noteBean = bean.getNote();
+                                                            updataCloudNoteSQL(noteBean);
+                                                        }
+                                                    }
+                                                })
+                                                .subscribeOn(Schedulers.io())
+                                                .subscribeOn(AndroidSchedulers.mainThread())
+                                                .subscribe(new Observer<CommonBean3<GetNoteByNoteIdBean>>() {
+                                                    @Override
+                                                    public void onCompleted() {
+
+                                                    }
+
+                                                    @Override
+                                                    public void onError(Throwable e) {
+                                                        MLog.e(TAG, "getCloudNote--onError--更新笔记失败" + e.toString());
+                                                    }
+
+                                                    @Override
+                                                    public void onNext(CommonBean3<GetNoteByNoteIdBean> getNoteByNoteIdBeanCommonBean3) {
+
+                                                    }
+                                                });
+                                    }
+                                }
+
+                            }
+                        } else {
+                            exit = false;
+                        }
                         for (TNNote editNote : allNotes) {
                             if (cloudNoteId == editNote.noteId) {
                                 exit = true;

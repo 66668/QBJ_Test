@@ -19,7 +19,7 @@ public class TNSettings {
     private static final String TAG = "TNSettings";
     private static final String PREF_NAME = "thinkernote";
 
-    private static TNSettings singleton = null;
+    private static TNSettings singleton  = new TNSettings();;
 
     public String shortRevision = "5.7";
     public String revision = "5.7.4";
@@ -104,13 +104,6 @@ public class TNSettings {
     }
 
     public static TNSettings getInstance() {
-        if (singleton == null) {
-            synchronized (TNSettings.class) {
-                if (singleton == null) {
-                    singleton = new TNSettings();
-                }
-            }
-        }
         return singleton;
     }
 

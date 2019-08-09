@@ -252,7 +252,7 @@
             android:configChanges="keyboardHidden|orientation" />
 
         <activity
-            android:name=".Activity.TNPagerAct"
+            android:name=".Activity.TNMainFragAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
 

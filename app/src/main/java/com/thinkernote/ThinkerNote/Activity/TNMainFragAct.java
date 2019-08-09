@@ -4,10 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Message;
-import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,11 +16,8 @@ import android.widget.Toast;
 import com.thinkernote.ThinkerNote.Activity.fragment.FolderFragment;
 import com.thinkernote.ThinkerNote.Activity.fragment.NoteFragment;
 import com.thinkernote.ThinkerNote.Activity.fragment.TagFragment;
-import com.thinkernote.ThinkerNote.DBHelper.NoteAttrDbHelper;
-import com.thinkernote.ThinkerNote.DBHelper.NoteDbHelper;
 import com.thinkernote.ThinkerNote.Data.TNCat;
 import com.thinkernote.ThinkerNote.Data.TNNote;
-import com.thinkernote.ThinkerNote.Data.TNNoteAtt;
 import com.thinkernote.ThinkerNote.Data.TNTag;
 import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
@@ -33,7 +27,6 @@ import com.thinkernote.ThinkerNote.General.TNConst;
 import com.thinkernote.ThinkerNote.General.TNHandleError;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
-import com.thinkernote.ThinkerNote.General.TNUtilsHtml;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.Other.HorizontalPager;
@@ -46,13 +39,9 @@ import com.thinkernote.ThinkerNote._constructer.listener.v.OnPagerListener;
 import com.thinkernote.ThinkerNote._constructer.p.SyncFolderPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.base.TNChildViewBase;
-import com.thinkernote.ThinkerNote.bean.main.AllNotesIdsBean;
-import com.thinkernote.ThinkerNote.bean.main.GetNoteByNoteIdBean;
-import com.thinkernote.ThinkerNote.bean.main.NewNoteBean;
 
 import org.json.JSONObject;
 
-import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -66,7 +55,7 @@ import static com.thinkernote.ThinkerNote.Utils.MLog.i;
  * <p>
  * sjy 0704
  */
-public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnClickListener,
+public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, OnClickListener,
         OnPagerListener, OnSyncListener {
     //正常登录的同步常量
     public static final int DIALOG_DELETE = 106;//
@@ -550,7 +539,7 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (!TNActionUtils.isSynchronizing()) {
-                    TNUtilsUi.showNotification(TNPagerAct.this, R.string.alert_NoteView_Synchronizing, false);
+                    TNUtilsUi.showNotification(TNMainFragAct.this, R.string.alert_NoteView_Synchronizing, false);
                     //具体执行
                     pCatDelete(cat);
                 }
@@ -604,7 +593,7 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (!TNActionUtils.isSynchronizing()) {
-                    TNUtilsUi.showNotification(TNPagerAct.this, R.string.alert_NoteView_Synchronizing, false);
+                    TNUtilsUi.showNotification(TNMainFragAct.this, R.string.alert_NoteView_Synchronizing, false);
                     //具体执行
                     pDialogDelete(noteLocalId);
 
@@ -647,7 +636,7 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (!TNActionUtils.isSynchronizing()) {
-                    TNUtilsUi.showNotification(TNPagerAct.this, R.string.alert_NoteView_Synchronizing, false);
+                    TNUtilsUi.showNotification(TNMainFragAct.this, R.string.alert_NoteView_Synchronizing, false);
                     //监听
                     MLog.d("同步GetDataByNoteId");
                     presenter.getDetailByNoteId(noteId);
@@ -690,7 +679,7 @@ public class TNPagerAct extends TNActBase implements OnScreenSwitchListener, OnC
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (!TNActionUtils.isSynchronizing()) {
-                    TNUtilsUi.showNotification(TNPagerAct.this, R.string.alert_NoteView_Synchronizing, false);
+                    TNUtilsUi.showNotification(TNMainFragAct.this, R.string.alert_NoteView_Synchronizing, false);
                     //监听
                     MLog.d("同步Cats");
                     pSynceCat(noteId);

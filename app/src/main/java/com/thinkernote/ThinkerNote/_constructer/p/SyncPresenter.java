@@ -27,7 +27,7 @@ import java.util.Vector;
  * 同步块
  */
 public class SyncPresenter implements IFolderModuleListener, ITagModuleListener, INoteModuleListener {
-    private static final String TAG = "MainPresenter";
+    private static final String TAG = "SyncPresenter";
     private Context context;
     private OnSyncListener onView;
     private TNSettings settings;
@@ -287,7 +287,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
     private void updateCloudNote() {
         MLog.d(TAG, "同步--云端笔记同步到本地");
         final Vector<TNNote> allNotes = TNDbUtils.getAllNoteList(TNSettings.getInstance().userId);
-        if (all_note_ids != null && all_note_ids.size() > 0 && allNotes != null && allNotes.size() > 0) {
+        if (all_note_ids != null && all_note_ids.size() > 0) {
             noteModule.getCloudNote(all_note_ids, allNotes, this);
         } else {
             //（15）

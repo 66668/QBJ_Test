@@ -5,14 +5,14 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 
-import com.thinkernote.ThinkerNote.Activity.TNPagerAct;
+import com.thinkernote.ThinkerNote.Activity.TNMainFragAct;
 
 import java.lang.ref.WeakReference;
 
 // fragment基类
 public class TNChildViewBase {
 	public int pageId;
-	public TNPagerAct mActivity;
+	public TNMainFragAct mActivity;
 	public View mChildView;
 	public Bundle mBundle;
 	

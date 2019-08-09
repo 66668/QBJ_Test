@@ -208,7 +208,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewL
                 break;
             }
             case R.id.main_allnote: {//我的笔记
-                startActivity(TNPagerAct.class);
+                startActivity(TNMainFragAct.class);
                 break;
             }
             case R.id.main_cameranote: {//拍照笔记

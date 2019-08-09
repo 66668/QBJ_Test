@@ -25,7 +25,7 @@ import android.widget.TextView;
 import com.thinkernote.ThinkerNote.Activity.TNNoteEditAct;
 import com.thinkernote.ThinkerNote.Activity.TNNoteListAct;
 import com.thinkernote.ThinkerNote.Activity.TNNoteViewAct;
-import com.thinkernote.ThinkerNote.Activity.TNPagerAct;
+import com.thinkernote.ThinkerNote.Activity.TNMainFragAct;
 import com.thinkernote.ThinkerNote.Activity.TNTextEditAct;
 import com.thinkernote.ThinkerNote.Adapter.TNCatViewHolder;
 import com.thinkernote.ThinkerNote.Adapter.TNNoteViewHolder;
@@ -71,7 +71,7 @@ public class FolderFragment extends TNChildViewBase implements
 
     private TNCatListAdapter mCatlistAdapter = null;
 
-    public FolderFragment(TNPagerAct activity) {
+    public FolderFragment(TNMainFragAct activity) {
         mActivity = activity;
         pageId = R.id.page_cats;
         mSettings = TNSettings.getInstance();

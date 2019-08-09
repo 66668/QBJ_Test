@@ -13,7 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.thinkernote.ThinkerNote.Activity.TNNoteViewAct;
-import com.thinkernote.ThinkerNote.Activity.TNPagerAct;
+import com.thinkernote.ThinkerNote.Activity.TNMainFragAct;
 import com.thinkernote.ThinkerNote.Adapter.TNNotesAdapter;
 import com.thinkernote.ThinkerNote.DBHelper.NoteDbHelper;
 import com.thinkernote.ThinkerNote.Data.TNNote;
@@ -62,7 +62,7 @@ public class NoteFragment extends TNChildViewBase implements OnItemLongClickList
 
     private TNSettings mSettings = TNSettings.getInstance();
 
-    public NoteFragment(TNPagerAct activity) {
+    public NoteFragment(TNMainFragAct activity) {
         mActivity = activity;
         pageId = R.id.page_notes;
 

@@ -18,16 +18,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.thinkernote.ThinkerNote.Activity.TNNoteListAct;
-import com.thinkernote.ThinkerNote.Activity.TNPagerAct;
-import com.thinkernote.ThinkerNote.DBHelper.NoteAttrDbHelper;
-import com.thinkernote.ThinkerNote.DBHelper.NoteDbHelper;
-import com.thinkernote.ThinkerNote.Data.TNNote;
-import com.thinkernote.ThinkerNote.Data.TNNoteAtt;
+import com.thinkernote.ThinkerNote.Activity.TNMainFragAct;
 import com.thinkernote.ThinkerNote.Data.TNTag;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
-import com.thinkernote.ThinkerNote.General.TNUtilsHtml;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.Other.PullToRefreshExpandableListView;
 import com.thinkernote.ThinkerNote.Other.PullToRefreshExpandableListView.OnHeadViewVisibleChangeListener;
@@ -39,11 +34,7 @@ import com.thinkernote.ThinkerNote._constructer.listener.v.OnSyncListener;
 import com.thinkernote.ThinkerNote._constructer.p.FragmentTagPresenter;
 import com.thinkernote.ThinkerNote._constructer.p.SyncPresenter;
 import com.thinkernote.ThinkerNote.base.TNChildViewBase;
-import com.thinkernote.ThinkerNote.bean.main.GetNoteByNoteIdBean;
 
-import org.json.JSONObject;
-
-import java.util.List;
 import java.util.Vector;
 
 /**
@@ -67,7 +58,7 @@ public class TagFragment extends TNChildViewBase implements
     private FragmentTagPresenter presenter;
     private SyncPresenter syncPresenter;
 
-    public TagFragment(TNPagerAct activity) {
+    public TagFragment(TNMainFragAct activity) {
         mActivity = activity;
         pageId = R.id.page_tags;
 
@@ -107,7 +98,7 @@ public class TagFragment extends TNChildViewBase implements
     public void configView(int createStatus) {
         //第一次进来且有网络的情况下从云端获取，否则从本地获取
         if (createStatus == 0 && TNUtils.isNetWork()) {
-            pTagList();
+            getTagList();
         } else {
             mTags = TNDbUtils.getTagList(TNSettings.getInstance().userId);
             notifyExpandList();
@@ -353,10 +344,12 @@ public class TagFragment extends TNChildViewBase implements
      * @param state 0 = 成功/1=back取消同步/2-异常触发同步终止
      */
     private void endSynchronize(final int state) {
+
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mListview.onRefreshComplete();
+                configView(1);
                 if (state == 0) {
                     //正常结束
                     TNUtilsUi.showNotification(mActivity, R.string.alert_MainCats_Synchronized, true);
@@ -369,13 +362,14 @@ public class TagFragment extends TNChildViewBase implements
                 } else {
                     TNUtilsUi.showNotification(mActivity, R.string.alert_SynchronizeCancell, true);
                 }
+
             }
         });
 
     }
 // ------------------------------------p层调用-------------------------------------------
 
-    private void pTagList() {
+    private void getTagList() {
         presenter.getTagList();
     }
 
@@ -394,9 +388,14 @@ public class TagFragment extends TNChildViewBase implements
     @Override
     public void onGetTagListSuccess() {
         //显示
-        mListview.onRefreshComplete();
-        mTags = TNDbUtils.getTagList(TNSettings.getInstance().userId);
-        notifyExpandList();
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mTags = TNDbUtils.getTagList(TNSettings.getInstance().userId);
+                mListview.onRefreshComplete();
+                notifyExpandList();
+            }
+        });
     }
 
     @Override
