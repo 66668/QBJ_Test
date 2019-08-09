@@ -46,6 +46,7 @@ import com.thinkernote.ThinkerNote._constructer.listener.v.OnMainViewListener;
 import com.thinkernote.ThinkerNote._constructer.p.SyncPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.main.MainUpgradeBean;
+import com.thinkernote.ThinkerNote.http.MyRxManager;
 import com.thinkernote.ThinkerNote.http.fileprogress.FileProgressListener;
 
 import org.json.JSONObject;
@@ -65,7 +66,6 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewL
     private String mDownLoadAPKPath = "";
     private TextView mTimeView;
     private TNSettings mSettings = TNSettings.getInstance();
-    private boolean isSynchronizing = false;//
     //
     private MainPresenter mainPresenter;//新版本
     private SyncPresenter syncPresenter;//新版本
@@ -83,7 +83,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewL
         mainPresenter = new MainPresenter(this, this);
         syncPresenter = new SyncPresenter(this, this);
         setViews();
-
+        MyRxManager.getInstance().syncOver();//修改状态值
         //第一次进入，打开帮助界面
         if (mSettings.firstLaunch) {
             startActivity(TNHelpAct.class);
@@ -94,12 +94,10 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewL
             if (TNUtils.isNetWork()) {
                 findUpgrade();
             }
-
             mSettings.appStartCount += 1;
             mSettings.savePref(false);
         }
         //
-        SPUtil.putBoolean("MainSync", false);
     }
 
     @Override
@@ -149,7 +147,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewL
 
     @Override
     public void onDestroy() {
-        SPUtil.putBoolean("MainSync", false);
+        MyRxManager.getInstance().cancelAll();
         super.onDestroy();
     }
 
@@ -175,15 +173,13 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewL
 
         //第一次进来有网或者在wifi情况下自动同步
         if ((createStatus == 0 && TNUtils.isAutoSync()) || mSettings.firstLaunch) {
-            if (isSynchronizing) {
+            if (MyRxManager.getInstance().isSyncing) {
                 Toast.makeText(this, "正在同步", Toast.LENGTH_SHORT).show();
                 return;
             }
             startSyncAnimation();
             TNUtilsUi.showNotification(this, R.string.alert_NoteView_Synchronizing, false);
             //p
-            isSynchronizing = true;
-            SPUtil.putBoolean("MainSync", true);
             synchronizeData();
         }
 
@@ -245,15 +241,14 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewL
             }
             case R.id.main_sync_btn: {//同步按钮
                 if (TNUtils.isNetWork()) {
-                    if (isSynchronizing) {
-                        TNUtilsUi.showNotification(this, R.string.alert_Synchronize_TooMuch, false);
+                    if (MyRxManager.getInstance().isSyncing()) {
+                        MyRxManager.getInstance().cancelAll();
+//                        TNUtilsUi.showNotification(this, R.string.alert_Synchronize_TooMuch, false);
                         return;
                     }
                     startSyncAnimation();
                     TNUtilsUi.showNotification(this, R.string.alert_NoteView_Synchronizing, false);
-                    //
-                    isSynchronizing = true;
-                    SPUtil.putBoolean("MainSync", true);
+
                     synchronizeData();
                 } else {
                     TNUtilsUi.showToast(R.string.alert_Net_NotWork);
@@ -350,11 +345,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewL
             @Override
             public void run() {
                 //一些变量需要清空，否则bug
-                isSynchronizing = false;
-                //
-                System.gc();
-                //结束同步
-                SPUtil.putBoolean("MainSync", false);
+
                 //结束动画
                 findViewById(R.id.main_sync_btn).clearAnimation();
 
@@ -510,7 +501,11 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewL
 
     @Override
     public void onSyncSuccess(String obj) {
-        endSynchronize(0);
+        if (obj.equals("同步取消")) {
+            endSynchronize(2);
+        } else {
+            endSynchronize(0);
+        }
     }
 
     @Override

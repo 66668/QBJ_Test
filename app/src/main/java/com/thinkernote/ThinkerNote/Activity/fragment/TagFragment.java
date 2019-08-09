@@ -34,6 +34,7 @@ import com.thinkernote.ThinkerNote._constructer.listener.v.OnSyncListener;
 import com.thinkernote.ThinkerNote._constructer.p.FragmentTagPresenter;
 import com.thinkernote.ThinkerNote._constructer.p.SyncPresenter;
 import com.thinkernote.ThinkerNote.base.TNChildViewBase;
+import com.thinkernote.ThinkerNote.http.MyRxManager;
 
 import java.util.Vector;
 

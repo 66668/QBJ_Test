@@ -67,6 +67,7 @@ import com.thinkernote.ThinkerNote._constructer.listener.v.OnSyncListener;
 import com.thinkernote.ThinkerNote._constructer.p.SyncPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.base.TNApplication;
+import com.thinkernote.ThinkerNote.http.MyRxManager;
 
 import java.io.File;
 import java.io.Serializable;

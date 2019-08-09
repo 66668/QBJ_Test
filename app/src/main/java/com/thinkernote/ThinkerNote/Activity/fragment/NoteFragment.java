@@ -32,6 +32,7 @@ import com.thinkernote.ThinkerNote.Utils.SPUtil;
 import com.thinkernote.ThinkerNote._constructer.listener.v.OnSyncListener;
 import com.thinkernote.ThinkerNote._constructer.p.SyncPresenter;
 import com.thinkernote.ThinkerNote.base.TNChildViewBase;
+import com.thinkernote.ThinkerNote.http.MyRxManager;
 
 import java.util.Vector;
 
@@ -154,7 +155,7 @@ public class NoteFragment extends TNChildViewBase implements OnItemLongClickList
     public void onRefresh() {
         if (TNUtils.isNetWork()) {
             //主线同步
-            if (SPUtil.getBoolean("MainSync", false)) {
+            if (MyRxManager.getInstance().isSyncing) {
                 TNUtilsUi.showNotification(mActivity, R.string.alert_Synchronize_TooMuch, false);
                 mPullListview.onRefreshComplete();
                 return;

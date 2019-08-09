@@ -17,6 +17,7 @@ import com.thinkernote.ThinkerNote.bean.CommonBean;
 import com.thinkernote.ThinkerNote.bean.main.TagItemBean;
 import com.thinkernote.ThinkerNote.bean.main.TagListBean;
 import com.thinkernote.ThinkerNote.http.MyHttpService;
+import com.thinkernote.ThinkerNote.http.MyRxManager;
 
 import org.json.JSONObject;
 
@@ -25,6 +26,7 @@ import java.util.Vector;
 
 import rx.Observable;
 import rx.Observer;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 import rx.functions.Action1;
@@ -58,7 +60,7 @@ public class TagModule {
     public void createTagByFirstLaunch(String[] arrayTag, final ITagModuleListener listener) {
         final String[] mFolderName = {""};
         //创建默认的tag
-        Observable.from(arrayTag)
+        Subscription subscription = Observable.from(arrayTag)
                 .subscribeOn(Schedulers.io())
                 .concatMap(new Func1<String, Observable<CommonBean>>() {
                     @Override
@@ -72,29 +74,29 @@ public class TagModule {
                                 .observeOn(AndroidSchedulers.mainThread());//固定样式
                     }
                 }).subscribe(new Observer<CommonBean>() {
-            @Override
-            public void onCompleted() {
-                MLog.d(TAG, "addNewTag--onCompleted");
-                listener.onAddDefaultTagSuccess();
-            }
+                    @Override
+                    public void onCompleted() {
+                        MLog.d(TAG, "addNewTag--onCompleted");
+                        listener.onAddDefaultTagSuccess();
+                    }
 
-            @Override
-            public void onError(Throwable e) {
-                listener.onAddTagFailed(new Exception(e.toString()), null);
-            }
+                    @Override
+                    public void onError(Throwable e) {
+                        listener.onAddTagFailed(new Exception(e.toString()), null);
+                    }
 
-            @Override
-            public void onNext(CommonBean bean) {
-                MLog.d(TAG, "addNewTag--onNext" + bean.getMessage());
-                if (bean.getCode() == 0) {
+                    @Override
+                    public void onNext(CommonBean bean) {
+                        MLog.d(TAG, "addNewTag--onNext" + bean.getMessage());
+                        if (bean.getCode() == 0) {
 
-                } else if (bean.getMessage().equals("标签已存在")) {
-                    //不处理
-                } else {
-                }
-            }
-        });
-
+                        } else if (bean.getMessage().equals("标签已存在")) {
+                            //不处理
+                        } else {
+                        }
+                    }
+                });
+        MyRxManager.getInstance().add(subscription);
     }
 
     /**
@@ -103,7 +105,7 @@ public class TagModule {
      * @param listener
      */
     public void getAllTags(final ITagModuleListener listener) {
-        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .syncTagList(settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
@@ -139,7 +141,7 @@ public class TagModule {
                     }
 
                 });
-
+        MyRxManager.getInstance().add(subscription);
     }
 
     /**
@@ -148,7 +150,7 @@ public class TagModule {
      * @param listener
      */
     public void getAllTagsBySingle(final ITagModuleListener listener) {
-        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .syncTagList(settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
@@ -184,6 +186,7 @@ public class TagModule {
                     }
 
                 });
+        MyRxManager.getInstance().add(subscription);
 
     }
 
@@ -193,7 +196,7 @@ public class TagModule {
      * @param listener
      */
     public void getTagList(final OnTagListListener listener) {
-        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .getTagList(settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .doOnNext(new Action1<TagListBean>() {
@@ -223,11 +226,12 @@ public class TagModule {
                     }
 
                 });
+        MyRxManager.getInstance().add(subscription);
     }
 
     public void deleteTag(final long pid, final ITagModuleListener listener) {
         TNSettings settings = TNSettings.getInstance();
-        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .deleteTag(pid, settings.token)//接口方法
                 .doOnCompleted(new Action0() {
                     @Override
@@ -256,6 +260,7 @@ public class TagModule {
 
                     }
                 });
+        MyRxManager.getInstance().add(subscription);
     }
 
     //================================================处理相关================================================

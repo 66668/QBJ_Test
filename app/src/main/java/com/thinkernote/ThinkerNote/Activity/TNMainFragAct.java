@@ -34,6 +34,7 @@ import com.thinkernote.ThinkerNote._constructer.p.MainFragPresenter;
 import com.thinkernote.ThinkerNote._constructer.p.SyncFolderPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.base.TNChildViewBase;
+import com.thinkernote.ThinkerNote.http.MyRxManager;
 
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;

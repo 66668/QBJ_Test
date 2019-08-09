@@ -19,12 +19,13 @@ import com.thinkernote.ThinkerNote._constructer.m.TagModule;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
 import com.thinkernote.ThinkerNote.bean.main.AllNotesIdsBean;
 import com.thinkernote.ThinkerNote.bean.main.NoteListBean;
+import com.thinkernote.ThinkerNote.http.MyRxManager;
 
 import java.util.List;
 import java.util.Vector;
 
 /**
- * 同步块
+ * 同步块(包好同步取消操作)
  */
 public class SyncPresenter implements IFolderModuleListener, ITagModuleListener, INoteModuleListener {
     private static final String TAG = "SyncPresenter";
@@ -81,6 +82,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * 同步执行后，（1）--（16）会自动执行，除非跑异常终止
      */
     public void synchronizeData(String type) {
+        MyRxManager.getInstance().setSyncing();
         this.type = type;
         if (type.equals("EDIT")) {
             isAllSync = false;
@@ -102,9 +104,6 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
         }
     }
 
-    /**
-     * TODO
-     */
     public void synchronizeEdit() {
         synchronizeData("EDIT");
     }
@@ -112,12 +111,22 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
 
     //（1）默认文件夹
     private void createFolderByFirstLaunch() {
+        if (!MyRxManager.getInstance().isSyncing) {
+            MLog.d(TAG, "终止同步--createFolderByFirstLaunch");
+            backSuccess("同步取消");
+            return;
+        }
         MLog.d(TAG, "同步--默认文件夹");
         folderModule.createFolderByFirstLaunch(arrayFolderName, -1L, this);
     }
 
     //(2) 默认Tag
     private void createTagByFirstLaunch() {
+        if (!MyRxManager.getInstance().isSyncing) {
+            MLog.d(TAG, "终止同步--createTagByFirstLaunch");
+            backSuccess("同步取消");
+            return;
+        }
         MLog.d(TAG, "同步--默认Tag");
         tagsModule.createTagByFirstLaunch(arrayTagName, this);
     }
@@ -126,6 +135,11 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * (3)同步老数据
      */
     private void getOldNote() {
+        if (!MyRxManager.getInstance().isSyncing) {
+            MLog.d(TAG, "终止同步--getOldNote");
+            backSuccess("同步取消");
+            return;
+        }
         MLog.d(TAG, "同步--老数据");
         Vector<TNNote> oldNotes = TNDbUtils.getOldDbNotesByUserId(TNSettings.getInstance().userId);
         if (!settings.syncOldDb && oldNotes != null && oldNotes.size() > 0) {
@@ -141,6 +155,11 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * (4)获取所有数据
      */
     private void getProFiles() {
+        if (!MyRxManager.getInstance().isSyncing) {
+            MLog.d(TAG, "终止同步--getProFiles");
+            backSuccess("同步取消");
+            return;
+        }
         Vector<TNCat> cats = TNDbUtils.getAllCatList(settings.userId);
         if (cats != null && cats.size() > 0 && (type.equals("FLODER") || type.equals("NOTE") || type.equals("TAG"))) {//不执行的type
             getTags();
@@ -155,6 +174,11 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * 条件：主界面||文件夹列表||文件夹数据为空
      */
     private void getAllFolder() {
+        if (!MyRxManager.getInstance().isSyncing) {
+            MLog.d(TAG, "终止同步--getAllFolder");
+            backSuccess("同步取消");
+            return;
+        }
         MLog.d(TAG, "同步--所有文件夹");
         folderModule.getAllFolder(this);
     }
@@ -164,6 +188,11 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * （6）更新默认子文件夹
      */
     private void updateDefaultFolder() {
+        if (!MyRxManager.getInstance().isSyncing) {
+            MLog.d(TAG, "终止同步--updateDefaultFolder");
+            backSuccess("同步取消");
+            return;
+        }
         MLog.d(TAG, "同步----更新默认子文件夹");
         Vector<TNCat> cats = TNDbUtils.getAllCatList(settings.userId);
         if (settings.firstLaunch) {
@@ -186,6 +215,11 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * (7)更新 标签
      */
     private void getTags() {
+        if (!MyRxManager.getInstance().isSyncing) {
+            MLog.d(TAG, "终止同步--getTags");
+            backSuccess("同步取消");
+            return;
+        }
         MLog.d(TAG, "同步--标签");
         Vector<TNTag> tags = TNDbUtils.getTagList(settings.userId);
         if (tags != null && tags.size() > 0 && (type.equals("NOTE") || type.equals("TRASH") || type.equals("FOLDER"))) {//不执行
@@ -201,6 +235,11 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * syncState ：1表示未完全同步，2表示完全同步，3表示本地新增，4表示本地编辑，5表示彻底删除，6表示删除到回收站，7表示从回收站还原
      */
     private void updateLocalNotes() {
+        if (!MyRxManager.getInstance().isSyncing) {
+            MLog.d(TAG, "终止同步--updateLocalNotes");
+            backSuccess("同步取消");
+            return;
+        }
         MLog.d(TAG, "同步--上传本地新增笔记");
         Vector<TNNote> localNewNotes = TNDbUtils.getNoteListBySyncState(TNSettings.getInstance().userId, 3);
         if (localNewNotes != null && localNewNotes.size() > 0) {
@@ -216,6 +255,11 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * syncState ：1表示未完全同步，2表示完全同步，3表示本地新增，4表示本地编辑，5表示彻底删除，6表示删除到回收站，7表示从回收站还原
      */
     private void updateRecoveryNotes() {
+        if (!MyRxManager.getInstance().isSyncing) {
+            MLog.d(TAG, "终止同步--updateRecoveryNotes");
+            backSuccess("同步取消");
+            return;
+        }
         MLog.d(TAG, "同步--还原回收站笔记");
         Vector<TNNote> recoveryNotes = TNDbUtils.getNoteListBySyncState(TNSettings.getInstance().userId, 7);
         if (recoveryNotes != null && recoveryNotes.size() > 0) {
@@ -231,6 +275,11 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * syncState ：1表示未完全同步，2表示完全同步，3表示本地新增，4表示本地编辑，5表示彻底删除，6表示删除到回收站，7表示从回收站还原
      */
     private void deleteNotes() {
+        if (!MyRxManager.getInstance().isSyncing) {
+            MLog.d(TAG, "终止同步--deleteNotes");
+            backSuccess("同步取消");
+            return;
+        }
         MLog.d(TAG, "同步--删除到回收站");
         Vector<TNNote> mDeleteNotes = TNDbUtils.getNoteListBySyncState(TNSettings.getInstance().userId, 6);
         if (mDeleteNotes != null && mDeleteNotes.size() > 0) {
@@ -246,6 +295,11 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * syncState ：1表示未完全同步，2表示完全同步，3表示本地新增，4表示本地编辑，5表示彻底删除，6表示删除到回收站，7表示从回收站还原
      */
     private void clearNotes() {
+        if (!MyRxManager.getInstance().isSyncing) {
+            MLog.d(TAG, "终止同步--clearNotes");
+            backSuccess("同步取消");
+            return;
+        }
         MLog.d(TAG, "同步--彻底删除");
         Vector<TNNote> mClaerNotes = TNDbUtils.getNoteListBySyncState(TNSettings.getInstance().userId, 5);
         if (mClaerNotes != null && mClaerNotes.size() > 0) {
@@ -260,6 +314,11 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * （12）获取所有笔记id,用于同步相关
      */
     private void getAllNotsId() {
+        if (!MyRxManager.getInstance().isSyncing) {
+            MLog.d(TAG, "终止同步--getAllNotsId");
+            backSuccess("同步取消");
+            return;
+        }
         MLog.d(TAG, "同步--获取所有笔记id");
         noteModule.getAllNotesId(this);
     }
@@ -271,6 +330,11 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * syncState ：1表示未完全同步，2表示完全同步，3表示本地新增，4表示本地编辑，5表示彻底删除，6表示删除到回收站，7表示从回收站还原
      */
     private void updateEditNote() {
+        if (!MyRxManager.getInstance().isSyncing) {
+            MLog.d(TAG, "终止同步--updateEditNote");
+            backSuccess("同步取消");
+            return;
+        }
         MLog.d(TAG, "同步--编辑笔记");
         Vector<TNNote> editNotes = TNDbUtils.getNoteListBySyncState(TNSettings.getInstance().userId, 4);
         if (editNotes != null && editNotes.size() > 0 && all_note_ids != null && all_note_ids.size() > 0) {
@@ -285,6 +349,11 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * （14）云端笔记同步到本地
      */
     private void updateCloudNote() {
+        if (!MyRxManager.getInstance().isSyncing) {
+            MLog.d(TAG, "终止同步--updateCloudNote");
+            backSuccess("同步取消");
+            return;
+        }
         MLog.d(TAG, "同步--云端笔记同步到本地");
         final Vector<TNNote> allNotes = TNDbUtils.getAllNoteList(TNSettings.getInstance().userId);
         if (all_note_ids != null && all_note_ids.size() > 0) {
@@ -300,8 +369,14 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * （15）获取所有回收站笔记
      */
     private void getTrashNotesId() {
+        if (!MyRxManager.getInstance().isSyncing) {
+            MLog.d(TAG, "终止同步--getTrashNotesId");
+            backSuccess("同步取消");
+            return;
+        }
         if (type.equals("EDIT")) {
             //结束
+            MyRxManager.getInstance().syncOver();
             onView.onSyncEditSuccess();
         } else {
             MLog.d(TAG, "同步--获取所有回收站笔记id");
@@ -314,13 +389,18 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * （16）回收站笔记根据id的处理
      */
     private void updateTrashNotes() {
+        if (!MyRxManager.getInstance().isSyncing) {
+            MLog.d(TAG, "终止同步--updateTrashNotes");
+            backSuccess("同步取消");
+            return;
+        }
         MLog.d(TAG, "同步--回收站笔记根据id的处理");
         Vector<TNNote> trashNotes = TNDbUtils.getNoteListByTrash(settings.userId, TNConst.CREATETIME);
         if (trashNotes != null && trashNotes.size() > 0 && trash_note_ids != null && trash_note_ids.size() > 0) {
             noteModule.upateTrashNotes(trash_note_ids, trashNotes, this);
         } else {
             //返回成功
-            onView.onSyncSuccess("数据同步成功");
+            backSuccess("数据同步成功");
         }
 
     }
@@ -352,7 +432,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
     //（1）（7）失败回调
     @Override
     public void onAddFolderFailed(Exception e, String msg) {
-        onView.onSyncFailed(e, msg);
+        backFailed(e, msg);
     }
 
 
@@ -374,7 +454,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
 
     @Override
     public void onGetFolderFailed(Exception e, String msg) {
-        onView.onSyncFailed(e, msg);
+        backFailed(e, msg);
     }
 
 
@@ -393,7 +473,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
 
     @Override
     public void onAddTagFailed(Exception e, String msg) {
-        onView.onSyncFailed(e, msg);
+        backFailed(e, msg);
     }
 
     // （7）获取标签
@@ -405,7 +485,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
 
     @Override
     public void onGetTagFailed(Exception e, String msg) {
-        onView.onSyncFailed(e, msg);
+        backFailed(e, msg);
     }
 
 
@@ -419,7 +499,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
 
     @Override
     public void onUpdateOldNoteFailed(Exception e, String msg) {
-        onView.onSyncFailed(e, msg);
+        backFailed(e, msg);
     }
 
     //（8）同步本地数据 3
@@ -431,7 +511,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
 
     @Override
     public void onUpdateLocalNoteFailed(Exception e, String msg) {
-        onView.onSyncFailed(e, msg);
+        backFailed(e, msg);
     }
 
     //（9）还原回收站笔记结果
@@ -444,7 +524,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
 
     @Override
     public void onUpdateRecoveryNoteFailed(Exception e, String msg) {
-        onView.onSyncFailed(e, msg);
+        backFailed(e, msg);
     }
 
     //(10)删除笔记
@@ -456,7 +536,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
 
     @Override
     public void onDeleteNoteFailed(Exception e, String msg) {
-        onView.onSyncFailed(e, msg);
+        backFailed(e, msg);
     }
 
 
@@ -469,7 +549,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
 
     @Override
     public void onClearNoteFailed(Exception e, String msg) {
-        onView.onSyncFailed(e, msg);
+        backFailed(e, msg);
     }
 
     // （12）获取所有笔记ID，用于同步
@@ -488,7 +568,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
 
     @Override
     public void onGetAllNoteIdFailed(Exception e, String msg) {
-        onView.onSyncFailed(e, msg);
+        backFailed(e, msg);
     }
 
 
@@ -501,7 +581,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
 
     @Override
     public void onUpdateEditNoteFailed(Exception e, String msg) {
-        onView.onSyncFailed(e, msg);
+        backFailed(e, msg);
     }
 
     //(14)加载云端笔记
@@ -514,7 +594,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
 
     @Override
     public void onCloudNoteFailed(Exception e, String msg) {
-        onView.onSyncFailed(e, msg);
+        backFailed(e, msg);
     }
 
 
@@ -533,19 +613,30 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
 
     @Override
     public void onGetTrashNoteIdFailed(Exception e, String msg) {
-        onView.onSyncFailed(e, msg);
+        backFailed(e, msg);
     }
 
     //（16）同步的最后一个接口
     @Override
     public void onGetTrashNoteSuccess() {
-        onView.onSyncSuccess("数据同步成功");
+        backSuccess("数据同步成功");
     }
 
     @Override
     public void onGetTrashNoteFailed(Exception e, String msg) {
+        backFailed(e, msg);
+    }
+
+    private void backFailed(Exception e, String msg) {
+        MyRxManager.getInstance().syncOver();
         onView.onSyncFailed(e, msg);
     }
+
+    private void backSuccess(String msg) {
+        MyRxManager.getInstance().syncOver();
+        onView.onSyncSuccess(msg);
+    }
+
 
     //=====================同步块不走如下回调============================
 

@@ -45,6 +45,7 @@ import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote._constructer.listener.v.OnSyncListener;
 import com.thinkernote.ThinkerNote._constructer.p.SyncPresenter;
 import com.thinkernote.ThinkerNote.base.TNChildViewBase;
+import com.thinkernote.ThinkerNote.http.MyRxManager;
 
 import java.util.Vector;
 
@@ -607,12 +608,12 @@ public class FolderFragment extends TNChildViewBase implements
 
     @Override
     public void onSyncSuccess(String obj) {
+
         endSynchronize(0);
     }
 
     @Override
     public void onSyncFailed(Exception e, String msg) {
-
         endSynchronize(2);
     }
 

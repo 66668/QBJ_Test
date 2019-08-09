@@ -31,6 +31,7 @@ import com.thinkernote.ThinkerNote.bean.main.NewNoteBean;
 import com.thinkernote.ThinkerNote.bean.main.NoteListBean;
 import com.thinkernote.ThinkerNote.bean.main.OldNotePicBean;
 import com.thinkernote.ThinkerNote.http.MyHttpService;
+import com.thinkernote.ThinkerNote.http.MyRxManager;
 import com.thinkernote.ThinkerNote.http.RequestBodyUtil;
 import com.thinkernote.ThinkerNote.http.URLUtils;
 
@@ -53,6 +54,7 @@ import okhttp3.ResponseBody;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 import rx.functions.Action1;
@@ -91,7 +93,7 @@ public class NoteModule {
      */
     public void updateOldNote(Vector<TNNote> notes, final boolean isNewDb, final INoteModuleListener listener) {
 
-        Observable.from(notes)
+        Subscription subscription =  Observable.from(notes)
                 .concatMap(new Func1<TNNote, Observable<TNNote>>() {//
                     @Override
                     public Observable<TNNote> call(final TNNote tnNote) {
@@ -204,6 +206,7 @@ public class NoteModule {
 
             }
         });
+        MyRxManager.getInstance().add(subscription);
     }
 
     /**
@@ -216,7 +219,7 @@ public class NoteModule {
      */
     public void updateLocalNewNotes(Vector<TNNote> notes, final INoteModuleListener listener) {
 
-        Observable.from(notes)
+        Subscription subscription = Observable.from(notes)
                 .concatMap(new Func1<TNNote, Observable<TNNote>>() {//
                     @Override
                     public Observable<TNNote> call(final TNNote tnNote) {
@@ -339,6 +342,7 @@ public class NoteModule {
                         MLog.d("updateLocalNewNotes--onNext");
                     }
                 });
+        MyRxManager.getInstance().add(subscription);
     }
 
     /**
@@ -352,7 +356,7 @@ public class NoteModule {
      */
     public void updateRecoveryNotes(Vector<TNNote> notes, final INoteModuleListener listener) {
 
-        Observable
+        Subscription subscription =  Observable
                 .from(notes)
                 .concatMap(new Func1<TNNote, Observable<List>>() {//
                     @Override
@@ -532,6 +536,7 @@ public class NoteModule {
 
                     }
                 });
+        MyRxManager.getInstance().add(subscription);
     }
 
     /**
@@ -544,7 +549,7 @@ public class NoteModule {
      * @param listener
      */
     public void deleteNotes(Vector<TNNote> notes, final INoteModuleListener listener) {
-        Observable.from(notes).concatMap(new Func1<TNNote, Observable<Integer>>() {
+        Subscription subscription =  Observable.from(notes).concatMap(new Func1<TNNote, Observable<Integer>>() {
             @Override
             public Observable<Integer> call(final TNNote tnNote) {
 
@@ -601,6 +606,7 @@ public class NoteModule {
                     }
 
                 });
+        MyRxManager.getInstance().add(subscription);
 
     }
 
@@ -614,7 +620,7 @@ public class NoteModule {
      * @param listener
      */
     public void clearNotes(Vector<TNNote> notes, final INoteModuleListener listener) {
-        Observable.from(notes)
+        Subscription subscription =  Observable.from(notes)
                 .concatMap(new Func1<TNNote, Observable<Integer>>() {//list转化item
                     @Override
                     public Observable<Integer> call(final TNNote tnNote) {
@@ -696,6 +702,7 @@ public class NoteModule {
                         }
                     }
                 });
+        MyRxManager.getInstance().add(subscription);
 
     }
 
@@ -706,7 +713,7 @@ public class NoteModule {
      * @param listener
      */
     public void getAllNotesId(final INoteModuleListener listener) {
-        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .syncAllNotesId(settings.token)
                 .doOnNext(new Action1<AllNotesIdsBean>() {
                     @Override
@@ -739,6 +746,7 @@ public class NoteModule {
                     }
 
                 });
+        MyRxManager.getInstance().add(subscription);
     }
 
     /**
@@ -748,7 +756,7 @@ public class NoteModule {
      * @param listener
      */
     public void getAllNotesId(long folderId, final INoteModuleListener listener) {
-        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .GetFolderNoteIds(folderId, settings.token)
                 .doOnNext(new Action1<AllNotesIdsBean>() {
                     @Override
@@ -781,6 +789,7 @@ public class NoteModule {
                     }
 
                 });
+        MyRxManager.getInstance().add(subscription);
     }
 
     /**
@@ -794,7 +803,7 @@ public class NoteModule {
      */
     public void updateEditNotes(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> notes, final INoteModuleListener listener) {
         MLog.d("编辑笔记同步--" + notes.size() + "--note_ids" + note_ids.size());
-        Observable.from(note_ids)
+        Subscription subscription =   Observable.from(note_ids)
                 .concatMap(new Func1<AllNotesIdsBean.NoteIdItemBean, Observable<CommonBean>>() {
                     @Override
                     public Observable<CommonBean> call(AllNotesIdsBean.NoteIdItemBean bean) {//list转item
@@ -970,6 +979,7 @@ public class NoteModule {
                     }
 
                 });
+        MyRxManager.getInstance().add(subscription);
     }
 
     /**
@@ -982,7 +992,7 @@ public class NoteModule {
      * @param listener
      */
     public void getCloudNote(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> allNotes, final INoteModuleListener listener) {
-        Observable.from(note_ids)
+        Subscription subscription =  Observable.from(note_ids)
                 .concatMap(new Func1<AllNotesIdsBean.NoteIdItemBean, Observable<Integer>>() {
                     @Override
                     public Observable<Integer> call(AllNotesIdsBean.NoteIdItemBean bean) {
@@ -1127,7 +1137,7 @@ public class NoteModule {
                         MLog.d(TAG, "getCloudNote--onNext" + integer);
                     }
                 });
-
+        MyRxManager.getInstance().add(subscription);
 
     }
 
@@ -1142,7 +1152,7 @@ public class NoteModule {
      */
     public void getCloudNote(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final long folderId, final INoteModuleListener listener) {
 
-        Observable.from(note_ids)
+        Subscription subscription =  Observable.from(note_ids)
                 .concatMap(new Func1<AllNotesIdsBean.NoteIdItemBean, Observable<Integer>>() {
                     @Override
                     public Observable<Integer> call(AllNotesIdsBean.NoteIdItemBean bean) {
@@ -1280,7 +1290,7 @@ public class NoteModule {
                     }
                 });
 
-
+        MyRxManager.getInstance().add(subscription);
     }
 
     /**
@@ -1291,7 +1301,7 @@ public class NoteModule {
      * @param listener
      */
     public void getTrashNotesId(final INoteModuleListener listener) {
-        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        Subscription subscription =  MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .getTrashNoteIds(settings.token)
                 .subscribeOn(Schedulers.io())
                 .doOnNext(new Action1<AllNotesIdsBean>() {
@@ -1326,6 +1336,7 @@ public class NoteModule {
                     }
 
                 });
+        MyRxManager.getInstance().add(subscription);
     }
 
     /**
@@ -1337,7 +1348,7 @@ public class NoteModule {
      * @param listener
      */
     public void upateTrashNotes(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> allNotes, final INoteModuleListener listener) {
-        Observable.from(note_ids)
+        Subscription subscription =  Observable.from(note_ids)
                 .concatMap(new Func1<AllNotesIdsBean.NoteIdItemBean, Observable<Integer>>() {
                     @Override
                     public Observable<Integer> call(AllNotesIdsBean.NoteIdItemBean bean) {
@@ -1400,7 +1411,7 @@ public class NoteModule {
                         MLog.d(TAG, "upateTrashNotes--onNext");
                     }
                 });
-
+        MyRxManager.getInstance().add(subscription);
     }
 
     /**
@@ -1408,7 +1419,7 @@ public class NoteModule {
      * <p>
      */
     public void getNoteListByFolderId(final long tagId, final int mPageNum, final int pageSize, final String sort, final INoteModuleListener listener) {
-        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        Subscription subscription =  MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .getNoteListByFolderId(tagId, mPageNum, pageSize, sort, settings.token)//接口方法
                 .subscribeOn(Schedulers.io())
                 .doOnNext(new Action1<NoteListBean>() {
@@ -1456,6 +1467,7 @@ public class NoteModule {
                         }
                     }
                 });
+        MyRxManager.getInstance().add(subscription);
     }
 
     /**
@@ -1463,7 +1475,7 @@ public class NoteModule {
      * <p>
      */
     public void getNoteListByTagId(final long tagId, final int mPageNum, final int pageSize, final String sort, final INoteModuleListener listener) {
-        MyHttpService.Builder.getHttpServer()
+        Subscription subscription =   MyHttpService.Builder.getHttpServer()
                 .getNoteListByTagId(tagId, mPageNum, pageSize, sort, settings.token)
                 .doOnNext(new Action1<NoteListBean>() {
                     @Override
@@ -1512,6 +1524,7 @@ public class NoteModule {
                         }
                     }
                 });
+        MyRxManager.getInstance().add(subscription);
     }
 
     /**
@@ -1521,7 +1534,7 @@ public class NoteModule {
      */
     public void getDetailByNoteId(final long noteId, final INoteModuleListener listener) {
 
-        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        Subscription subscription =   MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .getNoteByNoteId(noteId, settings.token)
                 .subscribeOn(Schedulers.io())
                 .doOnNext(new Action1<CommonBean3<GetNoteByNoteIdBean>>() {
@@ -1637,7 +1650,7 @@ public class NoteModule {
 
                     }
                 });
-
+        MyRxManager.getInstance().add(subscription);
     }
 
 

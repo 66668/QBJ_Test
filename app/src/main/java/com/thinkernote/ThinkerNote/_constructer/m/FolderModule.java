@@ -22,6 +22,7 @@ import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
 import com.thinkernote.ThinkerNote.bean.main.AllFolderBean;
 import com.thinkernote.ThinkerNote.bean.main.AllFolderItemBean;
 import com.thinkernote.ThinkerNote.http.MyHttpService;
+import com.thinkernote.ThinkerNote.http.MyRxManager;
 
 import org.json.JSONObject;
 
@@ -32,6 +33,7 @@ import java.util.concurrent.Executors;
 
 import rx.Observable;
 import rx.Observer;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
@@ -65,7 +67,7 @@ public class FolderModule {
 
         final String[] mFolderName = {""};
         //创建默认的一级文件夹
-        Observable.from(arrayFolders)
+        Subscription subscription =   Observable.from(arrayFolders)
                 .concatMap(new Func1<String, Observable<CommonBean>>() {
                     @Override
                     public Observable<CommonBean> call(String folderName) {
@@ -98,6 +100,7 @@ public class FolderModule {
                         }
                     }
                 });
+        MyRxManager.getInstance().add(subscription);
     }
 
     /**
@@ -105,7 +108,7 @@ public class FolderModule {
      */
     public void createFolderByIdByFirstLaunch(Vector<TNCat> cats, final String[] works, final String[] life, final String[] funs, final IFolderModuleListener listener) {
         MLog.d(TAG, "addNewFolder--创建子文件夹");
-        Observable.from(cats)
+        Subscription subscription =   Observable.from(cats)
                 .concatMap(new Func1<TNCat, Observable<CommonBean>>() {
                     @Override
                     public Observable<CommonBean> call(TNCat tnCat) {
@@ -166,6 +169,7 @@ public class FolderModule {
                         }
                     }
                 });
+        MyRxManager.getInstance().add(subscription);
 
     }
 
@@ -176,7 +180,7 @@ public class FolderModule {
      */
     public void getProfiles(final IFolderModuleListener listener) {
 
-        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        Subscription subscription =   MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .LogNormalProfile(settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
@@ -214,6 +218,7 @@ public class FolderModule {
                         }
                     }
                 });
+        MyRxManager.getInstance().add(subscription);
     }
 
     /**
@@ -225,7 +230,7 @@ public class FolderModule {
      */
     public void getAllFolder(final IFolderModuleListener listener) {
 
-        MyHttpService.Builder.getHttpServer()
+        Subscription subscription =   MyHttpService.Builder.getHttpServer()
                 .getFolder(settings.token) //（1）获取第一个接口数据
                 .subscribeOn(Schedulers.io())
                 .doOnNext(new Action1<AllFolderBean>() {
@@ -391,6 +396,7 @@ public class FolderModule {
                         }
                     }
                 });
+        MyRxManager.getInstance().add(subscription);
     }
 
 
@@ -401,7 +407,7 @@ public class FolderModule {
      */
     public void deleteFolder(final long fodlerId, final IFolderModuleListener listener) {
 
-        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .deleteFolder(fodlerId, settings.token)
                 .subscribeOn(Schedulers.io())//固定样式
                 .doOnNext(new Action1<CommonBean>() {
@@ -431,6 +437,7 @@ public class FolderModule {
                         MLog.d(TAG, "deleteFolder-onNext");
                     }
                 });
+        MyRxManager.getInstance().add(subscription);
     }
 
     /**
@@ -440,7 +447,7 @@ public class FolderModule {
      */
     public void setDefaultFolder(final long fodlerId, final IFolderModuleListener listener) {
 
-        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        Subscription subscription =  MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .setDefaultFolder(fodlerId, settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -463,6 +470,7 @@ public class FolderModule {
 
                     }
                 });
+        MyRxManager.getInstance().add(subscription);
     }
 
     //================================================处理相关================================================
