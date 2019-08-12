@@ -401,6 +401,48 @@ public class TNSettingsAct extends TNActBase implements OnClickListener, OnChild
         configView();
     }
 
+    /**
+     * 图压缩
+     */
+    public void ChangePictureCompressionmode() {
+
+        pictureCompressionMode = TNSettings.getInstance().pictureCompressionMode;
+        MLog.i(TAG, pictureCompressionMode + "");
+        if (pictureCompressionMode == -1) {
+            pictureCompressionMode = 1;
+        }
+
+        CommonDialog dialog = new CommonDialog(this, R.string.userinfo_picture_compressionmode,
+                "压缩",
+                "不压缩",
+                new CommonDialog.DialogCallBack() {
+                    @Override
+                    public void sureBack() {
+                        //0,不压缩  1,压缩(默认)
+                        pictureCompressionMode = 1;
+                        TNSettings settings = TNSettings.getInstance();
+                        settings.pictureCompressionMode = pictureCompressionMode;
+                        MLog.i(TAG, pictureCompressionMode + "");
+                        settings.savePref(true);
+                        configView();
+                    }
+
+                    @Override
+                    public void cancelBack() {
+                        pictureCompressionMode = 0;
+                        TNSettings settings = TNSettings.getInstance();
+                        settings.pictureCompressionMode = pictureCompressionMode;
+                        MLog.i(TAG, pictureCompressionMode + "");
+                        settings.savePref(true);
+                        configView();
+                    }
+
+                });
+        dialog.show();
+        dialog.getWindow().clearFlags(
+                WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+    }
+
 
     //修改声音
     public void ChangeVoice() {
