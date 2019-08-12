@@ -1,10 +1,7 @@
 package com.thinkernote.ThinkerNote.Activity;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -13,17 +10,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.TextUtils;
-import android.text.method.ScrollingMovementMethod;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,20 +28,17 @@ import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote.Utils.SPUtil;
 import com.thinkernote.ThinkerNote.Utils.TNActivityManager;
 import com.thinkernote.ThinkerNote.Views.CustomDialog;
 import com.thinkernote.ThinkerNote.Views.UpdateDialog;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnMainViewListener;
 import com.thinkernote.ThinkerNote._constructer.listener.v.OnSyncListener;
 import com.thinkernote.ThinkerNote._constructer.p.MainPresenter;
-import com.thinkernote.ThinkerNote._constructer.listener.v.OnMainViewListener;
 import com.thinkernote.ThinkerNote._constructer.p.SyncPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.main.MainUpgradeBean;
 import com.thinkernote.ThinkerNote.http.MyRxManager;
 import com.thinkernote.ThinkerNote.http.fileprogress.FileProgressListener;
-
-import org.json.JSONObject;
 
 import java.io.File;
 
@@ -64,6 +53,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewL
     //==================================变量=======================================
     private long mLastClickBackTime = 0;
     private String mDownLoadAPKPath = "";
+    private boolean isDestory;
     private TextView mTimeView;
     private TNSettings mSettings = TNSettings.getInstance();
     //
@@ -142,12 +132,14 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewL
     @Override
     protected void onResume() {
         mLastClickBackTime = 0;
+        isDestory = false;
         super.onResume();
     }
 
     @Override
     public void onDestroy() {
         MyRxManager.getInstance().cancelAll();
+        isDestory = true;
         super.onDestroy();
     }
 
@@ -243,6 +235,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewL
                 if (TNUtils.isNetWork()) {
                     if (MyRxManager.getInstance().isSyncing()) {
                         MyRxManager.getInstance().cancelAll();
+                        Toast.makeText(TNMainAct.this, "正在结束同步，请稍后", Toast.LENGTH_SHORT).show();
 //                        TNUtilsUi.showNotification(this, R.string.alert_Synchronize_TooMuch, false);
                         return;
                     }
@@ -456,6 +449,9 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewL
     //下载完成
     @Override
     public void onUpgradeFailed(String msg, Exception e) {
+        if (isDestory) {
+            return;
+        }
         MLog.e(msg);
         endSynchronize(2);
 //        TNUtilsUi.showToast(msg);
@@ -463,6 +459,9 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewL
 
     @Override
     public void onDownloadSuccess(File filePath) {
+        if (isDestory) {
+            return;
+        }
         upgradeDialog.dismiss();
         MLog.d("下载完成--apk路径：" + filePath);
         installFile = filePath;
@@ -494,6 +493,9 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewL
 
     @Override
     public void onDownloadFailed(String msg, Exception e) {
+        if (isDestory) {
+            return;
+        }
         MLog.e(msg);
         endSynchronize(2);
         TNUtilsUi.showToast(msg);
@@ -501,6 +503,9 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewL
 
     @Override
     public void onSyncSuccess(String obj) {
+        if (isDestory) {
+            return;
+        }
         if (obj.equals("同步取消")) {
             endSynchronize(2);
         } else {
@@ -510,6 +515,9 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewL
 
     @Override
     public void onSyncFailed(Exception e, String msg) {
+        if (isDestory) {
+            return;
+        }
         endSynchronize(2);
     }
 

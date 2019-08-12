@@ -653,9 +653,9 @@ public class TNUtils {
                     date.getMonth() + 1, date.getDate());
         }
 
-        MLog.i(TAG, "milliseconds=" + milliseconds + "now=" + now + "tzOffset="
-                + tzOffset + "secToday=" + secToday + "hours=" + hours
-                + "formated=" + formated);
+//        MLog.i(TAG, "milliseconds=" + milliseconds + "now=" + now + "tzOffset="
+//                + tzOffset + "secToday=" + secToday + "hours=" + hours
+//                + "formated=" + formated);
 
         return formated;
     }

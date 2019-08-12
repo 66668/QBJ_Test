@@ -331,7 +331,7 @@ public class TNNote implements Serializable {
         resetTitle();
         lastUpdate = (int) (System.currentTimeMillis() / 1000);
 
-        MLog.d(TAG, "content:" + content);
+//        MLog.d(TAG, "content:" + content);
     }
 
     public String makeHtml(int width) {
@@ -426,7 +426,7 @@ public class TNNote implements Serializable {
         for (TNNoteAtt att : atts) {
             String s = String.format("<tn-media att-id=\"%s\" hash=\"%s\"></tn-media>", att.attId, att.digest);
             //web端复制粘贴同一个附件是，只会增加tn-media，而附件不会增加，故在此使用replaceAll替换相同的tn-media，以便能将所有tn-media显示出来
-            MLog.d(TAG, mHtml);
+//            MLog.d(TAG, mHtml);
             mHtml = mHtml.replaceAll(s, replaceHtmlOfAtt(att));
             String s2 = String.format("<tn-media hash=\"%s\" />", att.digest);
             mHtml = mHtml.replaceAll(s2, replaceHtmlOfAtt(att));
@@ -436,7 +436,7 @@ public class TNNote implements Serializable {
 
         String sourceText = "";
         mHtml = String.format(htmlFormat, title, TNUtils.formatDateToWeeks(createTime), tagStr, mHtml, sourceText);
-        MLog.d(TAG, "html:" + mHtml);
+//        MLog.d(TAG, "html:" + mHtml);
         return mHtml;
     }
 
