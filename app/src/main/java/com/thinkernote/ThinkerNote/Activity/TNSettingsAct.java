@@ -584,6 +584,7 @@ public class TNSettingsAct extends TNActBase implements OnClickListener, OnChild
     //----------------------------------接口回调--------------------------------------
     @Override
     public void onDefaultFolderSuccess(Object obj, long pid) {
+        mProgressDialog.hide();
         TNSettings settings = TNSettings.getInstance();
         settings.defaultCatId = pid;
         settings.savePref(false);
@@ -605,11 +606,13 @@ public class TNSettingsAct extends TNActBase implements OnClickListener, OnChild
 
     @Override
     public void onVerifyEmailFailed(String msg, Exception e) {
+        mProgressDialog.hide();
         TNUtilsUi.showToast(msg);
     }
 
     @Override
     public void onProfileSuccess(Object obj) {
+        mProgressDialog.hide();
         setGroupList();
         ((BaseExpandableListAdapter) settingExpandableListView.getExpandableListAdapter()).notifyDataSetChanged();
         for (int i = 0; i < mGroups.size(); i++) {
@@ -619,6 +622,8 @@ public class TNSettingsAct extends TNActBase implements OnClickListener, OnChild
 
     @Override
     public void onProfileFailed(String msg, Exception e) {
+
+        mProgressDialog.hide();
         TNUtilsUi.showToast(msg);
     }
 }
