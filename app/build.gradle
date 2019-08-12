@@ -85,7 +85,7 @@ dependencies {
 
 
     //libs包依赖
-    implementation files('libs/alipaySdk-20161009.jar')
+    implementation files('libs/alipaySdk-20180601.jar')
     //TODO 后期删除
     implementation files('libs/android-async-http-1.4.4.jar')
     implementation files('libs/android_api.jar')
