@@ -66,7 +66,6 @@ public class TNApplication extends Application {
 //        TNLBSService.getInstance();
         //地图定位 新版
         LocationService.getInstance();
-        watchAppSwitch();
         // 设置此接口后，音频文件和识别结果文件保存在/sdcard/msc/record/目录下
         //com.iflytek.resource.MscSetting.setLogSaved(true);
 
@@ -119,48 +118,5 @@ public class TNApplication extends Application {
         TNSettings.getInstance().savePref(false);
 
         MLog.i("DbReportError e");
-    }
-
-
-    AsyncTask<Object, Object, Object> taskWatcher;
-    private void watchAppSwitch() {
-        mIsTaskWatchEnable =true;
-        //一个线程，让我一直检测
-        taskWatcher = new AsyncTask<Object, Object, Object>() {
-
-            @Override
-            protected Object doInBackground(Object... params) {
-
-                //把这个while当成看门狗吧。
-                while (mIsTaskWatchEnable) {
-                    TNUtilsUi.checkLockScreen(TNApplication.this);
-
-                    try {
-                        Thread.sleep(200);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                return null;
-            }
-        };
-        taskWatcher.execute(null, null);
-    }
-
-    private boolean mIsTaskWatchEnable;
-
-    public void watchAppEnable(boolean isTaskWatchEnable) {
-        //一个线程，让我一直检测
-
-        if (isTaskWatchEnable && null == taskWatcher) {
-            watchAppSwitch();
-        } else {
-            if (null != taskWatcher) {
-                boolean flag = taskWatcher.cancel(true);
-                Log.e("test", "taskWatcher.cancel1" + flag);
-                if (flag) taskWatcher = null;
-            }
-        }
-        mIsTaskWatchEnable = isTaskWatchEnable;
     }
 }

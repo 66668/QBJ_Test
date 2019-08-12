@@ -2,6 +2,7 @@ package com.thinkernote.ThinkerNote.Activity;
 
 import android.app.ProgressDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -22,6 +23,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -164,8 +166,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         mAttsLayout = (LinearLayout) findViewById(R.id.noteedit_atts_linearlayout);
         mRecordTime = (TextView) findViewById(R.id.record_time);
         mRecordAmplitudeProgress = (ProgressBar) findViewById(R.id.record_progressbar);
-        mContentView.requestFocus();
-        mContentView.setTextIsSelectable(true);
+
 
         findViewById(R.id.noteedit_save).setOnClickListener(this);
         findViewById(R.id.noteedit_camera).setOnClickListener(this);
@@ -177,6 +178,21 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         findViewById(R.id.record_stop).setOnClickListener(this);
 
         mTitleView.setOnFocusChangeListener(this);
+        //有的手机不支持软键盘
+        mContentView.requestFocus();
+        mContentView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                InputMethodManager inputManager = (InputMethodManager) mContentView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.showSoftInput(mContentView, 0);
+
+
+//                InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//                manager.showSoftInputFromInputMethod(mContentView.getWindowToken(), InputMethodManager.SHOW_FORCED);
+            }
+        });
+        mContentView.setTextIsSelectable(true);
+        mContentView.setOnFocusChangeListener(this);
         mContentView.addTextChangedListener(this);
     }
 
@@ -335,14 +351,12 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         super.onResume();
         setCursorLocation();
         ((ScrollView) findViewById(R.id.noteedit_scrollview)).scrollTo(0, 0);
-        TNApplication.getInstance().watchAppEnable(false);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         getCursorLocation();
-        TNApplication.getInstance().watchAppEnable(true);
     }
 
     private void setCursorLocation() {
@@ -817,6 +831,15 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
             String title = ((EditText) v).getText().toString();
             String trimTitle = title.trim();
             if (!title.equals(trimTitle)) {
+                if (((EditText) v).getSelectionStart() > trimTitle.length()) {
+                    ((EditText) v).setSelection(trimTitle.length());
+                }
+                ((EditText) v).setText(trimTitle);
+            }
+        } else if (v.getId() == R.id.noteedit_input_content && !hasFocus) {
+            String content = ((EditText) v).getText().toString();
+            String trimTitle = content.trim();
+            if (!content.equals(trimTitle)) {
                 if (((EditText) v).getSelectionStart() > trimTitle.length()) {
                     ((EditText) v).setSelection(trimTitle.length());
                 }

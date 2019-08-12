@@ -23,7 +23,8 @@
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                >
 
                 <HorizontalScrollView
                     android:layout_width="fill_parent"
@@ -67,7 +68,8 @@
                     android:paddingRight="4dip"
                     android:paddingBottom="2dip"
                     android:text=""
-                    android:textIsSelectable="true" />
+                    android:textIsSelectable="true"
+                    />
             </LinearLayout>
         </ScrollView>
 

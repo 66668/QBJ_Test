@@ -160,6 +160,9 @@ public class TNActBase extends Activity {
         TNSettings settings = TNSettings.getInstance();
         if (settings.topAct == this)
             settings.topAct = null;
+        if (!(TAG.equals("TNLoginAct")) && !(TAG.equals("TNSplashAct"))) {
+            TNUtilsUi.checkLockScreen(this);
+        }
     }
 
     @Override
