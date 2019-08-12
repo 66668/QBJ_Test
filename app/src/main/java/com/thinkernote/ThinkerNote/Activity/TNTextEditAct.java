@@ -354,7 +354,7 @@ public class TNTextEditAct extends TNActBase implements OnClickListener, OnKeyLi
 
     //-------------------------------------接口结果回调-----------------------------------------
     @Override
-    public void onFolderAddSuccess(Object obj) {
+    public void onFolderAddSuccess() {
         TNUtilsUi.showToast("保存成功！");
         finish();
     }
@@ -365,15 +365,8 @@ public class TNTextEditAct extends TNActBase implements OnClickListener, OnKeyLi
     }
 
     @Override
-    public void onFolderRenameSuccess(Object obj, String name, long pid) {
-        TNDb.beginTransaction();
-        try {
-            TNDb.getInstance().execSQL(TNSQLString.CAT_RENAME, name, pid);
+    public void onFolderRenameSuccess() {
 
-            TNDb.setTransactionSuccessful();
-        } finally {
-            TNDb.endTransaction();
-        }
         TNUtilsUi.showToast("修改成功！");
         finish();
     }
@@ -383,8 +376,9 @@ public class TNTextEditAct extends TNActBase implements OnClickListener, OnKeyLi
         TNUtilsUi.showToast(msg);
     }
 
+    //
     @Override
-    public void onTagAddSuccess(Object obj) {
+    public void onTagAddSuccess() {
         TNUtilsUi.showToast("保存成功！");
         finish();
     }
@@ -394,15 +388,15 @@ public class TNTextEditAct extends TNActBase implements OnClickListener, OnKeyLi
         TNUtilsUi.showToast(msg);
     }
 
+    //
     @Override
-    public void onTagRenameSuccess(Object obj, String name, long pid) {
-        TNDb.getInstance().execSQL(TNSQLString.TAG_RENAME, name, TNUtils.getPingYinIndex(name), pid);
+    public void onTagRenameSuccess() {
         TNUtilsUi.showToast("修改成功！");
         finish();
     }
 
     @Override
-    public void onTagRenameFailed(String msg, Exception e) {
+    public void onTagRenameFailed(Exception e, String msg) {
         TNUtilsUi.showToast(msg);
     }
 }

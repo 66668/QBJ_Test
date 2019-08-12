@@ -93,7 +93,7 @@ public class SettingsModule {
     public void mSetDefaultFolder(final OnSettingsListener listener, final long pid) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .setDefaultFolder(pid,settings.token)//接口方法
+                .setDefaultFolder(pid, settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -115,7 +115,7 @@ public class SettingsModule {
 
                         //处理返回结果
                         if (bean.getCode() == 0) {
-                            listener.onDefaultFolderSuccess(bean,pid);
+                            listener.onDefaultFolderSuccess(bean, pid);
                         } else {
                             listener.onDefaultFoldeFailed(bean.getMessage(), null);
                         }

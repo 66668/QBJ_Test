@@ -56,6 +56,16 @@ public class TagInfoPresenter implements ITagModuleListener {
     }
 
     @Override
+    public void onTagRenameSuccess() {
+
+    }
+
+    @Override
+    public void onTagRenameFailed(Exception e, String msg) {
+
+    }
+
+    @Override
     public void onGetTagSuccess() {
 
     }

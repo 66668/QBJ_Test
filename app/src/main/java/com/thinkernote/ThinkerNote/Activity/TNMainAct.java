@@ -31,9 +31,9 @@ import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Utils.TNActivityManager;
 import com.thinkernote.ThinkerNote.Views.CustomDialog;
 import com.thinkernote.ThinkerNote.Views.UpdateDialog;
-import com.thinkernote.ThinkerNote._constructer.listener.v.OnMainViewListener;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnUpgradeListener;
 import com.thinkernote.ThinkerNote._constructer.listener.v.OnSyncListener;
-import com.thinkernote.ThinkerNote._constructer.p.MainPresenter;
+import com.thinkernote.ThinkerNote._constructer.p.UpgradePresenter;
 import com.thinkernote.ThinkerNote._constructer.p.SyncPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.main.MainUpgradeBean;
@@ -48,7 +48,7 @@ import java.io.File;
  * 同步功能说明：由10多个接口串行调用，比较复杂，所以要注意调用顺序
  * sjy 0702
  */
-public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewListener, OnSyncListener {
+public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeListener, OnSyncListener {
 
     //==================================变量=======================================
     private long mLastClickBackTime = 0;
@@ -57,7 +57,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewL
     private TextView mTimeView;
     private TNSettings mSettings = TNSettings.getInstance();
     //
-    private MainPresenter mainPresenter;//新版本
+    private UpgradePresenter mainPresenter;//新版本
     private SyncPresenter syncPresenter;//新版本
     File installFile;//安装包file
 
@@ -70,7 +70,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewL
         setContentView(R.layout.main);
         //关闭其他界面
         TNActivityManager.getInstance().finishOtherActivity(this);
-        mainPresenter = new MainPresenter(this, this);
+        mainPresenter = new UpgradePresenter(this, this);
         syncPresenter = new SyncPresenter(this, this);
         setViews();
         MyRxManager.getInstance().syncOver();//修改状态值
@@ -373,7 +373,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnMainViewL
 
     //检查更新
     private void findUpgrade() {
-        mainPresenter.pUpgrade("HOME");
+        mainPresenter.pUpgrade();
     }
 
     private void downloadNewAPK(String url) {

@@ -88,6 +88,16 @@ public class MainFragPresenter implements IFolderModuleListener, ITagModuleListe
         onView.onDefaultFolderFailed(msg, e);
     }
 
+    @Override
+    public void onRenameFolderSuccess() {
+
+    }
+
+    @Override
+    public void onRenameFolderFailed(Exception e, String msg) {
+
+    }
+
     //同步一条笔记详情
     @Override
     public void onDownloadNoteSuccess() {
@@ -280,6 +290,16 @@ public class MainFragPresenter implements IFolderModuleListener, ITagModuleListe
 
     @Override
     public void onAddTagFailed(Exception e, String msg) {
+
+    }
+
+    @Override
+    public void onTagRenameSuccess() {
+
+    }
+
+    @Override
+    public void onTagRenameFailed(Exception e, String msg) {
 
     }
 

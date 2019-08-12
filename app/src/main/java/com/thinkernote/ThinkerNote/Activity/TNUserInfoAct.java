@@ -34,7 +34,9 @@ import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Views.CommonDialog;
 import com.thinkernote.ThinkerNote.Views.UpdateDialog;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnUpgradeListener;
 import com.thinkernote.ThinkerNote._constructer.listener.v.OnUserinfoListener;
+import com.thinkernote.ThinkerNote._constructer.p.UpgradePresenter;
 import com.thinkernote.ThinkerNote._constructer.p.UserInfoPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.main.MainUpgradeBean;
@@ -49,7 +51,7 @@ import java.util.Vector;
  * sjy 0614
  */
 public class TNUserInfoAct extends TNActBase implements OnClickListener,
-        OnItemClickListener, OnUserinfoListener {
+        OnItemClickListener, OnUserinfoListener, OnUpgradeListener {
 
     private ListView mListView;
     private Vector<TNPreferenceChild> mChilds;
@@ -59,6 +61,7 @@ public class TNUserInfoAct extends TNActBase implements OnClickListener,
     File installFile;//安装包file
     //
     private UserInfoPresenter presener;
+    private UpgradePresenter upgradePresenter;
 
 
     //更新弹窗的自定义监听（确定按钮的监听）
@@ -71,6 +74,7 @@ public class TNUserInfoAct extends TNActBase implements OnClickListener,
         setViews();
         //
         presener = new UserInfoPresenter(this, this);
+        upgradePresenter = new UpgradePresenter(this, this);
 
         mChilds = new Vector<TNPreferenceChild>();
         getSettings();
@@ -331,14 +335,14 @@ public class TNUserInfoAct extends TNActBase implements OnClickListener,
 
     private void upgrade() {
         if (TNUtils.checkNetwork(this)) {
-            presener.pUpgrade();
+            upgradePresenter.pUpgrade();
 
         }
     }
 
 
     private void download(String url) {
-        presener.pDownload(url, progressListener);
+        upgradePresenter.pDownload(url, progressListener);
     }
 
     //监听下载文件进度,包括文件大小

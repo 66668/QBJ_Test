@@ -1,14 +1,8 @@
-package com.thinkernote.ThinkerNote._constructer.listener.m;
-
-import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
+package com.thinkernote.ThinkerNote._constructer.listener.v;
 
 import java.io.File;
 
-/**
- * 主界面 其他回调
- */
-public interface IMainModuleListener {
-
+public interface OnUpgradeListener {
     void onUpgradeSuccess(Object obj);
 
     void onUpgradeFailed(String msg, Exception e);
@@ -16,5 +10,6 @@ public interface IMainModuleListener {
     void onDownloadSuccess(File file);
 
     void onDownloadFailed(String msg, Exception e);
+
 
 }

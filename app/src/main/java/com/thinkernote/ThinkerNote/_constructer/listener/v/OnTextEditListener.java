@@ -1,22 +1,22 @@
 package com.thinkernote.ThinkerNote._constructer.listener.v;
 
 /**
- *  v层
+ * v层
  */
 public interface OnTextEditListener {
-    void onFolderAddSuccess(Object obj);
+    void onFolderAddSuccess();
 
     void onFolderAddFailed(String msg, Exception e);
 
-    void onFolderRenameSuccess(Object obj,String name,long pid);
+    void onFolderRenameSuccess();
 
     void onFolderRenameFailed(String msg, Exception e);
 
-    void onTagAddSuccess(Object obj);
+    void onTagAddSuccess();
 
     void onTagAddFailed(String msg, Exception e);
 
-    void onTagRenameSuccess(Object obj,String name,long pid);
+    void onTagRenameSuccess();
 
-    void onTagRenameFailed(String msg, Exception e);
+    void onTagRenameFailed(Exception e, String msg);
 }

@@ -40,5 +40,9 @@ public interface IFolderModuleListener {
 
     void onDefaultFolderFailed(String msg, Exception e);
 
+    //
+    void onRenameFolderSuccess();
+
+    void onRenameFolderFailed(Exception e, String msg);
 }
 

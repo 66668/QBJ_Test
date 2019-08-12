@@ -15,6 +15,11 @@ public interface ITagModuleListener {
 
     void onAddTagFailed(Exception e, String msg);
 
+    //
+    void onTagRenameSuccess();
+
+    void onTagRenameFailed(Exception e, String msg);
+
     //获取标签
     void onGetTagSuccess();
 
@@ -23,10 +28,12 @@ public interface ITagModuleListener {
     //获取列表数据（非同步块回调）
     void onGetTagListSuccess();
 
-    void onGetTagListFailed( Exception e,String msg);
+    void onGetTagListFailed(Exception e, String msg);
+
     //
     void onDeleteTagSuccess();
 
-    void onDeleteTagFailed( Exception e,String msg);
+    void onDeleteTagFailed(Exception e, String msg);
+
 
 }

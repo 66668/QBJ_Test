@@ -5,7 +5,7 @@ import android.os.Environment;
 
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote._constructer.listener.m.IMainModuleListener;
+import com.thinkernote.ThinkerNote._constructer.listener.m.IUpgradeModuleListener;
 import com.thinkernote.ThinkerNote.bean.CommonBean1;
 import com.thinkernote.ThinkerNote.bean.main.MainUpgradeBean;
 import com.thinkernote.ThinkerNote.http.MyHttpService;
@@ -37,7 +37,7 @@ public class UpgradeModule {
         this.context = context;
     }
 
-    public void mUpgrade(final IMainModuleListener listener) {
+    public void mUpgrade(final IUpgradeModuleListener listener) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .upgrade(settings.token)//接口方法
@@ -74,7 +74,7 @@ public class UpgradeModule {
 
 
     //下载文件 实时进度
-    public void mDownload(final IMainModuleListener listener, String url, final FileProgressListener progressListener) {
+    public void mDownload(final IUpgradeModuleListener listener, String url, final FileProgressListener progressListener) {
         //自定义路径
         final File filePath = new File(Environment.getExternalStoragePublicDirectory
                 (Environment.DIRECTORY_DOWNLOADS), "qingbiji.apk");

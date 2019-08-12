@@ -476,6 +476,16 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
         backFailed(e, msg);
     }
 
+    @Override
+    public void onTagRenameSuccess() {
+
+    }
+
+    @Override
+    public void onTagRenameFailed(Exception e, String msg) {
+
+    }
+
     // （7）获取标签
     @Override
     public void onGetTagSuccess() {
@@ -662,6 +672,16 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
 
     @Override
     public void onDefaultFolderFailed(String msg, Exception e) {
+
+    }
+
+    @Override
+    public void onRenameFolderSuccess() {
+
+    }
+
+    @Override
+    public void onRenameFolderFailed(Exception e, String msg) {
 
     }
 

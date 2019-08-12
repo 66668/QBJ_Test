@@ -15,7 +15,8 @@ import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote._constructer.listener.m.IFolderModuleListener;
-import com.thinkernote.ThinkerNote._constructer.listener.m.IMainModuleListener;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnCatInfoListener;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnCatListListener;
 import com.thinkernote.ThinkerNote.bean.CommonBean;
 import com.thinkernote.ThinkerNote.bean.CommonBean2;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
@@ -67,7 +68,7 @@ public class FolderModule {
 
         final String[] mFolderName = {""};
         //创建默认的一级文件夹
-        Subscription subscription =   Observable.from(arrayFolders)
+        Subscription subscription = Observable.from(arrayFolders)
                 .concatMap(new Func1<String, Observable<CommonBean>>() {
                     @Override
                     public Observable<CommonBean> call(String folderName) {
@@ -108,7 +109,7 @@ public class FolderModule {
      */
     public void createFolderByIdByFirstLaunch(Vector<TNCat> cats, final String[] works, final String[] life, final String[] funs, final IFolderModuleListener listener) {
         MLog.d(TAG, "addNewFolder--创建子文件夹");
-        Subscription subscription =   Observable.from(cats)
+        Subscription subscription = Observable.from(cats)
                 .concatMap(new Func1<TNCat, Observable<CommonBean>>() {
                     @Override
                     public Observable<CommonBean> call(TNCat tnCat) {
@@ -180,7 +181,7 @@ public class FolderModule {
      */
     public void getProfiles(final IFolderModuleListener listener) {
 
-        Subscription subscription =   MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .LogNormalProfile(settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
@@ -230,7 +231,7 @@ public class FolderModule {
      */
     public void getAllFolder(final IFolderModuleListener listener) {
 
-        Subscription subscription =   MyHttpService.Builder.getHttpServer()
+        Subscription subscription = MyHttpService.Builder.getHttpServer()
                 .getFolder(settings.token) //（1）获取第一个接口数据
                 .subscribeOn(Schedulers.io())
                 .doOnNext(new Action1<AllFolderBean>() {
@@ -447,7 +448,7 @@ public class FolderModule {
      */
     public void setDefaultFolder(final long fodlerId, final IFolderModuleListener listener) {
 
-        Subscription subscription =  MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .setDefaultFolder(fodlerId, settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
@@ -473,6 +474,280 @@ public class FolderModule {
         MyRxManager.getInstance().add(subscription);
     }
 
+
+    public void renameFolder(final long pid, final String text, final IFolderModuleListener listener) {
+        TNSettings settings = TNSettings.getInstance();
+        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                .renameFolder(text, pid, settings.token)//接口方法
+                .subscribeOn(Schedulers.io())//固定样式
+                .doOnNext(new Action1<CommonBean>() {
+                    @Override
+                    public void call(CommonBean commonBean) {
+                        TNDb.beginTransaction();
+                        try {
+                            TNDb.getInstance().execSQL(TNSQLString.CAT_RENAME, text, pid);
+
+                            TNDb.setTransactionSuccessful();
+                        } finally {
+                            TNDb.endTransaction();
+                        }
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())//固定样式
+                .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
+                    @Override
+                    public void onCompleted() {
+                        MLog.d(TAG, "renameFolder--onCompleted");
+                        listener.onRenameFolderSuccess();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        MLog.e("renameFolder--onError:" + e.toString());
+                        listener.onRenameFolderFailed(new Exception(e.toString()), null);
+                    }
+
+                    @Override
+                    public void onNext(CommonBean bean) {
+                        MLog.d(TAG, "FolderRename-onNext");
+
+                    }
+
+                });
+    }
+
+    public void addFoler(long pid, String text, final IFolderModuleListener listener) {
+        TNSettings settings = TNSettings.getInstance();
+        if (pid == -1) {
+            MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                    .addNewFolder(text, settings.token)//接口方法
+                    .subscribeOn(Schedulers.io())//固定样式
+                    .unsubscribeOn(Schedulers.io())//固定样式
+                    .observeOn(AndroidSchedulers.mainThread())//固定样式
+                    .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
+                        @Override
+                        public void onCompleted() {
+                            MLog.d(TAG, "addFoler--onCompleted");
+                            listener.onAddFolderSuccess();
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            MLog.e("addFoler--onError:" + e.toString());
+                            listener.onAddFolderFailed(new Exception(e.toString()), null);
+                        }
+
+                        @Override
+                        public void onNext(CommonBean bean) {
+
+                        }
+
+                    });
+        } else {
+            MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                    .addNewFolderByPid(text, pid, settings.token)//接口方法
+                    .subscribeOn(Schedulers.io())//固定样式
+                    .unsubscribeOn(Schedulers.io())//固定样式
+                    .observeOn(AndroidSchedulers.mainThread())//固定样式
+                    .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
+                        @Override
+                        public void onCompleted() {
+                            MLog.d(TAG, "addFoler--onCompleted");
+                            listener.onAddFolderSuccess();
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            MLog.e("addFoler--onError:" + e.toString());
+                            listener.onAddFolderFailed(new Exception(e.toString()), null);
+                        }
+
+                        @Override
+                        public void onNext(CommonBean bean) {
+                            MLog.d(TAG, "addFoler--onNext");
+                        }
+
+                    });
+        }
+
+    }
+
+    public void mSetDefaultFolder(final OnCatInfoListener listener, final long catId) {
+        TNSettings settings = TNSettings.getInstance();
+        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                .setDefaultFolder(catId, settings.token)//接口方法
+                .subscribeOn(Schedulers.io())//固定样式
+                .unsubscribeOn(Schedulers.io())//固定样式
+                .observeOn(AndroidSchedulers.mainThread())//固定样式
+                .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
+                    @Override
+                    public void onCompleted() {
+                        MLog.d(TAG, "登录--onCompleted");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        MLog.e(TAG, "登录--登录失败异常onError:" + e.toString());
+                        listener.onFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onNext(CommonBean bean) {
+                        MLog.d(TAG, "登录-onNext");
+
+                        //处理返回结果
+                        if (bean.getCode() == 0) {
+                            MLog.d(TAG, "登录-成功");
+                            TNSettings settings = TNSettings.getInstance();
+                            settings.defaultCatId = catId;
+                            settings.savePref(false);
+                            listener.onSuccess(bean);
+                        } else {
+                            listener.onFailed(bean.getMessage(), null);
+                        }
+                    }
+
+                });
+    }
+
+
+    public void mCatDelete(final OnCatInfoListener listener, final long catId) {
+        TNSettings settings = TNSettings.getInstance();
+        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                .deleteFolder(catId, settings.token)
+                .subscribeOn(Schedulers.io())//固定样式
+                .unsubscribeOn(Schedulers.io())//固定样式
+                .observeOn(AndroidSchedulers.mainThread())//固定样式
+                .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
+                    @Override
+                    public void onCompleted() {
+                        MLog.d(TAG, "mCatDelete--onCompleted");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        MLog.e("mGetNoteByNoteId 异常onError:" + e.toString());
+                        listener.onDeleteFolderFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onNext(CommonBean bean) {
+                        MLog.d(TAG, "mGetNoteByNoteId-onNext");
+
+                        //处理返回结果
+                        if (bean.getCode() == 0) {
+                            listener.onDeleteFolderSuccess(bean, catId);
+                        } else {
+                            listener.onDeleteFolderFailed(bean.getMessage(), null);
+                        }
+                    }
+
+
+                });
+    }
+
+    public void mParentFolder(final OnCatListListener listener) {
+        TNSettings settings = TNSettings.getInstance();
+        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                .getFolder(settings.token)//接口方法
+                .subscribeOn(Schedulers.io())//固定样式
+                .unsubscribeOn(Schedulers.io())//固定样式
+                .observeOn(AndroidSchedulers.mainThread())//固定样式
+                .subscribe(new Observer<AllFolderBean>() {//固定样式，可自定义其他处理
+                    @Override
+                    public void onCompleted() {
+                        MLog.d(TAG, "mParentFolder--onCompleted");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        MLog.e(TAG, "mParentFolder--onError:" + e.toString());
+                        listener.onParentFolderFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onNext(AllFolderBean bean) {
+                        MLog.d(TAG, "mParentFolder-onNext");
+
+                        //处理返回结果
+                        if (bean.getCode() == 0) {
+                            MLog.d(TAG, "mParentFolder-成功");
+                            listener.onParentFolderSuccess(bean);
+                        } else {
+                            listener.onParentFolderFailed(bean.getMsg(), null);
+                        }
+                    }
+
+                });
+    }
+
+    public void mGetFolderByFolderId(final OnCatListListener listener, final long catId) {
+        TNSettings settings = TNSettings.getInstance();
+        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                .getFolderByFolderID(catId, settings.token)//接口方法
+                .subscribeOn(Schedulers.io())//固定样式
+                .unsubscribeOn(Schedulers.io())//固定样式
+                .observeOn(AndroidSchedulers.mainThread())//固定样式
+                .subscribe(new Observer<AllFolderBean>() {//固定样式，可自定义其他处理
+                    @Override
+                    public void onCompleted() {
+                        MLog.d(TAG, "mGetFolderByFolderId--onCompleted");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        MLog.e(TAG, "mGetFolderByFolderId--onError:" + e.toString());
+                        listener.onGetFoldersByFolderIdFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onNext(AllFolderBean bean) {
+                        MLog.d(TAG, "mGetFolderByFolderId-onNext");
+
+                        //处理返回结果
+                        if (bean.getCode() == 0) {
+                            listener.onGetFoldersByFolderIdSuccess(bean, catId);
+                        } else {
+                            listener.onGetFoldersByFolderIdFailed(bean.getMsg(), null);
+                        }
+                    }
+
+                });
+    }
+
+    public void mmoveFolder(final OnCatListListener listener, final long catId, long selectId) {
+        TNSettings settings = TNSettings.getInstance();
+        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                .folderMove(catId, selectId, settings.token)//接口方法
+                .subscribeOn(Schedulers.io())//固定样式
+                .unsubscribeOn(Schedulers.io())//固定样式
+                .observeOn(AndroidSchedulers.mainThread())//固定样式
+                .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
+                    @Override
+                    public void onCompleted() {
+                        MLog.d(TAG, "moveFolder--onCompleted");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        MLog.e(TAG, "moveFolder--onError:" + e.toString());
+                        listener.onFolderMoveFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onNext(CommonBean bean) {
+                        MLog.d(TAG, "moveFolder-onNext");
+
+                        //处理返回结果
+                        if (bean.getCode() == 0) {
+                            listener.onFolderMoveSuccess(bean);
+                        } else {
+                            listener.onFolderMoveFailed(bean.getMessage(), null);
+                        }
+                    }
+
+                });
+    }
     //================================================处理相关================================================
 
     private void deleteFolderSQL(long folderId) {

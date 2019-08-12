@@ -2,8 +2,8 @@ package com.thinkernote.ThinkerNote._constructer.p;
 
 import android.content.Context;
 
-import com.thinkernote.ThinkerNote._constructer.m.CatInfoModule;
 import com.thinkernote.ThinkerNote._constructer.listener.v.OnCatInfoListener;
+import com.thinkernote.ThinkerNote._constructer.m.FolderModule;
 
 /**
  * 登录 p层 具体实现
@@ -12,12 +12,12 @@ public class CatInfoPresenter implements  OnCatInfoListener {
     private Context context;
     private OnCatInfoListener onView;
     //p层调用M层方法
-    private CatInfoModule module;
+    private FolderModule module;
 
     public CatInfoPresenter(Context context, OnCatInfoListener logListener) {
         this.context = context;
         this.onView = logListener;
-        module = new CatInfoModule(context);
+        module = new FolderModule(context);
     }
 
 

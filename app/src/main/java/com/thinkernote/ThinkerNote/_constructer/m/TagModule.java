@@ -13,6 +13,7 @@ import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote._constructer.listener.m.ITagModuleListener;
 import com.thinkernote.ThinkerNote._constructer.listener.v.OnTagInfoListener;
 import com.thinkernote.ThinkerNote._constructer.listener.v.OnTagListListener;
+import com.thinkernote.ThinkerNote._constructer.listener.v.OnTextEditListener;
 import com.thinkernote.ThinkerNote.bean.CommonBean;
 import com.thinkernote.ThinkerNote.bean.main.TagItemBean;
 import com.thinkernote.ThinkerNote.bean.main.TagListBean;
@@ -261,6 +262,71 @@ public class TagModule {
                     }
                 });
         MyRxManager.getInstance().add(subscription);
+    }
+
+
+    public void renameTag(final long pid, final String text, final ITagModuleListener listener) {
+        TNSettings settings = TNSettings.getInstance();
+        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                .tagRename(text, pid, settings.token)//接口方法
+                .subscribeOn(Schedulers.io())//固定样式
+                .doOnNext(new Action1<CommonBean>() {
+                    @Override
+                    public void call(CommonBean commonBean) {
+                        //数据库
+                        TNDb.getInstance().execSQL(TNSQLString.TAG_RENAME, text, TNUtils.getPingYinIndex(text), pid);
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())//固定样式
+                .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
+                    @Override
+                    public void onCompleted() {
+                        MLog.d(TAG, "renameTag--onCompleted");
+                        listener.onTagRenameSuccess();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        MLog.e("renameTag--onError:" + e.toString());
+                        listener.onTagRenameFailed(new Exception(e.toString()), null);
+
+                    }
+
+                    @Override
+                    public void onNext(CommonBean bean) {
+                        MLog.d(TAG, "renameTag-onNext");
+                    }
+
+                });
+    }
+
+
+    public void addTag(String text, final ITagModuleListener listener) {
+        TNSettings settings = TNSettings.getInstance();
+        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                .addNewTag(text, settings.token)//接口方法
+                .subscribeOn(Schedulers.io())//固定样式
+                .unsubscribeOn(Schedulers.io())//固定样式
+                .observeOn(AndroidSchedulers.mainThread())//固定样式
+                .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
+                    @Override
+                    public void onCompleted() {
+                        MLog.d(TAG, "addTag--onCompleted");
+                        listener.onAddTagSuccess();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        MLog.e("addTag--onError:" + e.toString());
+                        listener.onAddTagFailed(new Exception(e.toString()), null);
+                    }
+
+                    @Override
+                    public void onNext(CommonBean bean) {
+
+                    }
+
+                });
     }
 
     //================================================处理相关================================================
