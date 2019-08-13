@@ -93,7 +93,7 @@ public class NoteModule {
      */
     public void updateOldNote(Vector<TNNote> notes, final boolean isNewDb, final INoteModuleListener listener) {
 
-        Subscription subscription =  Observable.from(notes)
+        Subscription subscription = Observable.from(notes)
                 .concatMap(new Func1<TNNote, Observable<TNNote>>() {//
                     @Override
                     public Observable<TNNote> call(final TNNote tnNote) {
@@ -167,45 +167,45 @@ public class NoteModule {
                         return fileBeanObservable;
                     }
                 }).concatMap(new Func1<TNNote, Observable<NewNoteBean>>() {//
-            @Override
-            public Observable<NewNoteBean> call(final TNNote note) {
-                return MyHttpService.Builder.getHttpServer()//(接口2，上传note)
-                        .addNewNote(note.title, note.content, note.tagStr, note.catId, note.createTime, note.lastUpdate, note.lbsLongitude, note.lbsLatitude, note.lbsAddress, note.lbsRadius, settings.token)//接口方法
-                        .subscribeOn(Schedulers.io())//固定样式
-                        .unsubscribeOn(Schedulers.io())//固定样式
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .doOnNext(new Action1<NewNoteBean>() {
-                            @Override
-                            public void call(NewNoteBean newNoteBean) {
-                                if (isNewDb) {//false时表示老数据库的数据上传，不用在修改本地的数据
-                                    upDataNoteLocalIdSQL(newNoteBean, note);
-                                }
-                            }
-                        })
-                        .doOnError(new Action1<Throwable>() {
-                            @Override
-                            public void call(Throwable e) {
-                                MLog.e(TAG, "updateNote--addNewNote--doOnError:" + e.toString());
-                                listener.onUpdateOldNoteFailed(new Exception(e.getMessage()), null);
-                            }
-                        });
-            }
-        }).subscribe(new Observer<NewNoteBean>() {
-            @Override
-            public void onCompleted() {
-                listener.onUpdateOldNoteSuccess();
-            }
+                    @Override
+                    public Observable<NewNoteBean> call(final TNNote note) {
+                        return MyHttpService.Builder.getHttpServer()//(接口2，上传note)
+                                .addNewNote(note.title, note.content, note.tagStr, note.catId, note.createTime, note.lastUpdate, note.lbsLongitude, note.lbsLatitude, note.lbsAddress, note.lbsRadius, settings.token)//接口方法
+                                .subscribeOn(Schedulers.io())//固定样式
+                                .unsubscribeOn(Schedulers.io())//固定样式
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .doOnNext(new Action1<NewNoteBean>() {
+                                    @Override
+                                    public void call(NewNoteBean newNoteBean) {
+                                        if (isNewDb) {//false时表示老数据库的数据上传，不用在修改本地的数据
+                                            upDataNoteLocalIdSQL(newNoteBean, note);
+                                        }
+                                    }
+                                })
+                                .doOnError(new Action1<Throwable>() {
+                                    @Override
+                                    public void call(Throwable e) {
+                                        MLog.e(TAG, "updateNote--addNewNote--doOnError:" + e.toString());
+                                        listener.onUpdateOldNoteFailed(new Exception(e.getMessage()), null);
+                                    }
+                                });
+                    }
+                }).subscribe(new Observer<NewNoteBean>() {
+                    @Override
+                    public void onCompleted() {
+                        listener.onUpdateOldNoteSuccess();
+                    }
 
-            @Override
-            public void onError(Throwable e) {
-                listener.onUpdateOldNoteFailed(new Exception(e.getMessage()), null);
-            }
+                    @Override
+                    public void onError(Throwable e) {
+                        listener.onUpdateOldNoteFailed(new Exception(e.getMessage()), null);
+                    }
 
-            @Override
-            public void onNext(NewNoteBean newNoteBean) {//主线程
+                    @Override
+                    public void onNext(NewNoteBean newNoteBean) {//主线程
 
-            }
-        });
+                    }
+                });
         MyRxManager.getInstance().add(subscription);
     }
 
@@ -356,7 +356,7 @@ public class NoteModule {
      */
     public void updateRecoveryNotes(Vector<TNNote> notes, final INoteModuleListener listener) {
 
-        Subscription subscription =  Observable
+        Subscription subscription = Observable
                 .from(notes)
                 .concatMap(new Func1<TNNote, Observable<List>>() {//
                     @Override
@@ -549,7 +549,7 @@ public class NoteModule {
      * @param listener
      */
     public void deleteNotes(Vector<TNNote> notes, final INoteModuleListener listener) {
-        Subscription subscription =  Observable.from(notes).concatMap(new Func1<TNNote, Observable<Integer>>() {
+        Subscription subscription = Observable.from(notes).concatMap(new Func1<TNNote, Observable<Integer>>() {
             @Override
             public Observable<Integer> call(final TNNote tnNote) {
 
@@ -620,7 +620,7 @@ public class NoteModule {
      * @param listener
      */
     public void clearNotes(Vector<TNNote> notes, final INoteModuleListener listener) {
-        Subscription subscription =  Observable.from(notes)
+        Subscription subscription = Observable.from(notes)
                 .concatMap(new Func1<TNNote, Observable<Integer>>() {//list转化item
                     @Override
                     public Observable<Integer> call(final TNNote tnNote) {
@@ -697,9 +697,6 @@ public class NoteModule {
                     @Override
                     public void onNext(Integer result) {
                         MLog.d(TAG, "clearNotes-onNext");
-                        if (result != 0) {
-                            listener.onClearNoteFailed(new Exception("彻底删除笔记异常返回"), null);
-                        }
                     }
                 });
         MyRxManager.getInstance().add(subscription);
@@ -803,7 +800,7 @@ public class NoteModule {
      */
     public void updateEditNotes(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> notes, final INoteModuleListener listener) {
         MLog.d("编辑笔记同步--" + notes.size() + "--note_ids" + note_ids.size());
-        Subscription subscription =   Observable.from(note_ids)
+        Subscription subscription = Observable.from(note_ids)
                 .concatMap(new Func1<AllNotesIdsBean.NoteIdItemBean, Observable<CommonBean>>() {
                     @Override
                     public Observable<CommonBean> call(AllNotesIdsBean.NoteIdItemBean bean) {//list转item
@@ -992,7 +989,7 @@ public class NoteModule {
      * @param listener
      */
     public void getCloudNote(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> allNotes, final INoteModuleListener listener) {
-        Subscription subscription =  Observable.from(note_ids)
+        Subscription subscription = Observable.from(note_ids)
                 .concatMap(new Func1<AllNotesIdsBean.NoteIdItemBean, Observable<Integer>>() {
                     @Override
                     public Observable<Integer> call(AllNotesIdsBean.NoteIdItemBean bean) {
@@ -1152,7 +1149,7 @@ public class NoteModule {
      */
     public void getCloudNote(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final long folderId, final INoteModuleListener listener) {
 
-        Subscription subscription =  Observable.from(note_ids)
+        Subscription subscription = Observable.from(note_ids)
                 .concatMap(new Func1<AllNotesIdsBean.NoteIdItemBean, Observable<Integer>>() {
                     @Override
                     public Observable<Integer> call(AllNotesIdsBean.NoteIdItemBean bean) {
@@ -1301,7 +1298,7 @@ public class NoteModule {
      * @param listener
      */
     public void getTrashNotesId(final INoteModuleListener listener) {
-        Subscription subscription =  MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .getTrashNoteIds(settings.token)
                 .subscribeOn(Schedulers.io())
                 .doOnNext(new Action1<AllNotesIdsBean>() {
@@ -1348,7 +1345,7 @@ public class NoteModule {
      * @param listener
      */
     public void upateTrashNotes(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> allNotes, final INoteModuleListener listener) {
-        Subscription subscription =  Observable.from(note_ids)
+        Subscription subscription = Observable.from(note_ids)
                 .concatMap(new Func1<AllNotesIdsBean.NoteIdItemBean, Observable<Integer>>() {
                     @Override
                     public Observable<Integer> call(AllNotesIdsBean.NoteIdItemBean bean) {
@@ -1419,7 +1416,7 @@ public class NoteModule {
      * <p>
      */
     public void getNoteListByFolderId(final long tagId, final int mPageNum, final int pageSize, final String sort, final INoteModuleListener listener) {
-        Subscription subscription =  MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .getNoteListByFolderId(tagId, mPageNum, pageSize, sort, settings.token)//接口方法
                 .subscribeOn(Schedulers.io())
                 .doOnNext(new Action1<NoteListBean>() {
@@ -1475,7 +1472,7 @@ public class NoteModule {
      * <p>
      */
     public void getNoteListByTagId(final long tagId, final int mPageNum, final int pageSize, final String sort, final INoteModuleListener listener) {
-        Subscription subscription =   MyHttpService.Builder.getHttpServer()
+        Subscription subscription = MyHttpService.Builder.getHttpServer()
                 .getNoteListByTagId(tagId, mPageNum, pageSize, sort, settings.token)
                 .doOnNext(new Action1<NoteListBean>() {
                     @Override
@@ -1534,7 +1531,7 @@ public class NoteModule {
      */
     public void getDetailByNoteId(final long noteId, final INoteModuleListener listener) {
 
-        Subscription subscription =   MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .getNoteByNoteId(noteId, settings.token)
                 .subscribeOn(Schedulers.io())
                 .doOnNext(new Action1<CommonBean3<GetNoteByNoteIdBean>>() {
@@ -1706,6 +1703,9 @@ public class NoteModule {
         try {
             TNDb.getInstance().execSQL(TNSQLString.ATT_UPDATE_SYNCSTATE_ATTID, 2, attrId, (int) tnNoteAtt.noteLocalId);
             TNDb.setTransactionSuccessful();
+        } catch (Exception e) {
+            MLog.e("upDataAttIdSQL" + e.toString());
+            TNDb.endTransaction();
         } finally {
             TNDb.endTransaction();
         }
@@ -1718,20 +1718,25 @@ public class NoteModule {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                TNNote note = TNDbUtils.getNoteByNoteId(noteId);
-                note.syncState = 2;
-                if (note.attCounts > 0) {
-                    for (int i = 0; i < note.atts.size(); i++) {
-                        TNNoteAtt tempAtt = note.atts.get(i);
-                        if (i == 0 && tempAtt.type > 10000 && tempAtt.type < 20000) {
-                            TNDb.getInstance().execSQL(TNSQLString.NOTE_UPDATE_THUMBNAIL, tempAtt.path, note.noteLocalId);
-                        }
-                        if (TextUtils.isEmpty(tempAtt.path) || "null".equals(tempAtt.path)) {
-                            note.syncState = 1;
+                try {
+                    TNNote note = TNDbUtils.getNoteByNoteId(noteId);
+                    note.syncState = 2;
+                    if (note.attCounts > 0) {
+                        for (int i = 0; i < note.atts.size(); i++) {
+                            TNNoteAtt tempAtt = note.atts.get(i);
+                            if (i == 0 && tempAtt.type > 10000 && tempAtt.type < 20000) {
+                                TNDb.getInstance().execSQL(TNSQLString.NOTE_UPDATE_THUMBNAIL, tempAtt.path, note.noteLocalId);
+                            }
+                            if (TextUtils.isEmpty(tempAtt.path) || "null".equals(tempAtt.path)) {
+                                note.syncState = 1;
+                            }
                         }
                     }
+                    TNDb.getInstance().execSQL(TNSQLString.NOTE_UPDATE_SYNCSTATE, note.syncState, note.noteLocalId);
+                } catch (Exception e) {
+                    MLog.e("upDataDetailNoteSQL" + e.toString());
                 }
-                TNDb.getInstance().execSQL(TNSQLString.NOTE_UPDATE_SYNCSTATE, note.syncState, note.noteLocalId);
+
             }
         });
 
@@ -1751,6 +1756,9 @@ public class NoteModule {
                     TNDb.getInstance().execSQL(TNSQLString.NOTE_UPDATE_NOTEID_BY_NOTELOCALID, id, note.noteLocalId);
 
                     TNDb.setTransactionSuccessful();
+                } catch (Exception e) {
+                    MLog.e("upDataNoteLocalIdSQL" + e.toString());
+                    TNDb.endTransaction();
                 } finally {
                     TNDb.endTransaction();
                 }
@@ -1772,6 +1780,9 @@ public class NoteModule {
             TNDb.getInstance().execSQL(TNSQLString.CAT_UPDATE_LASTUPDATETIME, System.currentTimeMillis() / 1000, note.catId);
 
             TNDb.setTransactionSuccessful();
+        } catch (Exception e) {
+            MLog.e("recoveryPutNoteSQL" + e.toString());
+            TNDb.endTransaction();
         } finally {
             TNDb.endTransaction();
         }
@@ -1791,6 +1802,9 @@ public class NoteModule {
             TNDb.getInstance().execSQL(TNSQLString.CAT_UPDATE_LASTUPDATETIME, System.currentTimeMillis() / 1000, note.catId);
 
             TNDb.setTransactionSuccessful();
+        } catch (Exception e) {
+            MLog.e("deleteNoteSQL--error=" + e.toString());
+            TNDb.endTransaction();
         } finally {
             TNDb.endTransaction();
         }
@@ -1835,6 +1849,9 @@ public class NoteModule {
             TNDb.getInstance().execSQL(TNSQLString.CAT_UPDATE_LASTUPDATETIME, System.currentTimeMillis() / 1000, note.catId);
 
             TNDb.setTransactionSuccessful();
+        } catch (Exception e) {
+            MLog.e("deleteTrashNoteSQL" + e.toString());
+            TNDb.endTransaction();
         } finally {
             TNDb.endTransaction();
         }
@@ -1865,7 +1882,10 @@ public class NoteModule {
                     TNDb.getInstance().deleteSQL(TNSQLString.NOTE_DELETE_BY_NOTEID, new Object[]{note.noteId});
 
                     TNDb.setTransactionSuccessful();
-                } finally {
+                } catch (Exception e) {
+                    MLog.e("synCloudNoteById" + e.toString());
+                    TNDb.endTransaction();
+                }finally {
                     TNDb.endTransaction();
                 }
             }
@@ -1899,7 +1919,10 @@ public class NoteModule {
                             TNDb.getInstance().deleteSQL(TNSQLString.NOTE_DELETE_BY_NOTEID, new Object[]{note.noteId});
 
                             TNDb.setTransactionSuccessful();
-                        } finally {
+                        } catch (Exception e) {
+                            MLog.e("synCloudTrashNoteById" + e.toString());
+                            TNDb.endTransaction();
+                        }finally {
                             TNDb.endTransaction();
                         }
 
@@ -1920,10 +1943,12 @@ public class NoteModule {
             //
             TNDb.getInstance().execSQL(TNSQLString.NOTE_UPDATE_SYNCSTATE, 1, noteId);
             TNDb.setTransactionSuccessful();
-        } finally {
+        } catch (Exception e) {
+            MLog.e("updataEditNotesStateSQL" + e.toString());
+            TNDb.endTransaction();
+        }finally {
             TNDb.endTransaction();
         }
-        MLog.d("数据库--更新编辑笔记状态--成功");
     }
 
     /**
@@ -1941,10 +1966,12 @@ public class NoteModule {
             TNDb.getInstance().execSQL(TNSQLString.CAT_UPDATE_LASTUPDATETIME, System.currentTimeMillis() / 1000, note.catId);
 
             TNDb.setTransactionSuccessful();
+        }catch (Exception e) {
+            MLog.e("updataEditNoteSQL" + e.toString());
+            TNDb.endTransaction();
         } finally {
             TNDb.endTransaction();
         }
-        MLog.d("数据库--更新编辑笔记内容--成功");
     }
 
     /**

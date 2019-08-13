@@ -394,7 +394,6 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
     }
 
     private void setButtonsAndNoteList() {
-        MLog.i(TAG, "setButtons " + mNotes);
         String title = null;
         switch (mListType) {
             case 1:

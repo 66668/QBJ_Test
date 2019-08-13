@@ -756,6 +756,9 @@ public class FolderModule {
             TNDb.getInstance().execSQL(TNSQLString.CAT_DELETE_CAT, folderId);
             TNDb.getInstance().execSQL(TNSQLString.NOTE_TRASH_CATID, 2, System.currentTimeMillis() / 1000, TNSettings.getInstance().defaultCatId, folderId);
             TNDb.setTransactionSuccessful();
+        } catch (Exception e) {
+            MLog.e("deleteFolderSQL" + e.toString());
+            TNDb.endTransaction();
         } finally {
             TNDb.endTransaction();
         }
