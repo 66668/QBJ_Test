@@ -67,6 +67,8 @@ import rx.schedulers.Schedulers;
  * 具体实现:
  * m层 笔记相关
  * syncState ：1表示未完全同步，2表示完全同步，3表示本地新增，4表示本地编辑，5表示彻底删除，6表示删除到回收站，7表示从回收站还原
+ * <p>
+ * 说明：isSync的方法保证，只有SyncPresenter里的方法使用，非SyncPresenter的方法，设置为false
  */
 public class NoteModule {
 
