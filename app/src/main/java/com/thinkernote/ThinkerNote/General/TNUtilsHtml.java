@@ -163,7 +163,6 @@ public class TNUtilsHtml {
     /**
      * @param content
      * @return
-     * @throws Exception
      */
     public static String getPlainText2(String content) throws Exception {
 
@@ -171,7 +170,6 @@ public class TNUtilsHtml {
 //        String str = content.replaceAll("\\&[a-zA-Z]{1,10};", "") //去除类似< >  的字串
 //                .replaceAll("<[a-zA-Z]+[1-9]?[^><]*>", "") //去除开始标签及没有结束标签的标签
 //                .replaceAll("</[a-zA-Z]+[1-9]?>", ""); //去除结束标签
-
 
         //方案2
         String str = content;

@@ -102,13 +102,13 @@
 				android:key="userinfo_voice"
 				android:widgetLayout="@layout/preference_more" />
 
-			<com.thinkernote.ThinkerNote.Other.SeekBarPreference  
+			<com.thinkernote.ThinkerNote.other.SeekBarPreference
 				android:title="@string/userinfo_speed"
 				android:key="userinfo_speed" 
 				android:widgetLayout="@layout/preference_more"
 			 	android:dialogTitle="@string/alert_Title" 
 			 	android:dialogLayout="@layout/seekbar_dialog">  
-			</com.thinkernote.ThinkerNote.Other.SeekBarPreference>  
+			</com.thinkernote.ThinkerNote.other.SeekBarPreference>
 
 <!-- 				
 			<Preference
@@ -121,13 +121,13 @@
 				android:key="userinfo_volume" 
 				android:widgetLayout="@layout/preference_more" />
  -->
-			<com.thinkernote.ThinkerNote.Other.SeekBarPreference  
+			<com.thinkernote.ThinkerNote.other.SeekBarPreference
 				android:title="@string/userinfo_volume"
 				android:key="userinfo_volume" 
 				android:widgetLayout="@layout/preference_more"
 			 	android:dialogTitle="@string/alert_Title" 
 			 	android:dialogLayout="@layout/seekbar_dialog">  
-			</com.thinkernote.ThinkerNote.Other.SeekBarPreference>  
+			</com.thinkernote.ThinkerNote.other.SeekBarPreference>
 	
 		</PreferenceCategory>		
 

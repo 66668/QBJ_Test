@@ -607,7 +607,6 @@ public class TNUtils {
         try {
             d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date);
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
             return -1;
         }
         return d.getTime();

@@ -19,7 +19,7 @@ import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Adapter.TNCatViewHolder;
 import com.thinkernote.ThinkerNote.Data.TNCat;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
-import com.thinkernote.ThinkerNote.Other.PullListView;
+import com.thinkernote.ThinkerNote.other.PullListView;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 
 /**

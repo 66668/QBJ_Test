@@ -17,8 +17,8 @@ import com.thinkernote.ThinkerNote.Action.TNAction;
 import com.thinkernote.ThinkerNote.General.TNHandleError;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
-import com.thinkernote.ThinkerNote.Other.HorizontalPager;
-import com.thinkernote.ThinkerNote.Other.HorizontalPager.OnScreenSwitchListener;
+import com.thinkernote.ThinkerNote.other.HorizontalPager;
+import com.thinkernote.ThinkerNote.other.HorizontalPager.OnScreenSwitchListener;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 

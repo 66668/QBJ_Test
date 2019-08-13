@@ -23,8 +23,8 @@ import com.thinkernote.ThinkerNote.General.TNConst;
 import com.thinkernote.ThinkerNote.General.TNHandleError;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
-import com.thinkernote.ThinkerNote.Other.HorizontalPager;
-import com.thinkernote.ThinkerNote.Other.HorizontalPager.OnScreenSwitchListener;
+import com.thinkernote.ThinkerNote.other.HorizontalPager;
+import com.thinkernote.ThinkerNote.other.HorizontalPager.OnScreenSwitchListener;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Views.CommonDialog;
@@ -34,7 +34,6 @@ import com.thinkernote.ThinkerNote._constructer.p.MainFragPresenter;
 import com.thinkernote.ThinkerNote._constructer.p.SyncFolderPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.base.TNChildViewBase;
-import com.thinkernote.ThinkerNote.http.MyRxManager;
 
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;

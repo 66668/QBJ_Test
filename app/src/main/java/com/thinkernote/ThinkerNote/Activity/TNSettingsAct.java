@@ -354,7 +354,7 @@ public class TNSettingsAct extends TNActBase implements OnClickListener, OnChild
         Bundle b = new Bundle();
         b.putLong("OriginalCatId", TNSettings.getInstance().defaultCatId);
         b.putInt("Type", 2);
-        startActForResult(TNCatListAct.class, b, R.string.userinfo_defaultfolder);// TODO
+        startActForResult(TNCatListAct.class, b, R.string.userinfo_defaultfolder);
     }
 
 
@@ -515,7 +515,6 @@ public class TNSettingsAct extends TNActBase implements OnClickListener, OnChild
                 WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
     }
 
-    // TODO 未知
     public void contribution() {
         Bundle b = new Bundle();
         b.putString("HtmlType", "contribution_rule");

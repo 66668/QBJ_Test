@@ -9,9 +9,9 @@ import android.widget.LinearLayout;
 
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
-import com.thinkernote.ThinkerNote.Other.HorizontalPager;
-import com.thinkernote.ThinkerNote.Other.HorizontalPager.OnScreenSwitchListener;
-import com.thinkernote.ThinkerNote.Other.PageController;
+import com.thinkernote.ThinkerNote.other.HorizontalPager;
+import com.thinkernote.ThinkerNote.other.HorizontalPager.OnScreenSwitchListener;
+import com.thinkernote.ThinkerNote.other.PageController;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 
 /**

@@ -38,14 +38,13 @@ import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsAtt;
 import com.thinkernote.ThinkerNote.General.TNUtilsHtml;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
-import com.thinkernote.ThinkerNote.Other.PullToRefreshExpandableListView;
-import com.thinkernote.ThinkerNote.Other.PullToRefreshExpandableListView.OnRefreshListener;
+import com.thinkernote.ThinkerNote.other.PullToRefreshExpandableListView;
+import com.thinkernote.ThinkerNote.other.PullToRefreshExpandableListView.OnRefreshListener;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote._constructer.listener.v.OnSyncListener;
 import com.thinkernote.ThinkerNote._constructer.p.SyncPresenter;
 import com.thinkernote.ThinkerNote.base.TNChildViewBase;
-import com.thinkernote.ThinkerNote.http.MyRxManager;
 
 import java.util.Vector;
 

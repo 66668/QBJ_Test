@@ -236,7 +236,7 @@ public class TNSQLString {
                     ",`lbsAddress` TEXT(200) NOT NULL" +
                     ",`nickName` TEXT(50) NOT NULL" +
                     ",`thumbnail` TEXT(1000) NOT NULL" +
-                    ",`contentDigest` TEXT(200)" +//TODO 修改 sjy 0702-->NOT NULL移除
+                    ",`contentDigest` TEXT(200)" +// 修改 sjy 0702-->NOT NULL移除
                     ")";
 
     public final static String NOTE_INSERT =

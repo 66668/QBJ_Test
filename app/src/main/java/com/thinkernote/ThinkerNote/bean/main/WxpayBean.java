@@ -9,7 +9,6 @@ import java.io.Serializable;
  * 支付结果返回
  * 格式{code msg data {}}
  */
-// TODO retcode
 public class WxpayBean extends CommonBean implements Serializable {
     String appid;
     String partnerid;

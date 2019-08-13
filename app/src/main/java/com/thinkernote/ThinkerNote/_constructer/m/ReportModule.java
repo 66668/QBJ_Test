@@ -43,13 +43,13 @@ public class ReportModule {
 //                .setType(MultipartBody.FORM)//表单类型
 //                .addFormDataPart("token", settings.token);
 //        for(File file:files){
-//            RequestBody photoRequestBody = RequestBody.create(MediaType.parse("image/*"), file);//TODO multipart/form-data /image/*
+//            RequestBody photoRequestBody = RequestBody.create(MediaType.parse("image/*"), file);
 //            builder.addFormDataPart("file", file.getName(), photoRequestBody);
 //            List<MultipartBody.Part> parts = builder.build().parts();
 //        }
 
         //单个文件上传
-        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file); //TODO multipart/form-data /image/*
+        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file); // multipart/form-data /image/*
         MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
 
         //拼接url(本app后台特殊嗜好，蛋疼):

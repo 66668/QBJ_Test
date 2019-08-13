@@ -3,7 +3,6 @@ package com.thinkernote.ThinkerNote.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -58,8 +57,8 @@ import com.thinkernote.ThinkerNote.General.TNUtilsDialog;
 import com.thinkernote.ThinkerNote.General.TNUtilsHtml;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
-import com.thinkernote.ThinkerNote.Other.PoPuMenuView;
-import com.thinkernote.ThinkerNote.Other.PoPuMenuView.OnPoPuMenuItemClickListener;
+import com.thinkernote.ThinkerNote.other.PoPuMenuView;
+import com.thinkernote.ThinkerNote.other.PoPuMenuView.OnPoPuMenuItemClickListener;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Service.LocationService;
 import com.thinkernote.ThinkerNote.Utils.JsonParser;
@@ -68,8 +67,6 @@ import com.thinkernote.ThinkerNote.Views.CommonDialog;
 import com.thinkernote.ThinkerNote._constructer.listener.v.OnSyncListener;
 import com.thinkernote.ThinkerNote._constructer.p.SyncPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
-import com.thinkernote.ThinkerNote.base.TNApplication;
-import com.thinkernote.ThinkerNote.http.MyRxManager;
 
 import java.io.File;
 import java.io.Serializable;
@@ -294,7 +291,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         if (target.equals("camera")) {
             startCamera();
         } else if (target.equals("doodle")) {
-            startActForResult(TNTuYaAct.class, null, R.id.noteedit_doodle);// TODO
+            startActForResult(TNTuYaAct.class, null, R.id.noteedit_doodle);
         } else if (target.equals("record")) {
             getIntent().removeExtra("Target");
             startRecord();

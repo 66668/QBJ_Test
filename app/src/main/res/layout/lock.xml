@@ -14,7 +14,7 @@
 	    android:layout_marginBottom="10dp" 
 	    android:src="@drawable/logo_120"/>
     
-	<com.thinkernote.ThinkerNote.Other.LockPatternView
+	<com.thinkernote.ThinkerNote.other.LockPatternView
 	    android:id="@+id/lock_patternView"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"

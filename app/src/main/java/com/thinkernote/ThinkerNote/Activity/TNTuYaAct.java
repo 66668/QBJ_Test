@@ -3,11 +3,8 @@ package com.thinkernote.ThinkerNote.Activity;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -30,11 +27,9 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
-import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.General.TNUtilsView;
-import com.thinkernote.ThinkerNote.Other.TuyaView;
+import com.thinkernote.ThinkerNote.other.TuyaView;
 import com.thinkernote.ThinkerNote.Views.CommonDialog;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 

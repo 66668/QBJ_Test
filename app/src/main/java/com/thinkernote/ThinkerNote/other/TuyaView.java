@@ -1,4 +1,4 @@
-package com.thinkernote.ThinkerNote.Other;
+package com.thinkernote.ThinkerNote.other;
 
 import java.io.File;
 import java.io.FileNotFoundException;

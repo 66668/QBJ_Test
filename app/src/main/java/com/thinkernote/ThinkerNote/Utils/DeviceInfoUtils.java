@@ -78,7 +78,6 @@ public class DeviceInfoUtils {
 			PackageInfo packageInfo = pm.getPackageInfo(context.getPackageName(), 0);
 			versionName = packageInfo.versionName;
 		} catch (NameNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -97,7 +96,6 @@ public class DeviceInfoUtils {
 			PackageInfo packageInfo = pm.getPackageInfo(context.getPackageName(), 0);
 			versionCode = packageInfo.versionCode;
 		} catch (NameNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

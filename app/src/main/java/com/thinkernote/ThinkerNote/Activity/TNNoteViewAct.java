@@ -3,7 +3,6 @@ package com.thinkernote.ThinkerNote.Activity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -62,7 +61,7 @@ import com.thinkernote.ThinkerNote.General.TNUtilsDialog;
 import com.thinkernote.ThinkerNote.General.TNUtilsHtml;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
-import com.thinkernote.ThinkerNote.Other.PoPuMenuView;
+import com.thinkernote.ThinkerNote.other.PoPuMenuView;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Views.CommonDialog;
@@ -405,33 +404,6 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
 
     protected void configView() {
         mNote = TNDbUtils.getNoteByNoteLocalId(mNoteLocalId);
-        /**
-         * TODO 测试
-         *
-         *
-         * (1-2)修复版
-         * {noteLocalId=3, title='2018年8月7日  15:39 附件', syncState=1, creatorUserId=2483045, creatorNick='asdf456', catId=32302287,
-         * content='<p><tn-media hash="50B902779AE38EF95F8112CBEE1918E4"></tn-media></p>',
-         * shortContent=' ', contentDigest='11A9B9A3AAED9E3D0C7BC99B8EE1569E', trash=0, source='android', createTime=1533627551, lastUpdate=1533627551,
-         * thumbnail='', thmDrawable=null, lbsLongitude=0, lbsLatitude=0, lbsRadius=0, lbsAddress='null', tags=null, tagStr='', attCounts=1,
-         * atts=[
-         * TNNoteAtt{attLocalId=2, noteLocalId=3, attId=28534881, attName='1533627547924.docx', type=40003, path='null', syncState=1, size=22923, digest='50B902779AE38EF95F8112CBEE1918E4', thumbnail='null', width=0, height=0}],
-         * currentAtt=null, noteId=37877769, revision=0, originalNote=null, richText='null', mapping=null}<<---
-         *
-         * 老版
-         * (2-2)退出再次进入 值：
-         * TNNote{noteLocalId=1, title='2018年7月26日  11:59 图片', syncState=2, creatorUserId=2483045, creatorNick='asdf456', catId=32302287,
-         * content='<p><tn-media hash="4564F31BA492B799BE884563B9D3316E"></tn-media></p><p><tn-media hash="AAB5329272633CAD63A2F53236A87C0C"></tn-media></p>',
-         * shortContent='  ', contentDigest='026180998DF4670605167D7D926D9E05', trash=0, source='android', createTime=1532577592, lastUpdate=1532577592,
-         * thumbnail='/storage/emulated/0/Android/data/com.thinkernote.ThinkerNote/files/Attachment/28/28519/28519271.jpeg', thmDrawable=null, lbsLongitude=0,
-         * lbsLatitude=0, lbsRadius=0, lbsAddress='null', tags=null, tagStr='', attCounts=2,
-         * atts=[
-         * TNNoteAtt{attLocalId=1, noteLocalId=1, attId=28519271,attName='1532577582546.jpg', type=10002, path='/storage/emulated/0/Android/data/com.thinkernote.ThinkerNote/files/Attachment/28/28519/28519271.jpeg',syncState=2, size=138470, digest='4564F31BA492B799BE884563B9D3316E', thumbnail='null', width=432, height=576},
-         * TNNoteAtt{attLocalId=2, noteLocalId=1,attId=28519272, attName='1532577589229.jpg', type=10002, path='/storage/emulated/0/Android/data/com.thinkernote.ThinkerNote/files/Attachment/28/28519/28519272.jpeg',syncState=2, size=157804,digest='AAB5329272633CAD63A2F53236A87C0C', thumbnail='null', width=432, height=576}],
-         * currentAtt=null, noteId=37840200,revision=0, originalNote=null,richText='null', mapping=null}
-         *
-         */
-        MLog.d(TAG, "configView--根据mNoteLocalId获取--mNote:" + mNote.toString());
 
         if (createStatus == 0) {
             download.setNewNote(mNote);
@@ -1464,20 +1436,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
                     "thumbnail", thumbnail,
                     "contentDigest", contentDigest
             );
-            /**
-             * TODO ok
-             * (1-1)
-             * tempObj:{"title":"2018年7月26日  11:59 图片","userId":2483045,"trash":"0","source":"android","catId":32302287,
-             * "content":"<p><tn-media hash=\"4564F31BA492B799BE884563B9D3316E\"><\/tn-media><\/p><p><tn-media hash=\"AAB5329272633CAD63A2F53236A87C0C\"><\/tn-media><\/p>",
-             * "createTime":1532577592,"lastUpdate":1532577592,"syncState":1,"noteId":37840200,"shortContent":"  ","tagStr":"","lbsLongitude":0,
-             * "lbsLatitude":0,"lbsRadius":0,"nickName":"asdf456","thumbnail":"","contentDigest":"026180998DF4670605167D7D926D9E05"}
-             *
-             * (2-1)
-             * tempObj:{"title":"2018年7月26日  11:59 图片","userId":2483045,"trash":0,"source":"android","catId":32302287,
-             * "content":"<p><tn-media hash=\"4564F31BA492B799BE884563B9D3316E\"><\/tn-media><\/p><p><tn-media hash=\"AAB5329272633CAD63A2F53236A87C0C\"><\/tn-media><\/p>",
-             * "createTime":1532577592,"lastUpdate":1532577592,"syncState":1,"noteId":37840200,"shortContent":"  ","tagStr":"","lbsLongitude":0,
-             * "lbsLatitude":0,"lbsRadius":0,"nickName":"asdf456","thumbnail":"","contentDigest":"026180998DF4670605167D7D926D9E05"}
-             */
+
             MLog.e("updateNote接口返回--tempObj:" + tempObj.toString());
             if (note == null)
                 NoteDbHelper.addOrUpdateNote(tempObj);

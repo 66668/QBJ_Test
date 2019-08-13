@@ -174,9 +174,6 @@ public class TNDb extends SQLiteOpenHelper {
         if (sql.startsWith("SELECT")) {
             return select(sql, valus);
         } else if (sql.startsWith("INSERT")) {
-            //TODO 原版插入 有问题
-//            return insert(sql, valus);
-            //TODO 本人修改的插入
             return insertSQL(sql, valus);
         } else {
             execute(sql, valus);

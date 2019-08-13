@@ -817,6 +817,7 @@ public class NoteModule {
     }
 
     /**
+     * TODO
      * 更新编辑的笔记 4
      * 流程介绍：
      * 双层for循环,主流程是 note_ids循环下嵌套 editNotes循环，editNotes下根据编辑状态，处理不同状态，先判断是否需要上传图片，在判断是否需要上传笔记。
@@ -1336,7 +1337,6 @@ public class NoteModule {
                                     int newPageSize = TNConst.MAX_PAGE_SIZE;
                                     String newSort = sort;
                                     newPageNum++;
-                                    //TODO 需要重新验证
                                     getNoteListByFolderId(newTagid, newPageNum, newPageSize, newSort, listener);
                                 }
                             }
@@ -1392,7 +1392,6 @@ public class NoteModule {
                                     int newPageSize = TNConst.MAX_PAGE_SIZE;
                                     String newSort = sort;
                                     newPageNum++;
-                                    //TODO 需要重新验证
                                     getNoteListByTagId(newTagid, newPageNum, newPageSize, newSort, listener);
                                 }
                             }

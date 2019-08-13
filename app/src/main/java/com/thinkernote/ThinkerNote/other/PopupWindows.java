@@ -1,4 +1,4 @@
-package com.thinkernote.ThinkerNote.Other;
+package com.thinkernote.ThinkerNote.other;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;

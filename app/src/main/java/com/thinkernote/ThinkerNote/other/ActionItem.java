@@ -1,4 +1,4 @@
-package com.thinkernote.ThinkerNote.Other;
+package com.thinkernote.ThinkerNote.other;
 
 import android.graphics.drawable.Drawable;
 import android.graphics.Bitmap;

@@ -1,4 +1,4 @@
-package com.thinkernote.ThinkerNote.Other;
+package com.thinkernote.ThinkerNote.other;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -10,20 +10,20 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.BaseAdapter;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 
-public class PullToRefreshListView extends ListView implements OnScrollListener {
-
-	private static final String TAG = "listview";
+public class PullToRefreshExpandableListView extends ExpandableListView implements OnScrollListener {
+	private static final String TAG = "PullToRefreshExpandableListView";
 
 	private final static int RELEASE_To_REFRESH = 0;
 	private final static int PULL_To_REFRESH = 1;
@@ -61,17 +61,16 @@ public class PullToRefreshListView extends ListView implements OnScrollListener 
 	private boolean isBack;
 
 	private OnRefreshListener refreshListener;
+	private OnHeadViewVisibleChangeListener headViewVisibleChangeListener;
 
 	private boolean isRefreshable;
 	
-	private String lastUpdateTime = "尚未同步";
-
-	public PullToRefreshListView(Context context) {
+	public PullToRefreshExpandableListView(Context context) {
 		super(context);
 		init(context);
 	}
 
-	public PullToRefreshListView(Context context, AttributeSet attrs) {
+	public PullToRefreshExpandableListView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		init(context);
 	}
@@ -123,15 +122,18 @@ public class PullToRefreshListView extends ListView implements OnScrollListener 
 		isRefreshable = false;
 	}
 
-	public void onScroll(AbsListView arg0, int firstVisiableItem, int arg2,
-			int arg3) {
-		firstItemIndex = firstVisiableItem;
+	@Override
+	public void onScrollStateChanged(AbsListView view, int scrollState) {
 	}
 
-	public void onScrollStateChanged(AbsListView arg0, int arg1) {
+	@Override
+	public void onScroll(AbsListView view, int firstVisibleItem,
+			int visibleItemCount, int totalItemCount) {
+		this.firstItemIndex = firstVisibleItem;
 	}
 
 	public boolean onTouchEvent(MotionEvent event) {
+
 		if (isRefreshable) {
 			switch (event.getAction()) {
 			case MotionEvent.ACTION_DOWN:
@@ -254,6 +256,7 @@ public class PullToRefreshListView extends ListView implements OnScrollListener 
 				break;
 			}
 		}
+
 		return super.onTouchEvent(event);
 	}
 
@@ -290,6 +293,7 @@ public class PullToRefreshListView extends ListView implements OnScrollListener 
 				tipsTextview.setText(R.string.pulltorefresh_listview_down_sync);
 			}
 //			Log.v(TAG, "当前状态，下拉刷新");
+			onHeadViewVisibleChange(View.VISIBLE);
 			break;
 
 		case REFRESHING:
@@ -314,6 +318,7 @@ public class PullToRefreshListView extends ListView implements OnScrollListener 
 			lastUpdatedTextView.setVisibility(View.VISIBLE);
 
 //			Log.v(TAG, "当前状态，done");
+			onHeadViewVisibleChange(View.INVISIBLE);
 			break;
 		}
 	}
@@ -329,19 +334,39 @@ public class PullToRefreshListView extends ListView implements OnScrollListener 
 
 	public void onRefreshComplete() {
 		state = DONE;
-		lastUpdatedTextView.setText("最近同步:" + lastUpdateTime);
-		changeHeaderViewByState();
-	}
-	
-	public void setLastUpdateTime(long milliseconds){
-		if(milliseconds > 0){
-			lastUpdateTime = TNUtils.formatDateToWeeks(milliseconds/1000L);
+		String time = "";
+		TNSettings settings = TNSettings.getInstance();
+		if(settings.originalSyncTime <= 0){
+			time = "尚未同步";
+		}else{
+			time = TNUtils.formatDateToWeeks(settings.originalSyncTime/1000L);
 		}
+		lastUpdatedTextView.setText("最近同步:" + time);
+		settings.originalSyncTime = System.currentTimeMillis();
+		settings.savePref(false);
+		changeHeaderViewByState();
 	}
 
 	private void onRefresh() {
 		if (refreshListener != null) {
 			refreshListener.onRefresh();
+		}
+	}
+	
+	public interface OnHeadViewVisibleChangeListener{
+		/**
+		 * @param visible View.VISIBLE or View.INVISIBLE
+		 */
+		public void onHeadViewVisibleChange(int visible);
+	}
+	
+	public void setOnHeadViewVisibleChangeListener(OnHeadViewVisibleChangeListener headViewVisibleChangeListener){
+		this.headViewVisibleChangeListener = headViewVisibleChangeListener;
+	}
+	
+	private void onHeadViewVisibleChange(int visible){
+		if(headViewVisibleChangeListener != null){
+			headViewVisibleChangeListener.onHeadViewVisibleChange(visible);
 		}
 	}
 
@@ -365,11 +390,17 @@ public class PullToRefreshListView extends ListView implements OnScrollListener 
 	        }
 	        child.measure(childWidthSpec, childHeightSpec);
 	}
-
-	public void setAdapter(BaseAdapter adapter) {
-		lastUpdatedTextView.setText("最近同步:" + lastUpdateTime);
+	
+	public void setAdapter(ExpandableListAdapter adapter){
+		String time = "";
+		if(TNSettings.getInstance().originalSyncTime <= 0){
+			time = "尚未同步";
+		}else{
+			time = TNUtils.formatDateToWeeks(TNSettings.getInstance().originalSyncTime/1000L);
+		}
+		
+		lastUpdatedTextView.setText("最近同步:" + time);
 		super.setAdapter(adapter);
 	}
-	
 
 }

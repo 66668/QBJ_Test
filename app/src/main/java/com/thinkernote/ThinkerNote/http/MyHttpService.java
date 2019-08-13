@@ -451,7 +451,6 @@ public interface MyHttpService {
 
 
     /**
-     * TODO  删除笔记
      *
      * @return
      */
@@ -463,7 +462,6 @@ public interface MyHttpService {
             , @Field("session_token") String session_token);
 
     /**
-     * TODO 删除笔记
      *
      * @return
      */
@@ -484,7 +482,6 @@ public interface MyHttpService {
             , @Field("session_token") String session_token);
 
     /**
-     * TODO 删除回收站笔记
      *
      * @return
      */
@@ -706,7 +703,6 @@ public interface MyHttpService {
             , @Field("session_token") String session_token);
 
     /**
-     * TODO 删除文件夹
      *
      * @return
      */
@@ -716,7 +712,6 @@ public interface MyHttpService {
             , @Field("session_token") String session_token);
 
     /**
-     * TODO 删除文件夹
      * <p>
      * deleteFodler
      *

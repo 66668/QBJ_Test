@@ -5,7 +5,7 @@
     android:background="@drawable/page_bg"
     android:orientation="vertical" >
     
-    <com.thinkernote.ThinkerNote.Other.PullToRefreshListView 
+    <com.thinkernote.ThinkerNote.other.PullToRefreshListView
         android:id="@+id/pulltorefreshlistview_lv"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

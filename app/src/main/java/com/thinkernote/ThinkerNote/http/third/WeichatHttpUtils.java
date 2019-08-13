@@ -89,7 +89,6 @@ public class WeichatHttpUtils {
     }
 
     /**
-     * 02 TODO
      * <p>
      * 微信登陆的baseURL
      *

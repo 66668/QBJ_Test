@@ -93,7 +93,6 @@ public class DateWidgetDayCell extends View {
     // 閲嶈浇缁樺埗鏂规硶
     @Override
     protected void onDraw(Canvas canvas) {
-        // TODO Auto-generated method stub
         super.onDraw(canvas);
 
         rect.set(0, 0, this.getWidth(), this.getHeight());

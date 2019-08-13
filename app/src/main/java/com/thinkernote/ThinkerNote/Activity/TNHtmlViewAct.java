@@ -12,7 +12,6 @@ import com.thinkernote.ThinkerNote.base.TNActBase;
 
 /**
  *sjy 0625
- * TODO 未使用
  */
 public class TNHtmlViewAct extends TNActBase
 	implements OnClickListener{

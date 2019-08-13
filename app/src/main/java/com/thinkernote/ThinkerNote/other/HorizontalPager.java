@@ -19,7 +19,7 @@
  * limitations under the License.
  */
 //package com.github.ysamlan.horizontalpager;
-package com.thinkernote.ThinkerNote.Other;
+package com.thinkernote.ThinkerNote.other;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -51,7 +51,7 @@ import com.thinkernote.ThinkerNote.Utils.MLog;
  * pager animation durations on scrolling to properly handle large screens without excessively
  * long animations.
  *
- * Other modifications:
+ * other modifications:
  * (aveyD) Handle orientation changes properly and fully snap to the right position.
  *
  * @author Marc Reichelt, <a href="http://www.marcreichelt.de/">http://www.marcreichelt.de/</a>
@@ -118,7 +118,6 @@ public final class HorizontalPager extends ViewGroup {
 	 * @param context The Context the view is running in, through which it can
 	 *		access the current theme, resources, etc.
 	 * @param attrs The attributes of the XML tag that is inflating the view.
-	 * @see #View(Context, AttributeSet, int)
 	 */
 	public HorizontalPager(final Context context, final AttributeSet attrs) {
 		super(context, attrs);

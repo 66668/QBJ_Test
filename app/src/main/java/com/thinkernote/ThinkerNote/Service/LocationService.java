@@ -203,7 +203,6 @@ public class LocationService {
 
         @Override
         public void onReceiveLocation(BDLocation location) {
-            // TODO Auto-generated method stub
             if (null != location && location.getLocType() != BDLocation.TypeServerError) {
                 StringBuffer sb = new StringBuffer(256);
                 sb.append("time : ");

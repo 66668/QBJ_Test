@@ -12,7 +12,7 @@
         android:contentDescription="@string/contentDescription"
         android:src="@drawable/pulllist_headbg" />
 
-    <com.thinkernote.ThinkerNote.Other.PullListView
+    <com.thinkernote.ThinkerNote.other.PullListView
         android:id="@+id/test_refresh_lv"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
