@@ -19,7 +19,7 @@ import com.thinkernote.ThinkerNote.mvp.m.TagModule;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
 import com.thinkernote.ThinkerNote.bean.main.AllNotesIdsBean;
 import com.thinkernote.ThinkerNote.bean.main.NoteListBean;
-import com.thinkernote.ThinkerNote.http.MyRxManager;
+import com.thinkernote.ThinkerNote.mvp.http.MyRxManager;
 
 import java.util.List;
 import java.util.Vector;

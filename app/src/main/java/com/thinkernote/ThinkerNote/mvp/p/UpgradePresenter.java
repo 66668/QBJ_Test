@@ -5,7 +5,7 @@ import android.content.Context;
 import com.thinkernote.ThinkerNote.mvp.m.UpgradeModule;
 import com.thinkernote.ThinkerNote.mvp.listener.m.IUpgradeModuleListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnUpgradeListener;
-import com.thinkernote.ThinkerNote.http.fileprogress.FileProgressListener;
+import com.thinkernote.ThinkerNote.mvp.http.fileprogress.FileProgressListener;
 
 import java.io.File;
 

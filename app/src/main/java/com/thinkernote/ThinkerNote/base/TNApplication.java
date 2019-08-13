@@ -1,8 +1,6 @@
 package com.thinkernote.ThinkerNote.base;
 
 import android.app.Application;
-import android.os.AsyncTask;
-import android.util.Log;
 
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
@@ -14,8 +12,8 @@ import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Service.LocationService;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote.http.HttpUtils;
-import com.thinkernote.ThinkerNote.http.third.WeichatHttpUtils;
+import com.thinkernote.ThinkerNote.mvp.http.HttpUtils;
+import com.thinkernote.ThinkerNote.mvp.http.third.WeichatHttpUtils;
 
 /**
  * sjy 0607

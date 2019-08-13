@@ -1,4 +1,4 @@
-package com.thinkernote.ThinkerNote.http;
+package com.thinkernote.ThinkerNote.mvp.http;
 
 public class MyException extends Exception {
     private static final long serialVersionUID = 1L;

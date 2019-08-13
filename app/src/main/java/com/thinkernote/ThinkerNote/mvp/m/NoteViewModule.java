@@ -7,7 +7,7 @@ import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnNoteViewListener;
 import com.thinkernote.ThinkerNote.bean.CommonBean3;
 import com.thinkernote.ThinkerNote.bean.main.GetNoteByNoteIdBean;
-import com.thinkernote.ThinkerNote.http.MyHttpService;
+import com.thinkernote.ThinkerNote.mvp.http.MyHttpService;
 
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;

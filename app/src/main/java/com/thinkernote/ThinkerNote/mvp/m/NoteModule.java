@@ -27,10 +27,10 @@ import com.thinkernote.ThinkerNote.bean.main.GetNoteByNoteIdBean;
 import com.thinkernote.ThinkerNote.bean.main.NewNoteBean;
 import com.thinkernote.ThinkerNote.bean.main.NoteListBean;
 import com.thinkernote.ThinkerNote.bean.main.OldNotePicBean;
-import com.thinkernote.ThinkerNote.http.MyHttpService;
-import com.thinkernote.ThinkerNote.http.MyRxManager;
-import com.thinkernote.ThinkerNote.http.RequestBodyUtil;
-import com.thinkernote.ThinkerNote.http.URLUtils;
+import com.thinkernote.ThinkerNote.mvp.http.MyHttpService;
+import com.thinkernote.ThinkerNote.mvp.http.MyRxManager;
+import com.thinkernote.ThinkerNote.mvp.http.RequestBodyUtil;
+import com.thinkernote.ThinkerNote.mvp.http.URLUtils;
 
 import org.json.JSONObject;
 

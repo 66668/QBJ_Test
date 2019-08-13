@@ -37,8 +37,8 @@ import com.thinkernote.ThinkerNote.mvp.p.UpgradePresenter;
 import com.thinkernote.ThinkerNote.mvp.p.SyncPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.main.MainUpgradeBean;
-import com.thinkernote.ThinkerNote.http.MyRxManager;
-import com.thinkernote.ThinkerNote.http.fileprogress.FileProgressListener;
+import com.thinkernote.ThinkerNote.mvp.http.MyRxManager;
+import com.thinkernote.ThinkerNote.mvp.http.fileprogress.FileProgressListener;
 
 import java.io.File;
 

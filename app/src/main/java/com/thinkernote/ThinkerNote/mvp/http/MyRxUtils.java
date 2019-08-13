@@ -1,4 +1,4 @@
-package com.thinkernote.ThinkerNote.http;
+package com.thinkernote.ThinkerNote.mvp.http;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;

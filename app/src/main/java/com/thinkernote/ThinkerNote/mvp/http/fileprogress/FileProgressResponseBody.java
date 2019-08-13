@@ -1,11 +1,10 @@
-package com.thinkernote.ThinkerNote.http.fileprogress;
+package com.thinkernote.ThinkerNote.mvp.http.fileprogress;
 
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote.http.fileprogress.FileProgressListener;
 
 import java.io.IOException;
 

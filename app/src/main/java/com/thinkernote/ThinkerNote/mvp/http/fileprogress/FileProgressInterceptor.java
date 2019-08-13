@@ -1,4 +1,4 @@
-package com.thinkernote.ThinkerNote.http.fileprogress;
+package com.thinkernote.ThinkerNote.mvp.http.fileprogress;
 
 import com.thinkernote.ThinkerNote.Utils.MLog;
 

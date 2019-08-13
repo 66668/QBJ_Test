@@ -14,8 +14,8 @@ import com.thinkernote.ThinkerNote.mvp.listener.v.OnTagListListener;
 import com.thinkernote.ThinkerNote.bean.CommonBean;
 import com.thinkernote.ThinkerNote.bean.main.TagItemBean;
 import com.thinkernote.ThinkerNote.bean.main.TagListBean;
-import com.thinkernote.ThinkerNote.http.MyHttpService;
-import com.thinkernote.ThinkerNote.http.MyRxManager;
+import com.thinkernote.ThinkerNote.mvp.http.MyHttpService;
+import com.thinkernote.ThinkerNote.mvp.http.MyRxManager;
 
 import org.json.JSONObject;
 

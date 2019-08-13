@@ -1,9 +1,5 @@
-package com.thinkernote.ThinkerNote.http;
+package com.thinkernote.ThinkerNote.mvp.http;
 
-import com.thinkernote.ThinkerNote.Utils.MLog;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Vector;
 
 import rx.Subscription;

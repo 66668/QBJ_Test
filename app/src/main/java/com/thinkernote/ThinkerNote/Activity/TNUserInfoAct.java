@@ -40,7 +40,7 @@ import com.thinkernote.ThinkerNote.mvp.p.UpgradePresenter;
 import com.thinkernote.ThinkerNote.mvp.p.UserInfoPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.main.MainUpgradeBean;
-import com.thinkernote.ThinkerNote.http.fileprogress.FileProgressListener;
+import com.thinkernote.ThinkerNote.mvp.http.fileprogress.FileProgressListener;
 
 import java.io.File;
 import java.util.LinkedList;

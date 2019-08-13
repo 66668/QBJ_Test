@@ -1,4 +1,4 @@
-package com.thinkernote.ThinkerNote.http.rx;
+package com.thinkernote.ThinkerNote.mvp.http.rx;
 
 import java.util.HashMap;
 

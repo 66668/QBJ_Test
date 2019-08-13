@@ -44,7 +44,7 @@ import com.thinkernote.ThinkerNote.mvp.p.NoteListPresenter;
 import com.thinkernote.ThinkerNote.mvp.p.SyncPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.main.NoteListBean;
-import com.thinkernote.ThinkerNote.http.MyRxManager;
+import com.thinkernote.ThinkerNote.mvp.http.MyRxManager;
 
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;

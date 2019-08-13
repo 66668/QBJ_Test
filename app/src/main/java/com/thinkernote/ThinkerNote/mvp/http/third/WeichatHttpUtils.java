@@ -1,4 +1,4 @@
-package com.thinkernote.ThinkerNote.http.third;
+package com.thinkernote.ThinkerNote.mvp.http.third;
 
 import android.content.Context;
 import android.util.Log;
@@ -10,10 +10,10 @@ import com.google.gson.GsonBuilder;
 import com.thinkernote.ThinkerNote.Utils.CheckNetworkUtils;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.base.Constants;
-import com.thinkernote.ThinkerNote.http.HttpHead;
-import com.thinkernote.ThinkerNote.http.NullOnEmptyConverterFactory;
-import com.thinkernote.ThinkerNote.http.ParamNames;
-import com.thinkernote.ThinkerNote.http.URLUtils;
+import com.thinkernote.ThinkerNote.mvp.http.HttpHead;
+import com.thinkernote.ThinkerNote.mvp.http.NullOnEmptyConverterFactory;
+import com.thinkernote.ThinkerNote.mvp.http.ParamNames;
+import com.thinkernote.ThinkerNote.mvp.http.URLUtils;
 
 
 import java.io.File;

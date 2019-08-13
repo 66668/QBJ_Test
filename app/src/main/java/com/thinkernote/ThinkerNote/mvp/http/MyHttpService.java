@@ -1,4 +1,4 @@
-package com.thinkernote.ThinkerNote.http;
+package com.thinkernote.ThinkerNote.mvp.http;
 
 
 import com.thinkernote.ThinkerNote.Utils.MLog;
@@ -21,7 +21,7 @@ import com.thinkernote.ThinkerNote.bean.main.OldNotePicBean;
 import com.thinkernote.ThinkerNote.bean.main.TagListBean;
 import com.thinkernote.ThinkerNote.bean.main.WxpayBean;
 import com.thinkernote.ThinkerNote.bean.settings.FeedBackBean;
-import com.thinkernote.ThinkerNote.http.fileprogress.FileProgressListener;
+import com.thinkernote.ThinkerNote.mvp.http.fileprogress.FileProgressListener;
 
 import java.util.List;
 

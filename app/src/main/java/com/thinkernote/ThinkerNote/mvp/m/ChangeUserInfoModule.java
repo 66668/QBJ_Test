@@ -8,7 +8,7 @@ import com.thinkernote.ThinkerNote.mvp.listener.v.OnChangeUserInfoListener;
 import com.thinkernote.ThinkerNote.bean.CommonBean;
 import com.thinkernote.ThinkerNote.bean.CommonBean2;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
-import com.thinkernote.ThinkerNote.http.MyHttpService;
+import com.thinkernote.ThinkerNote.mvp.http.MyHttpService;
 
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;

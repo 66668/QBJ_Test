@@ -1,4 +1,4 @@
-package com.thinkernote.ThinkerNote.http;
+package com.thinkernote.ThinkerNote.mvp.http;
 
 import android.content.Context;
 import android.util.Log;
@@ -11,8 +11,8 @@ import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.Utils.CheckNetworkUtils;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.base.Constants;
-import com.thinkernote.ThinkerNote.http.fileprogress.FileProgressInterceptor;
-import com.thinkernote.ThinkerNote.http.fileprogress.FileProgressListener;
+import com.thinkernote.ThinkerNote.mvp.http.fileprogress.FileProgressInterceptor;
+import com.thinkernote.ThinkerNote.mvp.http.fileprogress.FileProgressListener;
 
 import java.io.File;
 import java.io.IOException;

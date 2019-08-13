@@ -31,7 +31,7 @@ import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnSyncListener;
 import com.thinkernote.ThinkerNote.mvp.p.SyncPresenter;
 import com.thinkernote.ThinkerNote.base.TNChildViewBase;
-import com.thinkernote.ThinkerNote.http.MyRxManager;
+import com.thinkernote.ThinkerNote.mvp.http.MyRxManager;
 
 import java.util.Vector;
 

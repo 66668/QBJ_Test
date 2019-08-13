@@ -16,9 +16,9 @@ import com.thinkernote.ThinkerNote.Action.TNAction;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Utils.SPUtil;
 import com.thinkernote.ThinkerNote.base.TNActBase;
-import com.thinkernote.ThinkerNote.http.rx.RxBus;
-import com.thinkernote.ThinkerNote.http.rx.RxBusBaseMessage;
-import com.thinkernote.ThinkerNote.http.rx.RxCodeConstants;
+import com.thinkernote.ThinkerNote.mvp.http.rx.RxBus;
+import com.thinkernote.ThinkerNote.mvp.http.rx.RxBusBaseMessage;
+import com.thinkernote.ThinkerNote.mvp.http.rx.RxCodeConstants;
 
 import org.json.JSONObject;
 

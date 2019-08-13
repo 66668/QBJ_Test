@@ -22,8 +22,8 @@ import com.thinkernote.ThinkerNote.bean.CommonBean2;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
 import com.thinkernote.ThinkerNote.bean.main.AllFolderBean;
 import com.thinkernote.ThinkerNote.bean.main.AllFolderItemBean;
-import com.thinkernote.ThinkerNote.http.MyHttpService;
-import com.thinkernote.ThinkerNote.http.MyRxManager;
+import com.thinkernote.ThinkerNote.mvp.http.MyHttpService;
+import com.thinkernote.ThinkerNote.mvp.http.MyRxManager;
 
 import org.json.JSONObject;
 
