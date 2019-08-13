@@ -273,7 +273,6 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
 
             case R.id.maincats_menu_clearrecycler: {
                 clearrecyclerDialog();
-
                 break;
             }
             //=======================menu_recycler=======================
@@ -646,7 +645,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
     // ---------------------------------------弹窗----------------------------------------
 
     /**
-     * clearrecycler 弹窗
+     * 清空
      */
     private void clearrecyclerDialog() {
         dialog = new CommonDialog(this, R.string.alert_NoteList_ClearRecycle,
@@ -755,7 +754,6 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
                                     handler.sendEmptyMessage(DIALOG_DELETE);
                                 }
                             });
-
                         }
                     }
 

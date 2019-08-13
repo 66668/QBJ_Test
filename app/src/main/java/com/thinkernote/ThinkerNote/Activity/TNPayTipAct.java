@@ -173,11 +173,12 @@ public class TNPayTipAct extends TNActBase implements OnClickListener, android.w
             mType = "alipay";
             mCheckZ.setChecked(true);
             mCheckW.setChecked(false);
-        }
-        if (v == mCheckW && isChecked) {
+        } else if (v == mCheckW && isChecked) {
             mType = "weixin";
             mCheckW.setChecked(true);
             mCheckZ.setChecked(false);
+        } else {
+            mType = "";
         }
     }
 
@@ -188,8 +189,13 @@ public class TNPayTipAct extends TNActBase implements OnClickListener, android.w
 
     private void preparePay() {
         mAmount = mEditText.getText().toString().trim();
-        if ("alipay".equals(mType))
+
+        if ("alipay".equals(mType)) {
             payTip(mAmount, mType);
+        } else {
+            Toast.makeText(this, "请选择支付方式", Toast.LENGTH_SHORT).show();
+        }
+
 
     }
 

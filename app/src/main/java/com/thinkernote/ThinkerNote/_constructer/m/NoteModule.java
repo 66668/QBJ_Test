@@ -662,27 +662,23 @@ public class NoteModule {
                                     @Override
                                     public void call(CommonBean commonBean) {//先调用deleteNote接口
                                         //数据处理
-                                        if (commonBean.getCode() == 0) {
-                                            MLog.d("clearNotes--deleteNoteSQL--noteId" + tnNote.noteId);
-                                            deleteNoteSQL(tnNote.noteId);
-                                        }
+                                        MLog.d("clearNotes--deleteNoteSQL--noteId" + commonBean.toString());
+                                        deleteNoteSQL(tnNote.noteId);
                                     }
                                 })
                                 .concatMap(new Func1<CommonBean, Observable<Integer>>() {//转换 结果类型，保持 不同结果类型转后(CommonBean,int)，有相同的结果类型（int）
                                     @Override
                                     public Observable<Integer> call(CommonBean commonBean) {
+                                        //deleteNote 调用成功后，调用 deleteTrashNote2 接口
                                         //再调用第二个接口
-                                        Observable<Integer> clearTrashObservable = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                                        return MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                                                 .deleteTrashNote2(tnNote.noteId, settings.token)
                                                 .subscribeOn(Schedulers.io())
                                                 .doOnNext(new Action1<CommonBean>() {
                                                     @Override
-                                                    public void call(CommonBean commonBean) {
-                                                        //数据处理
-                                                        if (commonBean.getCode() == 0) {
-                                                            MLog.d("clearNotes--deleteTrashNoteSQL--noteLocalId" + tnNote.noteLocalId);
-                                                            deleteTrashNoteSQL(tnNote.noteLocalId);
-                                                        }
+                                                    public void call(CommonBean bean) {
+                                                        MLog.d("clearNotes--deleteTrashNoteSQL--noteLocalId" + bean.toString());
+                                                        deleteTrashNoteSQL(tnNote.noteLocalId);
                                                     }
                                                 }).concatMap(new Func1<CommonBean, Observable<? extends Integer>>() {
                                                     @Override
@@ -691,22 +687,18 @@ public class NoteModule {
                                                         return Observable.just(deleteTrashNoteResult);
                                                     }
                                                 });
-                                        if (commonBean.getCode() == 0) {
-                                            //deleteNote 调用成功后，调用 deleteTrashNote2 接口
-                                            return clearTrashObservable;
-                                        } else {
-                                            int deleteNoteResult = commonBean.getCode();
-                                            return Observable.just(deleteNoteResult);
-                                        }
+
                                     }
                                 }).subscribeOn(Schedulers.io());
 
                         if (tnNote.noteId == -1) {
                             // 不调用接口，直接数据库处理
+                            MLog.d("彻底删除--直接删除数据库");
                             int clearSqlResut = deleteLocalNoteSQL(tnNote.noteLocalId);
                             return Observable.just(clearSqlResut);
                         } else {
                             //需要调用接口（两个接口串行执行）
+                            MLog.d("彻底删除--调用接口");
                             return clearObservable;
                         }
                     }
@@ -1232,6 +1224,7 @@ public class NoteModule {
      * @param listener
      */
     public void upateTrashNotes(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> allNotes, final INoteModuleListener listener) {
+        MLog.d("upateTrashNotes--回收站笔记--" + note_ids.size());
         Subscription subscription = Observable.from(note_ids)
                 .concatMap(new Func1<AllNotesIdsBean.NoteIdItemBean, Observable<Integer>>() {
                     @Override
@@ -1833,8 +1826,9 @@ public class NoteModule {
         TNDb.beginTransaction();
         try {
             TNDb.getInstance().execSQL(TNSQLString.NOTE_SET_TRASH, 2, 1, System.currentTimeMillis() / 1000, note.noteLocalId);
-            TNDb.getInstance().execSQL(TNSQLString.CAT_UPDATE_LASTUPDATETIME, System.currentTimeMillis() / 1000, note.catId);
-
+            if (note != null) {
+                TNDb.getInstance().execSQL(TNSQLString.CAT_UPDATE_LASTUPDATETIME, System.currentTimeMillis() / 1000, note.catId);
+            }
             TNDb.setTransactionSuccessful();
         } catch (Exception e) {
             MLog.e("deleteNoteSQL--error=" + e.toString());
@@ -1856,7 +1850,9 @@ public class NoteModule {
             TNDb.getInstance().execSQL(TNSQLString.NOTE_SET_TRASH, 2, 6, System.currentTimeMillis() / 1000, noteLocalId);
             //
             TNNote note = TNDbUtils.getNoteByNoteLocalId(noteLocalId);
-            TNDb.getInstance().execSQL(TNSQLString.CAT_UPDATE_LASTUPDATETIME, System.currentTimeMillis() / 1000, note.catId);
+            if (note != null) {
+                TNDb.getInstance().execSQL(TNSQLString.CAT_UPDATE_LASTUPDATETIME, System.currentTimeMillis() / 1000, note.catId);
+            }
             TNDb.setTransactionSuccessful();
         } catch (Exception e) {
             MLog.e("deleteLocalNoteSQL" + e.toString());
@@ -1874,20 +1870,23 @@ public class NoteModule {
      * @param nonteLocalID
      */
     private void deleteTrashNoteSQL(final long nonteLocalID) {
-        TNDb.beginTransaction();
-        try {
-            TNNote note = TNDbUtils.getNoteByNoteId(nonteLocalID);
-            //
-            TNDb.getInstance().execSQL(TNSQLString.NOTE_DELETE_BY_NOTEID, nonteLocalID);
+        TNNote note = TNDbUtils.getNoteByNoteId(nonteLocalID);
+        if (note != null) {
+            TNDb.beginTransaction();
+            try {
 
-            TNDb.getInstance().execSQL(TNSQLString.CAT_UPDATE_LASTUPDATETIME, System.currentTimeMillis() / 1000, note.catId);
+                //
+                TNDb.getInstance().execSQL(TNSQLString.NOTE_DELETE_BY_NOTEID, nonteLocalID);
 
-            TNDb.setTransactionSuccessful();
-        } catch (Exception e) {
-            MLog.e("deleteTrashNoteSQL" + e.toString());
-            TNDb.endTransaction();
-        } finally {
-            TNDb.endTransaction();
+                TNDb.getInstance().execSQL(TNSQLString.CAT_UPDATE_LASTUPDATETIME, System.currentTimeMillis() / 1000, note.catId);
+
+                TNDb.setTransactionSuccessful();
+            } catch (Exception e) {
+                MLog.e("deleteTrashNoteSQL" + e.toString());
+                TNDb.endTransaction();
+            } finally {
+                TNDb.endTransaction();
+            }
         }
 
     }
