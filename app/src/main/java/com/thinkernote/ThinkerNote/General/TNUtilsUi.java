@@ -364,7 +364,6 @@ public class TNUtilsUi {
     }
 
     public static void showNotification(Activity act, int msgId, boolean isCancel) {
-        MLog.d(TAG, "showNotification:" + act.getString(msgId));
 
         try {
 
