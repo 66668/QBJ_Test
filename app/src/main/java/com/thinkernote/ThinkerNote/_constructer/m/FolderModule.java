@@ -371,6 +371,36 @@ public class FolderModule {
                                 }).subscribeOn(Schedulers.io());
 
                     }
+                }).concatMap(new Func1<AllFolderBean, Observable<AllFolderItemBean>>() {//（5）item下拿到新的list，将list再转item处理
+                    @Override
+                    public Observable<AllFolderItemBean> call(AllFolderBean allFolderBean) {
+                        if (allFolderBean.getFolders() != null && allFolderBean.getFolders().size() > 0) {
+                            return Observable.from(allFolderBean.getFolders());
+                        } else {
+                            //下一个循环
+                            return Observable.empty();
+                        }
+                    }
+                })
+                .concatMap(new Func1<AllFolderItemBean, Observable<AllFolderBean>>() {//处理每个item下的文件夹
+                    @Override
+                    public Observable<AllFolderBean> call(final AllFolderItemBean itemBean) {
+
+                        return MyHttpService.Builder.getHttpServer()
+                                .getFolderByFolderID(itemBean.getId(), settings.token)//接口方法
+                                .subscribeOn(Schedulers.io())
+                                .doOnNext(new Action1<AllFolderBean>() {
+                                    @Override
+                                    public void call(AllFolderBean bean) {
+                                        if (bean.getCode() == 0) {
+                                            //第5级处理：更新文件夹数据库
+                                            MLog.d(TAG, "6级文件夹--" + itemBean.getName());
+                                            insertCatsSQL(bean, itemBean.getId());
+                                        }
+                                    }
+                                }).subscribeOn(Schedulers.io());
+
+                    }
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

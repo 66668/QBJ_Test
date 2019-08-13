@@ -744,7 +744,7 @@ public interface MyHttpService {
      * @return
      */
     @FormUrlEncoded
-    @PUT(URLUtils.Cat.FOLDER_MOVE)
+    @POST(URLUtils.Cat.FOLDER_MOVE)
     Observable<CommonBean> folderMove(
             @Field("folder_id") long note_id
             , @Field("parent_id") long parent_id
