@@ -25,7 +25,7 @@ import java.util.Vector;
  * 说明：使用老版本代码，打开图片文件没有问题，但是无法打开其他文件
  */
 public class NoteViewDownloadPresenter implements OnNoteViewDownloadListener {
-    private static final String TAG = "AAA";
+    private static final String TAG = "NoteView";
     private static final long ATT_MAX_DOWNLOAD_SIZE = 50 * 1024;
 
     private static NoteViewDownloadPresenter singleton = null;
@@ -92,7 +92,7 @@ public class NoteViewDownloadPresenter implements OnNoteViewDownloadListener {
         //att下载结束，更新mNote
         readyDownloadAtts.removeAll(tmpList);
         mNote = TNDbUtils.getNoteByNoteLocalId(mNote.noteLocalId);
-        MLog.e(TAG, "更新mNote：" + mNote.toString());
+        MLog.d(TAG, "更新mNote：" + mNote.toString());
         mNote.syncState = mNote.syncState > 2 ? mNote.syncState : 2;
 
         //数据库操作

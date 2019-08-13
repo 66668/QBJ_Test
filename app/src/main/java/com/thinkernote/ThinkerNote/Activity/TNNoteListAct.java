@@ -737,6 +737,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
                 new CommonDialog.DialogCallBack() {
                     @Override
                     public void sureBack() {
+
                         if (!TNActionUtils.isSynchronizing()) {
                             TNUtilsUi.showNotification(TNNoteListAct.this, R.string.alert_NoteView_Synchronizing, false);
                             //具体执行
@@ -860,9 +861,6 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
                 }
                 configView();
                 if (TNUtils.isNetWork()) {
-                    if (TNActionUtils.isSynchronizing()) {
-                        return;
-                    }
                     TNUtilsUi.showNotification(this, R.string.alert_NoteView_Synchronizing, false);
                     syncEdit();
                 }

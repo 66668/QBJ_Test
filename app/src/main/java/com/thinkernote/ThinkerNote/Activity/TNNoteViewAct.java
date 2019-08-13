@@ -3,6 +3,7 @@ package com.thinkernote.ThinkerNote.Activity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -430,7 +431,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
          * currentAtt=null, noteId=37840200,revision=0, originalNote=null,richText='null', mapping=null}
          *
          */
-        MLog.e("AAA", "configView--根据mNoteLocalId获取--mNote:" + mNote.toString());
+        MLog.d(TAG, "configView--根据mNoteLocalId获取--mNote:" + mNote.toString());
 
         if (createStatus == 0) {
             download.setNewNote(mNote);
@@ -1205,7 +1206,16 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
             TNUtilsUi.alert(this, R.string.alert_NoSDCard);
             return;
         }
-        dialog = new CommonDialog(this, R.string.alert_NoteView_RealDeleteNoteMsg,
+        if (!TNUtilsAtt.hasExternalStorage()) {
+            TNUtilsUi.alert(this, R.string.alert_NoSDCard);
+            return;
+        }
+
+        String hint = String.format(
+                getString(R.string.alert_NoteView_SaveAttHint), "/ThinkerNote/"
+                        + mCurAtt.attName);
+
+        dialog = new CommonDialog(this, hint,
                 "保存",
                 "取消",
                 new CommonDialog.DialogCallBack() {

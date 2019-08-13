@@ -1209,7 +1209,6 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                 try {
                     if (note.noteLocalId < 0) {
                         // insert
-                        MLog.e("saveNote:", "insert", "note.noteLocalId < 0", "具体内容：" + note.toString());
                         note.createTime = (int) (System.currentTimeMillis() / 1000);
                         long id = TNDb.getInstance().insertSQL(TNSQLString.NOTE_INSERT//19个参数
                                 , new Object[]{note.title,

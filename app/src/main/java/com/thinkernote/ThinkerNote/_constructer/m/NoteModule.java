@@ -317,6 +317,7 @@ public class NoteModule {
                 .concatMap(new Func1<TNNote, Observable<NewNoteBean>>() {//
                     @Override
                     public Observable<NewNoteBean> call(final TNNote note) {
+                        MLog.e(TAG, "updateLocalNewNotes--noteId=" + note.noteId);
                         return MyHttpService.Builder.getHttpServer()//(接口2，上传note)
                                 .addNewNote(note.title, note.content, note.tagStr, note.catId, note.createTime, note.lastUpdate, note.lbsLongitude, note.lbsLatitude, note.lbsAddress, note.lbsRadius, settings.token)//接口方法
                                 .subscribeOn(Schedulers.io())//固定样式
@@ -648,7 +649,7 @@ public class NoteModule {
      * @param listener
      */
     public void clearNotes(Vector<TNNote> notes, final INoteModuleListener listener, boolean isSync) {
-        MLog.d("clearNotes" + notes.size());
+        MLog.d("clearNotes--size=" + notes.size());
         Subscription subscription = Observable.from(notes)
                 .concatMap(new Func1<TNNote, Observable<Integer>>() {//list转化item
                     @Override
@@ -662,6 +663,7 @@ public class NoteModule {
                                     public void call(CommonBean commonBean) {//先调用deleteNote接口
                                         //数据处理
                                         if (commonBean.getCode() == 0) {
+                                            MLog.d("clearNotes--deleteNoteSQL--noteId" + tnNote.noteId);
                                             deleteNoteSQL(tnNote.noteId);
                                         }
                                     }
@@ -678,6 +680,7 @@ public class NoteModule {
                                                     public void call(CommonBean commonBean) {
                                                         //数据处理
                                                         if (commonBean.getCode() == 0) {
+                                                            MLog.d("clearNotes--deleteTrashNoteSQL--noteLocalId" + tnNote.noteLocalId);
                                                             deleteTrashNoteSQL(tnNote.noteLocalId);
                                                         }
                                                     }
