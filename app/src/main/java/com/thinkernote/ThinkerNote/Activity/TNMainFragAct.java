@@ -28,10 +28,10 @@ import com.thinkernote.ThinkerNote.other.HorizontalPager.OnScreenSwitchListener;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Views.CommonDialog;
-import com.thinkernote.ThinkerNote._constructer.listener.v.OnPagerListener;
-import com.thinkernote.ThinkerNote._constructer.listener.v.OnSyncListener;
-import com.thinkernote.ThinkerNote._constructer.p.MainFragPresenter;
-import com.thinkernote.ThinkerNote._constructer.p.SyncFolderPresenter;
+import com.thinkernote.ThinkerNote.mvp.listener.v.OnPagerListener;
+import com.thinkernote.ThinkerNote.mvp.listener.v.OnSyncListener;
+import com.thinkernote.ThinkerNote.mvp.p.MainFragPresenter;
+import com.thinkernote.ThinkerNote.mvp.p.SyncFolderPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.base.TNChildViewBase;
 

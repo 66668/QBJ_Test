@@ -10,8 +10,8 @@ import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote._constructer.p.ChangeUserInfoPresenter;
-import com.thinkernote.ThinkerNote._constructer.listener.v.OnChangeUserInfoListener;
+import com.thinkernote.ThinkerNote.mvp.p.ChangeUserInfoPresenter;
+import com.thinkernote.ThinkerNote.mvp.listener.v.OnChangeUserInfoListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
 

@@ -65,9 +65,9 @@ import com.thinkernote.ThinkerNote.other.PoPuMenuView;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Views.CommonDialog;
-import com.thinkernote.ThinkerNote._constructer.listener.v.OnNoteViewListener;
-import com.thinkernote.ThinkerNote._constructer.p.NoteViewDownloadPresenter;
-import com.thinkernote.ThinkerNote._constructer.p.NoteViewPresenter;
+import com.thinkernote.ThinkerNote.mvp.listener.v.OnNoteViewListener;
+import com.thinkernote.ThinkerNote.mvp.p.NoteViewDownloadPresenter;
+import com.thinkernote.ThinkerNote.mvp.p.NoteViewPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.main.GetNoteByNoteIdBean;
 

@@ -32,8 +32,8 @@ import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.KeyBoardManager;
 import com.thinkernote.ThinkerNote.Utils.UiUtils;
 import com.thinkernote.ThinkerNote.Views.MyGridView;
-import com.thinkernote.ThinkerNote._constructer.p.ReportPresenter;
-import com.thinkernote.ThinkerNote._constructer.listener.v.OnReportListener;
+import com.thinkernote.ThinkerNote.mvp.p.ReportPresenter;
+import com.thinkernote.ThinkerNote.mvp.listener.v.OnReportListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.settings.FeedBackBean;
 

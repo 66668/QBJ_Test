@@ -28,9 +28,8 @@ import com.thinkernote.ThinkerNote.PullToRefresh.PullToRefreshBase.OnRefreshList
 import com.thinkernote.ThinkerNote.PullToRefresh.PullToRefreshListView;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote.Utils.SPUtil;
-import com.thinkernote.ThinkerNote._constructer.listener.v.OnSyncListener;
-import com.thinkernote.ThinkerNote._constructer.p.SyncPresenter;
+import com.thinkernote.ThinkerNote.mvp.listener.v.OnSyncListener;
+import com.thinkernote.ThinkerNote.mvp.p.SyncPresenter;
 import com.thinkernote.ThinkerNote.base.TNChildViewBase;
 import com.thinkernote.ThinkerNote.http.MyRxManager;
 

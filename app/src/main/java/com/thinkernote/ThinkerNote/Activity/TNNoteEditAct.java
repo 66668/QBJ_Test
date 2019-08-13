@@ -64,8 +64,8 @@ import com.thinkernote.ThinkerNote.Service.LocationService;
 import com.thinkernote.ThinkerNote.Utils.JsonParser;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Views.CommonDialog;
-import com.thinkernote.ThinkerNote._constructer.listener.v.OnSyncListener;
-import com.thinkernote.ThinkerNote._constructer.p.SyncPresenter;
+import com.thinkernote.ThinkerNote.mvp.listener.v.OnSyncListener;
+import com.thinkernote.ThinkerNote.mvp.p.SyncPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 
 import java.io.File;

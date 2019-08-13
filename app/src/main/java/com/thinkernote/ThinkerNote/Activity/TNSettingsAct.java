@@ -1,24 +1,17 @@
 package com.thinkernote.ThinkerNote.Activity;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
-import android.widget.LinearLayout;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.thinkernote.ThinkerNote.Action.TNAction.TNRunner;
@@ -27,10 +20,7 @@ import com.thinkernote.ThinkerNote.Data.TNCat;
 import com.thinkernote.ThinkerNote.Data.TNPreferenceChild;
 import com.thinkernote.ThinkerNote.Data.TNPreferenceGroup;
 import com.thinkernote.ThinkerNote.Data.TNUser;
-import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
-import com.thinkernote.ThinkerNote.Database.TNSQLString;
-import com.thinkernote.ThinkerNote.General.TNActionUtils;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsAtt;
@@ -41,15 +31,11 @@ import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Views.CommonDialog;
 import com.thinkernote.ThinkerNote.Views.InviteCodeDialog;
 import com.thinkernote.ThinkerNote.Views.VolumeDialog;
-import com.thinkernote.ThinkerNote._constructer.p.SettingsPresenter;
-import com.thinkernote.ThinkerNote._constructer.listener.v.OnSettingsListener;
+import com.thinkernote.ThinkerNote.mvp.p.SettingsPresenter;
+import com.thinkernote.ThinkerNote.mvp.listener.v.OnSettingsListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 
-import org.json.JSONObject;
-
 import java.util.Vector;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * 主页--设置--多个功能共用界面：用户信息/个性化设置/空间信息

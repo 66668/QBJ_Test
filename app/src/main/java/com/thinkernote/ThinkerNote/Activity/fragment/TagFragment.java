@@ -29,10 +29,10 @@ import com.thinkernote.ThinkerNote.other.PullToRefreshExpandableListView.OnHeadV
 import com.thinkernote.ThinkerNote.other.PullToRefreshExpandableListView.OnRefreshListener;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote._constructer.listener.v.OnFragmentTagListener;
-import com.thinkernote.ThinkerNote._constructer.listener.v.OnSyncListener;
-import com.thinkernote.ThinkerNote._constructer.p.FragmentTagPresenter;
-import com.thinkernote.ThinkerNote._constructer.p.SyncPresenter;
+import com.thinkernote.ThinkerNote.mvp.listener.v.OnFragmentTagListener;
+import com.thinkernote.ThinkerNote.mvp.listener.v.OnSyncListener;
+import com.thinkernote.ThinkerNote.mvp.p.FragmentTagPresenter;
+import com.thinkernote.ThinkerNote.mvp.p.SyncPresenter;
 import com.thinkernote.ThinkerNote.base.TNChildViewBase;
 
 import java.util.Vector;

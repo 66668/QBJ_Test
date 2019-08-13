@@ -2,7 +2,6 @@ package com.thinkernote.ThinkerNote.Activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
@@ -33,8 +32,8 @@ import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Views.CommonDialog;
-import com.thinkernote.ThinkerNote._constructer.p.CatListPresenter;
-import com.thinkernote.ThinkerNote._constructer.listener.v.OnCatListListener;
+import com.thinkernote.ThinkerNote.mvp.p.CatListPresenter;
+import com.thinkernote.ThinkerNote.mvp.listener.v.OnCatListListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.main.AllFolderBean;
 import com.thinkernote.ThinkerNote.bean.main.AllFolderItemBean;

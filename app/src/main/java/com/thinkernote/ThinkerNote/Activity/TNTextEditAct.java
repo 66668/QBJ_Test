@@ -2,7 +2,6 @@ package com.thinkernote.ThinkerNote.Activity;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -12,21 +11,16 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
-import com.thinkernote.ThinkerNote.Database.TNSQLString;
-import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsTag;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Views.CommonDialog;
-import com.thinkernote.ThinkerNote._constructer.p.TextEditPresenter;
-import com.thinkernote.ThinkerNote._constructer.listener.v.OnTextEditListener;
+import com.thinkernote.ThinkerNote.mvp.p.TextEditPresenter;
+import com.thinkernote.ThinkerNote.mvp.listener.v.OnTextEditListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
-
-import org.json.JSONObject;
 
 /**
  * 通用类

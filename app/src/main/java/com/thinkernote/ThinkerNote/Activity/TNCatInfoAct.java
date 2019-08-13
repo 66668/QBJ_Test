@@ -25,8 +25,8 @@ import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Views.CommonDialog;
-import com.thinkernote.ThinkerNote._constructer.listener.v.OnCatInfoListener;
-import com.thinkernote.ThinkerNote._constructer.p.CatInfoPresenter;
+import com.thinkernote.ThinkerNote.mvp.listener.v.OnCatInfoListener;
+import com.thinkernote.ThinkerNote.mvp.p.CatInfoPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 
 import java.util.Vector;
