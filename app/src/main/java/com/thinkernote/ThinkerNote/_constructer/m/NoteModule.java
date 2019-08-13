@@ -620,6 +620,7 @@ public class NoteModule {
      * @param listener
      */
     public void clearNotes(Vector<TNNote> notes, final INoteModuleListener listener) {
+        MLog.d("clearNotes" + notes.size());
         Subscription subscription = Observable.from(notes)
                 .concatMap(new Func1<TNNote, Observable<Integer>>() {//list转化item
                     @Override
@@ -1885,7 +1886,7 @@ public class NoteModule {
                 } catch (Exception e) {
                     MLog.e("synCloudNoteById" + e.toString());
                     TNDb.endTransaction();
-                }finally {
+                } finally {
                     TNDb.endTransaction();
                 }
             }
@@ -1922,7 +1923,7 @@ public class NoteModule {
                         } catch (Exception e) {
                             MLog.e("synCloudTrashNoteById" + e.toString());
                             TNDb.endTransaction();
-                        }finally {
+                        } finally {
                             TNDb.endTransaction();
                         }
 
@@ -1946,7 +1947,7 @@ public class NoteModule {
         } catch (Exception e) {
             MLog.e("updataEditNotesStateSQL" + e.toString());
             TNDb.endTransaction();
-        }finally {
+        } finally {
             TNDb.endTransaction();
         }
     }
@@ -1966,7 +1967,7 @@ public class NoteModule {
             TNDb.getInstance().execSQL(TNSQLString.CAT_UPDATE_LASTUPDATETIME, System.currentTimeMillis() / 1000, note.catId);
 
             TNDb.setTransactionSuccessful();
-        }catch (Exception e) {
+        } catch (Exception e) {
             MLog.e("updataEditNoteSQL" + e.toString());
             TNDb.endTransaction();
         } finally {
