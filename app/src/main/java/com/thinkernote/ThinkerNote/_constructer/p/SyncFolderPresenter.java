@@ -60,7 +60,7 @@ public class SyncFolderPresenter implements INoteModuleListener {
         MLog.d(TAG, "同步--上传本地folder下新增笔记");
         Vector<TNNote> localNewNotes = TNDbUtils.getNoteListBySyncStateByCatId(TNSettings.getInstance().userId, 3, folderId);
         if (localNewNotes != null && localNewNotes.size() > 0) {
-            noteModule.updateLocalNewNotes(localNewNotes, this);
+            noteModule.updateLocalNewNotes(localNewNotes, this,false);
         } else {
             //(9)
             updateRecoveryNotes();
@@ -75,7 +75,7 @@ public class SyncFolderPresenter implements INoteModuleListener {
         MLog.d(TAG, "同步--还原回收站笔记");
         Vector<TNNote> recoveryNotes = TNDbUtils.getNoteListBySyncState(TNSettings.getInstance().userId, 7);
         if (recoveryNotes != null && recoveryNotes.size() > 0) {
-            noteModule.updateRecoveryNotes(recoveryNotes, this);
+            noteModule.updateRecoveryNotes(recoveryNotes, this,false);
         } else {
             //（10）
             deleteNotes();
@@ -90,7 +90,7 @@ public class SyncFolderPresenter implements INoteModuleListener {
         MLog.d(TAG, "同步--删除到回收站");
         Vector<TNNote> mDeleteNotes = TNDbUtils.getNoteListBySyncState(TNSettings.getInstance().userId, 6);
         if (mDeleteNotes != null && mDeleteNotes.size() > 0) {
-            noteModule.deleteNotes(mDeleteNotes, this);
+            noteModule.deleteNotes(mDeleteNotes, this,false);
         } else {
             //（11）
             clearNotes();
@@ -105,7 +105,7 @@ public class SyncFolderPresenter implements INoteModuleListener {
         MLog.d(TAG, "同步--彻底删除");
         Vector<TNNote> mClaerNotes = TNDbUtils.getNoteListBySyncState(TNSettings.getInstance().userId, 5);
         if (mClaerNotes != null && mClaerNotes.size() > 0) {
-            noteModule.clearNotes(mClaerNotes, this);
+            noteModule.clearNotes(mClaerNotes, this,false);
         } else {
             //（12）
             getAllNotsId();
@@ -130,7 +130,7 @@ public class SyncFolderPresenter implements INoteModuleListener {
         MLog.d(TAG, "同步--编辑笔记");
         Vector<TNNote> editNotes = TNDbUtils.getNoteListBySyncState(TNSettings.getInstance().userId, 4);
         if (editNotes != null && editNotes.size() > 0 && all_note_ids != null && all_note_ids.size() > 0) {
-            noteModule.updateEditNotes(all_note_ids, editNotes, this);
+            noteModule.updateEditNotes(all_note_ids, editNotes, this,false);
         } else {
             //(14)
             updateCloudNote();
@@ -144,7 +144,7 @@ public class SyncFolderPresenter implements INoteModuleListener {
         MLog.d(TAG, "同步--云端笔记同步到本地");
         Vector<TNNote> allNotes = TNDbUtils.getNoteListByCatId(TNSettings.getInstance().userId, folderId, TNSettings.getInstance().sort, TNConst.MAX_PAGE_SIZE);
         if (all_note_ids != null && all_note_ids.size() > 0 && allNotes != null && allNotes.size() > 0) {
-            noteModule.getCloudNote(all_note_ids, folderId, this);
+            noteModule.getCloudNoteByFolderId(all_note_ids, folderId, this);
         } else {
             //（15）
             onView.onSyncSuccess("同步成功");

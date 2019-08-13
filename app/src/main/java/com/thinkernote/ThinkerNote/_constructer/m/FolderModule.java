@@ -468,7 +468,6 @@ public class FolderModule {
                         MLog.d(TAG, "deleteFolder-onNext");
                     }
                 });
-        MyRxManager.getInstance().add(subscription);
     }
 
     /**
@@ -501,7 +500,6 @@ public class FolderModule {
 
                     }
                 });
-        MyRxManager.getInstance().add(subscription);
     }
 
 

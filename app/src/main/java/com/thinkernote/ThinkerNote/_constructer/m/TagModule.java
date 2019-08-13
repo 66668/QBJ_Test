@@ -187,7 +187,6 @@ public class TagModule {
                     }
 
                 });
-        MyRxManager.getInstance().add(subscription);
 
     }
 
@@ -227,7 +226,6 @@ public class TagModule {
                     }
 
                 });
-        MyRxManager.getInstance().add(subscription);
     }
 
     public void deleteTag(final long pid, final ITagModuleListener listener) {
@@ -261,7 +259,6 @@ public class TagModule {
 
                     }
                 });
-        MyRxManager.getInstance().add(subscription);
     }
 
 

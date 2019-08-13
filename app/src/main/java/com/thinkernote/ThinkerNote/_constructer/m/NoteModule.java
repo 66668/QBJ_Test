@@ -134,7 +134,10 @@ public class NoteModule {
                                             @Override
                                             public void call(OldNotePicBean oldNotePicBean) {
                                                 //（1）更新图片--数据库
-                                                upDataAttIdSQL(oldNotePicBean.getId(), tnNoteAtt);
+                                                if (oldNotePicBean.getCode() == 0) {
+                                                    MLog.d("updateOldNote--upDataAttIdSQL--getId=" + oldNotePicBean.getId() + "--noteId=" + tnNote.noteId);
+                                                    upDataAttIdSQL(oldNotePicBean.getId(), tnNoteAtt);
+                                                }
                                             }
                                         })
                                         .doOnError(new Action1<Throwable>() {
@@ -217,79 +220,87 @@ public class NoteModule {
      * @param notes    syncState=3 的数据
      * @param listener
      */
-    public void updateLocalNewNotes(Vector<TNNote> notes, final INoteModuleListener listener) {
+    public void updateLocalNewNotes(Vector<TNNote> notes, final INoteModuleListener listener, boolean isSync) {
 
         Subscription subscription = Observable.from(notes)
                 .concatMap(new Func1<TNNote, Observable<TNNote>>() {//
                     @Override
                     public Observable<TNNote> call(final TNNote tnNote) {
                         Vector<TNNoteAtt> oldNotesAtts = tnNote.atts;//文件列表
-                        final String[] content = {tnNote.content};
+
+
                         //上传每一个文件
-                        Observable<TNNote> fileBeanObservable = Observable.from(oldNotesAtts).concatMap(new Func1<TNNoteAtt, Observable<OldNotePicBean>>() {//先上传文件
+                        Observable<TNNote> fileBeanObservable = Observable
+                                .from(oldNotesAtts)
+                                .concatMap(new Func1<TNNoteAtt, Observable<OldNotePicBean>>() {//先上传文件
 
-                            //拿到每一个文件数据，上传
-                            @Override
-                            public Observable<OldNotePicBean> call(final TNNoteAtt tnNoteAtt) {
-                                //多个文件上传
-                                // 需要加入到MultipartBody中，而不是作为参数传递
-                                //        MultipartBody.Builder builder = new MultipartBody.Builder()
-                                //                .setType(MultipartBody.FORM)//表单类型
-                                //                .addFormDataPart("token", settings.token);
-                                //        for(File file:files){
-                                //            RequestBody photoRequestBody = RequestBody.create(MediaType.parse("image/*"), file);// multipart/form-data /image/*
-                                //            builder.addFormDataPart("file", file.getName(), photoRequestBody);
-                                //            List<MultipartBody.Part> parts = builder.build().parts();
-                                //        }
+                                    //拿到每一个文件数据，上传
+                                    @Override
+                                    public Observable<OldNotePicBean> call(final TNNoteAtt tnNoteAtt) {
+                                        //多个文件上传
+                                        // 需要加入到MultipartBody中，而不是作为参数传递
+                                        //        MultipartBody.Builder builder = new MultipartBody.Builder()
+                                        //                .setType(MultipartBody.FORM)//表单类型
+                                        //                .addFormDataPart("token", settings.token);
+                                        //        for(File file:files){
+                                        //            RequestBody photoRequestBody = RequestBody.create(MediaType.parse("image/*"), file);// multipart/form-data /image/*
+                                        //            builder.addFormDataPart("file", file.getName(), photoRequestBody);
+                                        //            List<MultipartBody.Part> parts = builder.build().parts();
+                                        //        }
 
-                                //单个文件上传
-                                File file = new File(tnNoteAtt.path);
-                                RequestBody requestFile = RequestBodyUtil.getRequest(tnNoteAtt.path, file);
-                                MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+                                        //单个文件上传
+                                        File file = new File(tnNoteAtt.path);
+                                        RequestBody requestFile = RequestBodyUtil.getRequest(tnNoteAtt.path, file);
+                                        MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
 
-                                //拼接url(本app后台特殊嗜好，蛋疼):
-                                String url = URLUtils.API_BASE_URL + URLUtils.Home.UPLOAD_FILE + "?" + "filename=" + file.getName() + "&session_token=" + settings.token;
-                                MLog.d("FeedBackPic", "url=" + url + "\nfilename=" + file.toString() + "---" + file.getName());
-                                url = url.replace(" ", "%20");//文件名有空格
+                                        //拼接url(本app后台特殊嗜好，蛋疼):
+                                        String url = URLUtils.API_BASE_URL + URLUtils.Home.UPLOAD_FILE + "?" + "filename=" + file.getName() + "&session_token=" + settings.token;
+                                        MLog.d("FeedBackPic", "url=" + url + "\nfilename=" + file.toString() + "---" + file.getName());
+                                        url = url.replace(" ", "%20");//文件名有空格
 
 
-                                return MyHttpService.UpLoadBuilder.UploadServer()//(接口1，上传图片)
-                                        .uploadPic(url, part)//接口方法
-                                        .subscribeOn(Schedulers.io())//固定样式
-                                        .doOnNext(new Action1<OldNotePicBean>() {
-                                            @Override
-                                            public void call(OldNotePicBean oldNotePicBean) {
-                                                //（1）更新图片--数据库
-                                                upDataAttIdSQL(oldNotePicBean.getId(), tnNoteAtt);
-                                            }
-                                        })
-                                        .doOnError(new Action1<Throwable>() {
-                                            @Override
-                                            public void call(Throwable throwable) {
-                                                MLog.e(TAG, "updateLocalNewNotes--uploadPic--doOnError:" + throwable.toString());
-                                                listener.onUpdateLocalNoteFailed(new Exception(throwable.getMessage()), null);
-                                            }
-                                        });//固定样式
-                            }
+                                        return MyHttpService.UpLoadBuilder.UploadServer()//(接口1，上传图片)
+                                                .uploadPic(url, part)//接口方法
+                                                .subscribeOn(Schedulers.io())//固定样式
+                                                .doOnNext(new Action1<OldNotePicBean>() {
+                                                    @Override
+                                                    public void call(OldNotePicBean oldNotePicBean) {
+                                                        //（1）更新图片--数据库
+                                                        if (oldNotePicBean.getCode() == 0) {
+                                                            MLog.d("updateLocalNewNotes--upDataAttIdSQL--getId=" + oldNotePicBean.getId() + "--noteId=" + tnNote.noteId);
+                                                            upDataAttIdSQL(oldNotePicBean.getId(), tnNoteAtt);
+                                                        }
 
-                        }).concatMap(new Func1<OldNotePicBean, Observable<TNNote>>() {//OldNotePicBean和tnNote处理后，再转换成tnNote,上传old TNNote
-                            @Override
-                            public Observable<TNNote> call(OldNotePicBean oldNotePicBean) {
-                                String digest = oldNotePicBean.getMd5();
-                                long attId = oldNotePicBean.getId();
-                                //(2)更新图片--content
-                                String s1 = String.format("<tn-media hash=\"%s\" />", digest);
-                                String s2 = String.format("<tn-media hash=\"%s\" att-id=\"%s\" />", digest, attId);
-                                content[0] = content[0].replaceAll(s1, s2);
-                                //
-                                TNNote mNote = tnNote;
-                                mNote.content = content[0];
-                                if (mNote.catId == -1) {
-                                    mNote.catId = TNSettings.getInstance().defaultCatId;
-                                }
-                                return Observable.just(mNote);
-                            }
-                        });
+                                                    }
+                                                })
+                                                .doOnError(new Action1<Throwable>() {
+                                                    @Override
+                                                    public void call(Throwable throwable) {
+                                                        MLog.e(TAG, "updateLocalNewNotes--uploadPic--doOnError:" + throwable.toString());
+                                                        listener.onUpdateLocalNoteFailed(new Exception(throwable.getMessage()), null);
+                                                    }
+                                                });//固定样式
+                                    }
+
+                                }).concatMap(new Func1<OldNotePicBean, Observable<TNNote>>() {//OldNotePicBean和tnNote处理后，再转换成tnNote,上传old TNNote
+                                    @Override
+                                    public Observable<TNNote> call(OldNotePicBean oldNotePicBean) {
+                                        String digest = oldNotePicBean.getMd5();
+                                        String content = tnNote.content;
+                                        long attId = oldNotePicBean.getId();
+                                        //(2)更新图片--content
+                                        String s1 = String.format("<tn-media hash=\"%s\" />", digest);
+                                        String s2 = String.format("<tn-media hash=\"%s\" att-id=\"%s\" />", digest, attId);
+                                        content = content.replaceAll(s1, s2);
+                                        //
+                                        TNNote mNote = tnNote;
+                                        mNote.content = content;
+                                        if (mNote.catId == -1) {
+                                            mNote.catId = TNSettings.getInstance().defaultCatId;
+                                        }
+                                        return Observable.just(mNote);
+                                    }
+                                });
                         //判断是否有文件要上传
                         if (oldNotesAtts != null && oldNotesAtts.size() > 0) {
                             MLog.d("先本地笔记的文件");
@@ -310,7 +321,11 @@ public class NoteModule {
                                 .doOnNext(new Action1<NewNoteBean>() {
                                     @Override
                                     public void call(NewNoteBean newNoteBean) {
-                                        upDataNoteLocalIdSQL(newNoteBean, note);
+                                        if (newNoteBean.getCode() == 0) {
+                                            MLog.d("updateLocalNewNotes--upDataNoteLocalIdSQL");
+                                            upDataNoteLocalIdSQL(newNoteBean, note);
+                                        }
+
                                     }
                                 })
                                 .doOnError(new Action1<Throwable>() {
@@ -342,7 +357,10 @@ public class NoteModule {
                         MLog.d("updateLocalNewNotes--onNext");
                     }
                 });
-        MyRxManager.getInstance().add(subscription);
+        if (isSync) {//是否是主界面的同步
+            MyRxManager.getInstance().add(subscription);
+        }
+
     }
 
     /**
@@ -354,7 +372,7 @@ public class NoteModule {
      * @param notes    syncState=7 的数据
      * @param listener
      */
-    public void updateRecoveryNotes(Vector<TNNote> notes, final INoteModuleListener listener) {
+    public void updateRecoveryNotes(Vector<TNNote> notes, final INoteModuleListener listener, boolean isSync) {
 
         Subscription subscription = Observable
                 .from(notes)
@@ -391,7 +409,8 @@ public class NoteModule {
                         Vector<TNNoteAtt> oldNotesAtts = tnNote.atts;
                         final String[] content = {tnNote.content};
                         Observable<TNNote> fileBeanObservable = Observable
-                                .from(oldNotesAtts).concatMap(new Func1<TNNoteAtt, Observable<OldNotePicBean>>() {//先上传每一个文件
+                                .from(oldNotesAtts)
+                                .concatMap(new Func1<TNNoteAtt, Observable<OldNotePicBean>>() {//先上传每一个文件
                                     //拿到每一个文件数据，上传
                                     @Override
                                     public Observable<OldNotePicBean> call(final TNNoteAtt tnNoteAtt) {
@@ -412,6 +431,7 @@ public class NoteModule {
                                                     @Override
                                                     public void call(OldNotePicBean oldNotePicBean) {
                                                         //（1）更新图片--数据库
+                                                        MLog.d("updateRecoveryNotes--upDataAttIdSQL--getId=" + oldNotePicBean.getId() + "--noteId=" + tnNote.noteId);
                                                         upDataAttIdSQL(oldNotePicBean.getId(), tnNoteAtt);
                                                     }
                                                 })
@@ -536,7 +556,10 @@ public class NoteModule {
 
                     }
                 });
-        MyRxManager.getInstance().add(subscription);
+        if (isSync) {
+            MyRxManager.getInstance().add(subscription);
+        }
+
     }
 
     /**
@@ -548,7 +571,7 @@ public class NoteModule {
      * @param notes
      * @param listener
      */
-    public void deleteNotes(Vector<TNNote> notes, final INoteModuleListener listener) {
+    public void deleteNotes(Vector<TNNote> notes, final INoteModuleListener listener, boolean isSync) {
         Subscription subscription = Observable.from(notes).concatMap(new Func1<TNNote, Observable<Integer>>() {
             @Override
             public Observable<Integer> call(final TNNote tnNote) {
@@ -606,7 +629,10 @@ public class NoteModule {
                     }
 
                 });
-        MyRxManager.getInstance().add(subscription);
+        if (isSync) {
+            MyRxManager.getInstance().add(subscription);
+        }
+
 
     }
 
@@ -619,7 +645,7 @@ public class NoteModule {
      * @param notes
      * @param listener
      */
-    public void clearNotes(Vector<TNNote> notes, final INoteModuleListener listener) {
+    public void clearNotes(Vector<TNNote> notes, final INoteModuleListener listener, boolean isSync) {
         MLog.d("clearNotes" + notes.size());
         Subscription subscription = Observable.from(notes)
                 .concatMap(new Func1<TNNote, Observable<Integer>>() {//list转化item
@@ -700,7 +726,10 @@ public class NoteModule {
                         MLog.d(TAG, "clearNotes-onNext");
                     }
                 });
-        MyRxManager.getInstance().add(subscription);
+        if (isSync) {
+            MyRxManager.getInstance().add(subscription);
+        }
+
 
     }
 
@@ -799,7 +828,7 @@ public class NoteModule {
      *
      * @param listener
      */
-    public void updateEditNotes(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> notes, final INoteModuleListener listener) {
+    public void updateEditNotes(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> notes, final INoteModuleListener listener, boolean isSync) {
         MLog.d("编辑笔记同步--" + notes.size() + "--note_ids" + note_ids.size());
         Subscription subscription = Observable.from(note_ids)
                 .concatMap(new Func1<AllNotesIdsBean.NoteIdItemBean, Observable<CommonBean>>() {
@@ -824,10 +853,11 @@ public class NoteModule {
                                                 RequestBody requestFile = RequestBodyUtil.getRequest(tnNoteAtt.path, file);
                                                 MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
 
-                                                //拼接url(本app后台特殊嗜好，蛋疼):
+                                                //拼接url
                                                 String url = URLUtils.API_BASE_URL + URLUtils.Home.UPLOAD_FILE + "?" + "filename=" + file.getName() + "&session_token=" + settings.token;
-                                                MLog.d("FeedBackPic", "url=" + url + "\nfilename=" + file.toString() + "---" + file.getName());
                                                 url = url.replace(" ", "%20");//文件名有空格
+                                                //
+                                                MLog.d("url=" + url + "\nfilename=" + file.toString() + "\nfile.getName()=" + file.getName());
 
                                                 // 上传图片的处理，
                                                 Observable<TNNote> upResultObservier = MyHttpService.UpLoadBuilder.UploadServer()//(接口1，上传图片)
@@ -838,6 +868,7 @@ public class NoteModule {
                                                             public void call(OldNotePicBean oldNotePicBean) {
                                                                 //（1）更新图片--数据库(意见反馈不走这一块)
                                                                 if (oldNotePicBean.getCode() == 0) {
+                                                                    MLog.d("updateEditNotes--upDataAttIdSQL--getId=" + oldNotePicBean.getId() + "--noteId=" + editNote.noteId);
                                                                     upDataAttIdSQL(oldNotePicBean.getId(), tnNoteAtt);
                                                                 }
                                                             }
@@ -860,7 +891,6 @@ public class NoteModule {
                                                                 //笔记的内容修改
                                                                 TNNote newNote = editNote;
                                                                 newNote.content = newNote.content.replaceAll(s1, s2);
-
                                                                 //
                                                                 if (newNote.catId == -1) {
                                                                     newNote.catId = TNSettings.getInstance().defaultCatId;
@@ -977,7 +1007,9 @@ public class NoteModule {
                     }
 
                 });
-        MyRxManager.getInstance().add(subscription);
+        if (isSync) {
+            MyRxManager.getInstance().add(subscription);
+        }
     }
 
     /**
@@ -1139,157 +1171,6 @@ public class NoteModule {
 
     }
 
-    /**
-     * 笔记更新：云端笔记同步到本地(folder文件夹下的同步)
-     * <p>
-     * 双层for循环
-     * syncState ：1表示未完全同步，2表示完全同步，3表示本地新增，4表示本地编辑，5表示彻底删除，6表示删除到回收站，7表示从回收站还原
-     *
-     * @param note_ids 云端所有笔记数据
-     * @param listener
-     */
-    public void getCloudNote(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final long folderId, final INoteModuleListener listener) {
-
-        Subscription subscription = Observable.from(note_ids)
-                .concatMap(new Func1<AllNotesIdsBean.NoteIdItemBean, Observable<Integer>>() {
-                    @Override
-                    public Observable<Integer> call(AllNotesIdsBean.NoteIdItemBean bean) {
-                        final long cloudNoteId = bean.getId();
-                        final int lastUpdate = bean.getUpdate_at();
-                        //处理 note列表
-                        boolean exit = false;
-                        Vector<TNNote> allNotes = TNDbUtils.getNoteListByCatId(TNSettings.getInstance().userId, folderId, TNSettings.getInstance().sort, TNConst.MAX_PAGE_SIZE);
-                        for (TNNote editNote : allNotes) {
-                            if (cloudNoteId == editNote.noteId) {
-                                exit = true;
-                                if (editNote.lastUpdate > lastUpdate) {
-                                    //更新笔记
-                                    MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                                            .getNoteByNoteId(cloudNoteId, settings.token)
-                                            .subscribeOn(Schedulers.io())
-                                            .doOnNext(new Action1<CommonBean3<GetNoteByNoteIdBean>>() {
-                                                @Override
-                                                public void call(CommonBean3<GetNoteByNoteIdBean> bean) {
-                                                    //结果处理
-                                                    setNoteResult(bean.getMsg(), cloudNoteId);
-                                                    //数据处理
-                                                    if (bean.getCode() == 0) {
-                                                        GetNoteByNoteIdBean noteBean = bean.getNote();
-                                                        updataCloudNoteSQL(noteBean);
-                                                    }
-                                                }
-                                            })
-                                            .subscribeOn(Schedulers.io())
-                                            .subscribeOn(AndroidSchedulers.mainThread())
-                                            .subscribe(new Observer<CommonBean3<GetNoteByNoteIdBean>>() {
-                                                @Override
-                                                public void onCompleted() {
-
-                                                }
-
-                                                @Override
-                                                public void onError(Throwable e) {
-                                                    MLog.e(TAG, "getCloudNote--onError--更新笔记失败" + e.toString());
-                                                }
-
-                                                @Override
-                                                public void onNext(CommonBean3<GetNoteByNoteIdBean> getNoteByNoteIdBeanCommonBean3) {
-
-                                                }
-                                            });
-                                }
-                            }
-                            //
-                            if (editNote.syncState == 1) {
-                                //更新笔记
-                                MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                                        .getNoteByNoteId(cloudNoteId, settings.token)
-                                        .subscribeOn(Schedulers.io())
-                                        .doOnNext(new Action1<CommonBean3<GetNoteByNoteIdBean>>() {
-                                            @Override
-                                            public void call(CommonBean3<GetNoteByNoteIdBean> bean) {
-                                                //结果处理
-                                                setNoteResult(bean.getMsg(), cloudNoteId);
-                                                //数据处理
-                                                if (bean.getCode() == 0) {
-                                                    GetNoteByNoteIdBean noteBean = bean.getNote();
-                                                    updataCloudNoteSQL(noteBean);
-                                                }
-                                            }
-                                        })
-                                        .subscribeOn(Schedulers.io())
-                                        .subscribeOn(AndroidSchedulers.mainThread())
-                                        .subscribe(new Observer<CommonBean3<GetNoteByNoteIdBean>>() {
-                                            @Override
-                                            public void onCompleted() {
-
-                                            }
-
-                                            @Override
-                                            public void onError(Throwable e) {
-                                                MLog.e(TAG, "getCloudNote--onError--更新笔记失败" + e.toString());
-                                            }
-
-                                            @Override
-                                            public void onNext(CommonBean3<GetNoteByNoteIdBean> getNoteByNoteIdBeanCommonBean3) {
-
-                                            }
-                                        });
-                            }
-
-                        }
-                        //拿到遍历结果
-                        if (exit == false) {//本地不存在远端的数据，就更新到本地
-                            return MyHttpService.Builder.getHttpServer()//获取 noteid对应的数据，然后处理
-                                    .getNoteByNoteId(cloudNoteId, settings.token)
-                                    .subscribeOn(Schedulers.io())
-                                    .doOnNext(new Action1<CommonBean3<GetNoteByNoteIdBean>>() {
-                                        @Override
-                                        public void call(CommonBean3<GetNoteByNoteIdBean> bean) {
-                                            //结果处理
-                                            setNoteResult(bean.getMsg(), cloudNoteId);
-                                            //数据处理
-                                            if (bean.getCode() == 0) {
-                                                GetNoteByNoteIdBean noteBean = bean.getNote();
-                                                updataCloudNoteSQL(noteBean);
-                                            }
-                                        }
-                                    })
-                                    .subscribeOn(Schedulers.io())
-                                    .concatMap(new Func1<CommonBean3<GetNoteByNoteIdBean>, Observable<Integer>>() {//
-                                        @Override
-                                        public Observable<Integer> call(CommonBean3<GetNoteByNoteIdBean> bean) {
-                                            return Observable.just(bean.getCode());
-                                        }
-                                    });
-                        } else {
-                            //下一个循环
-                            return Observable.empty();
-                        }
-                    }
-                }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Integer>() {
-                    @Override
-                    public void onCompleted() {
-                        MLog.d(TAG, "getCloudNote--onCompleted");
-                        listener.onCloudNoteSuccess();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        MLog.d(TAG, "getCloudNote--onError");
-                        listener.onCloudNoteFailed(new Exception(e.toString()), null);
-                    }
-
-                    @Override
-                    public void onNext(Integer integer) {
-                        MLog.d(TAG, "getCloudNote--onNext" + integer);
-                    }
-                });
-
-        MyRxManager.getInstance().add(subscription);
-    }
 
     /**
      * 同步回收站的笔记-1：获取所有回收站的笔记id
@@ -1465,7 +1346,6 @@ public class NoteModule {
                         }
                     }
                 });
-        MyRxManager.getInstance().add(subscription);
     }
 
     /**
@@ -1522,7 +1402,157 @@ public class NoteModule {
                         }
                     }
                 });
-        MyRxManager.getInstance().add(subscription);
+    }
+
+    /**
+     * 笔记更新：云端笔记同步到本地(folder文件夹下的同步)
+     * <p>
+     * 双层for循环
+     * syncState ：1表示未完全同步，2表示完全同步，3表示本地新增，4表示本地编辑，5表示彻底删除，6表示删除到回收站，7表示从回收站还原
+     *
+     * @param note_ids 云端所有笔记数据
+     * @param listener
+     */
+    public void getCloudNoteByFolderId(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final long folderId, final INoteModuleListener listener) {
+
+        Subscription subscription = Observable.from(note_ids)
+                .concatMap(new Func1<AllNotesIdsBean.NoteIdItemBean, Observable<Integer>>() {
+                    @Override
+                    public Observable<Integer> call(AllNotesIdsBean.NoteIdItemBean bean) {
+                        final long cloudNoteId = bean.getId();
+                        final int lastUpdate = bean.getUpdate_at();
+                        //处理 note列表
+                        boolean exit = false;
+                        Vector<TNNote> allNotes = TNDbUtils.getNoteListByCatId(TNSettings.getInstance().userId, folderId, TNSettings.getInstance().sort, TNConst.MAX_PAGE_SIZE);
+                        for (TNNote editNote : allNotes) {
+                            if (cloudNoteId == editNote.noteId) {
+                                exit = true;
+                                if (editNote.lastUpdate > lastUpdate) {
+                                    //更新笔记
+                                    MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                                            .getNoteByNoteId(cloudNoteId, settings.token)
+                                            .subscribeOn(Schedulers.io())
+                                            .doOnNext(new Action1<CommonBean3<GetNoteByNoteIdBean>>() {
+                                                @Override
+                                                public void call(CommonBean3<GetNoteByNoteIdBean> bean) {
+                                                    //结果处理
+                                                    setNoteResult(bean.getMsg(), cloudNoteId);
+                                                    //数据处理
+                                                    if (bean.getCode() == 0) {
+                                                        GetNoteByNoteIdBean noteBean = bean.getNote();
+                                                        updataCloudNoteSQL(noteBean);
+                                                    }
+                                                }
+                                            })
+                                            .subscribeOn(Schedulers.io())
+                                            .subscribeOn(AndroidSchedulers.mainThread())
+                                            .subscribe(new Observer<CommonBean3<GetNoteByNoteIdBean>>() {
+                                                @Override
+                                                public void onCompleted() {
+
+                                                }
+
+                                                @Override
+                                                public void onError(Throwable e) {
+                                                    MLog.e(TAG, "getCloudNote--onError--更新笔记失败" + e.toString());
+                                                }
+
+                                                @Override
+                                                public void onNext(CommonBean3<GetNoteByNoteIdBean> getNoteByNoteIdBeanCommonBean3) {
+
+                                                }
+                                            });
+                                }
+                            }
+                            //
+                            if (editNote.syncState == 1) {
+                                //更新笔记
+                                MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                                        .getNoteByNoteId(cloudNoteId, settings.token)
+                                        .subscribeOn(Schedulers.io())
+                                        .doOnNext(new Action1<CommonBean3<GetNoteByNoteIdBean>>() {
+                                            @Override
+                                            public void call(CommonBean3<GetNoteByNoteIdBean> bean) {
+                                                //结果处理
+                                                setNoteResult(bean.getMsg(), cloudNoteId);
+                                                //数据处理
+                                                if (bean.getCode() == 0) {
+                                                    GetNoteByNoteIdBean noteBean = bean.getNote();
+                                                    updataCloudNoteSQL(noteBean);
+                                                }
+                                            }
+                                        })
+                                        .subscribeOn(Schedulers.io())
+                                        .subscribeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(new Observer<CommonBean3<GetNoteByNoteIdBean>>() {
+                                            @Override
+                                            public void onCompleted() {
+
+                                            }
+
+                                            @Override
+                                            public void onError(Throwable e) {
+                                                MLog.e(TAG, "getCloudNote--onError--更新笔记失败" + e.toString());
+                                            }
+
+                                            @Override
+                                            public void onNext(CommonBean3<GetNoteByNoteIdBean> getNoteByNoteIdBeanCommonBean3) {
+
+                                            }
+                                        });
+                            }
+
+                        }
+                        //拿到遍历结果
+                        if (exit == false) {//本地不存在远端的数据，就更新到本地
+                            return MyHttpService.Builder.getHttpServer()//获取 noteid对应的数据，然后处理
+                                    .getNoteByNoteId(cloudNoteId, settings.token)
+                                    .subscribeOn(Schedulers.io())
+                                    .doOnNext(new Action1<CommonBean3<GetNoteByNoteIdBean>>() {
+                                        @Override
+                                        public void call(CommonBean3<GetNoteByNoteIdBean> bean) {
+                                            //结果处理
+                                            setNoteResult(bean.getMsg(), cloudNoteId);
+                                            //数据处理
+                                            if (bean.getCode() == 0) {
+                                                GetNoteByNoteIdBean noteBean = bean.getNote();
+                                                updataCloudNoteSQL(noteBean);
+                                            }
+                                        }
+                                    })
+                                    .subscribeOn(Schedulers.io())
+                                    .concatMap(new Func1<CommonBean3<GetNoteByNoteIdBean>, Observable<Integer>>() {//
+                                        @Override
+                                        public Observable<Integer> call(CommonBean3<GetNoteByNoteIdBean> bean) {
+                                            return Observable.just(bean.getCode());
+                                        }
+                                    });
+                        } else {
+                            //下一个循环
+                            return Observable.empty();
+                        }
+                    }
+                }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Integer>() {
+                    @Override
+                    public void onCompleted() {
+                        MLog.d(TAG, "getCloudNote--onCompleted");
+                        listener.onCloudNoteSuccess();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        MLog.d(TAG, "getCloudNote--onError");
+                        listener.onCloudNoteFailed(new Exception(e.toString()), null);
+                    }
+
+                    @Override
+                    public void onNext(Integer integer) {
+                        MLog.d(TAG, "getCloudNote--onNext" + integer);
+                    }
+                });
+
     }
 
     /**
@@ -1648,7 +1678,6 @@ public class NoteModule {
 
                     }
                 });
-        MyRxManager.getInstance().add(subscription);
     }
 
 
@@ -1763,7 +1792,6 @@ public class NoteModule {
                 } finally {
                     TNDb.endTransaction();
                 }
-                MLog.d("本地上传成功，保存到本地数据库");
             }
         });
 
