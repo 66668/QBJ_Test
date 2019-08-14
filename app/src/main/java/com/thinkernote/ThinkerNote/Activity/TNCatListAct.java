@@ -444,11 +444,12 @@ public class TNCatListAct extends TNActBase
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (bean.getMessage().contains("当前有子文件夹")) {
-                    Toast.makeText(TNCatListAct.this, bean.getMessage(), Toast.LENGTH_SHORT).show();
-                } else {
+                if (bean.getCode() == 0) {
+                    Toast.makeText(TNCatListAct.this, "移动成功，请刷新", Toast.LENGTH_SHORT).show();
                     mProgressDialog.hide();
                     finish();
+                } else {
+                    Toast.makeText(TNCatListAct.this, bean.getMessage(), Toast.LENGTH_SHORT).show();
                 }
 
             }
