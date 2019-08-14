@@ -18,6 +18,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.thinkernote.ThinkerNote.DBHelper.CatDbHelper;
 import com.thinkernote.ThinkerNote.Data.TNCat;
@@ -32,6 +33,7 @@ import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Views.CommonDialog;
+import com.thinkernote.ThinkerNote.bean.CommonBean;
 import com.thinkernote.ThinkerNote.mvp.p.CatListPresenter;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnCatListListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
@@ -57,7 +59,6 @@ public class TNCatListAct extends TNActBase
      * OriginalCatId
      * Type: int  0 move cat, 1 move note, 2 表示startActivityForResult带回的
      */
-
     private ListView mListView;
     private long mSelectCatId = -1;
     private long mOriginalCatId = -1;
@@ -240,6 +241,7 @@ public class TNCatListAct extends TNActBase
     @Override
     public void onDestroy() {
         mProgressDialog.dismiss();
+
         super.onDestroy();
     }
 
@@ -438,13 +440,25 @@ public class TNCatListAct extends TNActBase
 
     @Override
     public void onFolderMoveSuccess(Object obj) {
-        mProgressDialog.hide();
-        finish();
+        final CommonBean bean = (CommonBean) obj;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (bean.getMessage().contains("当前有子文件夹")) {
+                    Toast.makeText(TNCatListAct.this, bean.getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    mProgressDialog.hide();
+                    finish();
+                }
+
+            }
+        });
+
     }
 
     @Override
-    public void onFolderMoveFailed(String msg, Exception e) {
-        MLog.e(msg);
+    public void onFolderMoveFailed(final String msg, Exception e) {
+
     }
 
 }

@@ -31,7 +31,7 @@ public class CatListPresenter implements  OnCatListListener {
     }
 
     public void pFolderMove(long catId, long selectId) {
-        module.mmoveFolder(this, catId, selectId);
+        module.moveFolder(this, catId, selectId);
     }
 
     //==========================结果回调==============================

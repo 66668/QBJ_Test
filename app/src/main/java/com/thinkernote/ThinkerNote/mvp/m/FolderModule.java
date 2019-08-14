@@ -743,7 +743,7 @@ public class FolderModule {
                 });
     }
 
-    public void mmoveFolder(final OnCatListListener listener, final long catId, long selectId) {
+    public void moveFolder(final OnCatListListener listener, final long catId, long selectId) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .folderMove(catId, selectId, settings.token)//接口方法
@@ -759,19 +759,13 @@ public class FolderModule {
                     @Override
                     public void onError(Throwable e) {
                         MLog.e(TAG, "moveFolder--onError:" + e.toString());
-                        listener.onFolderMoveFailed("异常", new Exception("接口异常！"));
+                        listener.onFolderMoveFailed("文件夹移动失败，请稍后重试", new Exception("文件夹移动失败，请稍后重试"));
                     }
 
                     @Override
                     public void onNext(CommonBean bean) {
-                        MLog.d(TAG, "moveFolder-onNext");
-
-                        //处理返回结果
-                        if (bean.getCode() == 0) {
-                            listener.onFolderMoveSuccess(bean);
-                        } else {
-                            listener.onFolderMoveFailed(bean.getMessage(), null);
-                        }
+                        MLog.d(TAG, "moveFolder-onNext--" + bean.getMessage());
+                        listener.onFolderMoveSuccess(bean);
                     }
 
                 });
