@@ -18,7 +18,6 @@ import com.thinkernote.ThinkerNote.General.TNUtilsAtt;
 import com.thinkernote.ThinkerNote.General.TNUtilsHtml;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote.mvp.listener.m.INoteModuleListener;
 import com.thinkernote.ThinkerNote.base.TNApplication;
 import com.thinkernote.ThinkerNote.bean.CommonBean;
 import com.thinkernote.ThinkerNote.bean.CommonBean3;
@@ -31,6 +30,7 @@ import com.thinkernote.ThinkerNote.mvp.http.MyHttpService;
 import com.thinkernote.ThinkerNote.mvp.http.MyRxManager;
 import com.thinkernote.ThinkerNote.mvp.http.RequestBodyUtil;
 import com.thinkernote.ThinkerNote.mvp.http.URLUtils;
+import com.thinkernote.ThinkerNote.mvp.listener.m.INoteModuleListener;
 
 import org.json.JSONObject;
 
@@ -78,6 +78,81 @@ public class NoteModule {
         settings = TNSettings.getInstance();
     }
 
+    /**
+     * note下所有文件上传
+     *
+     * @return
+     */
+    private Observable<TNNote> updateNoteFiles(Vector<TNNoteAtt> attrs, final TNNote tnNote) {
+        return Observable.from(attrs)
+                .concatMap(new Func1<TNNoteAtt, Observable<TNNote>>() {//先上传文件
+                    //拿到每一个文件数据，上传
+                    @Override
+                    public Observable<TNNote> call(final TNNoteAtt tnNoteAtt) {
+                        //多个文件上传
+                        // 需要加入到MultipartBody中，而不是作为参数传递
+                        //        MultipartBody.Builder builder = new MultipartBody.Builder()
+                        //                .setType(MultipartBody.FORM)//表单类型
+                        //                .addFormDataPart("token", settings.token);
+                        //        for(File file:files){
+                        //            RequestBody photoRequestBody = RequestBody.create(MediaType.parse("image/*"), file);// multipart/form-data /image/*
+                        //            builder.addFormDataPart("file", file.getName(), photoRequestBody);
+                        //            List<MultipartBody.Part> parts = builder.build().parts();
+                        //        }
+
+                        //单个文件上传
+                        File file = new File(tnNoteAtt.path);
+                        RequestBody requestFile = RequestBodyUtil.getRequest(tnNoteAtt.path, file);
+                        MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+
+                        //拼接url
+                        String url = URLUtils.API_BASE_URL + URLUtils.Home.UPLOAD_FILE + "?" + "filename=" + file.getName() + "&session_token=" + settings.token;
+                        MLog.d("url=" + url + "\nfilename=" + file.toString() + "\nfile.getName()" + file.getName());
+                        url = url.replace(" ", "%20");//文件名有空格
+
+                        //上传单个文件
+                        return MyHttpService.UpLoadBuilder.UploadServer()//(接口1，上传图片)
+                                .uploadPic(url, part)//接口方法
+                                .subscribeOn(Schedulers.io())//固定样式
+                                .doOnNext(new Action1<OldNotePicBean>() {
+                                    @Override
+                                    public void call(OldNotePicBean oldNotePicBean) {
+                                        //（1）更新图片--数据库(意见反馈不走这一块)
+                                        if (oldNotePicBean.getCode() == 0) {
+                                            MLog.d("updateEditNotes--upDataAttIdSQL--上传图片成功，保存数据库");
+                                            upDataAttIdSQL(oldNotePicBean.getId(), tnNoteAtt);
+                                        }
+                                    }
+                                })
+                                .concatMap(new Func1<OldNotePicBean, Observable<TNNote>>() {//结果需要转换成TNNote，用于上传TNNote
+                                    @Override
+                                    public Observable<TNNote> call(OldNotePicBean oldNotePicBean) {
+                                        TNNote newNote = tnNote;
+                                        // 结果doOnNext的进一步处理
+                                        if (oldNotePicBean.getCode() == 0) {
+                                            String digest = oldNotePicBean.getMd5();
+                                            long attId = oldNotePicBean.getId();
+                                            //(2)更新图片--content
+                                            String s1 = String.format("<tn-media hash=\"%s\" />", digest);
+                                            String s2 = String.format("<tn-media hash=\"%s\" att-id=\"%s\" />", digest, attId);
+                                            //笔记的内容修改
+
+                                            newNote.content = newNote.content.replaceAll(s1, s2);
+                                            //
+                                            if (newNote.catId == -1) {
+                                                newNote.catId = TNSettings.getInstance().defaultCatId;
+                                            }
+                                            return Observable.just(newNote);
+                                        } else {
+                                            // 上传失败需要重传三次 未做
+                                            return Observable.just(newNote);
+                                        }
+                                    }
+                                });
+                    }
+                }).last();//只传最后一个值，值是该note的最终结果
+    }
+
 
     //================================================接口相关================================================
 
@@ -96,91 +171,36 @@ public class NoteModule {
                     @Override
                     public Observable<TNNote> call(final TNNote tnNote) {
                         Vector<TNNoteAtt> oldNotesAtts = tnNote.atts;
-                        final String[] content = {tnNote.content};
-                        //上传每一个文件
-                        Observable<TNNote> fileBeanObservable = Observable.from(oldNotesAtts).concatMap(new Func1<TNNoteAtt, Observable<OldNotePicBean>>() {//先上传文件
-
-                            //拿到每一个文件数据，上传
-                            @Override
-                            public Observable<OldNotePicBean> call(final TNNoteAtt tnNoteAtt) {
-                                //多个文件上传
-                                // 需要加入到MultipartBody中，而不是作为参数传递
-                                //        MultipartBody.Builder builder = new MultipartBody.Builder()
-                                //                .setType(MultipartBody.FORM)//表单类型
-                                //                .addFormDataPart("token", settings.token);
-                                //        for(File file:files){
-                                //            RequestBody photoRequestBody = RequestBody.create(MediaType.parse("image/*"), file);// multipart/form-data /image/*
-                                //            builder.addFormDataPart("file", file.getName(), photoRequestBody);
-                                //            List<MultipartBody.Part> parts = builder.build().parts();
-                                //        }
-
-                                //单个文件上传
-                                File file = new File(tnNoteAtt.path);
-                                RequestBody requestFile = RequestBodyUtil.getRequest(tnNoteAtt.path, file);
-                                MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
-
-                                //拼接url(本app后台特殊嗜好，蛋疼):
-                                String url = URLUtils.API_BASE_URL + URLUtils.Home.UPLOAD_FILE + "?" + "filename=" + file.getName() + "&session_token=" + settings.token;
-                                MLog.d("FeedBackPic", "url=" + url + "\nfilename=" + file.toString() + "---" + file.getName());
-                                url = url.replace(" ", "%20");//文件名有空格
-
-
-                                return MyHttpService.UpLoadBuilder.UploadServer()//(接口1，上传图片)
-                                        .uploadPic(url, part)//接口方法
-                                        .subscribeOn(Schedulers.io())//固定样式
-                                        .doOnNext(new Action1<OldNotePicBean>() {
-                                            @Override
-                                            public void call(OldNotePicBean oldNotePicBean) {
-                                                //（1）更新图片--数据库
-                                                if (oldNotePicBean.getCode() == 0) {
-                                                    MLog.d("updateOldNote--upDataAttIdSQL--getId=" + oldNotePicBean.getId() + "--noteId=" + tnNote.noteId);
-                                                    upDataAttIdSQL(oldNotePicBean.getId(), tnNoteAtt);
-                                                }
-                                            }
-                                        })
-                                        .doOnError(new Action1<Throwable>() {
-                                            @Override
-                                            public void call(Throwable throwable) {
-                                                MLog.e(TAG, "updateNote--uploadPic--doOnError:" + throwable.toString());
-                                                listener.onUpdateOldNoteFailed(new Exception(throwable.getMessage()), null);
-                                            }
-                                        });//固定样式
-                            }
-
-                        }).concatMap(new Func1<OldNotePicBean, Observable<TNNote>>() {//OldNotePicBean和tnNote处理后，再转换成tnNote,上传old TNNote
-                            @Override
-                            public Observable<TNNote> call(OldNotePicBean oldNotePicBean) {
-                                String digest = oldNotePicBean.getMd5();
-                                long attId = oldNotePicBean.getId();
-                                //(2)更新图片--content
-                                String s1 = String.format("<tn-media hash=\"%s\" />", digest);
-                                String s2 = String.format("<tn-media hash=\"%s\" att-id=\"%s\" />", digest, attId);
-                                content[0] = content[0].replaceAll(s1, s2);
-                                //
-                                TNNote mNote = tnNote;
-                                mNote.content = content[0];
-                                if (mNote.catId == -1) {
-                                    mNote.catId = TNSettings.getInstance().defaultCatId;
-                                }
-                                return Observable.just(mNote);
-                            }
-                        });
-                        return fileBeanObservable;
+                        if (oldNotesAtts != null && oldNotesAtts.size() > 0) {
+                            MLog.d("先上传笔记的文件");
+                            return updateNoteFiles(oldNotesAtts, tnNote);
+                        } else {
+                            MLog.d("直接上传本地笔记");
+                            return Observable.just(tnNote);
+                        }
                     }
-                }).concatMap(new Func1<TNNote, Observable<NewNoteBean>>() {//
+                }).concatMap(new Func1<TNNote, Observable<NewNoteBean>>() {// 上传完图片后，再上传笔记
                     @Override
-                    public Observable<NewNoteBean> call(final TNNote note) {
+                    public Observable<NewNoteBean> call(final TNNote mNote) {
+                        TNNote note = mNote;//避免final
+                        if (note.catId == -1) {
+                            note.catId = TNSettings.getInstance().defaultCatId;
+                        }
+                        final TNNote note2 = note;//避免final
                         return MyHttpService.Builder.getHttpServer()//(接口2，上传note)
                                 .addNewNote(note.title, note.content, note.tagStr, note.catId, note.createTime, note.lastUpdate, note.lbsLongitude, note.lbsLatitude, note.lbsAddress, note.lbsRadius, settings.token)//接口方法
                                 .subscribeOn(Schedulers.io())//固定样式
-                                .unsubscribeOn(Schedulers.io())//固定样式
-                                .observeOn(AndroidSchedulers.mainThread())
                                 .doOnNext(new Action1<NewNoteBean>() {
                                     @Override
                                     public void call(NewNoteBean newNoteBean) {
-                                        if (isNewDb) {//false时表示老数据库的数据上传，不用在修改本地的数据
-                                            upDataNoteLocalIdSQL(newNoteBean, note);
+                                        if (newNoteBean.getCode() == 0) {
+                                            MLog.d("updateLocalNewNotes--upDataNoteLocalIdSQL");
+                                            if (isNewDb) {//false时表示老数据库的数据上传，不用在修改本地的数据
+                                                upDataNoteLocalIdSQL(newNoteBean, note2);
+                                            }
+
                                         }
+
                                     }
                                 })
                                 .doOnError(new Action1<Throwable>() {
@@ -211,7 +231,7 @@ public class NoteModule {
     }
 
     /**
-     * 笔记更新：上传本地新增笔记
+     * 笔记更新：上传本地新增笔记(一律当作是新数据，不考虑老数据)
      * 两个接口，一个for循环的图片上传
      * syncState ：1表示未完全同步，2表示完全同步，3表示本地新增，4表示本地编辑，5表示彻底删除，6表示删除到回收站，7表示从回收站还原
      *
@@ -220,89 +240,16 @@ public class NoteModule {
      */
     public void updateLocalNewNotes(Vector<TNNote> notes, final INoteModuleListener listener, boolean isSync) {
 
-        Subscription subscription = Observable.from(notes)
+        Subscription subscription = Observable
+                .from(notes)
                 .concatMap(new Func1<TNNote, Observable<TNNote>>() {//
                     @Override
                     public Observable<TNNote> call(final TNNote tnNote) {
                         Vector<TNNoteAtt> oldNotesAtts = tnNote.atts;//文件列表
-
-
-                        //上传每一个文件
-                        Observable<TNNote> fileBeanObservable = Observable
-                                .from(oldNotesAtts)
-                                .concatMap(new Func1<TNNoteAtt, Observable<OldNotePicBean>>() {//先上传文件
-
-                                    //拿到每一个文件数据，上传
-                                    @Override
-                                    public Observable<OldNotePicBean> call(final TNNoteAtt tnNoteAtt) {
-                                        //多个文件上传
-                                        // 需要加入到MultipartBody中，而不是作为参数传递
-                                        //        MultipartBody.Builder builder = new MultipartBody.Builder()
-                                        //                .setType(MultipartBody.FORM)//表单类型
-                                        //                .addFormDataPart("token", settings.token);
-                                        //        for(File file:files){
-                                        //            RequestBody photoRequestBody = RequestBody.create(MediaType.parse("image/*"), file);// multipart/form-data /image/*
-                                        //            builder.addFormDataPart("file", file.getName(), photoRequestBody);
-                                        //            List<MultipartBody.Part> parts = builder.build().parts();
-                                        //        }
-
-                                        //单个文件上传
-                                        File file = new File(tnNoteAtt.path);
-                                        RequestBody requestFile = RequestBodyUtil.getRequest(tnNoteAtt.path, file);
-                                        MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
-
-                                        //拼接url(本app后台特殊嗜好，蛋疼):
-                                        String url = URLUtils.API_BASE_URL + URLUtils.Home.UPLOAD_FILE + "?" + "filename=" + file.getName() + "&session_token=" + settings.token;
-                                        MLog.d("FeedBackPic", "url=" + url + "\nfilename=" + file.toString() + "---" + file.getName());
-                                        url = url.replace(" ", "%20");//文件名有空格
-
-
-                                        return MyHttpService.UpLoadBuilder.UploadServer()//(接口1，上传图片)
-                                                .uploadPic(url, part)//接口方法
-                                                .subscribeOn(Schedulers.io())//固定样式
-                                                .doOnNext(new Action1<OldNotePicBean>() {
-                                                    @Override
-                                                    public void call(OldNotePicBean oldNotePicBean) {
-                                                        //（1）更新图片--数据库
-                                                        if (oldNotePicBean.getCode() == 0) {
-                                                            MLog.d("updateLocalNewNotes--upDataAttIdSQL--getId=" + oldNotePicBean.getId() + "--noteId=" + tnNote.noteId);
-                                                            upDataAttIdSQL(oldNotePicBean.getId(), tnNoteAtt);
-                                                        }
-
-                                                    }
-                                                })
-                                                .doOnError(new Action1<Throwable>() {
-                                                    @Override
-                                                    public void call(Throwable throwable) {
-                                                        MLog.e(TAG, "updateLocalNewNotes--uploadPic--doOnError:" + throwable.toString());
-                                                        listener.onUpdateLocalNoteFailed(new Exception(throwable.getMessage()), null);
-                                                    }
-                                                });//固定样式
-                                    }
-
-                                }).concatMap(new Func1<OldNotePicBean, Observable<TNNote>>() {//OldNotePicBean和tnNote处理后，再转换成tnNote,上传old TNNote
-                                    @Override
-                                    public Observable<TNNote> call(OldNotePicBean oldNotePicBean) {
-                                        String digest = oldNotePicBean.getMd5();
-                                        String content = tnNote.content;
-                                        long attId = oldNotePicBean.getId();
-                                        //(2)更新图片--content
-                                        String s1 = String.format("<tn-media hash=\"%s\" />", digest);
-                                        String s2 = String.format("<tn-media hash=\"%s\" att-id=\"%s\" />", digest, attId);
-                                        content = content.replaceAll(s1, s2);
-                                        //
-                                        TNNote mNote = tnNote;
-                                        mNote.content = content;
-                                        if (mNote.catId == -1) {
-                                            mNote.catId = TNSettings.getInstance().defaultCatId;
-                                        }
-                                        return Observable.just(mNote);
-                                    }
-                                });
                         //判断是否有文件要上传
                         if (oldNotesAtts != null && oldNotesAtts.size() > 0) {
-                            MLog.d("先本地笔记的文件");
-                            return fileBeanObservable;
+                            MLog.d("先上传笔记的文件");
+                            return updateNoteFiles(oldNotesAtts, tnNote);
                         } else {
                             MLog.d("直接上传本地笔记");
                             return Observable.just(tnNote);
@@ -310,10 +257,14 @@ public class NoteModule {
 
                     }
                 })
-                .concatMap(new Func1<TNNote, Observable<NewNoteBean>>() {//
+                .concatMap(new Func1<TNNote, Observable<NewNoteBean>>() {// 上传完图片后，再上传笔记
                     @Override
-                    public Observable<NewNoteBean> call(final TNNote note) {
-                        MLog.e(TAG, "updateLocalNewNotes--noteId=" + note.noteId);
+                    public Observable<NewNoteBean> call(final TNNote mNote) {
+                        TNNote note = mNote;//避免final
+                        if (note.catId == -1) {
+                            note.catId = TNSettings.getInstance().defaultCatId;
+                        }
+                        final TNNote note2 = note;//避免final
                         return MyHttpService.Builder.getHttpServer()//(接口2，上传note)
                                 .addNewNote(note.title, note.content, note.tagStr, note.catId, note.createTime, note.lastUpdate, note.lbsLongitude, note.lbsLatitude, note.lbsAddress, note.lbsRadius, settings.token)//接口方法
                                 .subscribeOn(Schedulers.io())//固定样式
@@ -322,7 +273,7 @@ public class NoteModule {
                                     public void call(NewNoteBean newNoteBean) {
                                         if (newNoteBean.getCode() == 0) {
                                             MLog.d("updateLocalNewNotes--upDataNoteLocalIdSQL");
-                                            upDataNoteLocalIdSQL(newNoteBean, note);
+                                            upDataNoteLocalIdSQL(newNoteBean, note2);
                                         }
 
                                     }
@@ -406,63 +357,14 @@ public class NoteModule {
 
                         //上传文件(数据源2)
                         Vector<TNNoteAtt> oldNotesAtts = tnNote.atts;
-                        final String[] content = {tnNote.content};
-                        Observable<TNNote> fileBeanObservable = Observable
-                                .from(oldNotesAtts)
-                                .concatMap(new Func1<TNNoteAtt, Observable<OldNotePicBean>>() {//先上传每一个文件
-                                    //拿到每一个文件数据，上传
-                                    @Override
-                                    public Observable<OldNotePicBean> call(final TNNoteAtt tnNoteAtt) {
-                                        //单个文件上传
-                                        File file = new File(tnNoteAtt.path);
-                                        RequestBody requestFile = RequestBodyUtil.getRequest(tnNoteAtt.path, file);
-                                        MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
-
-                                        //拼接url(本app后台特殊嗜好，蛋疼):
-                                        String url = URLUtils.API_BASE_URL + URLUtils.Home.UPLOAD_FILE + "?" + "filename=" + file.getName() + "&session_token=" + settings.token;
-                                        MLog.d(TAG, "url=" + url + "\nfilename=" + file.toString() + "---" + file.getName());
-                                        url = url.replace(" ", "%20");//文件名有空格
-
-                                        return MyHttpService.UpLoadBuilder.UploadServer()//(接口1，上传图片)
-                                                .uploadPic(url, part)//接口方法
-                                                .subscribeOn(Schedulers.io())//固定样式
-                                                .doOnNext(new Action1<OldNotePicBean>() {
-                                                    @Override
-                                                    public void call(OldNotePicBean oldNotePicBean) {
-                                                        //（1）更新图片--数据库
-                                                        MLog.d("updateRecoveryNotes--upDataAttIdSQL--getId=" + oldNotePicBean.getId() + "--noteId=" + tnNote.noteId);
-                                                        upDataAttIdSQL(oldNotePicBean.getId(), tnNoteAtt);
-                                                    }
-                                                })
-                                                .doOnError(new Action1<Throwable>() {
-                                                    @Override
-                                                    public void call(Throwable throwable) {
-                                                        MLog.e(TAG, "updateLocalNewNotes--uploadPic--doOnError:" + throwable.toString());
-                                                        listener.onUpdateRecoveryNoteFailed(new Exception(throwable.getMessage()), null);
-                                                    }
-                                                });//固定样式
-                                    }
-
-                                }).concatMap(new Func1<OldNotePicBean, Observable<TNNote>>() {//OldNotePicBean和tnNote处理后，再转换成tnNote,上传old TNNote
-                                    @Override
-                                    public Observable<TNNote> call(OldNotePicBean oldNotePicBean) {
-                                        String digest = oldNotePicBean.getMd5();
-                                        long attId = oldNotePicBean.getId();
-                                        //(2)更新图片--content
-                                        String s1 = String.format("<tn-media hash=\"%s\" />", digest);
-                                        String s2 = String.format("<tn-media hash=\"%s\" att-id=\"%s\" />", digest, attId);
-                                        content[0] = content[0].replaceAll(s1, s2);
-                                        //
-                                        TNNote mNote = tnNote;
-                                        mNote.content = content[0];
-                                        if (mNote.catId == -1) {
-                                            mNote.catId = TNSettings.getInstance().defaultCatId;
-                                        }
-                                        return Observable.just(mNote);
-                                    }
-                                });
-                        //
-
+                        Observable<TNNote> fileBeanObservable = Observable.empty();
+                        if (oldNotesAtts != null && oldNotesAtts.size() > 0) {
+                            MLog.d("先上传笔记的文件");
+                            fileBeanObservable = updateNoteFiles(tnNote.atts, tnNote);
+                        } else {
+                            MLog.d("直接上传本地笔记");
+                            fileBeanObservable = Observable.just(tnNote);
+                        }
                         //使用zip解决不同数据源的统一处理
                         if (tnNote.noteId != -1L) {
                             return Observable.zip(renameNoteObservable, fileBeanObservable, new Func2<CommonBean, TNNote, List>() {
@@ -555,6 +457,7 @@ public class NoteModule {
 
                     }
                 });
+
         if (isSync) {
             MyRxManager.getInstance().add(subscription);
         }
@@ -813,17 +716,18 @@ public class NoteModule {
     }
 
     /**
-     * TODO
      * 更新编辑的笔记 4
      * 流程介绍：
      * 双层for循环,主流程是 note_ids循环下嵌套 editNotes循环，editNotes下根据编辑状态，处理不同状态，先判断是否需要上传图片，在判断是否需要上传笔记。
      * <p>
      * syncState ：1表示未完全同步，2表示完全同步，3表示本地新增，4表示本地编辑，5表示彻底删除，6表示删除到回收站，7表示从回收站还原
      *
+     * @param note_ids  所有笔记id（后台获取的）
+     * @param editNotes 本地未上传的已编辑笔记
      * @param listener
      */
-    public void updateEditNotes(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> notes, final INoteModuleListener listener, boolean isSync) {
-        MLog.d("编辑笔记同步--" + notes.size() + "--note_ids" + note_ids.size());
+    public void updateEditNotes(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> editNotes, final INoteModuleListener listener, boolean isSync) {
+        MLog.d("编辑笔记同步--" + editNotes.size() + "--note_ids" + note_ids.size());
         Subscription subscription = Observable.from(note_ids)
                 .concatMap(new Func1<AllNotesIdsBean.NoteIdItemBean, Observable<CommonBean>>() {
                     @Override
@@ -831,139 +735,145 @@ public class NoteModule {
                         final long cloudNoteId = bean.getId();
                         final int lastUpdate = bean.getUpdate_at();
                         //处理 notes列表
-                        return Observable.from(notes).concatMap(new Func1<TNNote, Observable<TNNote>>() {
-                            @Override
-                            public Observable<TNNote> call(final TNNote editNote) {//
-                                //note下的文件列表上传
-                                Vector<TNNoteAtt> oldNotesAtts = editNote.atts;//文件列表
-
-                                //处理 item note下的每一个图片是否上传(请先参考if的判断，先执行if的判断，在执行该处)
-                                Observable<TNNote> editNoteFilesObservable = Observable.from(oldNotesAtts)
-                                        .concatMap(new Func1<TNNoteAtt, Observable<TNNote>>() {//先上传文件，在上传TNNote
-                                            @Override
-                                            public Observable<TNNote> call(final TNNoteAtt tnNoteAtt) {
-                                                //单图片上传
-                                                File file = new File(tnNoteAtt.path);
-                                                RequestBody requestFile = RequestBodyUtil.getRequest(tnNoteAtt.path, file);
-                                                MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
-
-                                                //拼接url
-                                                String url = URLUtils.API_BASE_URL + URLUtils.Home.UPLOAD_FILE + "?" + "filename=" + file.getName() + "&session_token=" + settings.token;
-                                                url = url.replace(" ", "%20");//文件名有空格
-                                                //
-                                                MLog.d("url=" + url + "\nfilename=" + file.toString() + "\nfile.getName()=" + file.getName());
-
-                                                // 上传图片的处理，
-                                                Observable<TNNote> upResultObservier = MyHttpService.UpLoadBuilder.UploadServer()//(接口1，上传图片)
-                                                        .uploadPic(url, part)//接口方法
-                                                        .subscribeOn(Schedulers.io())//固定样式
-                                                        .doOnNext(new Action1<OldNotePicBean>() {
-                                                            @Override
-                                                            public void call(OldNotePicBean oldNotePicBean) {
-                                                                //（1）更新图片--数据库(意见反馈不走这一块)
-                                                                if (oldNotePicBean.getCode() == 0) {
-                                                                    MLog.d("updateEditNotes--upDataAttIdSQL--getId=" + oldNotePicBean.getId() + "--noteId=" + editNote.noteId);
-                                                                    upDataAttIdSQL(oldNotePicBean.getId(), tnNoteAtt);
-                                                                }
-                                                            }
-                                                        })
-                                                        .doOnError(new Action1<Throwable>() {
-                                                            @Override
-                                                            public void call(Throwable throwable) {
-                                                                MLog.e(TAG, "updateLocalNewNotes--uploadPic--doOnError:" + throwable.toString());
-                                                                listener.onUpdateLocalNoteFailed(new Exception(throwable.getMessage()), null);
-                                                            }
-                                                        }).concatMap(new Func1<OldNotePicBean, Observable<TNNote>>() {//结果需要转换成TNNote，用于上传TNNote
-                                                            @Override
-                                                            public Observable<TNNote> call(OldNotePicBean oldNotePicBean) {
-                                                                //结果doOnNext的进一步处理
-                                                                String digest = oldNotePicBean.getMd5();
-                                                                long attId = oldNotePicBean.getId();
-                                                                //(2)更新图片--content
-                                                                String s1 = String.format("<tn-media hash=\"%s\" />", digest);
-                                                                String s2 = String.format("<tn-media hash=\"%s\" att-id=\"%s\" />", digest, attId);
-                                                                //笔记的内容修改
-                                                                TNNote newNote = editNote;
-                                                                newNote.content = newNote.content.replaceAll(s1, s2);
-                                                                //
-                                                                if (newNote.catId == -1) {
-                                                                    newNote.catId = TNSettings.getInstance().defaultCatId;
-                                                                }
-                                                                return Observable.just(newNote);
-                                                            }
-                                                        });
-
-                                                //判断每个图片是否需要上传
-                                                if (!TextUtils.isEmpty(tnNoteAtt.path) && tnNoteAtt.attId != -1) { //不上传图片，直接返回Note对象
-                                                    TNNote newNote = editNote;
-                                                    String s1 = String.format("<tn-media hash=\"%s\" />", tnNoteAtt.digest);
-                                                    String s2 = String.format("<tn-media hash=\"%s\" att-id=\"%s\" />", tnNoteAtt.digest, tnNoteAtt.attId);
-                                                    newNote.content = newNote.content.replaceAll(s1, s2);
-                                                    String s3 = String.format("<tn-media hash=\"%s\"></tn-media>", tnNoteAtt.digest);
-                                                    String s4 = String.format("<tn-media hash=\"%s\" att-id=\"%s\" />", tnNoteAtt.digest, tnNoteAtt.attId);
-                                                    newNote.content = newNote.content.replaceAll(s3, s4);
-                                                    return Observable.just(newNote);
-                                                } else {//上传图片
-                                                    MLog.d("编辑笔记同步--上传图片");
-                                                    return upResultObservier;
-                                                }
-                                            }
-
-                                        });
-                                //if处理不同情况
-                                if (cloudNoteId == editNote.noteId) {//
-                                    if (editNote.lastUpdate > lastUpdate) {//用于上传 TNNote
-                                        MLog.d("编辑笔记同步--上传笔记更新");
-                                        return editNoteFilesObservable;
-                                    } else {//
-                                        MLog.d("编辑笔记同步--更新数据库");
-                                        //更新编辑笔记的状态
-                                        updataEditNotesStateSQL(editNote.noteLocalId);
-                                        //继续下一个循环
-                                        return Observable.empty();
-                                    }
-                                } else {
-                                    //继续下一个循环
-                                    return Observable.empty();
-                                }
-                            }
-                        })
-                                .concatMap(new Func1<TNNote, Observable<TNNote>>() {//该处来自 editNoteFilesObservable的结果
+                        return Observable.from(editNotes)
+                                .concatMap(new Func1<TNNote, Observable<TNNote>>() {
                                     @Override
-                                    public Observable<TNNote> call(TNNote newEditNote) {//editNoteFilesObservable处理后的新的TNNote
-                                        TNNote baseNote = newEditNote;//编辑新笔记
-                                        String shortContent = TNUtils.getBriefContent(baseNote.content);
-                                        String content = baseNote.content;
-                                        ArrayList list = new ArrayList();
-                                        int index1 = content.indexOf("<tn-media");
-                                        int index2 = content.indexOf("</tn-media>");
-                                        while (index1 >= 0 && index2 > 0) {
-                                            String temp = content.substring(index1, index2 + 11);
-                                            list.add(temp);
-                                            content = content.replaceAll(temp, "");
-                                            index1 = content.indexOf("<tn-media");
-                                            index2 = content.indexOf("</tn-media>");
-                                        }
-                                        for (int i = 0; i < list.size(); i++) {
-                                            String temp = (String) list.get(i);
-                                            boolean isExit = false;
-                                            for (TNNoteAtt att : baseNote.atts) {
-                                                String temp2 = String.format("<tn-media hash=\"%s\"></tn-media>", att.digest);
-                                                if (temp.equals(temp2)) {
-                                                    isExit = true;
+                                    public Observable<TNNote> call(final TNNote editNote) {//notes列表转note处理
+
+                                        //if处理不同情况
+                                        if (cloudNoteId == editNote.noteId) {//
+                                            if (editNote.lastUpdate > lastUpdate) {
+                                                MLog.d("编辑笔记同步--上传编辑笔记");
+                                                //一大坨处理
+                                                final TNNote mEditNote = editNote;
+                                                String shortContent = TNUtils.getBriefContent(mEditNote.content);
+                                                String content = mEditNote.content;
+                                                ArrayList list = new ArrayList();
+                                                int index1 = content.indexOf("<tn-media");
+                                                int index2 = content.indexOf("</tn-media>");
+                                                while (index1 >= 0 && index2 > 0) {
+                                                    String temp = content.substring(index1, index2 + 11);
+                                                    list.add(temp);
+                                                    content = content.replaceAll(temp, "");
+                                                    index1 = content.indexOf("<tn-media");
+                                                    index2 = content.indexOf("</tn-media>");
                                                 }
+                                                for (int i = 0; i < list.size(); i++) {
+                                                    String temp = (String) list.get(i);
+                                                    boolean isExit = false;
+                                                    for (TNNoteAtt att : mEditNote.atts) {
+                                                        String temp2 = String.format("<tn-media hash=\"%s\"></tn-media>", att.digest);
+                                                        if (temp.equals(temp2)) {
+                                                            isExit = true;
+                                                        }
+                                                    }
+                                                    if (!isExit) {
+                                                        mEditNote.content = mEditNote.content.replaceAll(temp, "");
+                                                    }
+                                                }
+                                                final TNNote mEditNote2 = mEditNote;//需要将数据传递给下边，操作完设置为final类型
+                                                //note下的文件列表上传
+                                                Vector<TNNoteAtt> oldNotesAtts = editNote.atts;//文件列表
+                                                //处理 item note下的每一个图片是否上传(请先参考if的判断，先执行if的判断，在执行该处)
+                                                return Observable.from(oldNotesAtts)
+                                                        .concatMap(new Func1<TNNoteAtt, Observable<TNNote>>() {//先上传文件，在上传TNNote
+                                                            @Override
+                                                            public Observable<TNNote> call(final TNNoteAtt att) {
+                                                                TNNote note = mEditNote2;
+                                                                if (!TextUtils.isEmpty(att.path) && att.attId != -1) {
+                                                                    String s1 = String.format("<tn-media hash=\"%s\" />", att.digest);
+                                                                    String s2 = String.format("<tn-media hash=\"%s\" att-id=\"%s\" />", att.digest, att.attId);
+                                                                    note.content = note.content.replaceAll(s1, s2);
+                                                                    String s3 = String.format("<tn-media hash=\"%s\"></tn-media>", att.digest);
+                                                                    String s4 = String.format("<tn-media hash=\"%s\" att-id=\"%s\" />", att.digest, att.attId);
+                                                                    note.content = note.content.replaceAll(s3, s4);
+                                                                    //不上传图片，直接返回note
+                                                                    return Observable.just(note);
+                                                                } else {//上传图片
+                                                                    //单图片上传
+                                                                    File file = new File(att.path);
+                                                                    RequestBody requestFile = RequestBodyUtil.getRequest(att.path, file);
+                                                                    MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+
+                                                                    //拼接url
+                                                                    String url = URLUtils.API_BASE_URL + URLUtils.Home.UPLOAD_FILE + "?" + "filename=" + file.getName() + "&session_token=" + settings.token;
+                                                                    url = url.replace(" ", "%20");//文件名有空格
+                                                                    //
+                                                                    MLog.d("url=" + url + "\nfilename=" + file.toString() + "\nfile.getName()=" + file.getName());
+                                                                    final TNNote note2 = note;//传递给下边使用，避免final
+                                                                    //上传单个文件
+                                                                    return MyHttpService.UpLoadBuilder.UploadServer()//(接口1，上传图片)
+                                                                            .uploadPic(url, part)//接口方法
+                                                                            .subscribeOn(Schedulers.io())//固定样式
+                                                                            .doOnNext(new Action1<OldNotePicBean>() {
+                                                                                @Override
+                                                                                public void call(OldNotePicBean oldNotePicBean) {
+                                                                                    //（1）更新图片--数据库(意见反馈不走这一块)
+                                                                                    if (oldNotePicBean.getCode() == 0) {
+                                                                                        MLog.d("updateEditNotes--upDataAttIdSQL--上传图片成功，保存数据库");
+                                                                                        upDataAttIdSQL(oldNotePicBean.getId(), att);
+                                                                                    }
+                                                                                }
+                                                                            })
+                                                                            .doOnError(new Action1<Throwable>() {
+                                                                                @Override
+                                                                                public void call(Throwable throwable) {
+                                                                                    MLog.e(TAG, "updateLocalNewNotes--uploadPic--doOnError:" + throwable.toString());
+                                                                                    listener.onUpdateLocalNoteFailed(new Exception(throwable.getMessage()), null);
+                                                                                }
+                                                                            }).concatMap(new Func1<OldNotePicBean, Observable<TNNote>>() {//结果需要转换成TNNote，用于上传TNNote
+                                                                                @Override
+                                                                                public Observable<TNNote> call(OldNotePicBean oldNotePicBean) {
+                                                                                    TNNote newNote = note2;
+                                                                                    //结果doOnNext的进一步处理
+                                                                                    if (oldNotePicBean.getCode() == 0) {
+                                                                                        String digest = oldNotePicBean.getMd5();
+                                                                                        long attId = oldNotePicBean.getId();
+                                                                                        //(2)更新图片--content
+                                                                                        String s1 = String.format("<tn-media hash=\"%s\" />", digest);
+                                                                                        String s2 = String.format("<tn-media hash=\"%s\" att-id=\"%s\" />", digest, attId);
+                                                                                        //笔记的内容修改
+
+                                                                                        newNote.content = newNote.content.replaceAll(s1, s2);
+                                                                                        //
+                                                                                        if (newNote.catId == -1) {
+                                                                                            newNote.catId = TNSettings.getInstance().defaultCatId;
+                                                                                        }
+                                                                                        return Observable.just(newNote);
+                                                                                    } else {
+                                                                                        return Observable.just(newNote);
+                                                                                    }
+                                                                                }
+                                                                            }).subscribeOn(Schedulers.io());
+
+                                                                }
+                                                            }
+
+                                                        })
+                                                        .subscribeOn(Schedulers.io())
+                                                        .last();//所有结果，都是同一个note处理，按顺序更新note,所以返回最后一个即可拿到最新的note
+                                            } else {//
+                                                MLog.d("编辑笔记同步--更新笔记的数据库");
+                                                //更新编辑笔记的状态
+                                                updataEditNotesStateSQL(editNote.noteLocalId);
+                                                //继续下一个循环
+                                                return Observable.empty();
                                             }
-                                            if (!isExit) {
-                                                baseNote.content = baseNote.content.replaceAll(temp, "");
-                                            }
+                                        } else {
+                                            //继续下一个循环
+                                            return Observable.empty();
                                         }
-                                        return Observable.just(baseNote);//再次转换处理
                                     }
                                 })
-                                .concatMap(new Func1<TNNote, Observable<CommonBean>>() {//编辑笔记上传
+                                .concatMap(new Func1<TNNote, Observable<CommonBean>>() {//该处来自 所有图片上传完成后，处理新note，准备上传note
                                     @Override
-                                    public Observable<CommonBean> call(final TNNote note) {
+                                    public Observable<CommonBean> call(TNNote mNote) {
+                                        TNNote note = mNote;
+                                        if (note.catId == -1) {
+                                            note.catId = TNSettings.getInstance().defaultCatId;
+                                        }
                                         MLog.d("编辑笔记同步--上传笔记");
+                                        final TNNote note2 = note;//给下边用，避免final
                                         return MyHttpService.Builder.getHttpServer()//上传笔记
                                                 .editNote(note.noteId, note.title, note.content, note.tagStr, note.catId, note.createTime, note.lastUpdate, settings.token)
                                                 .subscribeOn(Schedulers.io())
@@ -972,10 +882,11 @@ public class NoteModule {
                                                     public void call(CommonBean commonBean) {
                                                         //数据处理
                                                         if (commonBean.getCode() == 0) {
-                                                            updataEditNoteSQL(note);
+                                                            updataEditNoteSQL(note2);
                                                         }
                                                     }
-                                                });
+                                                })
+                                                .subscribeOn(Schedulers.io());
                                     }
                                 });
                     }
@@ -1769,24 +1680,19 @@ public class NoteModule {
      * 更新本地Note到数据库
      */
     private void upDataNoteLocalIdSQL(final NewNoteBean resultBean, final TNNote note) {
+        long id = resultBean.getId();
+        TNDb.beginTransaction();
+        try {
+            TNDb.getInstance().execSQL(TNSQLString.NOTE_UPDATE_NOTEID_BY_NOTELOCALID, id, note.noteLocalId);
 
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                long id = resultBean.getId();
-                TNDb.beginTransaction();
-                try {
-                    TNDb.getInstance().execSQL(TNSQLString.NOTE_UPDATE_NOTEID_BY_NOTELOCALID, id, note.noteLocalId);
+            TNDb.setTransactionSuccessful();
+        } catch (Exception e) {
+            MLog.e("upDataNoteLocalIdSQL" + e.toString());
+            TNDb.endTransaction();
+        } finally {
+            TNDb.endTransaction();
+        }
 
-                    TNDb.setTransactionSuccessful();
-                } catch (Exception e) {
-                    MLog.e("upDataNoteLocalIdSQL" + e.toString());
-                    TNDb.endTransaction();
-                } finally {
-                    TNDb.endTransaction();
-                }
-            }
-        });
 
     }
 
