@@ -15,8 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.thinkernote.ThinkerNote.Action.TNAction;
-import com.thinkernote.ThinkerNote.Action.TNAction.TNActionResult;
 import com.thinkernote.ThinkerNote.Adapter.TNNotesAdapter;
 import com.thinkernote.ThinkerNote.Data.TNCat;
 import com.thinkernote.ThinkerNote.Data.TNNote;
@@ -24,8 +22,6 @@ import com.thinkernote.ThinkerNote.Data.TNTag;
 import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.Database.TNSQLString;
-import com.thinkernote.ThinkerNote.General.TNActionType;
-import com.thinkernote.ThinkerNote.General.TNActionUtils;
 import com.thinkernote.ThinkerNote.General.TNConst;
 import com.thinkernote.ThinkerNote.General.TNHandleError;
 import com.thinkernote.ThinkerNote.General.TNSettings;
@@ -106,9 +102,6 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
 
         mProgressDialog = TNUtilsUi.progressDialog(this, R.string.in_progress);
 
-        //TODO
-        TNAction.regResponder(TNActionType.GetNoteListBySearch, this, "respondGetNoteListBySearch");
-        TNAction.regResponder(TNActionType.GetAllData, this, "respondGetAllData");
         //
         presenter = new NoteListPresenter(this, this);
         syncPresenter = new SyncPresenter(this, this);
@@ -468,7 +461,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
 
     @Override
     public void onRefresh() {
-        if (TNActionUtils.isSynchronizing()) {
+        if (MyRxManager.getInstance().isSyncing()) {
             TNUtilsUi.showNotification(this, R.string.alert_Synchronize_TooMuch, false);
             return;
         }
@@ -558,23 +551,6 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
         setButtonsAndNoteList();
     }
 
-
-    public void respondGetAllData(TNAction aAction) {
-        if (aAction.result == TNActionResult.Cancelled) {
-            TNUtilsUi.showNotification(this, R.string.alert_SynchronizeCancell, true);
-        } else if (!TNHandleError.handleResult(this, aAction, false)) {
-            TNUtilsUi.showNotification(this, R.string.alert_MainCats_Synchronized, true);
-            if (TNActionUtils.isSynchroniz(aAction)) {
-                TNSettings settings = TNSettings.getInstance();
-                settings.originalSyncTime = System.currentTimeMillis();
-                settings.savePref(false);
-            }
-        } else {
-            TNUtilsUi.showNotification(this,
-                    R.string.alert_Synchronize_Stoped, true);
-        }
-    }
-
     /**
      * 同步Data结束后的操作
      *
@@ -643,7 +619,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
                 new CommonDialog.DialogCallBack() {
                     @Override
                     public void sureBack() {
-                        if (!TNActionUtils.isSynchronizing()) {
+                        if (!MyRxManager.getInstance().isSyncing()) {
                             //具体执行
                             service.execute(new Runnable() {
                                 @Override
@@ -686,7 +662,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
                 new CommonDialog.DialogCallBack() {
                     @Override
                     public void sureBack() {
-                        if (!TNActionUtils.isSynchronizing()) {
+                        if (!MyRxManager.getInstance().isSyncing()) {
                             TNUtilsUi.showNotification(TNNoteListAct.this, R.string.alert_NoteView_Synchronizing, false);
                             //具体执行
                             service.execute(new Runnable() {
@@ -728,7 +704,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
                     @Override
                     public void sureBack() {
 
-                        if (!TNActionUtils.isSynchronizing()) {
+                        if (!MyRxManager.getInstance().isSyncing()) {
                             TNUtilsUi.showNotification(TNNoteListAct.this, R.string.alert_NoteView_Synchronizing, false);
                             //具体执行
                             service.execute(new Runnable() {
@@ -771,7 +747,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
                 new CommonDialog.DialogCallBack() {
                     @Override
                     public void sureBack() {
-                        if (!TNActionUtils.isSynchronizing()) {
+                        if (!MyRxManager.getInstance().isSyncing()) {
                             TNUtilsUi.showNotification(TNNoteListAct.this, R.string.alert_NoteView_Synchronizing, false);
                             //具体执行
                             service.execute(new Runnable() {
@@ -813,7 +789,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
                 new CommonDialog.DialogCallBack() {
                     @Override
                     public void sureBack() {
-                        if (!TNActionUtils.isSynchronizing()) {
+                        if (!MyRxManager.getInstance().isSyncing()) {
                             TNUtilsUi.showNotification(TNNoteListAct.this, R.string.alert_NoteView_Synchronizing, false);
                             //监听
                             getDetailByNoteId(noteId);

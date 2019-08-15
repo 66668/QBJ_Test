@@ -18,7 +18,6 @@ import com.thinkernote.ThinkerNote.Adapter.TNNotesAdapter;
 import com.thinkernote.ThinkerNote.DBHelper.NoteDbHelper;
 import com.thinkernote.ThinkerNote.Data.TNNote;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
-import com.thinkernote.ThinkerNote.General.TNActionUtils;
 import com.thinkernote.ThinkerNote.General.TNConst;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
@@ -160,7 +159,7 @@ public class NoteFragment extends TNChildViewBase implements OnItemLongClickList
                 return;
             }
             //
-            if (TNActionUtils.isSynchronizing()) {
+            if (MyRxManager.getInstance().isSyncing()) {
                 TNUtilsUi.showNotification(mActivity, R.string.alert_Synchronize_TooMuch, false);
                 mPullListview.onRefreshComplete();
                 return;

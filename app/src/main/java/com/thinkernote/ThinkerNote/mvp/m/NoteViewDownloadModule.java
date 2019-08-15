@@ -60,7 +60,6 @@ public class NoteViewDownloadModule  {
         }
 
         //http 方式从服务器下载附件
-//        aAction.runChildAction(TNActionType.TNHttpDownloadAtt, ("attachment/" + att.attId), att.attId, path);
 
         //url绝对路径:https://s.qingbiji.cn/attachment/28498638?session_token=KA6nN3d3eqMRuWJr8gmX6Svw7d27HPr69qmbpBhf
         String url = URLUtils.API_BASE_URL + "attachment/" + att.attId + "?session_token=" + TNSettings.getInstance().token;

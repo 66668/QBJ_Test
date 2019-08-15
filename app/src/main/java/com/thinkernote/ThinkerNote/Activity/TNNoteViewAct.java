@@ -51,7 +51,6 @@ import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.Database.TNSQLString;
 import com.thinkernote.ThinkerNote.General.TNActionType;
-import com.thinkernote.ThinkerNote.General.TNActionUtils;
 import com.thinkernote.ThinkerNote.General.TNConst;
 import com.thinkernote.ThinkerNote.General.TNHandleError;
 import com.thinkernote.ThinkerNote.General.TNSettings;
@@ -61,6 +60,7 @@ import com.thinkernote.ThinkerNote.General.TNUtilsDialog;
 import com.thinkernote.ThinkerNote.General.TNUtilsHtml;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
+import com.thinkernote.ThinkerNote.mvp.http.MyRxManager;
 import com.thinkernote.ThinkerNote.other.PoPuMenuView;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
@@ -1098,7 +1098,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
                 new CommonDialog.DialogCallBack() {
                     @Override
                     public void sureBack() {
-                        if (!TNActionUtils.isSynchronizing()) {
+                        if (!MyRxManager.getInstance().isSyncing()) {
                             TNUtilsUi.showNotification(TNNoteViewAct.this, R.string.alert_NoteView_Synchronizing, false);
                             //具体执行
                             mProgressDialog.show();
@@ -1140,7 +1140,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
                 new CommonDialog.DialogCallBack() {
                     @Override
                     public void sureBack() {
-                        if (!TNActionUtils.isSynchronizing()) {
+                        if (!MyRxManager.getInstance().isSyncing()) {
                             mProgressDialog.show();
                             TNUtilsUi.showNotification(TNNoteViewAct.this, R.string.alert_NoteView_Synchronizing, false);
                             mProgressDialog.show();
@@ -1227,7 +1227,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
                 new CommonDialog.DialogCallBack() {
                     @Override
                     public void sureBack() {
-                        if (!TNActionUtils.isSynchronizing()) {
+                        if (!MyRxManager.getInstance().isSyncing()) {
                             TNUtilsUi.showNotification(TNNoteViewAct.this, R.string.alert_NoteView_Synchronizing, false);
                             mProgressDialog.show();
                             //具体执行

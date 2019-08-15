@@ -18,13 +18,13 @@ import com.thinkernote.ThinkerNote.Data.TNPreferenceGroup;
 import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.Database.TNSQLString;
-import com.thinkernote.ThinkerNote.General.TNActionUtils;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Views.CommonDialog;
+import com.thinkernote.ThinkerNote.mvp.http.MyRxManager;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnCatInfoListener;
 import com.thinkernote.ThinkerNote.mvp.p.CatInfoPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
@@ -227,7 +227,7 @@ public class TNCatInfoAct extends TNActBase
                 new CommonDialog.DialogCallBack() {
                     @Override
                     public void sureBack() {
-                        if (!TNActionUtils.isSynchronizing()) {
+                        if (!MyRxManager.getInstance().isSyncing()) {
                             TNUtilsUi.showNotification(TNCatInfoAct.this, R.string.alert_NoteView_Synchronizing, false);
                             //具体执行
                             pCatDelete(cat);

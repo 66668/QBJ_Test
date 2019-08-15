@@ -47,7 +47,6 @@ import com.thinkernote.ThinkerNote.Data.TNNoteAtt;
 import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.Database.TNSQLString;
-import com.thinkernote.ThinkerNote.General.TNActionUtils;
 import com.thinkernote.ThinkerNote.General.TNConst;
 import com.thinkernote.ThinkerNote.General.TNRecord;
 import com.thinkernote.ThinkerNote.General.TNSettings;
@@ -57,6 +56,7 @@ import com.thinkernote.ThinkerNote.General.TNUtilsDialog;
 import com.thinkernote.ThinkerNote.General.TNUtilsHtml;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
+import com.thinkernote.ThinkerNote.mvp.http.MyRxManager;
 import com.thinkernote.ThinkerNote.other.PoPuMenuView;
 import com.thinkernote.ThinkerNote.other.PoPuMenuView.OnPoPuMenuItemClickListener;
 import com.thinkernote.ThinkerNote.R;
@@ -1154,7 +1154,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                     //获取note
                     mNote = (TNNote) msg.obj;
 
-                    if (TNActionUtils.isSynchronizing()) {
+                    if (MyRxManager.getInstance().isSyncing()) {
                         finish();
                         return;
                     }

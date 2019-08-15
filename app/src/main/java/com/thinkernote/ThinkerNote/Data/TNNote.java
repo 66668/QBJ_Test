@@ -4,7 +4,6 @@ import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 
 import com.baidu.location.BDLocation;
-import com.thinkernote.ThinkerNote.General.TNActionUtils;
 import com.thinkernote.ThinkerNote.General.TNConst;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
@@ -211,7 +210,7 @@ public class TNNote implements Serializable {
                     && content.length() == 0
                     && tagStr.length() == 0
                     && atts.size() == 0
-                    )
+            )
                 isModified = false;
         } else if (originalNote != null) {
             // edit
@@ -471,8 +470,8 @@ public class TNNote implements Serializable {
                         att.attLocalId, att.attLocalId, att.attName, (att.size * 100 / 1024) / 100f + "K");
             }
         }
-        // is downloading
-        else if (TNActionUtils.isDownloadingAtt(att.attId)) {
+        //TODO  is downloading 下载流程代码没有加对应的回调机制，需要补充
+        else if (false) {//TNActionUtils.isDownloadingAtt(att.attId)
             t = String.format("<div id=\"%d\"><img name=\"loading\" src=\"file:///android_asset/download.png\" /><span name=\"abcd\"></span><br />%s(%s)</div>",
                     att.attLocalId, att.attName, (att.size * 100 / 1024) / 100f + "K");
         }

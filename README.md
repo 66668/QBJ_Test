@@ -1,229 +1,33 @@
 
-#重要说明：
-本app的网络框架Okhttp第一次搭建，所以没有优化View层的封装，导致View层的网络逻辑比较复杂，影响View层的单一性。
+# 升级5.8.3修改说明
 
-修改建议：最好将view层的网络逻辑从View层中移出去。
-#轻笔记升级的两个方向：
-android的AyncTask类升级了四次，导致老的AyncTask已经无法调用
-（1）最方便的做法是将老版的AyncTask及相关类集成jar包，替换成jar包的类
-（2）还一种做法比较麻烦，技术不好容易出错，但是后续优化方便，就是换新的网络框架（前提是对源码了解透彻），有助于学习前人技术思想
-经决定，本人使用后者，而且版本升级，涉及的不仅仅是AyncTask，还有权限，文件调用等各种问题。
+接手时是5.7.9版本，改的5.8.0版本由于是大改，而且没有文档，盲改2、3个月仍有很多bug，基本上修改了一些原有逻辑。
+在拿到文档后，该版本又重新做了修改。修改时仍保持对原有逻辑的处理。所以该版本基本保持对性能稳定性的要求。可以作为新版的基础版本继续开发。
 
 
-#轻笔记大改说明：
+解决问题：
+1. 修复新建多图片的笔记会创建多个笔记的问题
+2. 修复无法创建文件夹的问题
+3. 修复无法彻底删除回收站笔记的问题
+4. 支付宝sdk升级
+5. 修复无法刷新加载文件夹标签的问题
+6. 修复微信重新登陆闪退问题
+7. 修复9.0上无法显示弹窗内容的问题
+8. 增加移动文件夹是否成功的提示
+9. 网络框架依赖升级
 
-本版本使用MVP+(Retrofit+Okhttp+Rxjava)网络框架，app中的for循环调用接口，改成position标记list的串行接口，（mainAct即可看到）同步的大块串行接口如有bug,请参考老版源码,新版已完全删除
+## 亮点 框架重构
 
-具体同步位置（7个地方）：
+1. 对mvp框架又重构了一遍：以前的5.8.0的mvp框架，各层划分不清，导致v层仍有大量数据操作，m层相同功能过于重叠，代码重复率过高，修改后，达到标准mvp框架要求。
+2. m层重点重构：减少v层不必要的数据操作，逻辑操作都转移到m层；m层相同逻辑相同接口的操作合为一个m具体类，m层具体细分由功能决定，而不是activity界面决定，m层细分后，
+各种调用由p层区分，p层控制m层的调用，v层控制p层，达到调用分层的目的，更好体现mvp精髓。
 
-1:三个fragment
+## 待优化 深度优化
+如果老板支持再重新设计的话，该软件还是不错的，只是需要一些功能重新设计，一些UI重新设计；UI功能过于单一，体现不了接口的复杂程度。如果只是满足运行的需求，到这个程度，后续没有继续优化的必要了。
 
-2:TNMainAct
-
-3:TNNoteListAct有两套同步块
-
-4：TNPagerAct
-
-5:讯飞语音优化so库
-
-##本人修改没有注意的地方：
-1没有添加back键中断网络操作
-2笔记详情:下载文件的地方，没有写单击下载文件的提示，回调写的比较潦草（缺少单击回调）
-3.
-##本人认为最值得借鉴的地方：
-1。数据库比较好，没有用Cursor,使用的Transaction机制
-2。文件的选择打开样式
-3。反射调用很经典，比如：多个act调用同一个接口，写一个接口方法，用反射调用就可以解决，节省不少代码量，但是，不容易找到引用位置，需要好好研究
-##轻笔记app弊端：
-无法解析web的表格页面
-
-###需要优化
-
-1forResult的RequestID没有修改（可修改bug）
-
-2数据库比较乱，本次未修改，但是需要优化成一个数据库---sjy 0713
-
-3.百度地图开源账号：行客记事/Qunbiji2015 (目前没有定位正确)
-
-##参照旧源码说明：
-
-1.新框架使用说明：
-新增包1：_constructer，具体的mvp的操作，
-
-新增包2：_interface,mvp的回调
-
-新增包3：bean,各种接口返回数据的封装
-
-新增包4：http，里头是Okhttp3+retrofit2+Rxjava的封装，最新网络框架
-
-新框架MVP的使用说明：
-
-每一个界面（eg：TNMainAct），都有对应的m v p的类，_interface包封装的是main的抽象接口（调用传递-->p,调用接口-->m，接口回调-->v），用于具体实现
-在_constructer包和Activity包（act是V层的具体实现）中,具体显示更新ui在v的Activity中实现，具体接口http的封装使用在m的module类中使用。
-
-2.旧框架说明：
-
-不用包1：Action（但是数据库仍使用，无法根除，后续必删）
-
-不用包2：NetWork（已删除，httpclient类封装）
-
-不用包3:OAuth2 网络框架太老，不可用（已删除，httpclient类封装）
+如果有新需求设计的话，还可以花时间优化细节：
+1. 终止同步块调用Rxjava的unsubscribe(),粒度没有直接调用ok的disposible()/cancel()效果好，可以考虑优化。
+2. 数据库操作那块下个版本可以考虑重构下。保留最新即可。
+3. 反射调用这块，还有一些遗留老代码考虑删除或重构下，大部分都不用了。
 
 
-###其他说明：
-
-1.Uri.fromFile(new File(temp))获取Uri的样式在android7.0+后，改成FileProvider.getUriForFile()样式，具体参考本app
-
-2.android4.2以后，任何为JS暴露的接口，都需要加@JavascriptInterface
-
- 
- ##error说明：
- 
-
-#数据库优化说明：
-1。本app涉及大量数据插入查询，所以使用Transaction机制最合适。
-2。耗时操作用handlerThread异步，否则app ANR
-3。
-
-#内存泄漏分析：
-2-11-2异常
-mGetNoteByNoteId 异常onError:java.util.regex.PatternSyntaxException: Incorrectly nested parentheses in regexp pattern near index 0
-
-
-mGetNoteByNoteId 异常onError:java.net.UnknownHostException: Unable to resolve host "s.qingbiji.cn": No address associated with hostname
-权限每丢失的情况下 断网了
-
-2-11-2异常： java.util.regex.PatternSyntaxException: In a character range [x-y], x is greater than y near index 43
- 原因：解析html转换成String的时候，转换异常引起
- 
- 
-2-11-2oom异常：本人注释掉了 不影响显示
- 
-   java.lang.OutOfMemoryError: Failed to allocate a 272911368 byte allocation with 25165824 free bytes and 111MB until OOM, max allowed footprint 176454560, growth limit 268435456
-         at java.util.Arrays.copyOf(Arrays.java:3260)
-         at java.lang.AbstractStringBuilder.ensureCapacityInternal(AbstractStringBuilder.java:125)
-         at java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:660)
-         at java.lang.StringBuffer.append(StringBuffer.java:381)
-         at java.util.regex.Matcher.appendEvaluated(Matcher.java:674)
-         at java.util.regex.Matcher.appendReplacement(Matcher.java:633)
-         at java.util.regex.Matcher.replaceAll(Matcher.java:750)
-         at java.lang.String.replaceAll(String.java:2216)
-         at com.thinkernote.ThinkerNote.General.TNUtilsHtml.getPlainText2(TNUtilsHtml.java:183)
-         at com.thinkernote.ThinkerNote.General.TNUtilsHtml.codeHtmlContent(TNUtilsHtml.java:78)
-         at com.thinkernote.ThinkerNote.Activity.TNMainAct.updateNote(TNMainAct.java:841)
-         at com.thinkernote.ThinkerNote.Activity.TNMainAct$8.handleMessage(TNMainAct.java:713)
-         at android.os.Handler.dispatchMessage(Handler.java:101)
-         at android.os.Looper.loop(Looper.java:164)
-         at android.os.HandlerThread.run(HandlerThread.java:65)
- 
-#Okhttp+Rxjava关于手动back键关闭网络连接的代码提示：
-
-在具体的module中eg:
-
-                 Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                .syncNewNoteAdd(note.title, content, note.tagStr, note.catId, note.createTime, note.lastUpdate, note.lbsLongitude, note.lbsLatitude, note.lbsAddress, note.lbsRadius, settings.token)//接口方法
-                .subscribeOn(Schedulers.io())//固定样式
-                .unsubscribeOn(Schedulers.io())//固定样式
-                .observeOn(AndroidSchedulers.mainThread())//固定样式
-                .subscribe(new Observer<OldNoteAddBean>() {//固定样式，可自定义其他处理
-                    @Override
-                    public void onCompleted() {
-                        MLog.d(TAG, "mNewNote--onCompleted");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        MLog.e("mNewNote 异常onError:" + e.toString());
-                        listener.onSyncNewNoteAddFailed("异常", new Exception("接口异常！"), position, arraySize);
-                    }
-
-                    @Override
-                    public void onNext(OldNoteAddBean bean) {
-                        MLog.d(TAG, "mNewNote-onNext");
-
-                        //处理返回结果
-                        if (bean.getCode() == 0) {
-                            listener.onSyncNewNoteAddSuccess(bean, position, arraySize, isNewDb);
-                        } else {
-                            listener.onSyncNewNoteAddFailed(bean.getMessage(), null, position, arraySize);
-                        }
-                    }
-
-                });
-  subscribe返回对象Subscription 
-  通过如下代码 中断该次连接
-         
-         
-          if (subscription != null && !subscription.isUnsubscribed()) {
-              subscription.unsubscribe();
-          }         
-
-
-#解决8.0打开安装包失败的代码
-act中设置：下载文件后调用checkIsAndroidO()方法即可，然后执行如下代码就完美解决
-
-
-    /**
-     * 判断是否是8.0,8.0需要处理未知应用来源权限问题,否则直接安装
-     */
-    private void checkIsAndroidO() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            boolean b = getPackageManager().canRequestPackageInstalls();
-            if (b) {
-                TNUtilsUi.openFile(this, installFile);//安装应用的逻辑(写自己的就可以)
-            } else {
-                //请求安装未知应用来源的权限
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.REQUEST_INSTALL_PACKAGES}, 10001);
-            }
-        } else {
-            TNUtilsUi.openFile(this, installFile);
-        }
-
-    } 
-    
-    
-    
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case 10001:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    MLog.d("4");
-                    TNUtilsUi.openFile(this, installFile);
-                } else {
-                    //打开未知安装许可
-                    Uri packageURI = Uri.parse("package:" + getPackageName());
-                    Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, packageURI);
-                    startActivityForResult(intent, 10002);
-                }
-                break;
-        }
-    }
-    
-    
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case 10002:
-                MLog.d("6");
-                checkIsAndroidO();
-                break;
-            default:
-                break;
-        }
-    }
-    
- 
- ## 讯飞语音
- nill.chen@thinkernote.com /Qunbijixxxx   
- 
- ## 接口异常：
- delete接口正确写法：
- 
-     @FormUrlEncoded
-     @HTTP(method = "DELETE", path = URLUtils.Note.TAG, hasBody = true)
-     Observable<CommonBean> deleteTag(@Field("tag_id") long tag_id
-             , @Field("session_token") String session_token);

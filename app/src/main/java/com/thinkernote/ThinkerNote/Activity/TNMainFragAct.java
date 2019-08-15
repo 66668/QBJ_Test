@@ -18,11 +18,11 @@ import com.thinkernote.ThinkerNote.Data.TNTag;
 import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.Database.TNSQLString;
-import com.thinkernote.ThinkerNote.General.TNActionUtils;
 import com.thinkernote.ThinkerNote.General.TNConst;
 import com.thinkernote.ThinkerNote.General.TNHandleError;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
+import com.thinkernote.ThinkerNote.mvp.http.MyRxManager;
 import com.thinkernote.ThinkerNote.other.HorizontalPager;
 import com.thinkernote.ThinkerNote.other.HorizontalPager.OnScreenSwitchListener;
 import com.thinkernote.ThinkerNote.R;
@@ -454,7 +454,7 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
                 new CommonDialog.DialogCallBack() {
                     @Override
                     public void sureBack() {
-                        if (!TNActionUtils.isSynchronizing()) {
+                        if (!MyRxManager.getInstance().isSyncing()) {
                             //具体执行
                             ExecutorService service = Executors.newSingleThreadExecutor();
                             service.execute(new Runnable() {
@@ -498,7 +498,7 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
                 new CommonDialog.DialogCallBack() {
                     @Override
                     public void sureBack() {
-                        if (!TNActionUtils.isSynchronizing()) {
+                        if (!MyRxManager.getInstance().isSyncing()) {
                             TNUtilsUi.showNotification(TNMainFragAct.this, R.string.alert_NoteView_Synchronizing, false);
                             //具体执行
                             pCatDelete(cat);
@@ -529,7 +529,7 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
                 new CommonDialog.DialogCallBack() {
                     @Override
                     public void sureBack() {
-                        if (!TNActionUtils.isSynchronizing()) {
+                        if (!MyRxManager.getInstance().isSyncing()) {
                             TNUtilsUi.showNotification(TNMainFragAct.this, R.string.alert_NoteView_Synchronizing, false);
                             //具体执行
                             pDialogDelete(noteLocalId);
@@ -556,7 +556,7 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
                 new CommonDialog.DialogCallBack() {
                     @Override
                     public void sureBack() {
-                        if (!TNActionUtils.isSynchronizing()) {
+                        if (!MyRxManager.getInstance().isSyncing()) {
                             TNUtilsUi.showNotification(TNMainFragAct.this, R.string.alert_NoteView_Synchronizing, false);
                             //监听
                             MLog.d("同步GetDataByNoteId");
@@ -583,7 +583,7 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
                 new CommonDialog.DialogCallBack() {
                     @Override
                     public void sureBack() {
-                        if (!TNActionUtils.isSynchronizing()) {
+                        if (!MyRxManager.getInstance().isSyncing()) {
                             TNUtilsUi.showNotification(TNMainFragAct.this, R.string.alert_NoteView_Synchronizing, false);
                             //监听
                             MLog.d("同步Cats");

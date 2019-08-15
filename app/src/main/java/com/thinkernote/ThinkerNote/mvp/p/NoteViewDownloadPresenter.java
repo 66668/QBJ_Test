@@ -9,7 +9,6 @@ import com.thinkernote.ThinkerNote.Data.TNNoteAtt;
 import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.Database.TNSQLString;
-import com.thinkernote.ThinkerNote.General.TNActionUtils;
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsAtt;
 import com.thinkernote.ThinkerNote.Utils.MLog;
@@ -77,15 +76,13 @@ public class NoteViewDownloadPresenter implements OnNoteViewDownloadListener {
                 continue;
             }
             if (TNUtils.isNetWork() && att.attId != -1) {
-                if (!TNActionUtils.isDownloadingAtt(att.attId)) {
-                    if (startListener != null) {
-                        startListener.onStart(att);
-                    }
-                    MLog.e("开始下载att:" + att.toString());
-                    listDownload(att, mNote, 0);
-                    downloadingAtts.add(att);
-                    tmpList.add(att);
+                if (startListener != null) {
+                    startListener.onStart(att);
                 }
+                MLog.e("开始下载att:" + att.toString());
+                listDownload(att, mNote, 0);
+                downloadingAtts.add(att);
+                tmpList.add(att);
             }
         }
 
@@ -126,14 +123,11 @@ public class NoteViewDownloadPresenter implements OnNoteViewDownloadListener {
         }
         if (TNUtils.checkNetwork(act)) {
             TNNoteAtt att = mNote.getAttDataById(attId);
-
-            if (!TNActionUtils.isDownloadingAtt(att.attId)) {
-                //开始下载回调
-                if (startListener != null)
-                    startListener.onStart(att);
-                //下载
-                singledownload(att, mNote);
-            }
+            //开始下载回调
+            if (startListener != null)
+                startListener.onStart(att);
+            //下载
+            singledownload(att, mNote);
         }
 
     }
