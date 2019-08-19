@@ -41,7 +41,6 @@ import com.iflytek.cloud.SpeechSynthesizer;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
-import com.thinkernote.ThinkerNote.Action.TNAction;
 import com.thinkernote.ThinkerNote.BuildConfig;
 import com.thinkernote.ThinkerNote.DBHelper.NoteAttrDbHelper;
 import com.thinkernote.ThinkerNote.DBHelper.NoteDbHelper;
@@ -50,7 +49,6 @@ import com.thinkernote.ThinkerNote.Data.TNNoteAtt;
 import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.Database.TNSQLString;
-import com.thinkernote.ThinkerNote.General.TNActionType;
 import com.thinkernote.ThinkerNote.General.TNConst;
 import com.thinkernote.ThinkerNote.General.TNHandleError;
 import com.thinkernote.ThinkerNote.General.TNSettings;
@@ -60,16 +58,16 @@ import com.thinkernote.ThinkerNote.General.TNUtilsDialog;
 import com.thinkernote.ThinkerNote.General.TNUtilsHtml;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
-import com.thinkernote.ThinkerNote.mvp.http.MyRxManager;
-import com.thinkernote.ThinkerNote.other.PoPuMenuView;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Views.CommonDialog;
+import com.thinkernote.ThinkerNote.base.TNActBase;
+import com.thinkernote.ThinkerNote.bean.main.GetNoteByNoteIdBean;
+import com.thinkernote.ThinkerNote.mvp.http.MyRxManager;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnNoteViewListener;
 import com.thinkernote.ThinkerNote.mvp.p.NoteViewDownloadPresenter;
 import com.thinkernote.ThinkerNote.mvp.p.NoteViewPresenter;
-import com.thinkernote.ThinkerNote.base.TNActBase;
-import com.thinkernote.ThinkerNote.bean.main.GetNoteByNoteIdBean;
+import com.thinkernote.ThinkerNote.other.PoPuMenuView;
 
 import org.json.JSONObject;
 
@@ -217,10 +215,6 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
         DisplayMetrics metric = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metric);
         mScale = metric.scaledDensity;
-
-        // TODO menu操作返回
-        TNAction.regResponder(TNActionType.NoteLocalRecovery, this, "respondNoteHandle");
-        TNAction.regResponder(TNActionType.GetAllDataByNoteId, this, "respondGetAllDataByNoteId");
 
         presenter = new NoteViewPresenter(this, this);
 
@@ -824,37 +818,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
 
     // Action respond methods
     // -------------------------------------------------------------------------------
-    public void respondSynchronize(TNAction aAction) {
-        if (aAction.result == TNAction.TNActionResult.Cancelled) {
-            TNUtilsUi.showNotification(this, R.string.alert_SynchronizeCancell,
-                    true);
-        } else if (!TNHandleError.handleResult(this, aAction, false)) {
-            TNSettings.getInstance().originalSyncTime = System
-                    .currentTimeMillis();
-            TNSettings.getInstance().savePref(false);
 
-            TNUtilsUi.showNotification(this,
-                    R.string.alert_MainCats_Synchronized, true);
-        } else {
-            TNUtilsUi.showNotification(this, R.string.alert_Synchronize_Stoped,
-                    true);
-        }
-    }
-
-
-    public void respondGetAllDataByNoteId(TNAction aAction) {
-        if (aAction.inputs.size() == 1) //消除编辑页的注册响应事件带来的影响
-            return;
-        if (aAction.result == TNAction.TNActionResult.Cancelled) {
-            TNUtilsUi.showNotification(this, R.string.alert_SynchronizeCancell, true);
-        } else if (!TNHandleError.handleResult(this, aAction, false)) {
-            TNUtilsUi.showNotification(this, R.string.alert_MainCats_Synchronized, true);
-        } else {
-            TNUtilsUi.showNotification(this,
-                    R.string.alert_Synchronize_Stoped, true);
-        }
-        configView();
-    }
 
     /**
      * 文件下载结束后的操作
@@ -967,10 +931,6 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
         }
     }
 
-    public void respondNoteHandle(TNAction aAction) {
-        mProgressDialog.hide();
-        finish();
-    }
 
     private void setPopuMenu() {
         mPopuMenu = new PoPuMenuView(this);

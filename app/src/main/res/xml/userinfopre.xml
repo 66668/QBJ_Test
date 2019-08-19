@@ -38,19 +38,6 @@
 				android:title="@string/userinfo_binding"
 				android:key="userinfo_binding"
 				android:widgetLayout="@layout/preference_more" />
-
-			<!--		
-			<Preference
-				android:title="@string/userinfo_logout"
-				android:key="userinfo_logout"
-				android:widgetLayout="@layout/preference_more" />			   
-			<com.thinkernote.ThinkerNote.General.TNDialogPreference
-				android:key="funThing" 
-				android:title="Fun Thing"
-				android:dialogLayout="@layout/login"
-				android:positiveButtonText="OK"
-				android:negativeButtonText="Cancel"
-				/> --> 
 			
 		</PreferenceCategory>
 
