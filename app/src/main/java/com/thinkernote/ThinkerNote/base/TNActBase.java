@@ -11,7 +11,7 @@ import com.thinkernote.ThinkerNote.Action.TNAction;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote.Views.MenuDialog;
+import com.thinkernote.ThinkerNote.dialog.MenuDialog;
 
 import android.app.Activity;
 import android.app.AlertDialog;

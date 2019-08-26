@@ -17,7 +17,7 @@ import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote.Views.CommonDialog;
+import com.thinkernote.ThinkerNote.dialog.CommonDialog;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnSplashListener;
 import com.thinkernote.ThinkerNote.mvp.p.SplashPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;

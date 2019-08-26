@@ -30,7 +30,7 @@ import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsView;
 import com.thinkernote.ThinkerNote.other.TuyaView;
-import com.thinkernote.ThinkerNote.Views.CommonDialog;
+import com.thinkernote.ThinkerNote.dialog.CommonDialog;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 
 /**

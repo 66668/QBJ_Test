@@ -1,4 +1,4 @@
-package com.thinkernote.ThinkerNote.Views;
+package com.thinkernote.ThinkerNote.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -8,20 +8,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.R;
 
 /**
- *
+ * 音量弹窗
  */
 
-public class InviteCodeDialog extends Dialog implements View.OnClickListener {
+public class VolumeDialog extends Dialog implements View.OnClickListener {
 
     private Context context;
     private DialogCallBack callBack;
 
-    public InviteCodeDialog(Context context, DialogCallBack callBack) {
+    public VolumeDialog(Context context, DialogCallBack callBack) {
         super(context, R.style.dialogStyle);
         this.context = context;
         this.callBack = callBack;
@@ -30,22 +32,42 @@ public class InviteCodeDialog extends Dialog implements View.OnClickListener {
 
     public interface DialogCallBack {
 
-        void sureBack(String str);
+        void sureBack(int str);
 
         void cancelBack();
 
     }
 
-    EditText dialog_et;
+    SeekBar seekbar;
+    TextView seekbar_dialog_textview;
 
     private void init() {
-
-        View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_invite, null);
-
+        View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_volume, null);
         TextView tv_sure = dialogView.findViewById(R.id.tv_sure);
-        dialog_et = dialogView.findViewById(R.id.dialog_et);
+        seekbar_dialog_textview = dialogView.findViewById(R.id.seekbar_dialog_textview);
+        seekbar = dialogView.findViewById(R.id.seekbar_dialog_seekbar);
         TextView tv_cancel = dialogView.findViewById(R.id.tv_cancel);
+        //
+        seekbar.setProgress(TNSettings.getInstance().volume);
+        seekbar_dialog_textview.setText(TNSettings.getInstance().volume + "");
+        seekbar.setMax(100);
+        seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
 
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress,
+                                          boolean fromUser) {
+                seekbar_dialog_textview.setText(progress + "");
+            }
+        });
         tv_sure.setOnClickListener(this);
         tv_cancel.setOnClickListener(this);
 
@@ -77,10 +99,7 @@ public class InviteCodeDialog extends Dialog implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_sure:
-                if (dialog_et != null) {
-                    callBack.sureBack(dialog_et.getText().toString());
-                }
-
+                callBack.sureBack(seekbar.getProgress());
                 dismiss();
                 break;
             case R.id.tv_cancel:

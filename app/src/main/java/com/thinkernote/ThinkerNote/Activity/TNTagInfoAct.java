@@ -16,7 +16,7 @@ import com.thinkernote.ThinkerNote.Data.TNTag;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote.Views.CommonDialog;
+import com.thinkernote.ThinkerNote.dialog.CommonDialog;
 import com.thinkernote.ThinkerNote.mvp.p.TagInfoPresenter;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnTagInfoListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;

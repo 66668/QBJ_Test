@@ -1,4 +1,4 @@
-package com.thinkernote.ThinkerNote.Views;
+package com.thinkernote.ThinkerNote.dialog;
 
 import android.app.Dialog;
 import android.content.Context;

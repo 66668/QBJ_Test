@@ -1,4 +1,4 @@
-package com.thinkernote.ThinkerNote.Views;
+package com.thinkernote.ThinkerNote.dialog;
 
 import com.thinkernote.ThinkerNote.R;
 

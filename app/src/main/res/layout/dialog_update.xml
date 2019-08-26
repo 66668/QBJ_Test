@@ -32,46 +32,57 @@
             android:textColor="#ff000000"
             android:textSize="20sp" />
     </RelativeLayout>
-
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:background="@android:color/white"
-        android:orientation="vertical">
+        android:gravity="center_vertical">
 
-        <TextView
-            android:id="@+id/update_hint"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="10dip"
-            android:padding="5dp"
-            android:text="@string/update_hint"
-            android:textColor="#ff000000"
-            android:textSize="15sp"></TextView>
-
-        <ProgressBar
-            android:id="@+id/update_progressbar"
-            style="?android:attr/progressBarStyleHorizontal"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="10dip"
-            android:layout_gravity="center"
-            android:layout_marginLeft="10dip"
-            android:layout_marginTop="6dip"
-            android:layout_marginRight="10dip"
-            android:layout_marginBottom="8dip"
-            android:max="100"
-            android:progress="0"></ProgressBar>
-
-        <TextView
-            android:id="@+id/update_percent"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text=""
-            android:textSize="13sp"></TextView>
-    </LinearLayout>
+            android:layout_gravity="center_horizontal">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/update_hint"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dip"
+                    android:layout_marginRight="10dip"
+                    android:padding="5dp"
+                    android:text="@string/update_hint"
+                    android:textColor="#ff000000"
+                    android:textSize="15sp"/>
+                <ProgressBar
+                    android:id="@+id/update_progressbar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="10dip"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="10dip"
+                    android:layout_marginTop="6dip"
+                    android:layout_marginRight="10dip"
+                    android:layout_marginBottom="8dip"
+                    android:max="100"
+                    android:progress="0"/>
+
+                <TextView
+                    android:id="@+id/update_percent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text=""
+                    android:textSize="13sp"/>
+            </LinearLayout>
+
+        </ScrollView>
+    </RelativeLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="45dp"
