@@ -23,7 +23,7 @@ import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 
 /**
- * TODO 未使用
+ *  未使用
  */
 public class TNNetSearchAct extends TNActBase implements OnClickListener, OnScreenSwitchListener,
 						OnKeyListener {

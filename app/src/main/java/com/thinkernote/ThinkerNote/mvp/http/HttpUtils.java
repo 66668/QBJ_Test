@@ -151,7 +151,6 @@ public class HttpUtils {
     /**
      * 00 retrofit接口，不用okhttp
      * （可用链式结构，但需要返回处理build()，就不用链式）
-     * TODO 未做
      */
     private Retrofit.Builder getDefaultRetrofit(String apiUrl) {
 
@@ -305,7 +304,7 @@ public class HttpUtils {
                     Request.Builder okhttpRequst = okhttpRequest.newBuilder()
                             .addHeader("user-agent", HttpHead.getHeader());
                     if (myToken != null) {
-                        okhttpRequst.addHeader("session_token", myToken);//TODO token 位置
+                        okhttpRequst.addHeader("session_token", myToken);// token 位置
                     }
 
                     return chain.proceed(okhttpRequst
@@ -383,7 +382,7 @@ public class HttpUtils {
                     Request.Builder okhttpRequst = okhttpRequest.newBuilder()
                             .addHeader("user-agent", HttpHead.getHeader());
                     if (myToken != null) {
-                        okhttpRequst.addHeader("session_token", myToken);//TODO token 位置
+                        okhttpRequst.addHeader("session_token", myToken);// token 位置
                     }
 
                     return chain.proceed(okhttpRequst
@@ -487,7 +486,7 @@ public class HttpUtils {
                     Request.Builder okhttpRequst = okhttpRequest.newBuilder()
                             .addHeader("user-agent", HttpHead.getHeader());
                     if (myToken != null) {
-                        okhttpRequst.addHeader("session_token", myToken);//TODO token 位置
+                        okhttpRequst.addHeader("session_token", myToken);// token 位置
                     }
 
                     return chain.proceed(okhttpRequst.build());

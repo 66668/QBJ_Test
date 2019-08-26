@@ -290,7 +290,6 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeLi
         switch (requestCode) {
             case 10001:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    MLog.d("4");
                     TNUtilsUi.openFile(this, installFile);
                 } else {
                     //打开未知安装许可
@@ -307,7 +306,6 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeLi
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case 10002:
-                MLog.d("6");
                 checkIsAndroidO();
                 break;
             default:

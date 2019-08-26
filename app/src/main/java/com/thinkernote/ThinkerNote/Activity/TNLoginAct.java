@@ -435,7 +435,6 @@ public class TNLoginAct extends TNActBase implements OnClickListener, OnLogListe
         settings.savePref(false);
         //更新
         updateProfile();
-
     }
 
     @Override
@@ -538,6 +537,7 @@ public class TNLoginAct extends TNActBase implements OnClickListener, OnLogListe
         //
         settings.isLogout = false;
         settings.savePref(false);
+        MLog.d("TNLoginAct--TNMainAct");
 
         startActivity(TNMainAct.class);
         finish();

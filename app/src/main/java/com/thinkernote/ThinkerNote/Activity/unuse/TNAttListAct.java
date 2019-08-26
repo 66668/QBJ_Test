@@ -40,7 +40,7 @@ import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 
 /**
- * TODO 未使用
+ *  未使用
  */
 public class TNAttListAct extends TNActBase implements OnClickListener,
 				OnItemClickListener, OnItemLongClickListener {
@@ -170,7 +170,7 @@ public class TNAttListAct extends TNActBase implements OnClickListener,
 			break;
 			}
 		case R.id.attlist_add_att:
-			startActForResult(TNFileListAct.class, null, R.id.noteedit_addatt);//TODO
+			startActForResult(TNFileListAct.class, null, R.id.noteedit_addatt);
 			break;
 			
 		}

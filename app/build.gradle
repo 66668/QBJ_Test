@@ -29,8 +29,7 @@ android {
 
     buildTypes {
         release {
-            // TODO 混淆,不可用，运行崩溃
-            minifyEnabled false
+            minifyEnabled false // TODO 混淆,不可用，运行崩溃
             // Zipalign优化
             zipAlignEnabled true
             // 移除无用的resource文件

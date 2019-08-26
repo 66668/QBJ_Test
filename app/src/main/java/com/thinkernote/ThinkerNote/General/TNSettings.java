@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
-import com.thinkernote.ThinkerNote.Utils.MLog;
-
 import java.util.Queue;
 
 /**
@@ -19,10 +17,7 @@ public class TNSettings {
     private static final String TAG = "TNSettings";
     private static final String PREF_NAME = "thinkernote";
 
-    private static TNSettings singleton  = new TNSettings();;
-
-    public String shortRevision = "5.7";
-    public String revision = "5.7.4";
+    private static TNSettings singleton = new TNSettings();
 
     // app status
     public boolean hasDbError;
@@ -122,15 +117,17 @@ public class TNSettings {
     }
 
     public boolean isLogin() {
-        if (expertTime * 1000 - System.currentTimeMillis() > 0 && loginname.length() != 0
+        //TODO 7天才重新登陆
+//        if (expertTime * 1000 - System.currentTimeMillis() > 0 && loginname.length() != 0
+        if (expertTime + 50000 - System.currentTimeMillis() > 0 && loginname.length() != 0
                 && token.length() != 0 && !isLogout) {
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     public boolean isTNTokenActivie() {
-        MLog.i(TAG, "userId" + userId + "tokenStatus=" + tokenStatus + " accessToken=" + tnAccessToken + " uniqueId=" + uniqueId);
         if (tokenStatus == 1 && tnAccessToken != null && tnAccessToken.length() > 0) {
             if (userType > 0) {
                 if (uniqueId != null && uniqueId.length() > 0)
@@ -197,7 +194,6 @@ public class TNSettings {
         remindLockNote = sp.getBoolean(username + "remindLockNote", true);
         showDialogType = sp.getInt(username + "showDialogType", 0x00);
 
-        MLog.i(TAG, "readPref OK " + firstLaunch);
     }
 
     public void savePref(boolean saveUserInfo) {
@@ -254,7 +250,6 @@ public class TNSettings {
         }
 
         editor.commit();
-        MLog.i(TAG, "savePref OK " + firstLaunch);
     }
 
 }

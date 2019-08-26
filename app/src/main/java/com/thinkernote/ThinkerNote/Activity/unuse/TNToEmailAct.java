@@ -18,7 +18,7 @@ import com.thinkernote.ThinkerNote.General.TNUtilsTag;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 /**
- * TODO 未使用
+ *  未使用
  */
 public class TNToEmailAct extends TNActBase
 	implements OnClickListener{

@@ -130,7 +130,6 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
                     (Intent) getIntent().getExtras().get(Intent.EXTRA_INTENT));
         }
 
-
         if (TNSettings.getInstance().hasDbError) {
             CommonDialog dialog = new CommonDialog(this, R.string.alert_DBErrorHint,
                     new CommonDialog.DialogCallBack() {

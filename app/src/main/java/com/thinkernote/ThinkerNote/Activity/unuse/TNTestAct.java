@@ -23,7 +23,7 @@ import com.thinkernote.ThinkerNote.other.PullListView;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 
 /**
- * TODO 未使用
+ *  未使用
  */
 public class TNTestAct extends TNActBase implements OnScrollListener {
 
