@@ -233,6 +233,7 @@ public class TNLoginAct extends TNActBase implements OnClickListener, OnLogListe
             pLoginNormal(mUserName, mPassword);
         } else {
             TNUtilsUi.showToast(R.string.alert_Net_NotWork);
+            mLoginingDialog.hide();
         }
 
     }
@@ -314,6 +315,7 @@ public class TNLoginAct extends TNActBase implements OnClickListener, OnLogListe
             WXapi.sendReq(req);
         } else {
             TNUtilsUi.showToast(R.string.alert_Net_NotWork);
+            mLoginingDialog.hide();
         }
 
     }
