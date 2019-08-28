@@ -134,6 +134,8 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeLi
         mLastClickBackTime = 0;
         isDestory = false;
         super.onResume();
+        //登陆成功后，可以开启锁屏配置了
+        TNSettings.getInstance().needShowLock2 = true;
     }
 
     @Override

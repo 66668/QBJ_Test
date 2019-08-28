@@ -1,6 +1,7 @@
 package com.thinkernote.ThinkerNote.base;
 
 import android.app.Application;
+import android.os.AsyncTask;
 
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
@@ -47,6 +48,7 @@ public class TNApplication extends Application {
 //            return;
 //        }
 //        LeakCanary.install(this);
+
     }
 
     // private methods
@@ -69,10 +71,10 @@ public class TNApplication extends Application {
 
         //讯飞语音初始化
         StringBuffer param = new StringBuffer();
-        param.append("appid="+getString(R.string.app_id));
+        param.append("appid=" + getString(R.string.app_id));
         param.append(",");
         // 设置使用v5+
-        param.append(SpeechConstant.ENGINE_MODE+"="+SpeechConstant.MODE_MSC);
+        param.append(SpeechConstant.ENGINE_MODE + "=" + SpeechConstant.MODE_MSC);
         SpeechUtility.createUtility(this, param.toString());
 
     }
@@ -104,6 +106,7 @@ public class TNApplication extends Application {
 
         MLog.i("DbReportError e");
     }
+
     // mainAct 2-11-2数据处理时的异常,
     public void htmlError(String error) {
         MLog.i("DbReportError s", TNSettings.getInstance().topAct);

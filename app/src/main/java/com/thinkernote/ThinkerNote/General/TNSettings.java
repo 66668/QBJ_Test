@@ -47,7 +47,9 @@ public class TNSettings {
 
     public int isAutoLogin; // 0 NO; 1 YES
     public long projectLocalId;
-    public boolean needShowLock;
+    public boolean needShowLock;//锁屏参数（1）
+    public boolean needShowLock2;//锁屏参数（2）程序大改后，该参数用于判断是否是从登陆跳转过来的，如果从登陆跳转到主界面的，该参数值是false,不显示锁屏
+
     public boolean remindLockGroup = true;
     public boolean remindLockNote = true;
 
@@ -117,9 +119,8 @@ public class TNSettings {
     }
 
     public boolean isLogin() {
-        //TODO 7天才重新登陆
-//        if (expertTime * 1000 - System.currentTimeMillis() > 0 && loginname.length() != 0
-        if (expertTime + 50000 - System.currentTimeMillis() > 0 && loginname.length() != 0
+        //7天 设置重新登陆
+        if (expertTime * 1000 - System.currentTimeMillis() > 0 && loginname.length() != 0
                 && token.length() != 0 && !isLogout) {
             return true;
         } else {

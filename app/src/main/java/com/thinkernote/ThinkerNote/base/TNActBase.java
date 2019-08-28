@@ -123,19 +123,17 @@ public class TNActBase extends Activity {
         configView();
         createStatus = 1;
 
-        //TODO 重新登录后，还要解锁
         if (!(TAG.equals("TNLoginAct")) && !(TAG.equals("TNSplashAct"))) {
             TNUtilsUi.checkLockScreen(this);
-            if (settings.needShowLock && !isFinishing() && !TNSettings.getInstance().isLogout) {
+            if (settings.needShowLock && settings.needShowLock2 && !isFinishing() && !TNSettings.getInstance().isLogout) {
                 if (!(TAG.equals("TNLockAct") && getTitle().equals("lock"))
                         && settings.lockPattern.size() > 0) {
-                    MLog.i(TAG, "show lock");
                     Bundle b = new Bundle();
                     b.putInt("Type", 2);
                     b.putString("OriginalPath", settings.lockPattern.toString());
-                    MLog.d("TNActBase--onResume--TNLockAct");
                     //解锁界面不可以使用singleTop模式,使用默认模式
-                    Intent intent = new Intent(this,TNLockAct.class);
+                    MLog.e(TAG, "show TNLockAct");
+                    Intent intent = new Intent(this, TNLockAct.class);
                     intent.putExtras(b);
                     startActivity(intent);
                 }
@@ -162,9 +160,9 @@ public class TNActBase extends Activity {
         TNSettings settings = TNSettings.getInstance();
         if (settings.topAct == this)
             settings.topAct = null;
-        if (!(TAG.equals("TNLoginAct")) && !(TAG.equals("TNSplashAct"))) {
-            TNUtilsUi.checkLockScreen(this);
-        }
+
+        //检测锁屏
+        TNUtilsUi.checkLockScreen(this);
     }
 
     @Override
