@@ -438,7 +438,7 @@ public class FolderModule {
      */
     public void deleteFolder(final long fodlerId, final IFolderModuleListener listener) {
 
-        Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .deleteFolder(fodlerId, settings.token)
                 .subscribeOn(Schedulers.io())//固定样式
                 .doOnNext(new Action1<CommonBean>() {
@@ -466,7 +466,7 @@ public class FolderModule {
                     @Override
                     public void onNext(CommonBean bean) {
                         MLog.d(TAG, "deleteFolder-onNext" + bean.getMessage());
-                        if (bean.getMessage().equals("文件夹只能一级一级删除")) {
+                        if (bean.getMessage().contains("文件夹只能一级一级删除")) {
                             listener.onDeleteFolderFailed("文件夹只能一级一级删除", new Exception("文件夹只能一级一级删除"));
                         }
                     }

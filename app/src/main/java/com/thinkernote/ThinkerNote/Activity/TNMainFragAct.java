@@ -287,7 +287,7 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
             }
 
             case R.id.notelistitem_menu_sync: {//完全同步
-                MLog.d("TNPagerAct--笔记相关--完全同步");
+                MLog.d("TNMainFragAct--笔记相关--完全同步");
                 mMenuBuilder.destroy();
                 if (mCurrNote == null || mCurrNote.noteId == -1)
                     break;
@@ -323,7 +323,7 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
 
             //================================02 文件夹相关的点击事件================================
             case R.id.folder_menu_sync: {
-                MLog.d("TNPagerAct--文件夹--完全同步");
+                MLog.d("TNMainFragAct--文件夹--完全同步");
                 mMenuBuilder.destroy();
                 if (mCurrCat == null)
                     break;
@@ -586,7 +586,7 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
                         if (!MyRxManager.getInstance().isSyncing()) {
                             TNUtilsUi.showNotification(TNMainFragAct.this, R.string.alert_NoteView_Synchronizing, false);
                             //监听
-                            MLog.d("同步Cats");
+                            MLog.d("同步Cats下所有笔记");
                             pSynceCat(noteId);
                         }
                     }
@@ -759,10 +759,15 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
 
     @Override
     protected void configView() {
-        for (TNChildViewBase child : mChildPages) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for (TNChildViewBase child : mChildPages) {
 //			if (child.pageId == mCurrChild.pageId)
-            child.configView(createStatus);
-        }
+                    child.configView(createStatus);
+                }
+            }
+        });
     }
 
     @Override
@@ -801,24 +806,29 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
      *
      * @param type 0=正常结束 1= cancel 2= stop
      */
-    private void endSyncCats(int type) {
+    private void endSyncCats(final int type) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (dialog != null) {
+                    dialog.dismiss();
+                    dialog = null;
+                }
+                TNUtilsUi.showToast("同步完成");
+                if (type == 0) {
+                    TNUtilsUi.showNotification(TNMainFragAct.this, R.string.alert_SynchronizeCancell, true);
+                    mSettings.originalSyncTime = System.currentTimeMillis();
+                    mSettings.savePref(false);
+                } else if (type == 1) {
+                    TNUtilsUi.showNotification(TNMainFragAct.this, R.string.alert_MainCats_Synchronized, true);
+                } else {
+                    TNUtilsUi.showNotification(TNMainFragAct.this,
+                            R.string.alert_Synchronize_Stoped, true);
+                }
+                configView();
+            }
+        });
 
-        if (dialog != null) {
-            dialog.dismiss();
-            dialog = null;
-        }
-        TNUtilsUi.showToast("同步完成");
-        if (type == 0) {
-            TNUtilsUi.showNotification(this, R.string.alert_SynchronizeCancell, true);
-            mSettings.originalSyncTime = System.currentTimeMillis();
-            mSettings.savePref(false);
-        } else if (type == 1) {
-            TNUtilsUi.showNotification(this, R.string.alert_MainCats_Synchronized, true);
-        } else {
-            TNUtilsUi.showNotification(this,
-                    R.string.alert_Synchronize_Stoped, true);
-        }
-        configView();
     }
 
 
@@ -858,7 +868,7 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
     }
 
     private void pCatDelete(TNCat cat) {
-        MLog.d("TNPagerAct删除文件夹");
+        MLog.d("TNMainFragAct删除文件夹");
         presenter.deleteFolder(cat.catId);
     }
 
@@ -923,10 +933,17 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
     }
 
     @Override
-    public void onDefaultFolderFailed(String msg, Exception e) {
-        mProgressDialog.hide();
-        TNUtilsUi.showToast(msg);
+    public void onDefaultFolderFailed(final String msg, Exception e) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mProgressDialog.hide();
+                TNUtilsUi.showToast(msg);
+            }
+        });
+
     }
+
     // 同步一条笔记详情
     @Override
     public void onDownloadNoteSuccess() {
@@ -948,9 +965,14 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
     }
 
     @Override
-    public void onTagDeleteFailed(String msg, Exception e) {
-        mProgressDialog.hide();
-        TNUtilsUi.showToast(msg);
+    public void onTagDeleteFailed(final String msg, Exception e) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mProgressDialog.hide();
+                TNUtilsUi.showToast(msg);
+            }
+        });
     }
 
     //删除文件夹
@@ -961,8 +983,14 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
     }
 
     @Override
-    public void onDeleteFolderFailed(String msg, Exception e) {
-        mProgressDialog.hide();
-        MLog.d(msg);
+    public void onDeleteFolderFailed(final String msg, Exception e) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mProgressDialog.hide();
+                TNUtilsUi.showToast(msg);
+            }
+        });
+
     }
 }

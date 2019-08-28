@@ -2,633 +2,632 @@
 <resources>
 
     <string name="ak_pull_to_refresh_pull_label">下拉同步最新</string>
-	<string name="ak_pull_to_refresh_release_label">松开同步</string>
-	<string name="ak_pull_to_refresh_tap_label">点击刷新&#8230;</string>
-	<string name="ak_pull_to_refresh_refreshing_label">正在同步</string>
-	<string name="ak_pull_to_refresh_time_label">上次更新于</string>
-    
-	<string name="tag_important">重要</string>
-	<string name="tag_todo">待办</string>
-	<string name="tag_goodsoft">好用的软件</string>
-	<string name="firstnote_title">从今天起，告别总是满世界找东西的日子</string>
-	<string name="firstnote_tag">重要,好用的软件</string>
+    <string name="ak_pull_to_refresh_release_label">松开同步</string>
+    <string name="ak_pull_to_refresh_tap_label">点击刷新&#8230;</string>
+    <string name="ak_pull_to_refresh_refreshing_label">正在同步</string>
+    <string name="ak_pull_to_refresh_time_label">上次更新于</string>
 
-	<string name="logging_in">正在登录……</string>
-	<string name="registering">正在注册……</string>
-	<string name="getingcontent">正在获取笔记……</string>
-	<string name="in_progress">正在处理……</string>
-	<string name="getingBindingList">正在获取第三方账号列表……</string>
-	<string name="unbinding">正在解除授权关系……</string>
-	
-	<string name="uploadingComment">正在上传评论……</string>
-	<string name="downloadComment">正在下载评论……</string>
-	<string name="note_saveing">正在保存笔记……</string>
-	
-	<string name="finish">完成</string>
-	<string name="send">发送</string>
-	
-	<string name="click_back_again_exit">再按一次退出</string>
-	
-	<!-- Application String -->
-	<string name="app_name">轻笔记</string>
-	<string name="app_name2">&#160;轻笔记 - 创建笔记</string>
-	<string name="contentDescription">contentDescription</string>
+    <string name="tag_important">重要</string>
+    <string name="tag_todo">待办</string>
+    <string name="tag_goodsoft">好用的软件</string>
+    <string name="firstnote_title">从今天起，告别总是满世界找东西的日子</string>
+    <string name="firstnote_tag">重要,好用的软件</string>
 
-	<string name="login_username">请输入账户名</string>
-	<string name="login_password">请输入密码</string>
-	<string name="login_login">登录</string>
-	<string name="login_remember_password">记住密码</string>
-	<string name="login_forget_password">忘记密码？</string>
-	<string name="login_menu_about">关于…</string>
-	<string name="login_menu_register">注册</string>
-	<string name="login_newuser">我要注册</string>
-	<string name="login_trial">继续体验</string>
-	<string name="login_threeId">第三方账号登录</string>
-	<string name="login_baidu">百度账号登录-获15G空间</string>
-	
-	<string name="dialog_forgetpwd_msg">输入您的用户名或邮箱</string>
-	<string name="dialog_forgetpwd_edittext_hint">用户名/邮箱</string>
-	<string name="dialog_setInviteCode_msg">让您的朋友增加空间\n填写他/她的邀请码</string>
-	<string name="dialog_setInviteCode_edittext_hint">邀请码</string>
+    <string name="logging_in">正在登录……</string>
+    <string name="registering">正在注册……</string>
+    <string name="getingcontent">正在获取笔记……</string>
+    <string name="in_progress">正在处理……</string>
+    <string name="getingBindingList">正在获取第三方账号列表……</string>
+    <string name="unbinding">正在解除授权关系……</string>
 
-	<string name="reg_username">用户名</string>
-	<string name="reg_email">邮箱</string>
-	<string name="reg_password">密码</string>
-	<string name="reg_confirm_password">确认密码</string>
-	<string name="reg_show_password">显示密码</string>
-	<string name="reg_register">注册</string>
-	<string name="reg_complete">完成</string>
-	<string name="reg_invite_code">邀请码(选填)</string>
-<!-- 
-	<string name="reg_username_hint">可以使用中文、英文、数字，2-50个字。</string>
-	<string name="reg_email_hint">注册一个有效的邮箱，才能使用“找回密码”等服务。</string>
-	<string name="reg_password_hint">温馨提示：简单的密码不利于保护您的数据安全。</string>
- -->
- 
- 	<string name="pulltorefresh_listview_down_sync">下拉同步</string>
- 	<string name="pulltorefresh_listview_up_sync">松开同步</string>
- 	<string name="pulltorefresh_listview_syncing">正在同步…</string>
- 	<string name="pulltorefresh_listview_sync_time">最近同步:</string>
- 
-	<string name="maincats_allnote">全部笔记</string>
-	<string name="maincats_used_format" formatted="false">已用%.2f兆</string>
-	<string name="maincats_total_format" formatted="false">总共%.2f兆</string>
-	<string name="maincats_space_hint">点击同步，刷新使用空间</string>
-	<string name="maincats_menu_feedback">意见反馈</string>
-	<string name="maincats_menu_invite">邀请朋友</string>
-	<string name="maincats_menu_tagcloud">标签云</string>
-	<string name="maincats_menu_search">搜索</string>
-	<string name="maincats_menu_syncall">完全同步</string>
-	<string name="maincats_menu_logout">注销</string>
-	<string name="maincats_menu_settings">设置</string>
-	<string name="maincats_menu_catsort">排序</string>
-	<string name="maincats_menu_about">关于</string>
-	<string name="maincats_menu_help">帮助</string>
-	<string name="search_word_hint">请输入搜索关键字</string>
-	<string name="search_hint_project_title">群组笔记搜索</string>
-	<string name="search_hint_personal_title">个人笔记搜索</string>
-	<string name="search_hint_project_msg">对本地当前群组所有笔记的标题和正文进行搜索。</string>
-	<string name="search_hint_personal_msg">对本地个人所有笔记的标题和正文进行搜索。</string>
-	<string name="netsearch_id">输入群组ID进行精确搜索</string>
-	<string name="netsearch_name">请输入关键字搜索群组</string>
-	<string name="netsearch_id_hint">请输入群组ID</string>
-	<string name="netsearch_name_hint">请输入群组名称</string>
+    <string name="uploadingComment">正在上传评论……</string>
+    <string name="downloadComment">正在下载评论……</string>
+    <string name="note_saveing">正在保存笔记……</string>
 
-	<string name="folder_menu_view">查看笔记</string>
-	<string name="folder_menu_sync">完全同步该文件夹</string>
-	<string name="folder_menu_sync_group">完全同步该文件夹</string>
-	<string name="folder_menu_rename">重命名</string>
-	<string name="folder_menu_moveto">移动到文件夹</string>
-	<string name="folder_menu_setdefault">设为默认文件夹</string>
-	<string name="folder_menu_info">属性</string>
-	<string name="folder_menu_delete">删除</string>
-	<string name="folder_menu_cancel">取消</string>
-	<string name="folder_menu_recycle">清空回收站</string>
-	
-	<string name="catlist_menu_default">默认排序</string>
-	<string name="catlist_menu_createtime">按创建时间排序</string>
-	<string name="catlist_menu_name">按文件夹名称排序</string>
+    <string name="finish">完成</string>
+    <string name="send">发送</string>
 
-	<string name="tag_menu_display">查看笔记</string>
-	<string name="tag_menu_info">属性</string>
-	<string name="tag_menu_delete">删除</string>
-	<string name="tag_menu_cancel">取消</string>
-	
-	<string name="taglist_select">选择标签</string>
-	<string name="folderlist_select">选择文件夹</string>
-	
-	<string name="updatelog_menu_setallreaded">全部设置为已读</string>
+    <string name="click_back_again_exit">再按一次退出</string>
 
-	<string name="notelist_allnote">全部笔记</string>
-	<string name="notelist_recycler">回收站</string>
-	<string name="notelist_today">今天</string>
-	<string name="notelist_yestoday">昨天</string>
-	<string name="notelist_sformat" formatted="false">%s %02d点%02d分</string>
-	<string name="notelist_mformat" formatted="false">%2d月%d日 %s</string>
-	<string name="notelist_lformat" formatted="false">%d年%d月%d日</string>
-	<string name="notelist_mmformat" formatted="false">%d年%d月</string>
-	<string name="recycler_menu_restore">还原</string>
-	<string name="recycler_menu_view">查看</string>
-	<string name="recycler_menu_delete">彻底删除</string>
-	<string name="recycler_menu_cancel">取消</string>
-	<string name="notelist_gettinglist">正在获取列表……</string>
-	<string name="notelist_search_result">搜索结果</string>
+    <!-- Application String -->
+    <string name="app_name">轻笔记</string>
+    <string name="app_name2">&#160;轻笔记 - 创建笔记</string>
+    <string name="contentDescription">contentDescription</string>
 
-	<string name="notelist_menu_updatetime">按更新时间排序</string>
-	<string name="notelist_menu_createtime">按创建时间排序</string>
-	<string name="notelist_menu_title">按标题排序</string>
-	<string name="notelist_menu_clear_recycle">清空回收站</string>
-	<string name="notelist_menu_cancel">取消</string>
+    <string name="login_username">请输入账户名</string>
+    <string name="login_password">请输入密码</string>
+    <string name="login_login">登录</string>
+    <string name="login_remember_password">记住密码</string>
+    <string name="login_forget_password">忘记密码？</string>
+    <string name="login_menu_about">关于…</string>
+    <string name="login_menu_register">注册</string>
+    <string name="login_newuser">我要注册</string>
+    <string name="login_trial">继续体验</string>
+    <string name="login_threeId">第三方账号登录</string>
+    <string name="login_baidu">百度账号登录-获15G空间</string>
 
-	<string name="notelistitem_menu_view">查看</string>
-	<string name="notelistitem_menu_edit">编辑</string>
-	<string name="notelistitem_menu_sync">完全同步</string>
-	<string name="notelistitem_menu_delete">删除</string>
-	<string name="notelistitem_menu_moveto">移动到文件夹</string>
-	<string name="notelistitem_menu_changetag">更换标签</string>
-	<string name="notelistitem_menu_share">分享</string>
-	<string name="notelistitem_menu_public_open">公开笔记</string>
-	<string name="notelistitem_menu_public_close">取消公开</string>
-	<string name="notelistitem_menu_info">属性</string>
-	<string name="notelistitem_menu_cancel">取消</string>
-	
-	<string name="sharenotes_comment_count" formatted="false">评论(%d)</string>
-	<string name="sharenotes_copy_count" formatted="false">收藏(%d)</string>
-	<string name="sharenotes_source" formatted="false">来源于:%s</string>
+    <string name="dialog_forgetpwd_msg">输入您的用户名或邮箱</string>
+    <string name="dialog_forgetpwd_edittext_hint">用户名/邮箱</string>
+    <string name="dialog_setInviteCode_msg">让您的朋友增加空间\n填写他/她的邀请码</string>
+    <string name="dialog_setInviteCode_edittext_hint">邀请码</string>
 
-	<string name="noteedit_title">未命名</string>
-	<string name="noteedit_tag">输入标签（用逗号分隔）</string>
-	<string name="noteedit_content">您此刻的想法、心情</string>
-	<string name="noteedit_richtext">此笔记包含富文本内容。不能修改原有内容，只能追加内容。</string>
-	<string name="attedit_menu_delete">删除</string>
-	<string name="attedit_menu_cancel">取消</string>
-	<string name="attedit_menu_camera">拍照</string>
-	<string name="attedit_menu_audio">录音</string>
-	<string name="attedit_menu_photo">照片</string>
-	<string name="attedit_menu_file">文件</string>
-	<string name="noteedit_menu_audioinput">语音输入</string>
-	<string name="noteedit_wordcount" formatted="false">%d字</string>
-	<string name="noteedit_current_time" formatted="false">%d年%d月%d日%02d:%02d:%02d</string>
-	
-	<string name="noteedit_btnname_camera">拍照</string>
-	<string name="noteedit_btnname_record">录音</string>
-	<string name="noteedit_btnname_doodle">涂鸦</string>
-	<string name="noteedit_btnname_speakinput">语音转文字</string>
-	<string name="noteedit_btnname_other">其他</string>
-	<string name="noteedit_record_start">继续</string>
-	<string name="noteedit_record_pause">暂停</string>
-	<string name="noteedit_record_stop">停止</string>
-	<string name="noteedit_record_time" formatted="false">%s:%s</string>
-	
-	<string name="noteedit_popomenu_folders">选择文件夹</string>
-	<string name="noteedit_popomenu_picture">添加相片</string>
-	<string name="noteedit_popomenu_tag">选择标签</string>
-	<string name="noteedit_popomenu_addatt">添加附件</string>
-	<string name="noteedit_popomenu_insertcurrenttime">插入当前时间</string>
-	<string name="noteedit_popomenu_lookatt">查看附件</string>
-	<string name="noteedit_popomenu_deleteatt">删除附件</string>
-	
-	<string name="noteview_detail">详细信息</string>
-	<string name="noteview_menu_email">邮件分享</string>
-	<string name="noteview_menu_sync">单篇同步</string>
-	<string name="noteview_menu_home">返回主页</string>
-	<string name="noteview_menu_selecttext">选择文本</string>
-	<string name="noteview_menu_read">语音朗读</string>
-	<string name="noteview_menu_weibo">微博分享</string>
-	
-	<string name="noteview_share_from">\r\n来自轻笔记</string>
-	<string name="weibo_hint">输入微博内容</string>
-	
-	<string name="noteview_menu_sina">新浪微博分享</string>
-	<string name="noteview_menu_shareto_sms">分享到短信</string>
-	<string name="noteview_menu_shareto_wx">分享到微信好友</string>
-	<string name="noteview_menu_shareto_wxcycle">分享到朋友圈</string>
-	<string name="noteview_menu_shareto_qq">分享到QQ好友</string>
-	<string name="noteview_menu_shareto_qqcycle">分享到QQ空间</string>
-	<string name="noteview_menu_text">其他方式分享</string>
-	
-	<string name="noteview_actionitem_share">分享笔记</string>
-	<string name="noteview_actionitem_tag">更换标签</string>
-	<string name="noteview_actionitem_comment">发表评论</string>
-	<string name="noteview_actionitem_selecttext">选择文本</string>
-	<string name="noteview_actionitem_move">更换文件夹</string>
-	<string name="noteview_actionitem_collection">收藏到个人</string>
-	<string name="noteview_actionitem_publicopen">公开笔记</string>
-	<string name="noteview_actionitem_publicclose">取消公开</string>
-	<string name="noteview_actionitem_attribute">查看属性</string>
-	<string name="noteview_actionitem_delete">删除</string>
-	<string name="noteview_editext_comment_hint">写评论</string>
-	
-	<string name="openatt_menu_view">查看</string>
-	<string name="openatt_menu_save">保存</string>
-	<string name="openatt_menu_send">发送</string>
-	<string name="openatt_menu_cancel">取消</string>	
+    <string name="reg_username">用户名</string>
+    <string name="reg_email">邮箱</string>
+    <string name="reg_password">密码</string>
+    <string name="reg_confirm_password">确认密码</string>
+    <string name="reg_show_password">显示密码</string>
+    <string name="reg_register">注册</string>
+    <string name="reg_complete">完成</string>
+    <string name="reg_invite_code">邀请码(选填)</string>
+    <!--
+        <string name="reg_username_hint">可以使用中文、英文、数字，2-50个字。</string>
+        <string name="reg_email_hint">注册一个有效的邮箱，才能使用“找回密码”等服务。</string>
+        <string name="reg_password_hint">温馨提示：简单的密码不利于保护您的数据安全。</string>
+     -->
 
-	<string name="read_menu_restart">从头开始朗读</string>
-	<string name="read_menu_continue">继续朗读</string>
+    <string name="pulltorefresh_listview_down_sync">下拉同步</string>
+    <string name="pulltorefresh_listview_up_sync">松开同步</string>
+    <string name="pulltorefresh_listview_syncing">正在同步…</string>
+    <string name="pulltorefresh_listview_sync_time">最近同步:</string>
 
-	<string name="userinfo_userinfo">用户信息</string>
-	<string name="userinfo_userinfo_child">用户名、密码、邮箱等信息</string>
-	<string name="userinfo_username">用户名</string>
-	<string name="userinfo_phone">手机号</string>
-	<string name="userinfo_password">密码</string>
-	<string name="userinfo_email">邮箱</string>
-	<string name="userinfo_verifyemail">验证您的邮箱</string>
-	<string name="userinfo_defaultfolder">默认文件夹</string>
-	<string name="userinfo_logout">退出登录</string>
-	<string name="userinfo_pwd_modify">修改密码：</string>
-	<string name="userinfo_pwd_old">原密码</string>
-	<string name="userinfo_pwd_new">新密码</string>
-	<string name="userinfo_pwd_confirm">确认密码</string>
-	<string name="userinfo_email_modify">修改邮箱：</string>
-	<string name="userinfo_username_modify">修改用户名：</string>
-	<string name="userinfo_phone_modify">修改手机号：</string>
-	<string name="userinfo_email_pwd">用户密码</string>
-	<string name="userinfo_email_new">新邮箱</string>
-	<string name="userinfo_email_confirm">确认邮箱</string>
-	<string name="userinfo_email_no">未设置</string>
-	<string name="userinfo_verifyemail_yes">已验证</string>
-	<string name="userinfo_verifyemail_no">尚未验证</string>
-	<string name="userinfo_username_new">新用户名</string>
-	<string name="userinfo_username_confirm">确认新用户名</string>
-	<string name="userinfo_phone_new">新手机号</string>
-	<string name="userinfo_phone_confirm">确认新手机号</string>
-	<string name="userinfo_phone_verify_code">验证码</string>
-	<string name="userinfo_binding_baidu">绑定百度网盘</string>
-	<string name="userinfo_binding_189">绑定天翼云</string>
-	<string name="userinfo_binding">第三方账号绑定</string>
-	<string name="userinfo_binding_baidu_ok">已绑定-15G网盘空间</string>
-	<string name="userinfo_binding_ok">已绑定</string>
-	<string name="userinfo_binding_baidu_no">未绑定</string>
-	<string name="userinfo_settings">个性化设置</string>
-	<string name="userinfo_settings_child">默认文件夹、密码锁</string>
-	<string name="userinfo_about">关于我们</string>
-	<string name="userinfo_about_child">意见反馈、版本信息等</string>
-	<string name="userinfo_sync">同步</string>
-	<string name="userinfo_lockpattern">设置密码锁</string>
-	<string name="userinfo_lockpattern_yes">已设置</string>
-	<string name="userinfo_lockpattern_no">未设置</string>
-	<string name="userinfo_remindlockgroup_open">群组管理信息通知</string>
-	<string name="userinfo_remindlockgroup_close">群组管理信息通知</string>
-	<string name="userinfo_remindlockgroup">群组管理信息通知</string>
-	<string name="userinfo_remindlocknote">群组笔记更新通知</string>
-	<string name="userinfo_remindlock_opened">已开启</string>
-	<string name="userinfo_remindlock_closed">已关闭</string>
-	<string name="userinfo_remindlocknote_open">群组笔记更新通知</string>
-	<string name="userinfo_remindlocknote_close">群组笔记更新通知</string>
-	<string name="userinfo_spaceinfo">存储空间</string>
-	<string name="userinfo_spaceinfo_child">云空间大小</string>
-	<string name="userinfo_usedspace">已用空间</string>
-	<string name="userinfo_contribution">贡献值</string>
-	<string name="userinfo_con_rank">贡献排名</string>
-	<string name="userinfo_set_invite_code">补填朋友的邀请码</string>
-	<string name="userinfo_invite_code_ok">已填写</string>
-	<string name="userinfo_invite_code">我的邀请码</string>
-	<string name="userinfo_invite">邀请朋友使用</string>
-	<string name="userinfo_invite_subject">来自轻笔记的邀请</string>
-	<string name="userinfo_invite_body" formatted="false">我正在用轻笔记（  http://www.qingbiji.cn) 帮我记录管理各种信息。它可以帮我在iphone、安卓、PC、WEB四个平台随时记录，各平台内容同步编辑查看，珍贵信息永不丢失！还可轻松分享至邮件和微博哦！\r\n\r\n注册请填写我的邀请码：%s，可以帮我增加存储空间，并同时给你带来1G的起始空间，越用越多,永久免费! 让轻笔记成为我们随身不离的资料库吧！\r\n\r\n来自%s</string>
-	<string name="userinfo_invite_body2" formatted="false">我发现了一款好用的软件，叫做轻笔记。我的资料编写都放在了轻笔记中进行，电脑中不再有拖慢系统的琐碎文件，U盘也成为了多余的东西，利用云存储我可以随时随地在电脑和手机上使用这些信息。现在轻笔记还推出了团队协作功能，我们可以一起通过它组织活动。\r\n\r\n点击（ http://www.qingbiji.cn）注册,立即获得3G的免费空间，畅享轻笔记带来的全新生活体验！\r\n\r\n来自%s</string>
-	<string name="userinfo_invite_body3" formatted="false">我发现了一款好用的软件，叫做轻笔记。我的资料编写都放在了轻笔记中进行，电脑中不再有拖慢系统的琐碎文件，U盘也成为了多余的东西，利用云存储我可以随时随地在电脑和手机上使用这些信息。现在轻笔记还推出了团队协作功能，我们可以一起通过它组织活动，注册时记得填上我的邀请码: %s，就可以获得3G的免费空间，同时我也可以增加100M空间。\r\n\r\n点击（http://www.qingbiji.cn）立即注册，畅享轻笔记带来的全新生活体验！\r\n\r\n来自%s</string>
-	<string name="userinfo_invite_body4" formatted="false">我找到了一款超棒的记事软件！Ta能帮你用照片、涂鸦、语音轻松记录!Ta能帮你保存感兴趣的网页！Ta能提醒你各种大事小事!Ta是唯一有群组功能的记事软件！Ta，叫轻笔记！登录后填邀请码%s，立即获得3G空间。点击（http://www.qingbiji.cn），快来加入吧！</string>
-	<string name="update_hint" formatted="false">发现新版本！现在开始更新？推荐在完成同步后，再更新。\n您的版本：%s\n最新版本：%s\n\n%s</string>
-	<string name="update_start">开始更新</string>
-	<string name="update_downloading">正在下载……</string>
-	<string name="userinfo_update_info">下载成功后，apk在：内部存储/Download文件夹下</string>
-	<string name="userinfo_update">检查更新</string>
-	<string name="userinfo_audio_settings">语音朗读设置</string>
-	<string name="userinfo_audio_settings_child">不看笔记，听笔记</string>
-	<string name="userinfo_voice">声音类型</string>
-	<string name="userinfo_voice_male">男声</string>
-	<string name="userinfo_voice_female">女声</string>
-	<string name="userinfo_speed">语速</string>
-	<string name="userinfo_volume">音量</string>
-	<string name="userinfo_space">存储空间</string>
-	<string name="userinfo_phone_all">本机总存储空间</string>
-	<string name="userinfo_phone_available">本机可用空间</string>
-	<string name="userinfo_sdcard_all">SD卡总存储空间</string>
-	<string name="userinfo_sdcard_available">SD卡可用空间</string>
-	<string name="userinfo_clear_cache">清除全部缓存</string>
-	<string name="userinfo_changeskin">更换皮肤</string>
-	<string name="userinfo_picture_compressionmode">大图片上传是否压缩</string>
-	<string name="userinfo_recommend">友情推荐</string>
-	<string name="userinfo_kuaizhang">装修快账</string>
-	<string name="userinfo_kuaizhang_link">http://3g.gfan.com/data/index.php?/detail/index/270280</string>
-	<string name="userinfo_wetuandui">微团队</string>
-	<string name="userinfo_wetuandui_link">http://www.wetuandui.com/static/android/Team.apk</string>
-	<string name="userinfo_copyto">CopyTo</string>
-	<string name="userinfo_copyto_link">http://www.copyto.cn/s/copyto.apk</string>
-	<string name="userinfo_360browser">360浏览器</string>
-	<string name="userinfo_360browser_link">http://www.copyto.cn/s/copyto.apk</string>
-	<string name="userinfo_189">天翼云</string>
-	<string name="userinfo_189_link">http://www.copyto.cn/s/copyto.apk</string>
-	
-	<string name="userinfo_pay">请支持我们一下！</string>
-	
-	<string name="noteinfo_wordcount">字数</string>
+    <string name="maincats_allnote">全部笔记</string>
+    <string name="maincats_used_format" formatted="false">已用%.2f兆</string>
+    <string name="maincats_total_format" formatted="false">总共%.2f兆</string>
+    <string name="maincats_space_hint">点击同步，刷新使用空间</string>
+    <string name="maincats_menu_feedback">意见反馈</string>
+    <string name="maincats_menu_invite">邀请朋友</string>
+    <string name="maincats_menu_tagcloud">标签云</string>
+    <string name="maincats_menu_search">搜索</string>
+    <string name="maincats_menu_syncall">完全同步</string>
+    <string name="maincats_menu_logout">注销</string>
+    <string name="maincats_menu_settings">设置</string>
+    <string name="maincats_menu_catsort">排序</string>
+    <string name="maincats_menu_about">关于</string>
+    <string name="maincats_menu_help">帮助</string>
+    <string name="search_word_hint">请输入搜索关键字</string>
+    <string name="search_hint_project_title">群组笔记搜索</string>
+    <string name="search_hint_personal_title">个人笔记搜索</string>
+    <string name="search_hint_project_msg">对本地当前群组所有笔记的标题和正文进行搜索。</string>
+    <string name="search_hint_personal_msg">对本地个人所有笔记的标题和正文进行搜索。</string>
+    <string name="netsearch_id">输入群组ID进行精确搜索</string>
+    <string name="netsearch_name">请输入关键字搜索群组</string>
+    <string name="netsearch_id_hint">请输入群组ID</string>
+    <string name="netsearch_name_hint">请输入群组名称</string>
 
-	<string name="lock_drawhint">绘制解锁图案</string>
-	<string name="lock_cancel">取消</string>
-	<string name="lock_next">下一步</string>
-	<string name="lock_lockcancelled">密码锁功能已取消</string>
-	<string name="lock_nopattern">请绘制解锁图案</string>
-	<string name="lock_redrawhint">再次绘制图案进行确认</string>
-	<string name="lock_ok">确定</string>
-	<string name="lock_unmatch">您绘制的图案不匹配</string>
-	<string name="lock_setted">密码锁设定成功</string>
-	<string name="lock_unlockhint">轻笔记密码锁</string>
-	<string name="lock_relogin">重新登录</string>
+    <string name="folder_menu_view">查看笔记</string>
+    <string name="folder_menu_sync">同步该文件夹</string>
+    <string name="folder_menu_rename">重命名</string>
+    <string name="folder_menu_moveto">移动到文件夹</string>
+    <string name="folder_menu_setdefault">设为默认文件夹</string>
+    <string name="folder_menu_info">属性</string>
+    <string name="folder_menu_delete">删除</string>
+    <string name="folder_menu_cancel">取消</string>
+    <string name="folder_menu_recycle">清空回收站</string>
 
-	<string name="about_company">关于轻笔记</string>
-	<string name="about_homepage">轻笔记主页</string>
-	<string name="about_homepage_url">www.qingbiji.cn</string>
-	<string name="about_contact">联系我们</string>
-	<string name="about_contact_email">info@qingbiji.cn  QQ:1657975956</string>
-	<string name="about_getlocaluser">显示本地用户</string>
-	<string name="about_getlocaluser_info">显示本地所有用户的用户名</string>
-	<string name="about_import_trialuserdata">获取体验用户数据</string>
-	<string name="about_import_trialuserdata_info">将体验用户数据导入到当前用户</string>
-	<string name="about_feedback">意见反馈</string>
-	<string name="about_advice">意见或建议</string>
-	<string name="about_bugreport">故障报告</string>
-	<string name="about_comment">给个好评吧</string>
-	<string name="about_other">其他</string>
-	<string name="about_debug">测试</string>
-	<string name="about_revision">软件版本</string>
-	<string name="about_friends">合作伙伴</string>
-	<string name="about_qihu360">360手机安全卫士</string>
-	
-	<string name="catinfo_folder">文件夹</string>
-	<string name="catinfo_foldergroup">文件夹</string>
-	<string name="catinfo_name">名称</string>
-	<string name="catinfo_notecount">笔记数量</string>
-	<string name="catinfo_isdefault">默认文件夹</string>
-	<string name="catinfo_delete">删除</string>
-	<string name="catinfo_setdefault">设置为默认文件夹</string>
-	<string name="catinfo_yes">是</string>
-	<string name="catinfo_no">否</string>
-	<string name="catinfo_noteunit">篇</string>
-	<string name="catinfo_group">所属文件夹</string>
-	<string name="catinfo_nogroup">无</string>
-	
-	<string name="textedit_folder">文件夹名称：</string>
-	<string name="textedit_foldergroup">文件夹名称：</string>
-	<string name="textedit_tag">标签名称：</string>
-	<string name="textedit_group">文件夹</string>
+    <string name="catlist_menu_default">默认排序</string>
+    <string name="catlist_menu_createtime">按创建时间排序</string>
+    <string name="catlist_menu_name">按文件夹名称排序</string>
 
-	<string name="taginfo_tag">标签</string>
-	<string name="taginfo_name">名称</string>
-	<string name="taginfo_notecount">笔记数量</string>
-	<string name="taginfo_delete">删除</string>
-	<string name="taginfo_noteunit">篇</string>
+    <string name="tag_menu_display">查看笔记</string>
+    <string name="tag_menu_info">属性</string>
+    <string name="tag_menu_delete">删除</string>
+    <string name="tag_menu_cancel">取消</string>
 
-	<string name="noteinfo_note">笔记</string>
-	<string name="noteinfo_folder">所在文件夹</string>
-	<string name="noteinfo_share">是否公开</string>
-	<string name="noteinfo_share_url">分享链接</string>
-	<string name="noteinfo_note_other">其他属性</string>
-	<string name="noteinfo_cretor">创建者</string>
-	<string name="noteinfo_client">创建客户端</string>
-	<string name="noteinfo_source">输入源</string>
-	<string name="noteinfo_createtime">创建时间</string>
-	<string name="noteinfo_lastaccess">最近访问时间</string>
-	<string name="noteinfo_lastupdate">最近更新时间</string>
-	<string name="noteinfo_location">创建位置</string>
-	<string name="noteinfo_location_unknown">未知位置</string>
-	<string name="noteinfo_accesstimes">访问次数</string>
-	<string name="noteinfo_issync">是否同步</string>
-	<string name="noteinfo_yes">已同步</string>
-	<string name="noteinfo_no">尚未同步</string>
-	<string name="noteinfo_share_yes">已公开</string>
-	<string name="noteinfo_share_no">未公开</string>
-	<string name="noteinfo_lformat" formatted="false">%d年%d月%d日 %02d:%02d:%02d</string>
-	<string name="noteinfo_nolink_hint">尚无链接信息，请同步后再试。</string>
-	<string name="noteinfo_lastsync_time">上次同步时间:</string>
-	<string name="publicnote_url" formatted="false">http://www.qingbiji.cn/note/%d</string>
-	<string name="shareinfo_publicnote_url" formatted="false">我在 @轻笔记 创建了一篇笔记【%s】，链接：http://www.qingbiji.cn/note/%d，快来看看吧!</string>
-	
-	<string name="projectinfo_edittext_joinmsg_hint">为了更快地通过管理员审核，请您填写准确的验证信息</string>
-	
-	<string name="projectinfo_projectstatus_active">正常</string>
-	<string name="projectinfo_projectstatus_nonactivated">未激活</string>
-	<string name="projectinfo_userstatus_creator">创建者</string>
-	<string name="projectinfo_userstatus_none">未加入</string>
-	<string name="projectinfo_userstatus_pending">等待管理员审批</string>
-	<string name="projectinfo_userstatus_active">已加入</string>
-	<string name="projectinfo_userstatus_deny">申请被拒绝</string>
-	<string name="projectinfo_userstatus_removed">被删除</string>
-	<string name="projectlistitem_intro_preson">我自己的笔记</string>
-	<string name="projectlist_invite_msg" formatted="false">我在轻笔记里创建了一个群组【%s】，邀请您加入，让我们在这里一起记录，相互分享吧！群组号：【%d】, 点击这里加入群组：http://www.qingbiji.cn/project/%d</string>
-	<string name="projectlist_invite_msg1" formatted="false">我在轻笔记里加入了一个群组【%s】，邀请您加入，让我们在这里一起记录，相互分享吧！群组号：【%d】, 点击这里加入群组：http://www.qingbiji.cn/project/%d</string>
-	<string name="projectlist_invite_title" formatted="false">邀请您加入轻笔记群组:%s</string>
-	<string name="projectlist_join">加入群组</string>
-	<string name="projectlist_create">创建群组</string>
-	
-	<string name="projects_menu_invite_sina">新浪微博邀请</string>
-	<string name="projects_menu_invite_email">邮件邀请</string>
-	<string name="projects_menu_invite_sms">短信邀请</string>
-	
-	<string name="project_notexist_project">"你好像还没有创建或加入任何群组哦？与爱人、家人记录分享只属于你们的快乐瞬间；与同事多人合作写计划......赶紧吧，不然你就OUT了！</string>
-	
-	<string name="project_joinedit_hint">输入群组编号:</string>
-	<string name="project_joinedit_getid_helpinfo">加入群组，请询问群组管理员获取群组编号;</string>
-	<string name="project_joinedit_createroject_helpinfo">您也可以到 http://www.qingbiji.cn/home 发起您自己的群组，并邀请好友加入</string>
-	
-	<string name="comment_newest">已是最新数据</string>
-	<string name="comment_edit_words_short">太短了</string>
-	<string name="comment_edit_words_long">太长了</string>
-	<string name="comment_deleted">已删除</string>
-	<string name="comment_uploading_ok">评论上传成功!</string>
-	<string name="comment_uploading_faild_notallow">评论失败，笔记不可评论!</string>
-	<string name="comment_download_ok">下载成功！</string>
-	<string name="comment_download_newest">没有新的评论！</string>
-	<string name="comment_title_lookup">查看评论</string>
-	<string name="comment_title_edit">编辑评论</string>
-	<string name="comment_sented">已发送</string>
-	
-	<string name="comment_hint">在这里发表您的评论</string>
-	
-	<string name="share_url_menu_copy">复制链接</string>
-	<string name="share_url_menu_send">邮件发送</string>
-	<string name="share_url_menu_sms">短信分享</string>
-	<string name="share_url_menu_other">其他分享</string>
-	<string name="share_url_menu_open">打开链接</string>
-	<string name="share_url_menu_cancel">取消</string>	
-	
-	<string name="report_title_fmt" formatted="false">%s的建议(%s)</string>
-	<string name="report_content">请在这里输入您的建议</string>
+    <string name="taglist_select">选择标签</string>
+    <string name="folderlist_select">选择文件夹</string>
 
-	<string name="wbsend_words_format" formatted="false">还可输入%d字</string>
+    <string name="updatelog_menu_setallreaded">全部设置为已读</string>
 
-	<string name="toemail_to_hint">收件人(用逗号分隔)</string>
-	<string name="toemail_subject_hint">主题</string>
-	<string name="toemail_addition_hint">消息</string>
-	<string name="toemail_note_hint">消息内容将添加到笔记前一起分享</string>
-	
-	<string name="boot_info_notelist">您的笔记还在服务器上？menu键选择完全同步或返回主页点击右下角同步按钮获取吧!</string>
-	<string name="boot_info_catlist">还没有创建任何笔记？\r\n 或者笔记还在服务器端？\r\n首页点击“同步”按钮或者当前界面选择“完全同步”</string>
-	<string name="boot_info_tagcloud">标签是除文件夹之外组织笔记的另外一种方式，您可以给不同文件夹里的一类笔记贴上同一个标签，从而快速查找。</string>
-	<string name="boot_info_search">快速搜索存储在您手机里的笔记</string>
-	<string name="boot_info_search_unsuccess">本地没有符合条件的笔记？有可能存储在服务器上呢！\r\n未来我们会推出搜索云端数据的功能，敬请期待</string>
-	<string name="boot_info_updatelog_allreaded">更新提醒内容已全部阅读完毕</string>
-	<string name="boot_info_updatelog_parentcat_noteexist">当前未读笔记没有同步下来,请先到主界面做一次同步</string>
-	<string name="boot_indo_attlist">点击右上角的按钮添加附件</string>
-	
-	
-	<string name="listfootview_title_notelist_allnote">全部笔记</string>
-	<string name="listfootview_title_notelist_recycle">回收站</string>
-	<string name="listfootview_title_notelist_tagnote">标签中的笔记</string>
-	<string name="listfootview_title_notelist_searchresult">笔记搜索</string>
-	<string name="listfootview_title_notelist_mypublicnote">我的公开笔记</string>
-	<string name="listfootview_title_attlist">附件</string>
-	<string name="listfootview_title_catlist">文件夹</string>
-	<string name="listfootview_title_updatelogs">未读提醒</string>
-	<string name="listfootview_title_projects">群组</string>
-	<string name="listfootview_title_tags">标签</string>
-	<string name="listfootview_info_attlist">点击右上角的按钮添加附件。单个附件最大20兆，单篇笔记最多200个附件。图片附件默认压缩，方便快速同步，您可以在设置中选择不压缩。</string>
-	<string name="listfootview_info_catlist">查看和整理我的笔记；下拉即可与云端同步。</string>	
-	<string name="listfootview_info_projects">创建您的群组，群组成员将可以共享文档，共同协作；高级功能支持成员的权限分配。下拉即可同步。</string>
-	<string name="listfootview_info_updatelogs">您参与的群组组内成员对笔记进行了修改或评论，您将收到一条笔记更新提醒。此处显示所有提醒信息。</string>
-	<string name="listfootview_info_tags">给笔记加上标签，能更方便快捷的找到您想要的笔记。</string>
-	<string name="listfootview_info_notelist_allnote">您的所有笔记，下拉即可同步本地笔记，上拉加载更多。</string>
-	<string name="listfootview_info_notelist_recycle">您删除的笔记，长按可彻底删除，下拉即可同步。</string>
-	<string name="listfootview_info_notelist_tagnote">给笔记加上标签，可以让您更快的检索到需要的笔记 。</string>
-	<string name="listfootview_info_notelist_searchresult">搜索结果，我们即将推出云端搜索笔记，敬请期待。</string>
-	<string name="listfootview_info_notelist_mypublicnote">当您将笔记分享到微博或者选择“公开此笔记”时，该笔记将可以被所有互联网用户访问。\r\n您带密码公开的笔记，他人只有正确输入密码才能访问。</string>
-	
-	<string name="notifcation_remaind_title">轻笔记群组有更新</string>
-	
-	<string name="auth_menu_binding">已有的轻笔记账户-绑定</string>
-	<string name="auth_menu_regist">没有轻笔记账户-完善资料</string>
-	
-	<string name="auth_list_baidu_intro">享受额外15G空间</string>
-	
-	<string name="hint_name_or_email">请输入用户名/邮箱</string>
-	<string name="hint_email">请输入您的真实邮箱</string>
-	
-	<string name="partner_login_360">使用360账号登录</string>
-	<string name="partner_login_baidu">使用百度账号登录-绑定15G网盘空间</string>
-	<string name="partner_login_sina">使用新浪微博账号登录</string>
-	<string name="partner_login_QQ">使用腾讯QQ账号登录</string>
-	<string name="partner_login_RenRen">使用人人网账号登录</string>
-	<string name="partner_login_189">使用天翼云账号登录-绑定15G云空间</string>
-	
-	<string name="partner_binding_360">绑定360账号</string>
-	<string name="partner_binding_baidu">绑定百度账号-绑定15G网盘空间</string>
-	<string name="partner_binding_sina">绑定新浪微博账号</string>
-	<string name="partner_binding_QQ">绑定腾讯QQ账号</string>
-	<string name="partner_binding_RenRen">绑定人人网账号</string>
-	<string name="partner_binding_189">绑定天翼云账号-绑定15G云空间</string>
-		
-	<string name="binding_weibo_msg">我刚刚用微博账号登录了轻笔记——全球首款有群组功能的云记事本。电脑与手机之间传输资料，再也不用数据线啦！轻松记录，方便协作。http://www.qingbiji.cn</string>
-	<string name="binding_renren_msg">我刚刚用人人网账号登录了轻笔记——全球首款有群组功能的云记事本。电脑和手机之间传输资料，再也不用数据线啦！轻松记录，方便协作。http://www.qingbiji.cn</string>
-	<string name="binding_renren_title">快来绑定轻笔记咯!</string>
-	<string name="account_info_title">一键注册用户的帐号信息</string>
-	<string name="account_info_msg">欢迎您使用轻笔记，下面是您一键使用轻笔记的初始账号和密码，请尽快更改您的轻笔记信息，以保证数据安全</string>
-	<string name="account_info_name" formatted="false">用户名：%s</string>
-	<string name="account_info_password" formatted="false">密码：%s</string>
-	<string name="account_info_saved" formatted="false">您的初始账号信息已保存到%s</string>
-	
-	<string name="sharenotes_personal">我的公开</string>
-	<string name="sharenotes_others">全部公开</string>
-	<string name="sharenotes_item_more">更  多</string>
-	
-	<string name="table_notes">全部笔记</string>
-	<string name="table_cats">文件夹</string>
-	<string name="table_tags">标签</string>
-	<string name="table_sharenotes">我的公开</string>
-	
-	<string name="createproject_trust_project">信任群组</string>
-	<string name="createproject_limited_project">有限群组</string>
-	<string name="createproject_readonly_project">只读群组</string>
-	<string name="createproject_custem_project">自定义群组</string>
-	<string name="createproject_trust_project_info">亲情分享/紧密团队 - 所有人都是管理员</string>
-	<string name="createproject_limited_project_info">兴趣小组 － 组员可以上传文章，但是不能删除他人的文章，类似论坛</string>
-	<string name="createproject_readonly_project_info">传达通知 － 组员只能阅读和评论，不能修改</string>
-	<string name="createproject_custem_project_info">办公协作 - 灵活的权限设定（仅支持由网页版本创建）</string>
-	<string name="createproject_input_name">群组名称:</string>
-	<string name="createproject_input_intro">群组简介:</string>
-	<string name="createproject_btn_next">下一步</string>
-	<string name="createproject_btn_sendSMS">发送短信邀请好友</string>
-	<string name="createproject_btn_sendWeibo">发送新浪微博邀请好友</string>
-	<string name="createproject_btn_sendEmail">发送邮件邀请好友</string>
-	<string name="createproject_ok">创建群组成功</string>
-	<string name="createproject_ok_id" formatted="false">群组ID:%d</string>
-	<string name="createproject_weibo_msg" formatted="false">我刚刚用轻笔记创建了一个群组【%s】，邀请你加入，让我们在这里一起记录，相互分享吧！群组号：【%d】, 点击这里加入群组：http://www.qingbiji.cn/project/%d</string>
-	
-	<string name="main_btnname_project">敬请期待</string>
-	<string name="main_btnname_newnote">综合笔记</string>
-	<string name="main_btnname_allnote">我的笔记</string>
-	<string name="main_btnname_cameranote">拍照笔记</string>
-	<string name="main_btnname_doodlenote">涂鸦笔记</string>
-	<string name="main_btnname_recordnote">录音笔记</string>
-	
-	<string name="test_text">                             今天起，我要告别总是找不到东西的日子；我再也不要忘记我最Care的亲人朋友的生日，我要告别厚厚的笔记本，几年时间下来，它太占地方了，而且我也没有勇气挨个翻一遍就为了找一条笔记！</string>
-	<string name="test_date">今天 16点12分</string>
-	<string name="test_title">公开的的笔记</string>
-	<string name="test_source">来源于:网页抓取</string>
-	<string name="test_creator">创建者:轻笔记</string>
-	<string name="test_comment">评论(131)</string>
-	<string name="test_collect">收藏(25)</string>
-	
-	<string name="limitedpublic_name">带密码公开</string>
-	<string name="unlimitedpublic_name">对所有用户公开</string>
-	<string name="dialog_limitedpublic_msg">带密码公开</string>
-	<string name="dialog_limitedpublic_hint">输入密码</string>
-	<string name="dialog_notelist_inputpassword_msg">该笔记需要输入密码才能阅读，如果没有密码，请与作者联系。</string>
-	<string name="dialog_notelist_inputpassword_hint">输入密码</string>
-	<string name="dialog_notelist_passwordwrong">密码错误!</string>
-	
-	<string name="pagetags_alltag_count" formatted="false">全部标签(%d)</string>
-	
-	<string name="ak_alert_NoAppCanOpen">没有应用能处理该操作。请下载相关程序后再试。</string>
-	
-	<!-- Color -->
-	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-	<color name="transparent">#00000000</color>
-	<color name="light_gray">#fff7f7f7</color>
-	<color name="tablebtn_pressed">#467CD4</color>
+    <string name="notelist_allnote">全部笔记</string>
+    <string name="notelist_recycler">回收站</string>
+    <string name="notelist_today">今天</string>
+    <string name="notelist_yestoday">昨天</string>
+    <string name="notelist_sformat" formatted="false">%s %02d点%02d分</string>
+    <string name="notelist_mformat" formatted="false">%2d月%d日 %s</string>
+    <string name="notelist_lformat" formatted="false">%d年%d月%d日</string>
+    <string name="notelist_mmformat" formatted="false">%d年%d月</string>
+    <string name="recycler_menu_restore">还原</string>
+    <string name="recycler_menu_view">查看</string>
+    <string name="recycler_menu_delete">彻底删除</string>
+    <string name="recycler_menu_cancel">取消</string>
+    <string name="notelist_gettinglist">正在获取列表……</string>
+    <string name="notelist_search_result">搜索结果</string>
 
-	<!--讯飞语音-->
-	<string name="app_id">4ea04eee</string>
-	<string-array name="voicer_cloud_entries">
-		<item>小燕—女青、中英、普通话</item>
-		<item>小宇—男青、中英、普通话</item>
-		<item>凯瑟琳—女青、英</item>
-		<item>亨利—男青、英</item>
-		<item>玛丽—女青、英</item>
-		<item>小研—女青、中英、普通话</item>
-		<item>小琪—女青、中英、普通话</item>
-		<item>小峰—男青、中英、普通话</item>
-		<item>小梅—女青、中英、粤语</item>
-		<item>小莉—女青、中英、台湾普通话</item>
-		<item>小蓉—女青、中、四川话</item>
-		<item>小芸—女青、中、东北话</item>
-		<item>小坤—男青、中、河南话</item>
-		<item>小强—男青、中、湖南话</item>
-		<item>小莹—女青、中、陕西话</item>
-		<item>小新—男童、中、普通话</item>
-		<item>楠楠—女童、中、普通话</item>
-		<item>老孙—男老、中、普通话</item>
-	</string-array>
-	<string-array name="voicer_cloud_values">
-		<item>xiaoyan</item>
-		<item>xiaoyu</item>
-		<item>catherine</item>
-		<item>henry</item>
-		<item>vimary</item>
-		<item>vixy</item>
-		<item>xiaoqi</item>
-		<item>vixf</item>
-		<item>xiaomei</item>
-		<item>xiaolin</item>
-		<item>xiaorong</item>
-		<item>xiaoqian</item>
-		<item>xiaokun</item>
-		<item>xiaoqiang</item>
-		<item>vixying</item>
-		<item>xiaoxin</item>
-		<item>nannan</item>
-		<item>vils</item>
-	</string-array>
-	
+    <string name="notelist_menu_updatetime">按更新时间排序</string>
+    <string name="notelist_menu_createtime">按创建时间排序</string>
+    <string name="notelist_menu_title">按标题排序</string>
+    <string name="notelist_menu_clear_recycle">清空回收站</string>
+    <string name="notelist_menu_cancel">取消</string>
+
+    <string name="notelistitem_menu_view">查看</string>
+    <string name="notelistitem_menu_edit">编辑</string>
+    <string name="notelistitem_menu_sync">完全同步</string>
+    <string name="notelistitem_menu_delete">删除</string>
+    <string name="notelistitem_menu_moveto">移动到文件夹</string>
+    <string name="notelistitem_menu_changetag">更换标签</string>
+    <string name="notelistitem_menu_share">分享</string>
+    <string name="notelistitem_menu_public_open">公开笔记</string>
+    <string name="notelistitem_menu_public_close">取消公开</string>
+    <string name="notelistitem_menu_info">属性</string>
+    <string name="notelistitem_menu_cancel">取消</string>
+
+    <string name="sharenotes_comment_count" formatted="false">评论(%d)</string>
+    <string name="sharenotes_copy_count" formatted="false">收藏(%d)</string>
+    <string name="sharenotes_source" formatted="false">来源于:%s</string>
+
+    <string name="noteedit_title">未命名</string>
+    <string name="noteedit_tag">输入标签（用逗号分隔）</string>
+    <string name="noteedit_content">您此刻的想法、心情</string>
+    <string name="noteedit_richtext">此笔记包含富文本内容。不能修改原有内容，只能追加内容。</string>
+    <string name="attedit_menu_delete">删除</string>
+    <string name="attedit_menu_cancel">取消</string>
+    <string name="attedit_menu_camera">拍照</string>
+    <string name="attedit_menu_audio">录音</string>
+    <string name="attedit_menu_photo">照片</string>
+    <string name="attedit_menu_file">文件</string>
+    <string name="noteedit_menu_audioinput">语音输入</string>
+    <string name="noteedit_wordcount" formatted="false">%d字</string>
+    <string name="noteedit_current_time" formatted="false">%d年%d月%d日%02d:%02d:%02d</string>
+
+    <string name="noteedit_btnname_camera">拍照</string>
+    <string name="noteedit_btnname_record">录音</string>
+    <string name="noteedit_btnname_doodle">涂鸦</string>
+    <string name="noteedit_btnname_speakinput">语音转文字</string>
+    <string name="noteedit_btnname_other">其他</string>
+    <string name="noteedit_record_start">继续</string>
+    <string name="noteedit_record_pause">暂停</string>
+    <string name="noteedit_record_stop">停止</string>
+    <string name="noteedit_record_time" formatted="false">%s:%s</string>
+
+    <string name="noteedit_popomenu_folders">选择文件夹</string>
+    <string name="noteedit_popomenu_picture">添加相片</string>
+    <string name="noteedit_popomenu_tag">选择标签</string>
+    <string name="noteedit_popomenu_addatt">添加附件</string>
+    <string name="noteedit_popomenu_insertcurrenttime">插入当前时间</string>
+    <string name="noteedit_popomenu_lookatt">查看附件</string>
+    <string name="noteedit_popomenu_deleteatt">删除附件</string>
+
+    <string name="noteview_detail">详细信息</string>
+    <string name="noteview_menu_email">邮件分享</string>
+    <string name="noteview_menu_sync">单篇同步</string>
+    <string name="noteview_menu_home">返回主页</string>
+    <string name="noteview_menu_selecttext">选择文本</string>
+    <string name="noteview_menu_read">语音朗读</string>
+    <string name="noteview_menu_weibo">微博分享</string>
+
+    <string name="noteview_share_from">\r\n来自轻笔记</string>
+    <string name="weibo_hint">输入微博内容</string>
+
+    <string name="noteview_menu_sina">新浪微博分享</string>
+    <string name="noteview_menu_shareto_sms">分享到短信</string>
+    <string name="noteview_menu_shareto_wx">分享到微信好友</string>
+    <string name="noteview_menu_shareto_wxcycle">分享到朋友圈</string>
+    <string name="noteview_menu_shareto_qq">分享到QQ好友</string>
+    <string name="noteview_menu_shareto_qqcycle">分享到QQ空间</string>
+    <string name="noteview_menu_text">其他方式分享</string>
+
+    <string name="noteview_actionitem_share">分享笔记</string>
+    <string name="noteview_actionitem_tag">更换标签</string>
+    <string name="noteview_actionitem_comment">发表评论</string>
+    <string name="noteview_actionitem_selecttext">选择文本</string>
+    <string name="noteview_actionitem_move">更换文件夹</string>
+    <string name="noteview_actionitem_collection">收藏到个人</string>
+    <string name="noteview_actionitem_publicopen">公开笔记</string>
+    <string name="noteview_actionitem_publicclose">取消公开</string>
+    <string name="noteview_actionitem_attribute">查看属性</string>
+    <string name="noteview_actionitem_delete">删除</string>
+    <string name="noteview_editext_comment_hint">写评论</string>
+
+    <string name="openatt_menu_view">查看</string>
+    <string name="openatt_menu_save">保存</string>
+    <string name="openatt_menu_send">发送</string>
+    <string name="openatt_menu_cancel">取消</string>
+
+    <string name="read_menu_restart">从头开始朗读</string>
+    <string name="read_menu_continue">继续朗读</string>
+
+    <string name="userinfo_userinfo">用户信息</string>
+    <string name="userinfo_userinfo_child">用户名、密码、邮箱等信息</string>
+    <string name="userinfo_username">用户名</string>
+    <string name="userinfo_phone">手机号</string>
+    <string name="userinfo_password">密码</string>
+    <string name="userinfo_email">邮箱</string>
+    <string name="userinfo_verifyemail">验证您的邮箱</string>
+    <string name="userinfo_defaultfolder">默认文件夹</string>
+    <string name="userinfo_logout">退出登录</string>
+    <string name="userinfo_pwd_modify">修改密码：</string>
+    <string name="userinfo_pwd_old">原密码</string>
+    <string name="userinfo_pwd_new">新密码</string>
+    <string name="userinfo_pwd_confirm">确认密码</string>
+    <string name="userinfo_email_modify">修改邮箱：</string>
+    <string name="userinfo_username_modify">修改用户名：</string>
+    <string name="userinfo_phone_modify">修改手机号：</string>
+    <string name="userinfo_email_pwd">用户密码</string>
+    <string name="userinfo_email_new">新邮箱</string>
+    <string name="userinfo_email_confirm">确认邮箱</string>
+    <string name="userinfo_email_no">未设置</string>
+    <string name="userinfo_verifyemail_yes">已验证</string>
+    <string name="userinfo_verifyemail_no">尚未验证</string>
+    <string name="userinfo_username_new">新用户名</string>
+    <string name="userinfo_username_confirm">确认新用户名</string>
+    <string name="userinfo_phone_new">新手机号</string>
+    <string name="userinfo_phone_confirm">确认新手机号</string>
+    <string name="userinfo_phone_verify_code">验证码</string>
+    <string name="userinfo_binding_baidu">绑定百度网盘</string>
+    <string name="userinfo_binding_189">绑定天翼云</string>
+    <string name="userinfo_binding">第三方账号绑定</string>
+    <string name="userinfo_binding_baidu_ok">已绑定-15G网盘空间</string>
+    <string name="userinfo_binding_ok">已绑定</string>
+    <string name="userinfo_binding_baidu_no">未绑定</string>
+    <string name="userinfo_settings">个性化设置</string>
+    <string name="userinfo_settings_child">默认文件夹、密码锁</string>
+    <string name="userinfo_about">关于我们</string>
+    <string name="userinfo_about_child">意见反馈、版本信息等</string>
+    <string name="userinfo_sync">同步</string>
+    <string name="userinfo_lockpattern">设置密码锁</string>
+    <string name="userinfo_lockpattern_yes">已设置</string>
+    <string name="userinfo_lockpattern_no">未设置</string>
+    <string name="userinfo_remindlockgroup_open">群组管理信息通知</string>
+    <string name="userinfo_remindlockgroup_close">群组管理信息通知</string>
+    <string name="userinfo_remindlockgroup">群组管理信息通知</string>
+    <string name="userinfo_remindlocknote">群组笔记更新通知</string>
+    <string name="userinfo_remindlock_opened">已开启</string>
+    <string name="userinfo_remindlock_closed">已关闭</string>
+    <string name="userinfo_remindlocknote_open">群组笔记更新通知</string>
+    <string name="userinfo_remindlocknote_close">群组笔记更新通知</string>
+    <string name="userinfo_spaceinfo">存储空间</string>
+    <string name="userinfo_spaceinfo_child">云空间大小</string>
+    <string name="userinfo_usedspace">已用空间</string>
+    <string name="userinfo_contribution">贡献值</string>
+    <string name="userinfo_con_rank">贡献排名</string>
+    <string name="userinfo_set_invite_code">补填朋友的邀请码</string>
+    <string name="userinfo_invite_code_ok">已填写</string>
+    <string name="userinfo_invite_code">我的邀请码</string>
+    <string name="userinfo_invite">邀请朋友使用</string>
+    <string name="userinfo_invite_subject">来自轻笔记的邀请</string>
+    <string name="userinfo_invite_body" formatted="false">我正在用轻笔记（  http://www.qingbiji.cn) 帮我记录管理各种信息。它可以帮我在iphone、安卓、PC、WEB四个平台随时记录，各平台内容同步编辑查看，珍贵信息永不丢失！还可轻松分享至邮件和微博哦！\r\n\r\n注册请填写我的邀请码：%s，可以帮我增加存储空间，并同时给你带来1G的起始空间，越用越多,永久免费! 让轻笔记成为我们随身不离的资料库吧！\r\n\r\n来自%s</string>
+    <string name="userinfo_invite_body2" formatted="false">我发现了一款好用的软件，叫做轻笔记。我的资料编写都放在了轻笔记中进行，电脑中不再有拖慢系统的琐碎文件，U盘也成为了多余的东西，利用云存储我可以随时随地在电脑和手机上使用这些信息。现在轻笔记还推出了团队协作功能，我们可以一起通过它组织活动。\r\n\r\n点击（ http://www.qingbiji.cn）注册,立即获得3G的免费空间，畅享轻笔记带来的全新生活体验！\r\n\r\n来自%s</string>
+    <string name="userinfo_invite_body3" formatted="false">我发现了一款好用的软件，叫做轻笔记。我的资料编写都放在了轻笔记中进行，电脑中不再有拖慢系统的琐碎文件，U盘也成为了多余的东西，利用云存储我可以随时随地在电脑和手机上使用这些信息。现在轻笔记还推出了团队协作功能，我们可以一起通过它组织活动，注册时记得填上我的邀请码: %s，就可以获得3G的免费空间，同时我也可以增加100M空间。\r\n\r\n点击（http://www.qingbiji.cn）立即注册，畅享轻笔记带来的全新生活体验！\r\n\r\n来自%s</string>
+    <string name="userinfo_invite_body4" formatted="false">我找到了一款超棒的记事软件！Ta能帮你用照片、涂鸦、语音轻松记录!Ta能帮你保存感兴趣的网页！Ta能提醒你各种大事小事!Ta是唯一有群组功能的记事软件！Ta，叫轻笔记！登录后填邀请码%s，立即获得3G空间。点击（http://www.qingbiji.cn），快来加入吧！</string>
+    <string name="update_hint" formatted="false">发现新版本！现在开始更新？推荐在完成同步后，再更新。\n您的版本：%s\n最新版本：%s\n\n%s</string>
+    <string name="update_start">开始更新</string>
+    <string name="update_downloading">正在下载……</string>
+    <string name="userinfo_update_info">下载成功后，apk在：内部存储/Download文件夹下</string>
+    <string name="userinfo_update">检查更新</string>
+    <string name="userinfo_audio_settings">语音朗读设置</string>
+    <string name="userinfo_audio_settings_child">不看笔记，听笔记</string>
+    <string name="userinfo_voice">声音类型</string>
+    <string name="userinfo_voice_male">男声</string>
+    <string name="userinfo_voice_female">女声</string>
+    <string name="userinfo_speed">语速</string>
+    <string name="userinfo_volume">音量</string>
+    <string name="userinfo_space">存储空间</string>
+    <string name="userinfo_phone_all">本机总存储空间</string>
+    <string name="userinfo_phone_available">本机可用空间</string>
+    <string name="userinfo_sdcard_all">SD卡总存储空间</string>
+    <string name="userinfo_sdcard_available">SD卡可用空间</string>
+    <string name="userinfo_clear_cache">清除全部缓存</string>
+    <string name="userinfo_changeskin">更换皮肤</string>
+    <string name="userinfo_picture_compressionmode">大图片上传是否压缩</string>
+    <string name="userinfo_recommend">友情推荐</string>
+    <string name="userinfo_kuaizhang">装修快账</string>
+    <string name="userinfo_kuaizhang_link">http://3g.gfan.com/data/index.php?/detail/index/270280</string>
+    <string name="userinfo_wetuandui">微团队</string>
+    <string name="userinfo_wetuandui_link">http://www.wetuandui.com/static/android/Team.apk</string>
+    <string name="userinfo_copyto">CopyTo</string>
+    <string name="userinfo_copyto_link">http://www.copyto.cn/s/copyto.apk</string>
+    <string name="userinfo_360browser">360浏览器</string>
+    <string name="userinfo_360browser_link">http://www.copyto.cn/s/copyto.apk</string>
+    <string name="userinfo_189">天翼云</string>
+    <string name="userinfo_189_link">http://www.copyto.cn/s/copyto.apk</string>
+
+    <string name="userinfo_pay">请支持我们一下！</string>
+
+    <string name="noteinfo_wordcount">字数</string>
+
+    <string name="lock_drawhint">绘制解锁图案</string>
+    <string name="lock_cancel">取消</string>
+    <string name="lock_next">下一步</string>
+    <string name="lock_lockcancelled">密码锁功能已取消</string>
+    <string name="lock_nopattern">请绘制解锁图案</string>
+    <string name="lock_redrawhint">再次绘制图案进行确认</string>
+    <string name="lock_ok">确定</string>
+    <string name="lock_unmatch">您绘制的图案不匹配</string>
+    <string name="lock_setted">密码锁设定成功</string>
+    <string name="lock_unlockhint">轻笔记密码锁</string>
+    <string name="lock_relogin">重新登录</string>
+
+    <string name="about_company">关于轻笔记</string>
+    <string name="about_homepage">轻笔记主页</string>
+    <string name="about_homepage_url">www.qingbiji.cn</string>
+    <string name="about_contact">联系我们</string>
+    <string name="about_contact_email">info@qingbiji.cn  QQ:1657975956</string>
+    <string name="about_getlocaluser">显示本地用户</string>
+    <string name="about_getlocaluser_info">显示本地所有用户的用户名</string>
+    <string name="about_import_trialuserdata">获取体验用户数据</string>
+    <string name="about_import_trialuserdata_info">将体验用户数据导入到当前用户</string>
+    <string name="about_feedback">意见反馈</string>
+    <string name="about_advice">意见或建议</string>
+    <string name="about_bugreport">故障报告</string>
+    <string name="about_comment">给个好评吧</string>
+    <string name="about_other">其他</string>
+    <string name="about_debug">测试</string>
+    <string name="about_revision">软件版本</string>
+    <string name="about_friends">合作伙伴</string>
+    <string name="about_qihu360">360手机安全卫士</string>
+
+    <string name="catinfo_folder">文件夹</string>
+    <string name="catinfo_foldergroup">文件夹</string>
+    <string name="catinfo_name">名称</string>
+    <string name="catinfo_notecount">笔记数量</string>
+    <string name="catinfo_isdefault">默认文件夹</string>
+    <string name="catinfo_delete">删除</string>
+    <string name="catinfo_setdefault">设置为默认文件夹</string>
+    <string name="catinfo_yes">是</string>
+    <string name="catinfo_no">否</string>
+    <string name="catinfo_noteunit">篇</string>
+    <string name="catinfo_group">所属文件夹</string>
+    <string name="catinfo_nogroup">无</string>
+
+    <string name="textedit_folder">文件夹名称：</string>
+    <string name="textedit_foldergroup">文件夹名称：</string>
+    <string name="textedit_tag">标签名称：</string>
+    <string name="textedit_group">文件夹</string>
+
+    <string name="taginfo_tag">标签</string>
+    <string name="taginfo_name">名称</string>
+    <string name="taginfo_notecount">笔记数量</string>
+    <string name="taginfo_delete">删除</string>
+    <string name="taginfo_noteunit">篇</string>
+
+    <string name="noteinfo_note">笔记</string>
+    <string name="noteinfo_folder">所在文件夹</string>
+    <string name="noteinfo_share">是否公开</string>
+    <string name="noteinfo_share_url">分享链接</string>
+    <string name="noteinfo_note_other">其他属性</string>
+    <string name="noteinfo_cretor">创建者</string>
+    <string name="noteinfo_client">创建客户端</string>
+    <string name="noteinfo_source">输入源</string>
+    <string name="noteinfo_createtime">创建时间</string>
+    <string name="noteinfo_lastaccess">最近访问时间</string>
+    <string name="noteinfo_lastupdate">最近更新时间</string>
+    <string name="noteinfo_location">创建位置</string>
+    <string name="noteinfo_location_unknown">未知位置</string>
+    <string name="noteinfo_accesstimes">访问次数</string>
+    <string name="noteinfo_issync">是否同步</string>
+    <string name="noteinfo_yes">已同步</string>
+    <string name="noteinfo_no">尚未同步</string>
+    <string name="noteinfo_share_yes">已公开</string>
+    <string name="noteinfo_share_no">未公开</string>
+    <string name="noteinfo_lformat" formatted="false">%d年%d月%d日 %02d:%02d:%02d</string>
+    <string name="noteinfo_nolink_hint">尚无链接信息，请同步后再试。</string>
+    <string name="noteinfo_lastsync_time">上次同步时间:</string>
+    <string name="publicnote_url" formatted="false">http://www.qingbiji.cn/note/%d</string>
+    <string name="shareinfo_publicnote_url" formatted="false">我在 @轻笔记 创建了一篇笔记【%s】，链接：http://www.qingbiji.cn/note/%d，快来看看吧!</string>
+
+    <string name="projectinfo_edittext_joinmsg_hint">为了更快地通过管理员审核，请您填写准确的验证信息</string>
+
+    <string name="projectinfo_projectstatus_active">正常</string>
+    <string name="projectinfo_projectstatus_nonactivated">未激活</string>
+    <string name="projectinfo_userstatus_creator">创建者</string>
+    <string name="projectinfo_userstatus_none">未加入</string>
+    <string name="projectinfo_userstatus_pending">等待管理员审批</string>
+    <string name="projectinfo_userstatus_active">已加入</string>
+    <string name="projectinfo_userstatus_deny">申请被拒绝</string>
+    <string name="projectinfo_userstatus_removed">被删除</string>
+    <string name="projectlistitem_intro_preson">我自己的笔记</string>
+    <string name="projectlist_invite_msg" formatted="false">我在轻笔记里创建了一个群组【%s】，邀请您加入，让我们在这里一起记录，相互分享吧！群组号：【%d】, 点击这里加入群组：http://www.qingbiji.cn/project/%d</string>
+    <string name="projectlist_invite_msg1" formatted="false">我在轻笔记里加入了一个群组【%s】，邀请您加入，让我们在这里一起记录，相互分享吧！群组号：【%d】, 点击这里加入群组：http://www.qingbiji.cn/project/%d</string>
+    <string name="projectlist_invite_title" formatted="false">邀请您加入轻笔记群组:%s</string>
+    <string name="projectlist_join">加入群组</string>
+    <string name="projectlist_create">创建群组</string>
+
+    <string name="projects_menu_invite_sina">新浪微博邀请</string>
+    <string name="projects_menu_invite_email">邮件邀请</string>
+    <string name="projects_menu_invite_sms">短信邀请</string>
+
+    <string name="project_notexist_project">"你好像还没有创建或加入任何群组哦？与爱人、家人记录分享只属于你们的快乐瞬间；与同事多人合作写计划......赶紧吧，不然你就OUT了！</string>
+
+    <string name="project_joinedit_hint">输入群组编号:</string>
+    <string name="project_joinedit_getid_helpinfo">加入群组，请询问群组管理员获取群组编号;</string>
+    <string name="project_joinedit_createroject_helpinfo">您也可以到 http://www.qingbiji.cn/home 发起您自己的群组，并邀请好友加入</string>
+
+    <string name="comment_newest">已是最新数据</string>
+    <string name="comment_edit_words_short">太短了</string>
+    <string name="comment_edit_words_long">太长了</string>
+    <string name="comment_deleted">已删除</string>
+    <string name="comment_uploading_ok">评论上传成功!</string>
+    <string name="comment_uploading_faild_notallow">评论失败，笔记不可评论!</string>
+    <string name="comment_download_ok">下载成功！</string>
+    <string name="comment_download_newest">没有新的评论！</string>
+    <string name="comment_title_lookup">查看评论</string>
+    <string name="comment_title_edit">编辑评论</string>
+    <string name="comment_sented">已发送</string>
+
+    <string name="comment_hint">在这里发表您的评论</string>
+
+    <string name="share_url_menu_copy">复制链接</string>
+    <string name="share_url_menu_send">邮件发送</string>
+    <string name="share_url_menu_sms">短信分享</string>
+    <string name="share_url_menu_other">其他分享</string>
+    <string name="share_url_menu_open">打开链接</string>
+    <string name="share_url_menu_cancel">取消</string>
+
+    <string name="report_title_fmt" formatted="false">%s的建议(%s)</string>
+    <string name="report_content">请在这里输入您的建议</string>
+
+    <string name="wbsend_words_format" formatted="false">还可输入%d字</string>
+
+    <string name="toemail_to_hint">收件人(用逗号分隔)</string>
+    <string name="toemail_subject_hint">主题</string>
+    <string name="toemail_addition_hint">消息</string>
+    <string name="toemail_note_hint">消息内容将添加到笔记前一起分享</string>
+
+    <string name="boot_info_notelist">您的笔记还在服务器上？menu键选择完全同步或返回主页点击右下角同步按钮获取吧!</string>
+    <string name="boot_info_catlist">还没有创建任何笔记？\r\n 或者笔记还在服务器端？\r\n首页点击“同步”按钮或者当前界面选择“完全同步”</string>
+    <string name="boot_info_tagcloud">标签是除文件夹之外组织笔记的另外一种方式，您可以给不同文件夹里的一类笔记贴上同一个标签，从而快速查找。</string>
+    <string name="boot_info_search">快速搜索存储在您手机里的笔记</string>
+    <string name="boot_info_search_unsuccess">本地没有符合条件的笔记？有可能存储在服务器上呢！\r\n未来我们会推出搜索云端数据的功能，敬请期待</string>
+    <string name="boot_info_updatelog_allreaded">更新提醒内容已全部阅读完毕</string>
+    <string name="boot_info_updatelog_parentcat_noteexist">当前未读笔记没有同步下来,请先到主界面做一次同步</string>
+    <string name="boot_indo_attlist">点击右上角的按钮添加附件</string>
+
+
+    <string name="listfootview_title_notelist_allnote">全部笔记</string>
+    <string name="listfootview_title_notelist_recycle">回收站</string>
+    <string name="listfootview_title_notelist_tagnote">标签中的笔记</string>
+    <string name="listfootview_title_notelist_searchresult">笔记搜索</string>
+    <string name="listfootview_title_notelist_mypublicnote">我的公开笔记</string>
+    <string name="listfootview_title_attlist">附件</string>
+    <string name="listfootview_title_catlist">文件夹</string>
+    <string name="listfootview_title_updatelogs">未读提醒</string>
+    <string name="listfootview_title_projects">群组</string>
+    <string name="listfootview_title_tags">标签</string>
+    <string name="listfootview_info_attlist">点击右上角的按钮添加附件。单个附件最大20兆，单篇笔记最多200个附件。图片附件默认压缩，方便快速同步，您可以在设置中选择不压缩。</string>
+    <string name="listfootview_info_catlist">查看和整理我的笔记；下拉即可与云端同步。</string>
+    <string name="listfootview_info_projects">创建您的群组，群组成员将可以共享文档，共同协作；高级功能支持成员的权限分配。下拉即可同步。</string>
+    <string name="listfootview_info_updatelogs">您参与的群组组内成员对笔记进行了修改或评论，您将收到一条笔记更新提醒。此处显示所有提醒信息。</string>
+    <string name="listfootview_info_tags">给笔记加上标签，能更方便快捷的找到您想要的笔记。</string>
+    <string name="listfootview_info_notelist_allnote">您的所有笔记，下拉即可同步本地笔记，上拉加载更多。</string>
+    <string name="listfootview_info_notelist_recycle">您删除的笔记，长按可彻底删除，下拉即可同步。</string>
+    <string name="listfootview_info_notelist_tagnote">给笔记加上标签，可以让您更快的检索到需要的笔记 。</string>
+    <string name="listfootview_info_notelist_searchresult">搜索结果，我们即将推出云端搜索笔记，敬请期待。</string>
+    <string name="listfootview_info_notelist_mypublicnote">当您将笔记分享到微博或者选择“公开此笔记”时，该笔记将可以被所有互联网用户访问。\r\n您带密码公开的笔记，他人只有正确输入密码才能访问。</string>
+
+    <string name="notifcation_remaind_title">轻笔记群组有更新</string>
+
+    <string name="auth_menu_binding">已有的轻笔记账户-绑定</string>
+    <string name="auth_menu_regist">没有轻笔记账户-完善资料</string>
+
+    <string name="auth_list_baidu_intro">享受额外15G空间</string>
+
+    <string name="hint_name_or_email">请输入用户名/邮箱</string>
+    <string name="hint_email">请输入您的真实邮箱</string>
+
+    <string name="partner_login_360">使用360账号登录</string>
+    <string name="partner_login_baidu">使用百度账号登录-绑定15G网盘空间</string>
+    <string name="partner_login_sina">使用新浪微博账号登录</string>
+    <string name="partner_login_QQ">使用腾讯QQ账号登录</string>
+    <string name="partner_login_RenRen">使用人人网账号登录</string>
+    <string name="partner_login_189">使用天翼云账号登录-绑定15G云空间</string>
+
+    <string name="partner_binding_360">绑定360账号</string>
+    <string name="partner_binding_baidu">绑定百度账号-绑定15G网盘空间</string>
+    <string name="partner_binding_sina">绑定新浪微博账号</string>
+    <string name="partner_binding_QQ">绑定腾讯QQ账号</string>
+    <string name="partner_binding_RenRen">绑定人人网账号</string>
+    <string name="partner_binding_189">绑定天翼云账号-绑定15G云空间</string>
+
+    <string name="binding_weibo_msg">我刚刚用微博账号登录了轻笔记——全球首款有群组功能的云记事本。电脑与手机之间传输资料，再也不用数据线啦！轻松记录，方便协作。http://www.qingbiji.cn</string>
+    <string name="binding_renren_msg">我刚刚用人人网账号登录了轻笔记——全球首款有群组功能的云记事本。电脑和手机之间传输资料，再也不用数据线啦！轻松记录，方便协作。http://www.qingbiji.cn</string>
+    <string name="binding_renren_title">快来绑定轻笔记咯!</string>
+    <string name="account_info_title">一键注册用户的帐号信息</string>
+    <string name="account_info_msg">欢迎您使用轻笔记，下面是您一键使用轻笔记的初始账号和密码，请尽快更改您的轻笔记信息，以保证数据安全</string>
+    <string name="account_info_name" formatted="false">用户名：%s</string>
+    <string name="account_info_password" formatted="false">密码：%s</string>
+    <string name="account_info_saved" formatted="false">您的初始账号信息已保存到%s</string>
+
+    <string name="sharenotes_personal">我的公开</string>
+    <string name="sharenotes_others">全部公开</string>
+    <string name="sharenotes_item_more">更  多</string>
+
+    <string name="table_notes">全部笔记</string>
+    <string name="table_cats">文件夹</string>
+    <string name="table_tags">标签</string>
+    <string name="table_sharenotes">我的公开</string>
+
+    <string name="createproject_trust_project">信任群组</string>
+    <string name="createproject_limited_project">有限群组</string>
+    <string name="createproject_readonly_project">只读群组</string>
+    <string name="createproject_custem_project">自定义群组</string>
+    <string name="createproject_trust_project_info">亲情分享/紧密团队 - 所有人都是管理员</string>
+    <string name="createproject_limited_project_info">兴趣小组 － 组员可以上传文章，但是不能删除他人的文章，类似论坛</string>
+    <string name="createproject_readonly_project_info">传达通知 － 组员只能阅读和评论，不能修改</string>
+    <string name="createproject_custem_project_info">办公协作 - 灵活的权限设定（仅支持由网页版本创建）</string>
+    <string name="createproject_input_name">群组名称:</string>
+    <string name="createproject_input_intro">群组简介:</string>
+    <string name="createproject_btn_next">下一步</string>
+    <string name="createproject_btn_sendSMS">发送短信邀请好友</string>
+    <string name="createproject_btn_sendWeibo">发送新浪微博邀请好友</string>
+    <string name="createproject_btn_sendEmail">发送邮件邀请好友</string>
+    <string name="createproject_ok">创建群组成功</string>
+    <string name="createproject_ok_id" formatted="false">群组ID:%d</string>
+    <string name="createproject_weibo_msg" formatted="false">我刚刚用轻笔记创建了一个群组【%s】，邀请你加入，让我们在这里一起记录，相互分享吧！群组号：【%d】, 点击这里加入群组：http://www.qingbiji.cn/project/%d</string>
+
+    <string name="main_btnname_project">敬请期待</string>
+    <string name="main_btnname_newnote">综合笔记</string>
+    <string name="main_btnname_allnote">我的笔记</string>
+    <string name="main_btnname_cameranote">拍照笔记</string>
+    <string name="main_btnname_doodlenote">涂鸦笔记</string>
+    <string name="main_btnname_recordnote">录音笔记</string>
+
+    <string name="test_text">                             今天起，我要告别总是找不到东西的日子；我再也不要忘记我最Care的亲人朋友的生日，我要告别厚厚的笔记本，几年时间下来，它太占地方了，而且我也没有勇气挨个翻一遍就为了找一条笔记！</string>
+    <string name="test_date">今天 16点12分</string>
+    <string name="test_title">公开的的笔记</string>
+    <string name="test_source">来源于:网页抓取</string>
+    <string name="test_creator">创建者:轻笔记</string>
+    <string name="test_comment">评论(131)</string>
+    <string name="test_collect">收藏(25)</string>
+
+    <string name="limitedpublic_name">带密码公开</string>
+    <string name="unlimitedpublic_name">对所有用户公开</string>
+    <string name="dialog_limitedpublic_msg">带密码公开</string>
+    <string name="dialog_limitedpublic_hint">输入密码</string>
+    <string name="dialog_notelist_inputpassword_msg">该笔记需要输入密码才能阅读，如果没有密码，请与作者联系。</string>
+    <string name="dialog_notelist_inputpassword_hint">输入密码</string>
+    <string name="dialog_notelist_passwordwrong">密码错误!</string>
+
+    <string name="pagetags_alltag_count" formatted="false">全部标签(%d)</string>
+
+    <string name="ak_alert_NoAppCanOpen">没有应用能处理该操作。请下载相关程序后再试。</string>
+
+    <!-- Color -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <color name="transparent">#00000000</color>
+    <color name="light_gray">#fff7f7f7</color>
+    <color name="tablebtn_pressed">#467CD4</color>
+
+    <!--讯飞语音-->
+    <string name="app_id">4ea04eee</string>
+    <string-array name="voicer_cloud_entries">
+        <item>小燕—女青、中英、普通话</item>
+        <item>小宇—男青、中英、普通话</item>
+        <item>凯瑟琳—女青、英</item>
+        <item>亨利—男青、英</item>
+        <item>玛丽—女青、英</item>
+        <item>小研—女青、中英、普通话</item>
+        <item>小琪—女青、中英、普通话</item>
+        <item>小峰—男青、中英、普通话</item>
+        <item>小梅—女青、中英、粤语</item>
+        <item>小莉—女青、中英、台湾普通话</item>
+        <item>小蓉—女青、中、四川话</item>
+        <item>小芸—女青、中、东北话</item>
+        <item>小坤—男青、中、河南话</item>
+        <item>小强—男青、中、湖南话</item>
+        <item>小莹—女青、中、陕西话</item>
+        <item>小新—男童、中、普通话</item>
+        <item>楠楠—女童、中、普通话</item>
+        <item>老孙—男老、中、普通话</item>
+    </string-array>
+    <string-array name="voicer_cloud_values">
+        <item>xiaoyan</item>
+        <item>xiaoyu</item>
+        <item>catherine</item>
+        <item>henry</item>
+        <item>vimary</item>
+        <item>vixy</item>
+        <item>xiaoqi</item>
+        <item>vixf</item>
+        <item>xiaomei</item>
+        <item>xiaolin</item>
+        <item>xiaorong</item>
+        <item>xiaoqian</item>
+        <item>xiaokun</item>
+        <item>xiaoqiang</item>
+        <item>vixying</item>
+        <item>xiaoxin</item>
+        <item>nannan</item>
+        <item>vils</item>
+    </string-array>
+
 </resources>
