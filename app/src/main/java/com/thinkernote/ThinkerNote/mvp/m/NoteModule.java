@@ -330,7 +330,7 @@ public class NoteModule {
                     public Observable<List> call(final TNNote tnNote) {
 
                         //修改文件类型 rename(数据源1)
-                        Observable<CommonBean> renameNoteObservable = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                        Observable<CommonBean> renameNoteObservable = MyHttpService.Builder.getHttpServer()//
                                 .putRecoveryNote(tnNote.noteId, settings.token)
                                 .subscribeOn(Schedulers.io())
                                 .doOnNext(new Action1<CommonBean>() {
@@ -477,7 +477,7 @@ public class NoteModule {
             @Override
             public Observable<Integer> call(final TNNote tnNote) {
 
-                Observable<Integer> deleteObservable = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                Observable<Integer> deleteObservable = MyHttpService.Builder.getHttpServer()//
                         .deleteNote(tnNote.noteId, settings.token)
                         .subscribeOn(Schedulers.io())
                         .doOnNext(new Action1<CommonBean>() {
@@ -553,7 +553,7 @@ public class NoteModule {
                     @Override
                     public Observable<Integer> call(final TNNote tnNote) {
 
-                        Observable<Integer> clearObservable = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                        Observable<Integer> clearObservable = MyHttpService.Builder.getHttpServer()//
                                 .deleteNote(tnNote.noteId, settings.token)
                                 .subscribeOn(Schedulers.io())
                                 .doOnNext(new Action1<CommonBean>() {
@@ -569,7 +569,7 @@ public class NoteModule {
                                     public Observable<Integer> call(CommonBean commonBean) {
                                         //deleteNote 调用成功后，调用 deleteTrashNote2 接口
                                         //再调用第二个接口
-                                        return MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                                        return MyHttpService.Builder.getHttpServer()//
                                                 .deleteTrashNote2(tnNote.noteId, settings.token)
                                                 .subscribeOn(Schedulers.io())
                                                 .doOnNext(new Action1<CommonBean>() {
@@ -635,7 +635,7 @@ public class NoteModule {
      * @param listener
      */
     public void getAllNotesId(final INoteModuleListener listener) {
-        Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        Subscription subscription = MyHttpService.Builder.getHttpServer()//
                 .syncAllNotesId(settings.token)
                 .doOnNext(new Action1<AllNotesIdsBean>() {
                     @Override
@@ -678,7 +678,7 @@ public class NoteModule {
      * @param listener
      */
     public void getAllNotesId(long folderId, final INoteModuleListener listener) {
-        Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        Subscription subscription = MyHttpService.Builder.getHttpServer()//
                 .GetFolderNoteIds(folderId, settings.token)
                 .doOnNext(new Action1<AllNotesIdsBean>() {
                     @Override
@@ -715,7 +715,7 @@ public class NoteModule {
     }
 
     /**
-     * 更新编辑的笔记 4
+     * 编辑笔记 （上传）
      * 流程介绍：
      * 双层for循环,主流程是 note_ids循环下嵌套 editNotes循环，editNotes下根据编辑状态，处理不同状态，先判断是否需要上传图片，在判断是否需要上传笔记。
      * <p>
@@ -917,7 +917,7 @@ public class NoteModule {
     }
 
     /**
-     * 笔记更新：云端笔记同步到本地
+     * 笔记更新：云端笔记同步到本地（包括编辑笔记的同步）
      * <p>
      * 双层for循环
      * syncState ：1表示未完全同步，2表示完全同步，3表示本地新增，4表示本地编辑，5表示彻底删除，6表示删除到回收站，7表示从回收站还原
@@ -925,7 +925,7 @@ public class NoteModule {
      * @param note_ids 云端所有笔记数据
      * @param listener
      */
-    public void getCloudNote(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> allNotes, final INoteModuleListener listener) {
+    public void getCloudNote(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> localAllNotes, final INoteModuleListener listener) {
         Subscription subscription = Observable.from(note_ids)
                 .concatMap(new Func1<AllNotesIdsBean.NoteIdItemBean, Observable<Integer>>() {
                     @Override
@@ -934,13 +934,14 @@ public class NoteModule {
                         final int lastUpdate = bean.getUpdate_at();
                         //处理 note列表
                         boolean exit = false;
-                        if (allNotes != null && allNotes.size() > 0) {
-                            for (TNNote editNote : allNotes) {
-                                if (cloudNoteId == editNote.noteId) {
+                        if (localAllNotes != null && localAllNotes.size() > 0) {
+
+                            for (TNNote localNote : localAllNotes) {
+                                if (cloudNoteId == localNote.noteId) {
                                     exit = true;
-                                    if (editNote.lastUpdate > lastUpdate) {
+                                    if (lastUpdate > localNote.lastUpdate) {//云端数据若是最新的，更新为云端的最新数据
                                         //更新笔记
-                                        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                                        MyHttpService.Builder.getHttpServer()//
                                                 .getNoteByNoteId(cloudNoteId, settings.token)
                                                 .subscribeOn(Schedulers.io())
                                                 .doOnNext(new Action1<CommonBean3<GetNoteByNoteIdBean>>() {
@@ -960,7 +961,7 @@ public class NoteModule {
                                                 .subscribe(new Observer<CommonBean3<GetNoteByNoteIdBean>>() {
                                                     @Override
                                                     public void onCompleted() {
-
+                                                        MLog.d(TAG, "getCloudNote--云端更新编辑笔记-onCompleted");
                                                     }
 
                                                     @Override
@@ -980,50 +981,8 @@ public class NoteModule {
                         } else {
                             exit = false;
                         }
-                        for (TNNote editNote : allNotes) {
-                            if (cloudNoteId == editNote.noteId) {
-                                exit = true;
-                                if (editNote.lastUpdate > lastUpdate) {
-                                    //更新笔记
-                                    MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
-                                            .getNoteByNoteId(cloudNoteId, settings.token)
-                                            .subscribeOn(Schedulers.io())
-                                            .doOnNext(new Action1<CommonBean3<GetNoteByNoteIdBean>>() {
-                                                @Override
-                                                public void call(CommonBean3<GetNoteByNoteIdBean> bean) {
-                                                    //结果处理
-                                                    setNoteResult(bean.getMsg(), cloudNoteId);
-                                                    //数据处理
-                                                    if (bean.getCode() == 0) {
-                                                        GetNoteByNoteIdBean noteBean = bean.getNote();
-                                                        updataCloudNoteSQL(noteBean);
-                                                    }
-                                                }
-                                            })
-                                            .subscribeOn(Schedulers.io())
-                                            .subscribeOn(AndroidSchedulers.mainThread())
-                                            .subscribe(new Observer<CommonBean3<GetNoteByNoteIdBean>>() {
-                                                @Override
-                                                public void onCompleted() {
-
-                                                }
-
-                                                @Override
-                                                public void onError(Throwable e) {
-                                                    MLog.e(TAG, "getCloudNote--onError--更新笔记失败" + e.toString());
-                                                }
-
-                                                @Override
-                                                public void onNext(CommonBean3<GetNoteByNoteIdBean> getNoteByNoteIdBeanCommonBean3) {
-
-                                                }
-                                            });
-                                }
-                            }
-
-                        }
                         //拿到遍历结果
-                        if (exit == false) {//本地不存在远端的数据，就更新到本地
+                        if (exit == false) {//本地缺少云端新笔记，就更新到本地
                             return MyHttpService.Builder.getHttpServer()//获取 noteid对应的数据，然后处理
                                     .getNoteByNoteId(cloudNoteId, settings.token)
                                     .subscribeOn(Schedulers.io())
@@ -1084,7 +1043,7 @@ public class NoteModule {
      * @param listener
      */
     public void getTrashNotesId(final INoteModuleListener listener) {
-        Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        Subscription subscription = MyHttpService.Builder.getHttpServer()//
                 .getTrashNoteIds(settings.token)
                 .subscribeOn(Schedulers.io())
                 .doOnNext(new Action1<AllNotesIdsBean>() {
@@ -1203,7 +1162,7 @@ public class NoteModule {
      * <p>
      */
     public void getNoteListByFolderId(final long tagId, final int mPageNum, final int pageSize, final String sort, final INoteModuleListener listener) {
-        Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        Subscription subscription = MyHttpService.Builder.getHttpServer()//
                 .getNoteListByFolderId(tagId, mPageNum, pageSize, sort, settings.token)//接口方法
                 .subscribeOn(Schedulers.io())
                 .doOnNext(new Action1<NoteListBean>() {
@@ -1332,7 +1291,7 @@ public class NoteModule {
                                 exit = true;
                                 if (editNote.lastUpdate > lastUpdate) {
                                     //更新笔记
-                                    MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                                    MyHttpService.Builder.getHttpServer()//
                                             .getNoteByNoteId(cloudNoteId, settings.token)
                                             .subscribeOn(Schedulers.io())
                                             .doOnNext(new Action1<CommonBean3<GetNoteByNoteIdBean>>() {
@@ -1370,7 +1329,7 @@ public class NoteModule {
                             //
                             if (editNote.syncState == 1) {
                                 //更新笔记
-                                MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                                MyHttpService.Builder.getHttpServer()//
                                         .getNoteByNoteId(cloudNoteId, settings.token)
                                         .subscribeOn(Schedulers.io())
                                         .doOnNext(new Action1<CommonBean3<GetNoteByNoteIdBean>>() {
@@ -1465,7 +1424,7 @@ public class NoteModule {
      */
     public void getDetailByNoteId(final long noteId, final INoteModuleListener listener) {
 
-        Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        Subscription subscription = MyHttpService.Builder.getHttpServer()//
                 .getNoteByNoteId(noteId, settings.token)
                 .subscribeOn(Schedulers.io())
                 .doOnNext(new Action1<CommonBean3<GetNoteByNoteIdBean>>() {
@@ -1507,7 +1466,7 @@ public class NoteModule {
                                                 //方式从服务器下载附件
                                                 //url绝对路径
                                                 String url = URLUtils.API_BASE_URL + "attachment/" + att.attId + "?session_token=" + TNSettings.getInstance().token;
-                                                return MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                                                return MyHttpService.Builder.getHttpServer()//
                                                         .downloadFile(url)//接口方法
                                                         .subscribeOn(Schedulers.io())
                                                         .unsubscribeOn(Schedulers.io())

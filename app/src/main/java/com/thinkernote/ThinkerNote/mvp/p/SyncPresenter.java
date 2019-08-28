@@ -325,7 +325,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
 
 
     /**
-     * (13)编辑笔记 同步
+     * (13)云端的编辑笔记 同步（12的子步骤）
      * <p>
      * syncState ：1表示未完全同步，2表示完全同步，3表示本地新增，4表示本地编辑，5表示彻底删除，6表示删除到回收站，7表示从回收站还原
      */
@@ -346,7 +346,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
     }
 
     /**
-     * （14）云端笔记同步到本地
+     * （14）云端新笔记同步到本地（12的子步骤）
      */
     private void updateCloudNote() {
         if (!MyRxManager.getInstance().isSyncing) {
@@ -354,10 +354,10 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
             backSuccess("同步取消");
             return;
         }
-        MLog.d(TAG, "同步--云端笔记同步到本地");
-        final Vector<TNNote> allNotes = TNDbUtils.getAllNoteList(TNSettings.getInstance().userId);
+        MLog.d(TAG, "同步--云端新笔记同步到本地");
+        final Vector<TNNote> localAllNotes = TNDbUtils.getAllNoteList(TNSettings.getInstance().userId);
         if (all_note_ids != null && all_note_ids.size() > 0) {
-            noteModule.getCloudNote(all_note_ids, allNotes, this);
+            noteModule.getCloudNote(all_note_ids, localAllNotes, this);
         } else {
             //（15）
             getTrashNotesId();

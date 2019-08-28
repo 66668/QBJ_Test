@@ -115,7 +115,7 @@ public class SyncFolderPresenter implements INoteModuleListener {
 
 
     /**
-     * (13)编辑笔记 同步
+     * (13)云端的编辑笔记 同步（12的子步骤）
      * <p>
      * syncState ：1表示未完全同步，2表示完全同步，3表示本地新增，4表示本地编辑，5表示彻底删除，6表示删除到回收站，7表示从回收站还原
      */
@@ -131,7 +131,7 @@ public class SyncFolderPresenter implements INoteModuleListener {
     }
 
     /**
-     * （14）云端笔记同步到本地
+     * （14）云端笔记同步到本地（12的子步骤）
      */
     private void updateCloudNote() {
         MLog.d(TAG, "同步--云端笔记同步到本地");
