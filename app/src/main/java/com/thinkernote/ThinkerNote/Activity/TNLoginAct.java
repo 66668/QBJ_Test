@@ -9,8 +9,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.AlphaAnimation;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sina.weibo.sdk.WbSdk;
+import com.sina.weibo.sdk.auth.AuthInfo;
+import com.sina.weibo.sdk.auth.Oauth2AccessToken;
+import com.sina.weibo.sdk.auth.WbConnectErrorMessage;
+import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.tencent.mm.sdk.modelmsg.SendAuth;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
@@ -23,14 +29,10 @@ import com.thinkernote.ThinkerNote.General.TNConst;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
-import com.thinkernote.ThinkerNote.other.TNLinearLayout;
-import com.thinkernote.ThinkerNote.other.TNLinearLayout.TNLinearLayoutListener;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Utils.SPUtil;
 import com.thinkernote.ThinkerNote.Utils.TNActivityManager;
-import com.thinkernote.ThinkerNote.mvp.p.LogPresenter;
-import com.thinkernote.ThinkerNote.mvp.listener.v.OnLogListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.login.LoginBean;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
@@ -38,12 +40,10 @@ import com.thinkernote.ThinkerNote.bean.login.QQBean;
 import com.thinkernote.ThinkerNote.mvp.http.rx.RxBus;
 import com.thinkernote.ThinkerNote.mvp.http.rx.RxBusBaseMessage;
 import com.thinkernote.ThinkerNote.mvp.http.rx.RxCodeConstants;
-import com.weibo.sdk.android.Oauth2AccessToken;
-import com.weibo.sdk.android.Weibo;
-import com.weibo.sdk.android.WeiboAuthListener;
-import com.weibo.sdk.android.WeiboDialogError;
-import com.weibo.sdk.android.WeiboException;
-import com.weibo.sdk.android.sso.SsoHandler;
+import com.thinkernote.ThinkerNote.mvp.listener.v.OnLogListener;
+import com.thinkernote.ThinkerNote.mvp.p.LogPresenter;
+import com.thinkernote.ThinkerNote.other.TNLinearLayout;
+import com.thinkernote.ThinkerNote.other.TNLinearLayout.TNLinearLayoutListener;
 
 import org.json.JSONObject;
 
@@ -61,18 +61,23 @@ public class TNLoginAct extends TNActBase implements OnClickListener, OnLogListe
     private Dialog mLoginingDialog = null;
     private AlphaAnimation mAlphaAnimation;
     private static IWXAPI WXapi;
-    private Weibo mWeibo;
+
     private Boolean isClickQQ = false;
 
+    //=========sina相关==============
+    /**
+     * 显示认证后的信息，如 AccessToken
+     */
+    private TextView mTokenText;
     /**
      * 封装了 "access_token"，"expires_in"，"refresh_token"，并提供了他们的管理功能
      */
     private Oauth2AccessToken mAccessToken;
-
     /**
-     * 注意：SsoHandler 仅当sdk支持sso时有效
+     * 注意：SsoHandler 仅当 SDK 支持 SSO 时有效
      */
     private SsoHandler mSsoHandler;
+    //=======================
 
     private Tencent mTencent;//qq
     private String mLoginId;
@@ -324,57 +329,54 @@ public class TNLoginAct extends TNActBase implements OnClickListener, OnLogListe
     //-------------------------------------sina登录------------------------------------------
 
     private void loginSina() {
-        mWeibo = Weibo.getInstance(TNConst.SINA_APP_KEY, TNConst.SINA_REDIRECT_URL,
-                TNConst.SINA_SCOPE);
-
-        mSsoHandler = new SsoHandler(TNLoginAct.this, mWeibo);
-        mSsoHandler.authorize(new AuthDialogListener(), null);
+        //初始化
+        WbSdk.install(this, new AuthInfo(this, TNConst.SINA_APP_KEY, TNConst.SINA_REDIRECT_URL, TNConst.SINA_SCOPE));
+        //调用
+        mSsoHandler = new SsoHandler(TNLoginAct.this);
+        mSsoHandler.authorizeClientSso(new SelfWbAuthListener());
     }
+
 
     /**
      * 微博认证授权回调类。 1. SSO登陆时，需要在{@link #onActivityResult}
      * 中调用mSsoHandler.authorizeCallBack后， 该回调才会被执行。 2. 非SSO登陆时，当授权后，就会被执行。
      * 当授权成功后，请保存该access_token、expires_in等信息到SharedPreferences中。
      */
-    class AuthDialogListener implements WeiboAuthListener {
-
+    private class SelfWbAuthListener implements com.sina.weibo.sdk.auth.WbAuthListener {
         @Override
-        public void onComplete(Bundle values) {
-            String access_token = values.getString("access_token");
-            String refresh_token = values.getString("refresh_token");
-            String expires_in = values.getString("expires_in");
-            String uid = values.getString("uid");
-            mAccessToken = new Oauth2AccessToken(access_token, expires_in);
-            if (mAccessToken.isSessionValid()) {
-                pLoginThird(2, uid, System.currentTimeMillis(), access_token, refresh_token, "sina" + System.currentTimeMillis());
-            } else {
-                mLoginingDialog.hide();
-                Toast.makeText(getApplicationContext(), "Auth Fail", Toast.LENGTH_LONG).show();
-            }
+        public void onSuccess(final Oauth2AccessToken token) {
+            TNLoginAct.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mAccessToken = token;
+                    String access_token = mAccessToken.KEY_ACCESS_TOKEN;
+                    String refresh_token = mAccessToken.KEY_REFRESH_TOKEN;
+                    String expires_in = mAccessToken.KEY_EXPIRES_IN;
+                    String uid = mAccessToken.KEY_UID;
+                    if (mAccessToken.isSessionValid()) {
+                        pLoginThird(2, uid, System.currentTimeMillis(), access_token, refresh_token, "sina" + System.currentTimeMillis());
+                    } else {
+                        mLoginingDialog.hide();
+                        Toast.makeText(getApplicationContext(), "Auth Fail", Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
         }
 
         @Override
-        public void onError(WeiboDialogError e) {
-            mLoginingDialog.hide();
-            Toast.makeText(getApplicationContext(),
-                    "Auth error : " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
-
-        @Override
-        public void onCancel() {
+        public void cancel() {
             mLoginingDialog.hide();
             Toast.makeText(getApplicationContext(), "sina login cancel",
                     Toast.LENGTH_LONG).show();
         }
 
         @Override
-        public void onWeiboException(WeiboException e) {
+        public void onFailure(WbConnectErrorMessage errorMessage) {
             mLoginingDialog.hide();
-            Toast.makeText(getApplicationContext(),
-                    "Auth exception : " + e.getMessage(), Toast.LENGTH_LONG)
-                    .show();
+            Toast.makeText(TNLoginAct.this, errorMessage.getErrorMessage(), Toast.LENGTH_LONG).show();
         }
     }
+
 
     //--------------------------------------其他重写-----------------------------------------
     @Override

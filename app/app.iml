@@ -98,7 +98,6 @@
     <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/Qingbiji_5.8.4/app/libs/mta-sdk-1.6.2.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/Qingbiji_5.8.4/app/libs/open_sdk.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/Qingbiji_5.8.4/app/libs/pinyin4j-2.5.0.jar:unspecified@jar" level="project" />
-    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/Qingbiji_5.8.4/app/libs/weibo_sdk.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/Qingbiji_5.8.4/app/libs/commons-lang3-3.1.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/Qingbiji_5.8.4/app/libs/Sunflower.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/Qingbiji_5.8.4/app/libs/libammsdk.jar:unspecified@jar" level="project" />
@@ -119,6 +118,7 @@
     <orderEntry type="library" name="Gradle: com.google.code.gson:gson:2.8.5@jar" level="project" />
     <orderEntry type="library" name="Gradle: io.reactivex.rxjava2:rxjava:2.2.10@jar" level="project" />
     <orderEntry type="library" name="Gradle: org.reactivestreams:reactive-streams:1.0.2@jar" level="project" />
+    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/Qingbiji_5.8.4/app/libs/core-4.3.1-openDefaultRelease.aar:unspecified@jar" level="project" />
     <orderEntry type="library" name="Gradle: androidx.appcompat:appcompat:1.1.0-rc01@aar" level="project" />
     <orderEntry type="library" name="Gradle: androidx.legacy:legacy-support-v4:1.0.0@aar" level="project" />
     <orderEntry type="library" name="Gradle: androidx.fragment:fragment:1.1.0-rc01@aar" level="project" />

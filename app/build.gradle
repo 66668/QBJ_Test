@@ -101,7 +101,6 @@ dependencies {
     implementation files('libs/mta-sdk-1.6.2.jar')
     implementation files('libs/open_sdk.jar')
     implementation files('libs/pinyin4j-2.5.0.jar')
-    implementation files('libs/weibo_sdk.jar')
     implementation files('libs/commons-lang3-3.1.jar')
     //讯飞语音合成
     implementation files('libs/Sunflower.jar')
@@ -116,6 +115,8 @@ dependencies {
 
     //    implementation 'jp.wasabeef:richeditor-android:1.2.2'
 
+    //新浪登陆 依赖
+    implementation files('libs/core-4.3.1-openDefaultRelease.aar')
 
     //---------------------------------使用最新网络框架--开始----------------------------------------
 
