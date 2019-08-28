@@ -227,7 +227,11 @@ public class TNLoginAct extends TNActBase implements OnClickListener, OnLogListe
         mLoginingDialog.show();
 
         //调用p层代码
-        pLoginNormal(mUserName, mPassword);
+        if (TNUtils.isNetWork()) {
+            pLoginNormal(mUserName, mPassword);
+        } else {
+            TNUtilsUi.showToast(R.string.alert_Net_NotWork);
+        }
 
     }
 //-------------------------------------QQ登录------------------------------------------
@@ -299,12 +303,17 @@ public class TNLoginAct extends TNActBase implements OnClickListener, OnLogListe
 
     //-------------------------------------wechat登录------------------------------------------
     private void loginWechat() {
-        WXapi = WXAPIFactory.createWXAPI(this, TNConst.WX_APP_ID, true);
-        WXapi.registerApp(TNConst.WX_APP_ID);
-        SendAuth.Req req = new SendAuth.Req();
-        req.scope = "snsapi_userinfo";
-        req.state = "wechat_sdk_demo";
-        WXapi.sendReq(req);
+        if (TNUtils.isNetWork()) {
+            WXapi = WXAPIFactory.createWXAPI(this, TNConst.WX_APP_ID, true);
+            WXapi.registerApp(TNConst.WX_APP_ID);
+            SendAuth.Req req = new SendAuth.Req();
+            req.scope = "snsapi_userinfo";
+            req.state = "wechat_sdk_demo";
+            WXapi.sendReq(req);
+        } else {
+            TNUtilsUi.showToast(R.string.alert_Net_NotWork);
+        }
+
     }
 
 

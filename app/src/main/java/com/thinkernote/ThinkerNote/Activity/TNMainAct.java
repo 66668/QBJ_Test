@@ -245,6 +245,9 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeLi
                     synchronizeData();
                 } else {
                     TNUtilsUi.showToast(R.string.alert_Net_NotWork);
+                    //结束同步按钮动作
+                    MyRxManager.getInstance().cancelAll();
+                    endSynchronize(1);
                 }
                 break;
             }

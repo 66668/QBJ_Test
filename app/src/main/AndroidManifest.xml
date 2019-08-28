@@ -60,7 +60,9 @@
         android:label="@string/app_name"
         android:theme="@android:style/Theme.NoTitleBar">
         <!--andriod9版本兼容设置-->
-        <uses-library android:name="org.apache.http.legacy" android:required="false" />
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
         <!-- 百度统计分析 start ================================================================ -->
         <!-- 百度 渠道商编号 -->
         <meta-data
@@ -113,7 +115,8 @@
         <!--============================android7.0+ 使用应用间共享文件 设置 结束============================-->
         <activity
             android:name=".Activity.TNSplashAct"
-            android:configChanges="keyboardHidden|orientation">
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -130,12 +133,14 @@
         <activity
             android:name=".Activity.TNRegistAct"
             android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysVisible" />
 
         <activity
             android:name=".Activity.TNNoteEditAct"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/app_name2"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateAlwaysVisible">
 
             <intent-filter>
@@ -150,61 +155,75 @@
         <activity
             android:name=".Activity.TNNoteListAct"
             android:configChanges="keyboardHidden|orientation"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".Activity.TNTagListAct"
-            android:configChanges="keyboardHidden|orientation" />
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".Activity.TNNoteViewAct"
-            android:configChanges="keyboardHidden|orientation" />
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".Activity.TNTextEditAct"
             android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
 
         <activity
             android:name=".Activity.TNCatListAct"
-            android:configChanges="keyboardHidden|orientation" />
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".Activity.TNFileListAct"
-            android:configChanges="keyboardHidden|orientation" />
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".Activity.TNUserInfoAct"
-            android:configChanges="keyboardHidden|orientation" />
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".Activity.TNAboutAct"
-            android:configChanges="keyboardHidden|orientation" />
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".Activity.TNCatInfoAct"
-            android:configChanges="keyboardHidden|orientation" />
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".Activity.TNTagInfoAct"
-            android:configChanges="keyboardHidden|orientation" />
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".Activity.TNNoteInfoAct"
-            android:configChanges="keyboardHidden|orientation" />
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".Activity.TNReportAct"
             android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
 
         <activity
             android:name=".Activity.TNHtmlViewAct"
-            android:configChanges="keyboardHidden|orientation" />
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".Activity.unuse.TNToEmailAct"
             android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
 
         <activity
@@ -219,7 +238,8 @@
 
         <activity
             android:name=".Activity.unuse.TNTestAct"
-            android:configChanges="keyboardHidden|orientation" />
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".Activity.TNMainAct"
@@ -229,11 +249,14 @@
 
         <activity
             android:name=".Activity.TNSearchAct"
-            android:configChanges="keyboardHidden|orientation" />
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".Activity.unuse.TNAttListAct"
-            android:configChanges="keyboardHidden|orientation" />
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait" />
+
 
         <activity
             android:name=".Activity.TNTuYaAct"
@@ -242,16 +265,19 @@
 
         <activity
             android:name=".Activity.TNRemindAct"
-            android:configChanges="keyboardHidden|orientation" />
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".Activity.unuse.TNNetSearchAct"
             android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
 
         <activity
             android:name=".Activity.TNSettingsAct"
-            android:configChanges="keyboardHidden|orientation" />
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".Activity.TNMainFragAct"
@@ -270,15 +296,18 @@
 
         <activity
             android:name=".Activity.TNChangeUserInfoAct"
-            android:configChanges="keyboardHidden|orientation" />
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".Activity.TNFindPasswordAct"
-            android:configChanges="keyboardHidden|orientation" />
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".Activity.TNBindAccountAct"
-            android:configChanges="keyboardHidden|orientation" />
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".Activity.ViewImageActivity"
@@ -310,7 +339,8 @@
         <activity
             android:name="com.tencent.tauth.AuthActivity"
             android:launchMode="singleTask"
-            android:noHistory="true">
+            android:noHistory="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -327,14 +357,6 @@
         <receiver android:name=".Register.AppRegister">
             <intent-filter>
                 <action android:name="com.tencent.mm.plugin.openapi.Intent.ACTION_REFRESH_WXAPP" />
-            </intent-filter>
-        </receiver>
-
-        <!--未使用-->
-        <!-- BroadcastReceiver -->
-        <receiver android:name=".Service.TNSystemStartedReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 

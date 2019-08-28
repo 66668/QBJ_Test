@@ -1021,7 +1021,7 @@ public class NoteModule {
 
                     @Override
                     public void onError(Throwable e) {
-                        MLog.d(TAG, "getCloudNote--onError");
+                        MLog.e(TAG, "getCloudNote--onError" + e.toString());
                         listener.onCloudNoteFailed(new Exception(e.toString()), null);
                     }
 
