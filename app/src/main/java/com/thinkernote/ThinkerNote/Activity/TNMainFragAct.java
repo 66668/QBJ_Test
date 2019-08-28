@@ -927,19 +927,6 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
         mProgressDialog.hide();
         TNUtilsUi.showToast(msg);
     }
-
-    //
-    @Override
-    public void onFolderDeleteSuccess(Object obj) {
-        mProgressDialog.hide();
-    }
-
-    @Override
-    public void onFolderDeleteFailed(String msg, Exception e) {
-        mProgressDialog.hide();
-        TNUtilsUi.showToast(msg);
-    }
-
     // 同步一条笔记详情
     @Override
     public void onDownloadNoteSuccess() {

@@ -48,7 +48,7 @@ public class TNSettings {
     public int isAutoLogin; // 0 NO; 1 YES
     public long projectLocalId;
     public boolean needShowLock;//锁屏参数（1）
-    public boolean needShowLock2;//锁屏参数（2）程序大改后，该参数用于判断是否是从登陆跳转过来的，如果从登陆跳转到主界面的，该参数值是false,不显示锁屏
+    public boolean needShowLock2;//锁屏参数（2）程序大改后，该参数用于判断是否是从登陆跳转过来的，如果从登陆跳转到主界面的，该参数值是false,不显示锁屏(两处，欢迎页+登陆页)
 
     public boolean remindLockGroup = true;
     public boolean remindLockNote = true;

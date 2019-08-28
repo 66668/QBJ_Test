@@ -19,10 +19,6 @@ public interface OnPagerListener {
     void onDefaultFolderFailed(String msg, Exception e);
 
     //
-    void onFolderDeleteSuccess(Object obj);
-
-    void onFolderDeleteFailed(String msg, Exception e);
-    //
     void onDownloadNoteSuccess();
 
     void onDownloadNoteFailed(String msg, Exception e);

@@ -143,6 +143,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeLi
         MyRxManager.getInstance().cancelAll();
         isDestory = true;
         super.onDestroy();
+        MLog.d("TNMainAct--onDestroy");
     }
 
     @Override

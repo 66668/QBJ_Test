@@ -123,7 +123,7 @@ public class TNActBase extends Activity {
         configView();
         createStatus = 1;
 
-        if (!(TAG.equals("TNLoginAct")) && !(TAG.equals("TNSplashAct"))) {
+        if (!(TAG.equals("TNLoginAct")) && !(TAG.equals("TNSplashAct"))&& !(TAG.equals("TNMainFragAct"))) {
             TNUtilsUi.checkLockScreen(this);
             if (settings.needShowLock && settings.needShowLock2 && !isFinishing() && !TNSettings.getInstance().isLogout) {
                 if (!(TAG.equals("TNLockAct") && getTitle().equals("lock"))
@@ -161,8 +161,7 @@ public class TNActBase extends Activity {
         if (settings.topAct == this)
             settings.topAct = null;
 
-        //检测锁屏
-        TNUtilsUi.checkLockScreen(this);
+
     }
 
     @Override

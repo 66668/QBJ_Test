@@ -18,6 +18,7 @@ import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.dialog.CommonDialog;
+import com.thinkernote.ThinkerNote.mvp.http.URLUtils;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnSplashListener;
 import com.thinkernote.ThinkerNote.mvp.p.SplashPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
@@ -52,6 +53,7 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MLog.d("SJY", "TNSplashAct--onCreate");
         //解决首次安装按home键置入后台，从桌面图标点击重新启动的问题
         if (!isTaskRoot()) {
             Intent intent = getIntent();
@@ -123,6 +125,8 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
 //			Intent serviceIntent = new Intent(TNSplashAct.this, TNPushService.class);
 //			startService(serviceIntent);
 //		}
+        //设置重新登陆-不开启锁屏
+        TNSettings.getInstance().needShowLock2 = false;
 
         if (getIntent().hasExtra(Intent.EXTRA_INTENT)) {
             extraBundle = new Bundle();

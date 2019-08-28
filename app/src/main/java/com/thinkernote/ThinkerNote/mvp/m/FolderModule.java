@@ -460,12 +460,15 @@ public class FolderModule {
                     @Override
                     public void onError(Throwable e) {
                         MLog.e("deleteFolder--onError:" + e.toString());
-                        listener.onDeleteFolderFailed("异常", new Exception("接口异常！"));
+
                     }
 
                     @Override
                     public void onNext(CommonBean bean) {
-                        MLog.d(TAG, "deleteFolder-onNext");
+                        MLog.d(TAG, "deleteFolder-onNext" + bean.getMessage());
+                        if (bean.getMessage().equals("文件夹只能一级一级删除")) {
+                            listener.onDeleteFolderFailed("文件夹只能一级一级删除", new Exception("文件夹只能一级一级删除"));
+                        }
                     }
                 });
     }
