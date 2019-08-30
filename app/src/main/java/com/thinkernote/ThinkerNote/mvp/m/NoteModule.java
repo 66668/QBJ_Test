@@ -44,6 +44,7 @@ import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import io.reactivex.disposables.Disposable;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -473,6 +474,7 @@ public class NoteModule {
      * @param listener
      */
     public void deleteNotes(Vector<TNNote> notes, final INoteModuleListener listener, boolean isSync) {
+
         Subscription subscription = Observable.from(notes).concatMap(new Func1<TNNote, Observable<Integer>>() {
             @Override
             public Observable<Integer> call(final TNNote tnNote) {

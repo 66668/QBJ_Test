@@ -24,6 +24,8 @@ import com.thinkernote.ThinkerNote.mvp.http.MyRxManager;
 import java.util.List;
 import java.util.Vector;
 
+import io.reactivex.disposables.CompositeDisposable;
+
 /**
  * 同步块(包好同步取消操作)
  */
@@ -32,6 +34,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
     private Context context;
     private OnSyncListener onView;
     private TNSettings settings;
+    private CompositeDisposable disposable;
 
     /**
      * 流程控制：
@@ -303,7 +306,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
         MLog.d(TAG, "同步--彻底删除");
         Vector<TNNote> mClaerNotes = TNDbUtils.getNoteListBySyncState(TNSettings.getInstance().userId, 5);
         if (mClaerNotes != null && mClaerNotes.size() > 0) {
-            noteModule.clearNotes(mClaerNotes, this,true);
+            noteModule.clearNotes(mClaerNotes, this, true);
         } else {
             //（12）
             getAllNotsId();
@@ -338,7 +341,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
         MLog.d(TAG, "同步--编辑笔记");
         Vector<TNNote> editNotes = TNDbUtils.getNoteListBySyncState(TNSettings.getInstance().userId, 4);
         if (editNotes != null && editNotes.size() > 0 && all_note_ids != null && all_note_ids.size() > 0) {
-            noteModule.updateEditNotes(all_note_ids, editNotes, this,true);
+            noteModule.updateEditNotes(all_note_ids, editNotes, this, true);
         } else {
             //(14)
             updateCloudNote();
