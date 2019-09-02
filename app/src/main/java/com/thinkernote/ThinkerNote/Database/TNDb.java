@@ -181,6 +181,63 @@ public class TNDb extends SQLiteOpenHelper {
 
         return null;
     }
+
+    //TODO 不用 delete
+    public void executeSQL(TNAction aAction) {
+//        MLog.d("TNDB--executeSQL", aAction.inputs.toString());
+        try {
+            String sql = (String) aAction.inputs.get(0);
+            if (sql.startsWith("SELECT")) {
+                String[] args = new String[aAction.inputs.size() - 1];
+                for (int i = 1; i < aAction.inputs.size(); i++) {
+                    args[i - 1] = aAction.inputs.get(i).toString();
+                }
+                Cursor cursor = db.rawQuery(sql, args);
+
+                Vector<Vector<String>> allData = new Vector<Vector<String>>();
+                while (cursor.moveToNext()) {
+                    Vector<String> rowData = new Vector<String>();
+                    for (int i = 0; i < cursor.getColumnCount(); i++) {
+                        String value = cursor.getString(i);
+                        if (value != null)
+                            rowData.add(value);
+                        else
+                            rowData.add("0");
+                    }
+                    allData.add(rowData);
+                }
+                aAction.outputs.add(allData);
+                cursor.close();
+            } else if (sql.startsWith("INSERT")) {
+                int start = 0, end = 0;
+                String tableName = "";
+                ContentValues values = new ContentValues();
+
+                start = sql.indexOf("`");
+                end = sql.indexOf("`", start + 1);
+                tableName = sql.substring(start, end + 1);
+
+                for (int i = 1; i < aAction.inputs.size(); i++) {
+                    start = sql.indexOf("`", end + 1);
+                    end = sql.indexOf("`", start + 1);
+                    values.put(sql.substring(start, end + 1), aAction.inputs.get(i).toString());
+                }
+                long id = db.insertOrThrow(tableName, null, values);
+                aAction.outputs.add(id);
+            } else {
+                Object[] args = new Object[aAction.inputs.size() - 1];
+                for (int i = 1; i < aAction.inputs.size(); i++) {
+                    args[i - 1] = aAction.inputs.get(i);
+                }
+                db.execSQL(sql, args);
+
+            }
+            aAction.result = TNActionResult.Finished;
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+            MLog.e("数据库异常：" + e.toString());
+        }
+    }
 //==================================sjy 更改 开始======================================
 
 

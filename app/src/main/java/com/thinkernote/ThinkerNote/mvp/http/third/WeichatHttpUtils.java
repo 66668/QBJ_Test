@@ -15,7 +15,6 @@ import com.thinkernote.ThinkerNote.mvp.http.NullOnEmptyConverterFactory;
 import com.thinkernote.ThinkerNote.mvp.http.ParamNames;
 import com.thinkernote.ThinkerNote.mvp.http.URLUtils;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -39,7 +38,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -132,7 +131,7 @@ public class WeichatHttpUtils {
         builder.baseUrl(apiUrl);//设置远程地址
         builder.addConverterFactory(new NullOnEmptyConverterFactory()); //添加自定义转换器，处理响应
         builder.addConverterFactory(GsonConverterFactory.create(getGson())); //添加Gson转换器，处理返回
-        builder.addCallAdapterFactory(RxJavaCallAdapterFactory.create()); //Rx
+        builder.addCallAdapterFactory(RxJava2CallAdapterFactory.create()); //Rx
         return builder;
     }
 
@@ -155,7 +154,7 @@ public class WeichatHttpUtils {
         //        builder.addConverterFactory(JsonResultConvertFactory.create());//自定义的json解析器
 
 
-        builder.addCallAdapterFactory(RxJavaCallAdapterFactory.create()); //Rx
+        builder.addCallAdapterFactory(RxJava2CallAdapterFactory.create()); //Rx
         return builder;
     }
 

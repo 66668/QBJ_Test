@@ -179,20 +179,6 @@
 -dontwarn okio.**
 -dontwarn javax.annotation.**
 
-# RxJava RxAndroid
--dontwarn sun.misc.**
--keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
-    long producerIndex;
-    long consumerIndex;
-}
--keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueProducerNodeRef {
-    rx.internal.util.atomic.LinkedQueueNode producerNode;
-}
--keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueConsumerNodeRef {
-    rx.internal.util.atomic.LinkedQueueNode consumerNode;
-}
--dontnote rx.internal.util.PlatformDependent
-
 
 # 高德相关依赖
 # 集合包:3D地图3.3.2 导航1.8.0 定位2.5.0

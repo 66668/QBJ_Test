@@ -8,9 +8,11 @@ import com.thinkernote.ThinkerNote.mvp.listener.v.OnSettingsListener;
 import com.thinkernote.ThinkerNote.bean.CommonBean;
 import com.thinkernote.ThinkerNote.mvp.http.MyHttpService;
 
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+
 
 /**
  * m层 具体实现
@@ -33,7 +35,7 @@ public class SettingsModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "upgrade--onCompleted");
                     }
 
@@ -41,6 +43,11 @@ public class SettingsModule {
                     public void onError(Throwable e) {
                         MLog.e("upgrade 异常onError:" + e.toString());
                         listener.onProfileFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -66,7 +73,7 @@ public class SettingsModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "upgrade--onCompleted");
                     }
 
@@ -74,6 +81,11 @@ public class SettingsModule {
                     public void onError(Throwable e) {
                         MLog.e("upgrade 异常onError:" + e.toString());
                         listener.onVerifyEmailFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -99,7 +111,7 @@ public class SettingsModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "upgrade--onCompleted");
                     }
 
@@ -107,6 +119,11 @@ public class SettingsModule {
                     public void onError(Throwable e) {
                         MLog.e("upgrade 异常onError:" + e.toString());
                         listener.onDefaultFoldeFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override

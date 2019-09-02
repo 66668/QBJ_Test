@@ -30,7 +30,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -163,7 +163,7 @@ public class HttpUtils {
         //builder.addConverterFactory(GsonConverterFactory.create());        //03:添加Gson转换器,将规范的gson及解析成实体
         //builder.addConverterFactory(JsonResultConvertFactory.create());    //04:自定义的json解析器处理不规范json
         //
-        builder.addCallAdapterFactory(RxJavaCallAdapterFactory.create());//添加RxJavaCallAdapter,把Retrofit请求转化成RxJava的Observable
+        builder.addCallAdapterFactory(RxJava2CallAdapterFactory.create());//添加RxJavaCallAdapter,把Retrofit请求转化成RxJava的Observable
 
         return builder;
     }
@@ -180,7 +180,7 @@ public class HttpUtils {
         Retrofit.Builder builder = new Retrofit.Builder();
         builder.client(getFileOkHttp(listener));//设置okhttp（重点），不设置走默认的
         builder.baseUrl(apiUrl);//设置远程地址
-        builder.addCallAdapterFactory(RxJavaCallAdapterFactory.create());//添加RxJavaCallAdapter,把Retrofit请求转化成RxJava的Observable
+        builder.addCallAdapterFactory(RxJava2CallAdapterFactory.create());//添加RxJavaCallAdapter,把Retrofit请求转化成RxJava的Observable
 
         //如下1--4 至少四选一
         //builder.addConverterFactory(new NullOnEmptyConverterFactory());      //01:添加自定义转换器，处理null响应
@@ -201,7 +201,7 @@ public class HttpUtils {
         Retrofit.Builder builder = new Retrofit.Builder();
         builder.client(uploadOkHttp());//设置okhttp（重点），不设置走默认的
         builder.baseUrl(apiUrl);//设置远程地址
-        builder.addCallAdapterFactory(RxJavaCallAdapterFactory.create());//添加RxJavaCallAdapter,把Retrofit请求转化成RxJava的Observable
+        builder.addCallAdapterFactory(RxJava2CallAdapterFactory.create());//添加RxJavaCallAdapter,把Retrofit请求转化成RxJava的Observable
 
         //如下1--4 至少四选一
         //builder.addConverterFactory(new NullOnEmptyConverterFactory());      //01:添加自定义转换器，处理null响应
@@ -229,7 +229,7 @@ public class HttpUtils {
         //        builder.addConverterFactory(JsonResultConvertFactory.create());//自定义的json解析器
 
 
-        builder.addCallAdapterFactory(RxJavaCallAdapterFactory.create()); //把Retrofit请求转化成RxJava的Observable
+        builder.addCallAdapterFactory(RxJava2CallAdapterFactory.create()); //把Retrofit请求转化成RxJava的Observable
         return builder;
     }
 
@@ -250,7 +250,7 @@ public class HttpUtils {
         //        builder.addConverterFactory(JsonResultConvertFactory.create());//自定义的json解析器
 
 
-        builder.addCallAdapterFactory(RxJavaCallAdapterFactory.create()); //把Retrofit请求转化成RxJava的Observable
+        builder.addCallAdapterFactory(RxJava2CallAdapterFactory.create()); //把Retrofit请求转化成RxJava的Observable
         return builder;
     }
 

@@ -44,20 +44,20 @@ import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.BiFunction;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
-import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.functions.Func2;
-import rx.functions.FuncN;
-import rx.schedulers.Schedulers;
+
 
 /**
  * 具体实现:
@@ -84,11 +84,11 @@ public class NoteModule {
      * @return
      */
     private Observable<TNNote> updateNoteFiles(Vector<TNNoteAtt> attrs, final TNNote tnNote) {
-        return Observable.from(attrs)
-                .concatMap(new Func1<TNNoteAtt, Observable<TNNote>>() {//先上传文件
+        return Observable.fromIterable(attrs)
+                .concatMap(new Function<TNNoteAtt, Observable<TNNote>>() {//先上传文件
                     //拿到每一个文件数据，上传
                     @Override
-                    public Observable<TNNote> call(final TNNoteAtt tnNoteAtt) {
+                    public Observable<TNNote> apply(final TNNoteAtt tnNoteAtt) {
                         //多个文件上传
                         // 需要加入到MultipartBody中，而不是作为参数传递
                         //        MultipartBody.Builder builder = new MultipartBody.Builder()
@@ -114,9 +114,9 @@ public class NoteModule {
                         return MyHttpService.UpLoadBuilder.UploadServer()//(接口1，上传图片)
                                 .uploadPic(url, part)//接口方法
                                 .subscribeOn(Schedulers.io())//固定样式
-                                .doOnNext(new Action1<OldNotePicBean>() {
+                                .doOnNext(new Consumer<OldNotePicBean>() {
                                     @Override
-                                    public void call(OldNotePicBean oldNotePicBean) {
+                                    public void accept(OldNotePicBean oldNotePicBean) {
                                         //（1）更新图片--数据库(意见反馈不走这一块)
                                         if (oldNotePicBean.getCode() == 0) {
                                             MLog.d("updateEditNotes--upDataAttIdSQL--上传图片成功，保存数据库");
@@ -124,9 +124,9 @@ public class NoteModule {
                                         }
                                     }
                                 })
-                                .concatMap(new Func1<OldNotePicBean, Observable<TNNote>>() {//结果需要转换成TNNote，用于上传TNNote
+                                .concatMap(new Function<OldNotePicBean, Observable<TNNote>>() {//结果需要转换成TNNote，用于上传TNNote
                                     @Override
-                                    public Observable<TNNote> call(OldNotePicBean oldNotePicBean) {
+                                    public Observable<TNNote> apply(OldNotePicBean oldNotePicBean) {
                                         TNNote newNote = tnNote;
                                         // 结果doOnNext的进一步处理
                                         if (oldNotePicBean.getCode() == 0) {
@@ -144,13 +144,20 @@ public class NoteModule {
                                             }
                                             return Observable.just(newNote);
                                         } else {
-                                            // 上传失败需要重传三次 未做
+                                            //TODO  上传失败需要重传三次 未做
                                             return Observable.just(newNote);
                                         }
                                     }
                                 });
                     }
-                }).last();//只传最后一个值，值是该note的最终结果
+                })
+                .last(tnNote)//只传最后一个值，值是该note的最终结果
+                .flatMapObservable(new Function<TNNote, ObservableSource<TNNote>>() {
+                    @Override
+                    public ObservableSource<TNNote> apply(TNNote tnNote) throws Exception {
+                        return Observable.just(tnNote);
+                    }
+                });
     }
 
 
@@ -165,11 +172,10 @@ public class NoteModule {
      * @param listener
      */
     public void updateOldNote(Vector<TNNote> notes, final boolean isNewDb, final INoteModuleListener listener) {
-
-        Subscription subscription = Observable.from(notes)
-                .concatMap(new Func1<TNNote, Observable<TNNote>>() {//
+        Observable.fromIterable(notes)
+                .concatMap(new Function<TNNote, ObservableSource<TNNote>>() {
                     @Override
-                    public Observable<TNNote> call(final TNNote tnNote) {
+                    public ObservableSource<TNNote> apply(TNNote tnNote) throws Exception {
                         Vector<TNNoteAtt> oldNotesAtts = tnNote.atts;
                         if (oldNotesAtts != null && oldNotesAtts.size() > 0) {
                             MLog.d("先上传笔记的文件");
@@ -179,9 +185,10 @@ public class NoteModule {
                             return Observable.just(tnNote);
                         }
                     }
-                }).concatMap(new Func1<TNNote, Observable<NewNoteBean>>() {// 上传完图片后，再上传笔记
+                })
+                .concatMap(new Function<TNNote, ObservableSource<NewNoteBean>>() {
                     @Override
-                    public Observable<NewNoteBean> call(final TNNote mNote) {
+                    public ObservableSource<NewNoteBean> apply(TNNote mNote) throws Exception {
                         TNNote note = mNote;//避免final
                         if (note.catId == -1) {
                             note.catId = TNSettings.getInstance().defaultCatId;
@@ -190,9 +197,9 @@ public class NoteModule {
                         return MyHttpService.Builder.getHttpServer()//(接口2，上传note)
                                 .addNewNote(note.title, note.content, note.tagStr, note.catId, note.createTime, note.lastUpdate, note.lbsLongitude, note.lbsLatitude, note.lbsAddress, note.lbsRadius, settings.token)//接口方法
                                 .subscribeOn(Schedulers.io())//固定样式
-                                .doOnNext(new Action1<NewNoteBean>() {
+                                .doOnNext(new Consumer<NewNoteBean>() {
                                     @Override
-                                    public void call(NewNoteBean newNoteBean) {
+                                    public void accept(NewNoteBean newNoteBean) throws Exception {
                                         if (newNoteBean.getCode() == 0) {
                                             MLog.d("updateLocalNewNotes--upDataNoteLocalIdSQL");
                                             if (isNewDb) {//false时表示老数据库的数据上传，不用在修改本地的数据
@@ -200,21 +207,26 @@ public class NoteModule {
                                             }
 
                                         }
-
                                     }
                                 })
-                                .doOnError(new Action1<Throwable>() {
+                                .doOnError(new Consumer<Throwable>() {
                                     @Override
-                                    public void call(Throwable e) {
+                                    public void accept(Throwable e) throws Exception {
                                         MLog.e(TAG, "updateNote--addNewNote--doOnError:" + e.toString());
                                         listener.onUpdateOldNoteFailed(new Exception(e.getMessage()), null);
                                     }
                                 });
                     }
-                }).subscribe(new Observer<NewNoteBean>() {
+                })
+                .subscribe(new Observer<NewNoteBean>() {
                     @Override
-                    public void onCompleted() {
-                        listener.onUpdateOldNoteSuccess();
+                    public void onSubscribe(Disposable d) {
+                        MyRxManager.getInstance().add(d);
+                    }
+
+                    @Override
+                    public void onNext(NewNoteBean newNoteBean) {
+
                     }
 
                     @Override
@@ -223,11 +235,11 @@ public class NoteModule {
                     }
 
                     @Override
-                    public void onNext(NewNoteBean newNoteBean) {//主线程
-
+                    public void onComplete() {
+                        listener.onUpdateOldNoteSuccess();
                     }
                 });
-        MyRxManager.getInstance().add(subscription);
+
     }
 
     /**
@@ -238,13 +250,12 @@ public class NoteModule {
      * @param notes    syncState=3 的数据
      * @param listener
      */
-    public void updateLocalNewNotes(Vector<TNNote> notes, final INoteModuleListener listener, boolean isSync) {
+    public void updateLocalNewNotes(Vector<TNNote> notes, final INoteModuleListener listener, final boolean isSync) {
 
-        Subscription subscription = Observable
-                .from(notes)
-                .concatMap(new Func1<TNNote, Observable<TNNote>>() {//
+        Observable.fromIterable(notes)
+                .concatMap(new Function<TNNote, Observable<TNNote>>() {//
                     @Override
-                    public Observable<TNNote> call(final TNNote tnNote) {
+                    public Observable<TNNote> apply(final TNNote tnNote) {
                         Vector<TNNoteAtt> oldNotesAtts = tnNote.atts;//文件列表
                         //判断是否有文件要上传
                         if (oldNotesAtts != null && oldNotesAtts.size() > 0) {
@@ -257,9 +268,9 @@ public class NoteModule {
 
                     }
                 })
-                .concatMap(new Func1<TNNote, Observable<NewNoteBean>>() {// 上传完图片后，再上传笔记
+                .concatMap(new Function<TNNote, Observable<NewNoteBean>>() {// 上传完图片后，再上传笔记
                     @Override
-                    public Observable<NewNoteBean> call(final TNNote mNote) {
+                    public Observable<NewNoteBean> apply(final TNNote mNote) {
                         TNNote note = mNote;//避免final
                         if (note.catId == -1) {
                             note.catId = TNSettings.getInstance().defaultCatId;
@@ -268,9 +279,9 @@ public class NoteModule {
                         return MyHttpService.Builder.getHttpServer()//(接口2，上传note)
                                 .addNewNote(note.title, note.content, note.tagStr, note.catId, note.createTime, note.lastUpdate, note.lbsLongitude, note.lbsLatitude, note.lbsAddress, note.lbsRadius, settings.token)//接口方法
                                 .subscribeOn(Schedulers.io())//固定样式
-                                .doOnNext(new Action1<NewNoteBean>() {
+                                .doOnNext(new Consumer<NewNoteBean>() {
                                     @Override
-                                    public void call(NewNoteBean newNoteBean) {
+                                    public void accept(NewNoteBean newNoteBean) {
                                         if (newNoteBean.getCode() == 0) {
                                             MLog.d("updateLocalNewNotes--upDataNoteLocalIdSQL");
                                             upDataNoteLocalIdSQL(newNoteBean, note2);
@@ -278,9 +289,9 @@ public class NoteModule {
 
                                     }
                                 })
-                                .doOnError(new Action1<Throwable>() {
+                                .doOnError(new Consumer<Throwable>() {
                                     @Override
-                                    public void call(Throwable e) {
+                                    public void accept(Throwable e) {
                                         MLog.e(TAG, "updateLocalNewNotes--addNewNote--doOnError:" + e.toString());
                                         listener.onUpdateLocalNoteFailed(new Exception(e.getMessage()), null);
                                     }
@@ -290,11 +301,6 @@ public class NoteModule {
                 .subscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<NewNoteBean>() {
-                    @Override
-                    public void onCompleted() {
-                        MLog.d("updateLocalNewNotes--onCompleted");
-                        listener.onUpdateLocalNoteSuccess();
-                    }
 
                     @Override
                     public void onError(Throwable e) {
@@ -303,13 +309,25 @@ public class NoteModule {
                     }
 
                     @Override
+                    public void onComplete() {
+                        MLog.d("updateLocalNewNotes--onCompleted");
+                        listener.onUpdateLocalNoteSuccess();
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        if (isSync) {//是否是主界面的同步
+                            MyRxManager.getInstance().add(d);
+                        }
+
+                    }
+
+                    @Override
                     public void onNext(NewNoteBean newNoteBean) {//主线程
                         MLog.d("updateLocalNewNotes--onNext");
                     }
                 });
-        if (isSync) {//是否是主界面的同步
-            MyRxManager.getInstance().add(subscription);
-        }
+
 
     }
 
@@ -322,21 +340,21 @@ public class NoteModule {
      * @param notes    syncState=7 的数据
      * @param listener
      */
-    public void updateRecoveryNotes(Vector<TNNote> notes, final INoteModuleListener listener, boolean isSync) {
+    public void updateRecoveryNotes(Vector<TNNote> notes, final INoteModuleListener listener, final boolean isSync) {
 
-        Subscription subscription = Observable
-                .from(notes)
-                .concatMap(new Func1<TNNote, Observable<List>>() {//
+        Observable
+                .fromIterable(notes)
+                .concatMap(new Function<TNNote, Observable<List>>() {//
                     @Override
-                    public Observable<List> call(final TNNote tnNote) {
+                    public Observable<List> apply(final TNNote tnNote) {
 
                         //修改文件类型 rename(数据源1)
                         Observable<CommonBean> renameNoteObservable = MyHttpService.Builder.getHttpServer()//
                                 .putRecoveryNote(tnNote.noteId, settings.token)
                                 .subscribeOn(Schedulers.io())
-                                .doOnNext(new Action1<CommonBean>() {
+                                .doOnNext(new Consumer<CommonBean>() {
                                     @Override
-                                    public void call(CommonBean commonBean) {
+                                    public void accept(CommonBean commonBean) {
                                         MLog.d(TAG, "updateRecoveryNotes--doOnNext" + commonBean.getCode() + "--" + commonBean.getMessage());
                                         if (commonBean.getCode() == 0) {
                                             MLog.d(TAG, "更新回收站数据库");
@@ -347,9 +365,9 @@ public class NoteModule {
 
                                     }
                                 })
-                                .doOnError(new Action1<Throwable>() {
+                                .doOnError(new Consumer<Throwable>() {
                                     @Override
-                                    public void call(Throwable throwable) {
+                                    public void accept(Throwable throwable) {
                                         MLog.d(TAG, "updateRecoveryNotes--doOnError" + throwable.getMessage());
                                         listener.onUpdateRecoveryNoteFailed(new Exception(throwable.getMessage()), null);
                                     }
@@ -367,20 +385,19 @@ public class NoteModule {
                         }
                         //使用zip解决不同数据源的统一处理
                         if (tnNote.noteId != -1L) {
-                            return Observable.zip(renameNoteObservable, fileBeanObservable, new Func2<CommonBean, TNNote, List>() {
-
+                            return Observable.zip(renameNoteObservable, fileBeanObservable, new BiFunction<CommonBean, TNNote, List>() {
                                 @Override
-                                public List call(CommonBean commonBean, TNNote tnNote) {
+                                public List apply(CommonBean commonBean, TNNote tnNote) {
                                     List list = new ArrayList();
                                     list.add(commonBean);
                                     return list;
                                 }
                             });
                         } else {
-                            return Observable.zip(renameNoteObservable, fileBeanObservable, new Func2<CommonBean, TNNote, List>() {
+                            return Observable.zip(renameNoteObservable, fileBeanObservable, new BiFunction<CommonBean, TNNote, List>() {
 
                                 @Override
-                                public List call(CommonBean commonBean, TNNote tnNote) {
+                                public List apply(CommonBean commonBean, TNNote tnNote) {
                                     List list = new ArrayList();
                                     list.add(tnNote);
                                     return list;
@@ -390,60 +407,48 @@ public class NoteModule {
 
                     }
                 })
-                .concatMap(new Func1<List, Observable<List>>() {//混合数据源的状态处理
+                .concatMap(new Function<List, Observable<Integer>>() {//混合数据源的状态处理
                     @Override
-                    public Observable<List> call(List list) {
+                    public Observable<Integer> apply(List list) {
 
                         if (list.get(0) instanceof CommonBean) {//继续传递一次，结果一起处理
                             CommonBean bean = (CommonBean) list.get(0);
-                            Observable beanObservable = Observable.just(bean);
-                            return Observable.zip(beanObservable, new FuncN<List>() {// 返回 CommonBean对象
-                                @Override
-                                public List call(Object... args) {
-                                    List list = new ArrayList();
-                                    list.add(args);
-                                    return list;
-                                }
-                            });
+                            return Observable.just(bean.getCode());
+
                         } else {//TNNote
                             final TNNote note = (TNNote) list.get(0);
-                            Observable empty = Observable.empty();
                             //上传笔记
-                            final Observable noteObservable = MyHttpService.Builder
+                            return MyHttpService.Builder
                                     .getHttpServer()//(接口2，上传note)
                                     .addNewNote(note.title, note.content, note.tagStr, note.catId, note.createTime, note.lastUpdate, note.lbsLongitude, note.lbsLatitude, note.lbsAddress, note.lbsRadius, settings.token)//接口方法
                                     .subscribeOn(Schedulers.io())//固定样式
-                                    .doOnNext(new Action1<NewNoteBean>() {
+                                    .doOnNext(new Consumer<NewNoteBean>() {
                                         @Override
-                                        public void call(NewNoteBean newNoteBean) {
+                                        public void accept(NewNoteBean newNoteBean) {
                                             upDataNoteLocalIdSQL(newNoteBean, note);
                                         }
                                     })
-                                    .doOnError(new Action1<Throwable>() {
+                                    .doOnError(new Consumer<Throwable>() {
                                         @Override
-                                        public void call(Throwable e) {
+                                        public void accept(Throwable e) {
                                             MLog.e(TAG, "updateLocalNewNotes--addNewNote--doOnError:" + e.toString());
                                             listener.onUpdateRecoveryNoteFailed(new Exception(e.getMessage()), null);
                                         }
+                                    }).map(new Function<NewNoteBean, Integer>() {
+                                        @Override
+                                        public Integer apply(NewNoteBean newNoteBean) throws Exception {
+                                            return newNoteBean.getCode();
+                                        }
                                     });
-
-                            return Observable.zip(noteObservable, new FuncN<List>() {//返回 NewNoteBean对象
-                                @Override
-                                public List call(Object... args) {
-                                    List list = new ArrayList();
-                                    list.add(args);
-                                    return list;
-                                }
-                            });
                         }
                     }
                 })
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List>() {
+                .subscribe(new Observer<Integer>() {
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         listener.onUpdateRecoveryNoteSuccess();
                     }
 
@@ -453,14 +458,18 @@ public class NoteModule {
                     }
 
                     @Override
-                    public void onNext(List list) {
+                    public void onSubscribe(Disposable d) {
+                        if (isSync) {
+                            MyRxManager.getInstance().add(d);
+                        }
+                    }
+
+                    @Override
+                    public void onNext(Integer list) {
 
                     }
                 });
 
-        if (isSync) {
-            MyRxManager.getInstance().add(subscription);
-        }
 
     }
 
@@ -473,27 +482,27 @@ public class NoteModule {
      * @param notes
      * @param listener
      */
-    public void deleteNotes(Vector<TNNote> notes, final INoteModuleListener listener, boolean isSync) {
+    public void deleteNotes(Vector<TNNote> notes, final INoteModuleListener listener, final boolean isSync) {
 
-        Subscription subscription = Observable.from(notes).concatMap(new Func1<TNNote, Observable<Integer>>() {
+        Observable.fromIterable(notes).concatMap(new Function<TNNote, Observable<Integer>>() {
             @Override
-            public Observable<Integer> call(final TNNote tnNote) {
+            public Observable<Integer> apply(final TNNote tnNote) {
 
                 Observable<Integer> deleteObservable = MyHttpService.Builder.getHttpServer()//
                         .deleteNote(tnNote.noteId, settings.token)
                         .subscribeOn(Schedulers.io())
-                        .doOnNext(new Action1<CommonBean>() {
+                        .doOnNext(new Consumer<CommonBean>() {
                             @Override
-                            public void call(CommonBean commonBean) {
+                            public void accept(CommonBean commonBean) {
                                 //数据处理
                                 if (commonBean.getCode() == 0) {
                                     deleteNoteSQL(tnNote.noteId);
                                 }
                             }
                         })
-                        .concatMap(new Func1<CommonBean, Observable<Integer>>() {//转换 结果类型，保持 不同结果类型转后(CommonBean,int)，有相同的结果类型（int）
+                        .concatMap(new Function<CommonBean, Observable<Integer>>() {//转换 结果类型，保持 不同结果类型转后(CommonBean,int)，有相同的结果类型（int）
                             @Override
-                            public Observable<Integer> call(CommonBean commonBean) {
+                            public Observable<Integer> apply(CommonBean commonBean) {
                                 int result = commonBean.getCode();
                                 return Observable.just(result);
                             }
@@ -512,7 +521,7 @@ public class NoteModule {
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Integer>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "deleteNotes--onCompleted");
                         listener.onDeleteNoteSuccess();
                     }
@@ -524,6 +533,13 @@ public class NoteModule {
                     }
 
                     @Override
+                    public void onSubscribe(Disposable d) {
+                        if (isSync) {
+                            MyRxManager.getInstance().add(d);
+                        }
+                    }
+
+                    @Override
                     public void onNext(Integer result) {
                         MLog.d(TAG, "deleteNotes-onNext");
                         if (result != 0) {
@@ -532,9 +548,6 @@ public class NoteModule {
                     }
 
                 });
-        if (isSync) {
-            MyRxManager.getInstance().add(subscription);
-        }
 
 
     }
@@ -548,41 +561,41 @@ public class NoteModule {
      * @param notes
      * @param listener
      */
-    public void clearNotes(Vector<TNNote> notes, final INoteModuleListener listener, boolean isSync) {
+    public void clearNotes(Vector<TNNote> notes, final INoteModuleListener listener, final boolean isSync) {
         MLog.d("clearNotes--size=" + notes.size());
-        Subscription subscription = Observable.from(notes)
-                .concatMap(new Func1<TNNote, Observable<Integer>>() {//list转化item
+        Observable.fromIterable(notes)
+                .concatMap(new Function<TNNote, Observable<Integer>>() {//list转化item
                     @Override
-                    public Observable<Integer> call(final TNNote tnNote) {
+                    public Observable<Integer> apply(final TNNote tnNote) {
 
                         Observable<Integer> clearObservable = MyHttpService.Builder.getHttpServer()//
                                 .deleteNote(tnNote.noteId, settings.token)
                                 .subscribeOn(Schedulers.io())
-                                .doOnNext(new Action1<CommonBean>() {
+                                .doOnNext(new Consumer<CommonBean>() {
                                     @Override
-                                    public void call(CommonBean commonBean) {//先调用deleteNote接口
+                                    public void accept(CommonBean commonBean) {//先调用deleteNote接口
                                         //数据处理
                                         MLog.d("clearNotes--deleteNoteSQL--noteId" + commonBean.toString());
                                         deleteNoteSQL(tnNote.noteId);
                                     }
                                 })
-                                .concatMap(new Func1<CommonBean, Observable<Integer>>() {//转换 结果类型，保持 不同结果类型转后(CommonBean,int)，有相同的结果类型（int）
+                                .concatMap(new Function<CommonBean, Observable<Integer>>() {//转换 结果类型，保持 不同结果类型转后(CommonBean,int)，有相同的结果类型（int）
                                     @Override
-                                    public Observable<Integer> call(CommonBean commonBean) {
+                                    public Observable<Integer> apply(CommonBean commonBean) {
                                         //deleteNote 调用成功后，调用 deleteTrashNote2 接口
                                         //再调用第二个接口
                                         return MyHttpService.Builder.getHttpServer()//
                                                 .deleteTrashNote2(tnNote.noteId, settings.token)
                                                 .subscribeOn(Schedulers.io())
-                                                .doOnNext(new Action1<CommonBean>() {
+                                                .doOnNext(new Consumer<CommonBean>() {
                                                     @Override
-                                                    public void call(CommonBean bean) {
+                                                    public void accept(CommonBean bean) {
                                                         MLog.d("clearNotes--deleteTrashNoteSQL--noteLocalId" + bean.toString());
                                                         deleteTrashNoteSQL(tnNote.noteLocalId);
                                                     }
-                                                }).concatMap(new Func1<CommonBean, Observable<? extends Integer>>() {
+                                                }).concatMap(new Function<CommonBean, Observable<? extends Integer>>() {
                                                     @Override
-                                                    public Observable<? extends Integer> call(CommonBean commonBean) {
+                                                    public Observable<? extends Integer> apply(CommonBean commonBean) {
                                                         int deleteTrashNoteResult = commonBean.getCode();
                                                         return Observable.just(deleteTrashNoteResult);
                                                     }
@@ -607,7 +620,7 @@ public class NoteModule {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Integer>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "clearNotes--onCompleted");
                         listener.onClearNoteSuccess();
                     }
@@ -619,13 +632,17 @@ public class NoteModule {
                     }
 
                     @Override
+                    public void onSubscribe(Disposable d) {
+                        if (isSync) {
+                            MyRxManager.getInstance().add(d);
+                        }
+                    }
+
+                    @Override
                     public void onNext(Integer result) {
                         MLog.d(TAG, "clearNotes-onNext");
                     }
                 });
-        if (isSync) {
-            MyRxManager.getInstance().add(subscription);
-        }
 
 
     }
@@ -637,11 +654,11 @@ public class NoteModule {
      * @param listener
      */
     public void getAllNotesId(final INoteModuleListener listener) {
-        Subscription subscription = MyHttpService.Builder.getHttpServer()//
+        MyHttpService.Builder.getHttpServer()//
                 .syncAllNotesId(settings.token)
-                .doOnNext(new Action1<AllNotesIdsBean>() {
+                .doOnNext(new Consumer<AllNotesIdsBean>() {
                     @Override
-                    public void call(AllNotesIdsBean bean) {
+                    public void accept(AllNotesIdsBean bean) {
                         if (bean.getCode() == 0) {
                             synCloudNoteById(bean.getNote_ids());
                         }
@@ -651,7 +668,7 @@ public class NoteModule {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<AllNotesIdsBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "getAllNotsId--onCompleted");
                         listener.onGetAllNoteIdSuccess();
                     }
@@ -663,6 +680,11 @@ public class NoteModule {
                     }
 
                     @Override
+                    public void onSubscribe(Disposable d) {
+                        MyRxManager.getInstance().add(d);
+                    }
+
+                    @Override
                     public void onNext(AllNotesIdsBean bean) {
                         if (bean.getCode() == 0) {
                             listener.onGetAllNoteIdNext(bean);
@@ -670,7 +692,7 @@ public class NoteModule {
                     }
 
                 });
-        MyRxManager.getInstance().add(subscription);
+
     }
 
     /**
@@ -680,11 +702,11 @@ public class NoteModule {
      * @param listener
      */
     public void getAllNotesId(long folderId, final INoteModuleListener listener) {
-        Subscription subscription = MyHttpService.Builder.getHttpServer()//
+        MyHttpService.Builder.getHttpServer()//
                 .GetFolderNoteIds(folderId, settings.token)
-                .doOnNext(new Action1<AllNotesIdsBean>() {
+                .doOnNext(new Consumer<AllNotesIdsBean>() {
                     @Override
-                    public void call(AllNotesIdsBean bean) {
+                    public void accept(AllNotesIdsBean bean) {
                         if (bean.getCode() == 0) {
                             synCloudNoteById(bean.getNote_ids());
                         }
@@ -694,7 +716,7 @@ public class NoteModule {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<AllNotesIdsBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "getAllNotsId--onCompleted");
                         listener.onGetAllNoteIdSuccess();
                     }
@@ -706,6 +728,11 @@ public class NoteModule {
                     }
 
                     @Override
+                    public void onSubscribe(Disposable d) {
+                        MyRxManager.getInstance().add(d);
+                    }
+
+                    @Override
                     public void onNext(AllNotesIdsBean bean) {
                         if (bean.getCode() == 0) {
                             listener.onGetAllNoteIdNext(bean);
@@ -713,7 +740,7 @@ public class NoteModule {
                     }
 
                 });
-        MyRxManager.getInstance().add(subscription);
+
     }
 
     /**
@@ -727,19 +754,19 @@ public class NoteModule {
      * @param editNotes 本地未上传的已编辑笔记
      * @param listener
      */
-    public void updateEditNotes(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> editNotes, final INoteModuleListener listener, boolean isSync) {
+    public void updateEditNotes(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> editNotes, final INoteModuleListener listener, final boolean isSync) {
         MLog.d("编辑笔记同步--" + editNotes.size() + "--note_ids" + note_ids.size());
-        Subscription subscription = Observable.from(note_ids)
-                .concatMap(new Func1<AllNotesIdsBean.NoteIdItemBean, Observable<CommonBean>>() {
+        Observable.fromIterable(note_ids)
+                .concatMap(new Function<AllNotesIdsBean.NoteIdItemBean, Observable<CommonBean>>() {
                     @Override
-                    public Observable<CommonBean> call(AllNotesIdsBean.NoteIdItemBean bean) {//list转item
+                    public Observable<CommonBean> apply(AllNotesIdsBean.NoteIdItemBean bean) {//list转item
                         final long cloudNoteId = bean.getId();
                         final int lastUpdate = bean.getUpdate_at();
                         //处理 notes列表
-                        return Observable.from(editNotes)
-                                .concatMap(new Func1<TNNote, Observable<TNNote>>() {
+                        return Observable.fromIterable(editNotes)
+                                .concatMap(new Function<TNNote, Observable<TNNote>>() {
                                     @Override
-                                    public Observable<TNNote> call(final TNNote editNote) {//notes列表转note处理
+                                    public Observable<TNNote> apply(final TNNote editNote) {//notes列表转note处理
 
                                         //if处理不同情况
                                         if (cloudNoteId == editNote.noteId) {//
@@ -776,10 +803,10 @@ public class NoteModule {
                                                 //note下的文件列表上传
                                                 Vector<TNNoteAtt> oldNotesAtts = editNote.atts;//文件列表
                                                 //处理 item note下的每一个图片是否上传(请先参考if的判断，先执行if的判断，在执行该处)
-                                                return Observable.from(oldNotesAtts)
-                                                        .concatMap(new Func1<TNNoteAtt, Observable<TNNote>>() {//先上传文件，在上传TNNote
+                                                return Observable.fromIterable(oldNotesAtts)
+                                                        .concatMap(new Function<TNNoteAtt, Observable<TNNote>>() {//先上传文件，在上传TNNote
                                                             @Override
-                                                            public Observable<TNNote> call(final TNNoteAtt att) {
+                                                            public Observable<TNNote> apply(final TNNoteAtt att) {
                                                                 TNNote note = mEditNote2;
                                                                 if (!TextUtils.isEmpty(att.path) && att.attId != -1) {
                                                                     String s1 = String.format("<tn-media hash=\"%s\" />", att.digest);
@@ -806,9 +833,9 @@ public class NoteModule {
                                                                     return MyHttpService.UpLoadBuilder.UploadServer()//(接口1，上传图片)
                                                                             .uploadPic(url, part)//接口方法
                                                                             .subscribeOn(Schedulers.io())//固定样式
-                                                                            .doOnNext(new Action1<OldNotePicBean>() {
+                                                                            .doOnNext(new Consumer<OldNotePicBean>() {
                                                                                 @Override
-                                                                                public void call(OldNotePicBean oldNotePicBean) {
+                                                                                public void accept(OldNotePicBean oldNotePicBean) {
                                                                                     //（1）更新图片--数据库(意见反馈不走这一块)
                                                                                     if (oldNotePicBean.getCode() == 0) {
                                                                                         MLog.d("updateEditNotes--upDataAttIdSQL--上传图片成功，保存数据库");
@@ -816,15 +843,15 @@ public class NoteModule {
                                                                                     }
                                                                                 }
                                                                             })
-                                                                            .doOnError(new Action1<Throwable>() {
+                                                                            .doOnError(new Consumer<Throwable>() {
                                                                                 @Override
-                                                                                public void call(Throwable throwable) {
+                                                                                public void accept(Throwable throwable) {
                                                                                     MLog.e(TAG, "updateLocalNewNotes--uploadPic--doOnError:" + throwable.toString());
                                                                                     listener.onUpdateLocalNoteFailed(new Exception(throwable.getMessage()), null);
                                                                                 }
-                                                                            }).concatMap(new Func1<OldNotePicBean, Observable<TNNote>>() {//结果需要转换成TNNote，用于上传TNNote
+                                                                            }).concatMap(new Function<OldNotePicBean, Observable<TNNote>>() {//结果需要转换成TNNote，用于上传TNNote
                                                                                 @Override
-                                                                                public Observable<TNNote> call(OldNotePicBean oldNotePicBean) {
+                                                                                public Observable<TNNote> apply(OldNotePicBean oldNotePicBean) {
                                                                                     TNNote newNote = note2;
                                                                                     //结果doOnNext的进一步处理
                                                                                     if (oldNotePicBean.getCode() == 0) {
@@ -852,7 +879,13 @@ public class NoteModule {
 
                                                         })
                                                         .subscribeOn(Schedulers.io())
-                                                        .last();//所有结果，都是同一个note处理，按顺序更新note,所以返回最后一个即可拿到最新的note
+                                                        .last(mEditNote2)//所有结果，都是同一个note处理，按顺序更新note,所以返回最后一个即可拿到最新的note
+                                                        .flatMapObservable(new Function<TNNote, ObservableSource<TNNote>>() {
+                                                            @Override
+                                                            public ObservableSource<TNNote> apply(TNNote tnNote) throws Exception {
+                                                                return Observable.just(tnNote);
+                                                            }
+                                                        });
                                             } else {//
                                                 MLog.d("编辑笔记同步--更新笔记的数据库");
                                                 //更新编辑笔记的状态
@@ -866,9 +899,9 @@ public class NoteModule {
                                         }
                                     }
                                 })
-                                .concatMap(new Func1<TNNote, Observable<CommonBean>>() {//该处来自 所有图片上传完成后，处理新note，准备上传note
+                                .concatMap(new Function<TNNote, Observable<CommonBean>>() {//该处来自 所有图片上传完成后，处理新note，准备上传note
                                     @Override
-                                    public Observable<CommonBean> call(TNNote mNote) {
+                                    public Observable<CommonBean> apply(TNNote mNote) {
                                         TNNote note = mNote;
                                         if (note.catId == -1) {
                                             note.catId = TNSettings.getInstance().defaultCatId;
@@ -878,9 +911,9 @@ public class NoteModule {
                                         return MyHttpService.Builder.getHttpServer()//上传笔记
                                                 .editNote(note.noteId, note.title, note.content, note.tagStr, note.catId, note.createTime, note.lastUpdate, settings.token)
                                                 .subscribeOn(Schedulers.io())
-                                                .doOnNext(new Action1<CommonBean>() {
+                                                .doOnNext(new Consumer<CommonBean>() {
                                                     @Override
-                                                    public void call(CommonBean commonBean) {
+                                                    public void accept(CommonBean commonBean) {
                                                         //数据处理
                                                         if (commonBean.getCode() == 0) {
                                                             updataEditNoteSQL(note2);
@@ -896,7 +929,7 @@ public class NoteModule {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<CommonBean>() {
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "updateEditNotes--onCompleted");
                         listener.onUpdateEditNoteSuccess();
                     }
@@ -908,14 +941,19 @@ public class NoteModule {
                     }
 
                     @Override
+                    public void onSubscribe(Disposable d) {
+                        if (isSync) {
+                            MyRxManager.getInstance().add(d);
+                        }
+                    }
+
+                    @Override
                     public void onNext(CommonBean bean) {
                         MLog.d(TAG, "updateEditNotes-onNext--" + bean.getCode() + bean.getMessage());
                     }
 
                 });
-        if (isSync) {
-            MyRxManager.getInstance().add(subscription);
-        }
+
     }
 
     /**
@@ -928,10 +966,10 @@ public class NoteModule {
      * @param listener
      */
     public void getCloudNote(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> localAllNotes, final INoteModuleListener listener) {
-        Subscription subscription = Observable.from(note_ids)
-                .concatMap(new Func1<AllNotesIdsBean.NoteIdItemBean, Observable<Integer>>() {
+        Observable.fromIterable(note_ids)
+                .concatMap(new Function<AllNotesIdsBean.NoteIdItemBean, Observable<Integer>>() {
                     @Override
-                    public Observable<Integer> call(AllNotesIdsBean.NoteIdItemBean bean) {
+                    public Observable<Integer> apply(AllNotesIdsBean.NoteIdItemBean bean) {
                         final long cloudNoteId = bean.getId();
                         final int lastUpdate = bean.getUpdate_at();
                         //处理 note列表
@@ -946,9 +984,9 @@ public class NoteModule {
                                         MyHttpService.Builder.getHttpServer()//
                                                 .getNoteByNoteId(cloudNoteId, settings.token)
                                                 .subscribeOn(Schedulers.io())
-                                                .doOnNext(new Action1<CommonBean3<GetNoteByNoteIdBean>>() {
+                                                .doOnNext(new Consumer<CommonBean3<GetNoteByNoteIdBean>>() {
                                                     @Override
-                                                    public void call(CommonBean3<GetNoteByNoteIdBean> bean) {
+                                                    public void accept(CommonBean3<GetNoteByNoteIdBean> bean) {
                                                         //结果处理
                                                         setNoteResult(bean.getMsg(), cloudNoteId);
                                                         //数据处理
@@ -962,13 +1000,19 @@ public class NoteModule {
                                                 .subscribeOn(AndroidSchedulers.mainThread())
                                                 .subscribe(new Observer<CommonBean3<GetNoteByNoteIdBean>>() {
                                                     @Override
-                                                    public void onCompleted() {
+                                                    public void onComplete() {
                                                         MLog.d(TAG, "getCloudNote--云端更新编辑笔记-onCompleted");
                                                     }
 
                                                     @Override
                                                     public void onError(Throwable e) {
                                                         MLog.e(TAG, "getCloudNote--onError--更新笔记失败" + e.toString());
+                                                    }
+
+                                                    @Override
+                                                    public void onSubscribe(Disposable d) {
+
+                                                        //TODO
                                                     }
 
                                                     @Override
@@ -988,9 +1032,9 @@ public class NoteModule {
                             return MyHttpService.Builder.getHttpServer()//获取 noteid对应的数据，然后处理
                                     .getNoteByNoteId(cloudNoteId, settings.token)
                                     .subscribeOn(Schedulers.io())
-                                    .doOnNext(new Action1<CommonBean3<GetNoteByNoteIdBean>>() {
+                                    .doOnNext(new Consumer<CommonBean3<GetNoteByNoteIdBean>>() {
                                         @Override
-                                        public void call(CommonBean3<GetNoteByNoteIdBean> bean) {
+                                        public void accept(CommonBean3<GetNoteByNoteIdBean> bean) {
                                             //结果处理
                                             setNoteResult(bean.getMsg(), cloudNoteId);
                                             //数据处理
@@ -1001,9 +1045,9 @@ public class NoteModule {
                                         }
                                     })
                                     .subscribeOn(Schedulers.io())
-                                    .concatMap(new Func1<CommonBean3<GetNoteByNoteIdBean>, Observable<Integer>>() {//
+                                    .concatMap(new Function<CommonBean3<GetNoteByNoteIdBean>, Observable<Integer>>() {//
                                         @Override
-                                        public Observable<Integer> call(CommonBean3<GetNoteByNoteIdBean> bean) {
+                                        public Observable<Integer> apply(CommonBean3<GetNoteByNoteIdBean> bean) {
                                             return Observable.just(bean.getCode());
                                         }
                                     });
@@ -1014,9 +1058,9 @@ public class NoteModule {
                     }
                 }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Integer>() {
+                .subscribe(new Observer<Integer>() {
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "getCloudNote--onCompleted");
                         listener.onCloudNoteSuccess();
                     }
@@ -1028,11 +1072,16 @@ public class NoteModule {
                     }
 
                     @Override
+                    public void onSubscribe(Disposable d) {
+                        MyRxManager.getInstance().add(d);
+                    }
+
+                    @Override
                     public void onNext(Integer integer) {
                         MLog.d(TAG, "getCloudNote--onNext" + integer);
                     }
                 });
-        MyRxManager.getInstance().add(subscription);
+
 
     }
 
@@ -1045,12 +1094,12 @@ public class NoteModule {
      * @param listener
      */
     public void getTrashNotesId(final INoteModuleListener listener) {
-        Subscription subscription = MyHttpService.Builder.getHttpServer()//
+        MyHttpService.Builder.getHttpServer()//
                 .getTrashNoteIds(settings.token)
                 .subscribeOn(Schedulers.io())
-                .doOnNext(new Action1<AllNotesIdsBean>() {
+                .doOnNext(new Consumer<AllNotesIdsBean>() {
                     @Override
-                    public void call(AllNotesIdsBean bean) {
+                    public void accept(AllNotesIdsBean bean) {
                         //数据处理
                         if (bean.getCode() == 0) {
                             synCloudTrashNoteById(bean.getNote_ids());
@@ -1061,7 +1110,7 @@ public class NoteModule {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<AllNotesIdsBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "getTrashNotesId--onCompleted");
                         listener.onGetTrashNoteIdSuccess();
                     }
@@ -1073,6 +1122,11 @@ public class NoteModule {
                     }
 
                     @Override
+                    public void onSubscribe(Disposable d) {
+                        MyRxManager.getInstance().add(d);
+                    }
+
+                    @Override
                     public void onNext(AllNotesIdsBean bean) {
                         if (bean.getCode() == 0) {
                             listener.onGetTrashNoteIdNext(bean);
@@ -1080,7 +1134,7 @@ public class NoteModule {
                     }
 
                 });
-        MyRxManager.getInstance().add(subscription);
+
     }
 
     /**
@@ -1093,10 +1147,10 @@ public class NoteModule {
      */
     public void upateTrashNotes(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> allNotes, final INoteModuleListener listener) {
         MLog.d("upateTrashNotes--回收站笔记--" + note_ids.size());
-        Subscription subscription = Observable.from(note_ids)
-                .concatMap(new Func1<AllNotesIdsBean.NoteIdItemBean, Observable<Integer>>() {
+        Observable.fromIterable(note_ids)
+                .concatMap(new Function<AllNotesIdsBean.NoteIdItemBean, Observable<Integer>>() {
                     @Override
-                    public Observable<Integer> call(AllNotesIdsBean.NoteIdItemBean bean) {
+                    public Observable<Integer> apply(AllNotesIdsBean.NoteIdItemBean bean) {
                         final long cloudTrashNoteId = bean.getId();
 
                         //处理 note列表
@@ -1112,9 +1166,9 @@ public class NoteModule {
                             return MyHttpService.Builder.getHttpServer()//获取 noteid对应的数据，然后处理
                                     .getNoteByNoteId(cloudTrashNoteId, settings.token)
                                     .subscribeOn(Schedulers.io())
-                                    .doOnNext(new Action1<CommonBean3<GetNoteByNoteIdBean>>() {
+                                    .doOnNext(new Consumer<CommonBean3<GetNoteByNoteIdBean>>() {
                                         @Override
-                                        public void call(CommonBean3<GetNoteByNoteIdBean> bean) {
+                                        public void accept(CommonBean3<GetNoteByNoteIdBean> bean) {
                                             //结果处理
                                             setNoteResult(bean.getMsg(), cloudTrashNoteId);
                                             //数据处理
@@ -1125,9 +1179,9 @@ public class NoteModule {
                                         }
                                     })
                                     .subscribeOn(Schedulers.io())
-                                    .concatMap(new Func1<CommonBean3<GetNoteByNoteIdBean>, Observable<Integer>>() {//
+                                    .concatMap(new Function<CommonBean3<GetNoteByNoteIdBean>, Observable<Integer>>() {//
                                         @Override
-                                        public Observable<Integer> call(CommonBean3<GetNoteByNoteIdBean> bean) {
+                                        public Observable<Integer> apply(CommonBean3<GetNoteByNoteIdBean> bean) {
                                             return Observable.just(bean.getCode());
                                         }
                                     });
@@ -1140,7 +1194,7 @@ public class NoteModule {
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Integer>() {
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "upateTrashNotes--onCompleted");
                         listener.onGetTrashNoteSuccess();
                     }
@@ -1152,11 +1206,18 @@ public class NoteModule {
                     }
 
                     @Override
+                    public void onSubscribe(Disposable d) {
+
+                        MyRxManager.getInstance().add(d);
+
+                    }
+
+                    @Override
                     public void onNext(Integer integer) {
                         MLog.d(TAG, "upateTrashNotes--onNext");
                     }
                 });
-        MyRxManager.getInstance().add(subscription);
+
     }
 
     /**
@@ -1164,12 +1225,12 @@ public class NoteModule {
      * <p>
      */
     public void getNoteListByFolderId(final long tagId, final int mPageNum, final int pageSize, final String sort, final INoteModuleListener listener) {
-        Subscription subscription = MyHttpService.Builder.getHttpServer()//
+        MyHttpService.Builder.getHttpServer()//
                 .getNoteListByFolderId(tagId, mPageNum, pageSize, sort, settings.token)//接口方法
                 .subscribeOn(Schedulers.io())
-                .doOnNext(new Action1<NoteListBean>() {
+                .doOnNext(new Consumer<NoteListBean>() {
                     @Override
-                    public void call(NoteListBean bean) {
+                    public void accept(NoteListBean bean) {
                         //数据处理
                         if (bean.getCode() == 0) {
                             insertDbNotes(bean, false);//异步
@@ -1179,7 +1240,7 @@ public class NoteModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<NoteListBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "getNoteListByFolderId--onCompleted");
                         listener.onNoteListByIdSuccess();
                     }
@@ -1188,6 +1249,11 @@ public class NoteModule {
                     public void onError(Throwable e) {
                         MLog.e("getNoteListByTagId--onError:" + e.toString());
                         listener.onNoteListByIdFailed(new Exception(e.toString()), null);
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -1218,11 +1284,11 @@ public class NoteModule {
      * <p>
      */
     public void getNoteListByTagId(final long tagId, final int mPageNum, final int pageSize, final String sort, final INoteModuleListener listener) {
-        Subscription subscription = MyHttpService.Builder.getHttpServer()
+        MyHttpService.Builder.getHttpServer()
                 .getNoteListByTagId(tagId, mPageNum, pageSize, sort, settings.token)
-                .doOnNext(new Action1<NoteListBean>() {
+                .doOnNext(new Consumer<NoteListBean>() {
                     @Override
-                    public void call(NoteListBean bean) {
+                    public void accept(NoteListBean bean) {
                         //数据处理
                         if (bean.getCode() == 0) {
                             insertDbNotes(bean, false);//异步
@@ -1234,7 +1300,7 @@ public class NoteModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<NoteListBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "getNoteListByTagId--onCompleted");
                         listener.onNoteListByIdSuccess();
                     }
@@ -1243,6 +1309,10 @@ public class NoteModule {
                     public void onError(Throwable e) {
                         MLog.e("getNoteListByTagId--onError:" + e.toString());
                         listener.onNoteListByIdFailed(new Exception(e.toString()), null);
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
                     }
 
                     @Override
@@ -1279,10 +1349,10 @@ public class NoteModule {
      */
     public void getCloudNoteByFolderId(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final long folderId, final INoteModuleListener listener) {
 
-        Subscription subscription = Observable.from(note_ids)
-                .concatMap(new Func1<AllNotesIdsBean.NoteIdItemBean, Observable<Integer>>() {
+        Observable.fromIterable(note_ids)
+                .concatMap(new Function<AllNotesIdsBean.NoteIdItemBean, Observable<Integer>>() {
                     @Override
-                    public Observable<Integer> call(AllNotesIdsBean.NoteIdItemBean bean) {
+                    public Observable<Integer> apply(AllNotesIdsBean.NoteIdItemBean bean) {
                         final long cloudNoteId = bean.getId();
                         final int lastUpdate = bean.getUpdate_at();
                         //处理 note列表
@@ -1296,9 +1366,9 @@ public class NoteModule {
                                     MyHttpService.Builder.getHttpServer()//
                                             .getNoteByNoteId(cloudNoteId, settings.token)
                                             .subscribeOn(Schedulers.io())
-                                            .doOnNext(new Action1<CommonBean3<GetNoteByNoteIdBean>>() {
+                                            .doOnNext(new Consumer<CommonBean3<GetNoteByNoteIdBean>>() {
                                                 @Override
-                                                public void call(CommonBean3<GetNoteByNoteIdBean> bean) {
+                                                public void accept(CommonBean3<GetNoteByNoteIdBean> bean) {
                                                     //结果处理
                                                     setNoteResult(bean.getMsg(), cloudNoteId);
                                                     //数据处理
@@ -1312,13 +1382,18 @@ public class NoteModule {
                                             .subscribeOn(AndroidSchedulers.mainThread())
                                             .subscribe(new Observer<CommonBean3<GetNoteByNoteIdBean>>() {
                                                 @Override
-                                                public void onCompleted() {
+                                                public void onComplete() {
 
                                                 }
 
                                                 @Override
                                                 public void onError(Throwable e) {
                                                     MLog.e(TAG, "getCloudNote--onError--更新笔记失败" + e.toString());
+                                                }
+
+                                                @Override
+                                                public void onSubscribe(Disposable d) {
+
                                                 }
 
                                                 @Override
@@ -1334,9 +1409,9 @@ public class NoteModule {
                                 MyHttpService.Builder.getHttpServer()//
                                         .getNoteByNoteId(cloudNoteId, settings.token)
                                         .subscribeOn(Schedulers.io())
-                                        .doOnNext(new Action1<CommonBean3<GetNoteByNoteIdBean>>() {
+                                        .doOnNext(new Consumer<CommonBean3<GetNoteByNoteIdBean>>() {
                                             @Override
-                                            public void call(CommonBean3<GetNoteByNoteIdBean> bean) {
+                                            public void accept(CommonBean3<GetNoteByNoteIdBean> bean) {
                                                 //结果处理
                                                 setNoteResult(bean.getMsg(), cloudNoteId);
                                                 //数据处理
@@ -1350,13 +1425,18 @@ public class NoteModule {
                                         .subscribeOn(AndroidSchedulers.mainThread())
                                         .subscribe(new Observer<CommonBean3<GetNoteByNoteIdBean>>() {
                                             @Override
-                                            public void onCompleted() {
+                                            public void onComplete() {
 
                                             }
 
                                             @Override
                                             public void onError(Throwable e) {
                                                 MLog.e(TAG, "getCloudNote--onError--更新笔记失败" + e.toString());
+                                            }
+
+                                            @Override
+                                            public void onSubscribe(Disposable d) {
+
                                             }
 
                                             @Override
@@ -1372,9 +1452,9 @@ public class NoteModule {
                             return MyHttpService.Builder.getHttpServer()//获取 noteid对应的数据，然后处理
                                     .getNoteByNoteId(cloudNoteId, settings.token)
                                     .subscribeOn(Schedulers.io())
-                                    .doOnNext(new Action1<CommonBean3<GetNoteByNoteIdBean>>() {
+                                    .doOnNext(new Consumer<CommonBean3<GetNoteByNoteIdBean>>() {
                                         @Override
-                                        public void call(CommonBean3<GetNoteByNoteIdBean> bean) {
+                                        public void accept(CommonBean3<GetNoteByNoteIdBean> bean) {
                                             //结果处理
                                             setNoteResult(bean.getMsg(), cloudNoteId);
                                             //数据处理
@@ -1385,9 +1465,9 @@ public class NoteModule {
                                         }
                                     })
                                     .subscribeOn(Schedulers.io())
-                                    .concatMap(new Func1<CommonBean3<GetNoteByNoteIdBean>, Observable<Integer>>() {//
+                                    .concatMap(new Function<CommonBean3<GetNoteByNoteIdBean>, Observable<Integer>>() {//
                                         @Override
-                                        public Observable<Integer> call(CommonBean3<GetNoteByNoteIdBean> bean) {
+                                        public Observable<Integer> apply(CommonBean3<GetNoteByNoteIdBean> bean) {
                                             return Observable.just(bean.getCode());
                                         }
                                     });
@@ -1398,9 +1478,9 @@ public class NoteModule {
                     }
                 }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Integer>() {
+                .subscribe(new Observer<Integer>() {
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "getCloudNote--onCompleted");
                         listener.onCloudNoteSuccess();
                     }
@@ -1409,6 +1489,11 @@ public class NoteModule {
                     public void onError(Throwable e) {
                         MLog.d(TAG, "getCloudNote--onError");
                         listener.onCloudNoteFailed(new Exception(e.toString()), null);
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -1426,12 +1511,12 @@ public class NoteModule {
      */
     public void getDetailByNoteId(final long noteId, final INoteModuleListener listener) {
 
-        Subscription subscription = MyHttpService.Builder.getHttpServer()//
+        MyHttpService.Builder.getHttpServer()//
                 .getNoteByNoteId(noteId, settings.token)
                 .subscribeOn(Schedulers.io())
-                .doOnNext(new Action1<CommonBean3<GetNoteByNoteIdBean>>() {
+                .doOnNext(new Consumer<CommonBean3<GetNoteByNoteIdBean>>() {
                     @Override
-                    public void call(CommonBean3<GetNoteByNoteIdBean> bean) {
+                    public void accept(CommonBean3<GetNoteByNoteIdBean> bean) {
                         //更新数据库
                         if (bean.getCode() == 0) {
                             MLog.e("getDetailByNoteId--获取笔记详情--doOnError");
@@ -1439,25 +1524,25 @@ public class NoteModule {
                         }
                     }
                 })
-                .doOnError(new Action1<Throwable>() {
+                .doOnError(new Consumer<Throwable>() {
                     @Override
-                    public void call(Throwable e) {
+                    public void accept(Throwable e) {
                         MLog.e("getDetailByNoteId--获取笔记详情--doOnError");
                     }
                 })
-                .concatMap(new Func1<CommonBean3<GetNoteByNoteIdBean>, Observable<Boolean>>() {
+                .concatMap(new Function<CommonBean3<GetNoteByNoteIdBean>, Observable<Boolean>>() {
                     @Override
-                    public Observable<Boolean> call(CommonBean3<GetNoteByNoteIdBean> dataBean) {
+                    public Observable<Boolean> apply(CommonBean3<GetNoteByNoteIdBean> dataBean) {
                         if (dataBean.getCode() == 0) {
                             TNNote note = TNDbUtils.getNoteByNoteId(noteId);
                             Vector<TNNoteAtt> atts = note.atts;
 
                             if (atts != null && atts.size() > 0) {
                                 //下载文件数据
-                                return Observable.from(atts)
-                                        .concatMap(new Func1<TNNoteAtt, Observable<InputStream>>() {
+                                return Observable.fromIterable(atts)
+                                        .concatMap(new Function<TNNoteAtt, Observable<InputStream>>() {
                                             @Override
-                                            public Observable<InputStream> call(TNNoteAtt att) {
+                                            public Observable<InputStream> apply(TNNoteAtt att) {
 
                                                 final String path = TNUtilsAtt.getAttPath(att.attId, att.type);
                                                 MLog.d("下载附件路径：" + path);
@@ -1472,31 +1557,31 @@ public class NoteModule {
                                                         .downloadFile(url)//接口方法
                                                         .subscribeOn(Schedulers.io())
                                                         .unsubscribeOn(Schedulers.io())
-                                                        .map(new Func1<ResponseBody, InputStream>() {//第一次转换，将流数据转成InputStream类数据
+                                                        .map(new Function<ResponseBody, InputStream>() {//第一次转换，将流数据转成InputStream类数据
                                                             @Override
-                                                            public InputStream call(ResponseBody responseBody) {
+                                                            public InputStream apply(ResponseBody responseBody) {
                                                                 return responseBody.byteStream();
                                                             }
                                                         })
                                                         .observeOn(Schedulers.computation())
-                                                        .doOnNext(new Action1<InputStream>() {
+                                                        .doOnNext(new Consumer<InputStream>() {
                                                             @Override
-                                                            public void call(InputStream inputStream) {
+                                                            public void accept(InputStream inputStream) {
                                                                 //保存下载文件
                                                                 MLog.e("getDetailByNoteId--保存文件--doOnNext");
                                                                 writeFile(inputStream, new File(path));
                                                             }
                                                         })
-                                                        .doOnError(new Action1<Throwable>() {
+                                                        .doOnError(new Consumer<Throwable>() {
                                                             @Override
-                                                            public void call(Throwable e) {
+                                                            public void accept(Throwable e) {
                                                                 MLog.e("getDetailByNoteId--下载文件--onError--" + e.toString());
                                                             }
                                                         });
                                             }
-                                        }).concatMap(new Func1<InputStream, Observable<Boolean>>() {
+                                        }).concatMap(new Function<InputStream, Observable<Boolean>>() {
                                             @Override
-                                            public Observable<Boolean> call(InputStream inputStream) {
+                                            public Observable<Boolean> apply(InputStream inputStream) {
                                                 return Observable.just(true);
                                             }
                                         });
@@ -1510,9 +1595,9 @@ public class NoteModule {
                         }
                     }
                 })
-                .doOnNext(new Action1<Boolean>() {
+                .doOnNext(new Consumer<Boolean>() {
                     @Override
-                    public void call(Boolean aBoolean) {
+                    public void accept(Boolean aBoolean) {
                         MLog.d(TAG, "getDetailByNoteId--onNext=" + aBoolean);
                         if (aBoolean) {
                             upDataDetailNoteSQL(noteId);
@@ -1520,9 +1605,9 @@ public class NoteModule {
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
-                .subscribe(new Subscriber<Boolean>() {
+                .subscribe(new Observer<Boolean>() {
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "getDetailByNoteId--onCompleted");
                         listener.onDownloadNoteSuccess();
                     }
@@ -1531,6 +1616,11 @@ public class NoteModule {
                     public void onError(Throwable e) {
                         MLog.d(TAG, "getDetailByNoteId--onError");
                         listener.onDownloadNoteFailed(new Exception(e.toString()), null);
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override

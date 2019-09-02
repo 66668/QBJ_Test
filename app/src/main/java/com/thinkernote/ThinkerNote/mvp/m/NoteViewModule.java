@@ -9,9 +9,11 @@ import com.thinkernote.ThinkerNote.bean.CommonBean3;
 import com.thinkernote.ThinkerNote.bean.main.GetNoteByNoteIdBean;
 import com.thinkernote.ThinkerNote.mvp.http.MyHttpService;
 
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+
 
 /**
  * 笔记详情 m层 具体实现
@@ -31,11 +33,10 @@ public class NoteViewModule {
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .getNoteByNoteId(noteId, settings.token)
                 .subscribeOn(Schedulers.io())//固定样式
-                .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<CommonBean3<GetNoteByNoteIdBean>>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "mGetNote--onCompleted");
                     }
 
@@ -43,6 +44,11 @@ public class NoteViewModule {
                     public void onError(Throwable e) {
                         MLog.e("mGetNoteByNoteId 异常onError:" + e.toString());
                         listener.onGetNoteFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override

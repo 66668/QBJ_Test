@@ -14,9 +14,6 @@ import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote.mvp.listener.m.IFolderModuleListener;
-import com.thinkernote.ThinkerNote.mvp.listener.v.OnCatInfoListener;
-import com.thinkernote.ThinkerNote.mvp.listener.v.OnCatListListener;
 import com.thinkernote.ThinkerNote.bean.CommonBean;
 import com.thinkernote.ThinkerNote.bean.CommonBean2;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
@@ -24,6 +21,9 @@ import com.thinkernote.ThinkerNote.bean.main.AllFolderBean;
 import com.thinkernote.ThinkerNote.bean.main.AllFolderItemBean;
 import com.thinkernote.ThinkerNote.mvp.http.MyHttpService;
 import com.thinkernote.ThinkerNote.mvp.http.MyRxManager;
+import com.thinkernote.ThinkerNote.mvp.listener.m.IFolderModuleListener;
+import com.thinkernote.ThinkerNote.mvp.listener.v.OnCatInfoListener;
+import com.thinkernote.ThinkerNote.mvp.listener.v.OnCatListListener;
 
 import org.json.JSONObject;
 
@@ -32,13 +32,15 @@ import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import rx.Observable;
-import rx.Observer;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
+
 
 /**
  * 具体实现:
@@ -68,10 +70,10 @@ public class FolderModule {
 
         final String[] mFolderName = {""};
         //创建默认的一级文件夹
-        Subscription subscription = Observable.from(arrayFolders)
-                .concatMap(new Func1<String, Observable<CommonBean>>() {
+        Observable.fromArray(arrayFolders)
+                .concatMap(new Function<String, Observable<CommonBean>>() {
                     @Override
-                    public Observable<CommonBean> call(String folderName) {
+                    public Observable<CommonBean> apply(String folderName) {
                         mFolderName[0] = folderName;
                         //拿到list的item数据 访问接口
                         return MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
@@ -82,13 +84,18 @@ public class FolderModule {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<CommonBean>() {
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         listener.onAddDefaultFolderSuccess();
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         listener.onAddFolderFailed(new Exception(e.toString()), null);
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        MyRxManager.getInstance().add(d);
                     }
 
                     @Override
@@ -101,7 +108,7 @@ public class FolderModule {
                         }
                     }
                 });
-        MyRxManager.getInstance().add(subscription);
+
     }
 
     /**
@@ -109,25 +116,25 @@ public class FolderModule {
      */
     public void createFolderByIdByFirstLaunch(Vector<TNCat> cats, final String[] works, final String[] life, final String[] funs, final IFolderModuleListener listener) {
         MLog.d(TAG, "addNewFolder--创建子文件夹");
-        Subscription subscription = Observable.from(cats)
-                .concatMap(new Func1<TNCat, Observable<CommonBean>>() {
+        Observable.fromIterable(cats)
+                .concatMap(new Function<TNCat, Observable<CommonBean>>() {
                     @Override
-                    public Observable<CommonBean> call(TNCat tnCat) {
+                    public Observable<CommonBean> apply(TNCat tnCat) {
                         if (TNConst.GROUP_WORK.equals(tnCat.catName)) {
-                            return Observable.from(works)
-                                    .concatMap(new Func1<String, Observable<CommonBean>>() {
+                            return Observable.fromArray(works)
+                                    .concatMap(new Function<String, Observable<CommonBean>>() {
                                         @Override
-                                        public Observable<CommonBean> call(String workName) {
+                                        public Observable<CommonBean> apply(String workName) {
                                             return MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                                                     .addNewFolder(workName, settings.token)//接口方法
                                                     .subscribeOn(Schedulers.io());
                                         }
                                     });
                         } else if (TNConst.GROUP_LIFE.equals(tnCat.catName)) {
-                            return Observable.from(life)
-                                    .concatMap(new Func1<String, Observable<CommonBean>>() {
+                            return Observable.fromArray(life)
+                                    .concatMap(new Function<String, ObservableSource<? extends CommonBean>>() {
                                         @Override
-                                        public Observable<CommonBean> call(String lifeName) {
+                                        public Observable<CommonBean> apply(String lifeName) {
                                             return MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                                                     .addNewFolder(lifeName, settings.token)//接口方法
                                                     .subscribeOn(Schedulers.io())
@@ -135,10 +142,10 @@ public class FolderModule {
                                         }
                                     });
                         } else if (TNConst.GROUP_FUN.equals(tnCat.catName)) {
-                            return Observable.from(funs)
-                                    .concatMap(new Func1<String, Observable<CommonBean>>() {
+                            return Observable.fromArray(funs)
+                                    .concatMap(new Function<String, ObservableSource<? extends CommonBean>>() {
                                         @Override
-                                        public Observable<CommonBean> call(String funsName) {
+                                        public Observable<CommonBean> apply(String funsName) {
                                             return MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                                                     .addNewFolder(funsName, settings.token)//接口方法
                                                     .subscribeOn(Schedulers.io());
@@ -151,13 +158,18 @@ public class FolderModule {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<CommonBean>() {
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         listener.onAddDefaultFolderIdSuccess();
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         listener.onAddFolderFailed(new Exception(e.toString()), null);
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        MyRxManager.getInstance().add(d);
                     }
 
                     @Override
@@ -170,7 +182,7 @@ public class FolderModule {
                         }
                     }
                 });
-        MyRxManager.getInstance().add(subscription);
+
 
     }
 
@@ -181,13 +193,13 @@ public class FolderModule {
      */
     public void getProfiles(final IFolderModuleListener listener) {
 
-        Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .LogNormalProfile(settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
-                .doOnNext(new Action1<CommonBean2<ProfileBean>>() {
+                .doOnNext(new Consumer<CommonBean2<ProfileBean>>() {
                     @Override
-                    public void call(CommonBean2<ProfileBean> bean) {
+                    public void accept(CommonBean2<ProfileBean> bean) {
                         if (bean.getCode() == 0) {
 
                         }
@@ -198,7 +210,7 @@ public class FolderModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<CommonBean2<ProfileBean>>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
 
                     }
 
@@ -206,6 +218,11 @@ public class FolderModule {
                     public void onError(Throwable e) {
                         MLog.e("getProfiles--onError" + e.toString());
                         listener.onProfileFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        MyRxManager.getInstance().add(d);
                     }
 
                     @Override
@@ -219,7 +236,7 @@ public class FolderModule {
                         }
                     }
                 });
-        MyRxManager.getInstance().add(subscription);
+
     }
 
     /**
@@ -231,12 +248,12 @@ public class FolderModule {
      */
     public void getAllFolder(final IFolderModuleListener listener) {
 
-        Subscription subscription = MyHttpService.Builder.getHttpServer()
+        MyHttpService.Builder.getHttpServer()
                 .getFolder(settings.token) //（1）获取第一个接口数据
                 .subscribeOn(Schedulers.io())
-                .doOnNext(new Action1<AllFolderBean>() {
+                .doOnNext(new Consumer<AllFolderBean>() {
                     @Override
-                    public void call(AllFolderBean bean) {
+                    public void accept(AllFolderBean bean) {
 
                         setFolderResult(bean, -1L);
                         if (bean.getCode() == 0) {
@@ -246,11 +263,12 @@ public class FolderModule {
                         }
                     }
                 }).subscribeOn(Schedulers.io())
-                .concatMap(new Func1<AllFolderBean, Observable<AllFolderItemBean>>() {//（2）拿到第一个总接口数据，将list转item处理
+                .concatMap(new Function<AllFolderBean, Observable<AllFolderItemBean>>() {//（2）拿到第一个总接口数据，将list转item处理
                     @Override
-                    public Observable<AllFolderItemBean> call(AllFolderBean allFolderBean) {
+                    public Observable<AllFolderItemBean> apply(AllFolderBean allFolderBean) {
                         if (allFolderBean.getFolders() != null && allFolderBean.getFolders().size() > 0) {
-                            return Observable.from(allFolderBean.getFolders());
+
+                            return Observable.fromIterable(allFolderBean.getFolders());
                         } else {
                             //下一个循环
                             return Observable.empty();
@@ -258,16 +276,16 @@ public class FolderModule {
 
                     }
                 })
-                .concatMap(new Func1<AllFolderItemBean, Observable<AllFolderBean>>() {//处理每个item下的文件夹
+                .concatMap(new Function<AllFolderItemBean, Observable<AllFolderBean>>() {//处理每个item下的文件夹
                     @Override
-                    public Observable<AllFolderBean> call(final AllFolderItemBean itemBean) {
+                    public Observable<AllFolderBean> apply(final AllFolderItemBean itemBean) {
 
                         return MyHttpService.Builder.getHttpServer()
                                 .getFolderByFolderID(itemBean.getId(), settings.token)
                                 .subscribeOn(Schedulers.io())
-                                .doOnNext(new Action1<AllFolderBean>() {
+                                .doOnNext(new Consumer<AllFolderBean>() {
                                     @Override
-                                    public void call(AllFolderBean bean) {
+                                    public void accept(AllFolderBean bean) {
 
                                         if (bean.getCode() == 0) {
                                             //第二级处理：更新文件夹数据库
@@ -279,27 +297,27 @@ public class FolderModule {
 
                     }
                 })
-                .concatMap(new Func1<AllFolderBean, Observable<AllFolderItemBean>>() {//（3）item下拿到新的list，将list再转item处理
+                .concatMap(new Function<AllFolderBean, Observable<AllFolderItemBean>>() {//（3）item下拿到新的list，将list再转item处理
                     @Override
-                    public Observable<AllFolderItemBean> call(AllFolderBean allFolderBean) {
+                    public Observable<AllFolderItemBean> apply(AllFolderBean allFolderBean) {
                         if (allFolderBean.getFolders() != null && allFolderBean.getFolders().size() > 0) {
-                            return Observable.from(allFolderBean.getFolders());
+                            return Observable.fromIterable(allFolderBean.getFolders());
                         } else {
                             //下一个循环
                             return Observable.empty();
                         }
                     }
                 })
-                .concatMap(new Func1<AllFolderItemBean, Observable<AllFolderBean>>() {//处理每个item下的文件夹
+                .concatMap(new Function<AllFolderItemBean, Observable<AllFolderBean>>() {//处理每个item下的文件夹
                     @Override
-                    public Observable<AllFolderBean> call(final AllFolderItemBean itemBean) {
+                    public Observable<AllFolderBean> apply(final AllFolderItemBean itemBean) {
 
                         return MyHttpService.Builder.getHttpServer()
                                 .getFolderByFolderID(itemBean.getId(), settings.token)
                                 .subscribeOn(Schedulers.io())
-                                .doOnNext(new Action1<AllFolderBean>() {
+                                .doOnNext(new Consumer<AllFolderBean>() {
                                     @Override
-                                    public void call(AllFolderBean bean) {
+                                    public void accept(AllFolderBean bean) {
                                         if (bean.getCode() == 0) {
                                             //第3级处理：更新文件夹数据库
                                             MLog.d(TAG, "3级文件夹--" + itemBean.getName());
@@ -310,27 +328,27 @@ public class FolderModule {
 
                     }
                 })
-                .concatMap(new Func1<AllFolderBean, Observable<AllFolderItemBean>>() {//（4）item下拿到新的list，将list再转item处理
+                .concatMap(new Function<AllFolderBean, Observable<AllFolderItemBean>>() {//（4）item下拿到新的list，将list再转item处理
                     @Override
-                    public Observable<AllFolderItemBean> call(AllFolderBean allFolderBean) {
+                    public Observable<AllFolderItemBean> apply(AllFolderBean allFolderBean) {
                         if (allFolderBean.getFolders() != null && allFolderBean.getFolders().size() > 0) {
-                            return Observable.from(allFolderBean.getFolders());
+                            return Observable.fromIterable(allFolderBean.getFolders());
                         } else {
                             //下一个循环
                             return Observable.empty();
                         }
                     }
                 })
-                .concatMap(new Func1<AllFolderItemBean, Observable<AllFolderBean>>() {//处理每个item下的文件夹
+                .concatMap(new Function<AllFolderItemBean, Observable<AllFolderBean>>() {//处理每个item下的文件夹
                     @Override
-                    public Observable<AllFolderBean> call(final AllFolderItemBean itemBean) {
+                    public Observable<AllFolderBean> apply(final AllFolderItemBean itemBean) {
 
                         return MyHttpService.Builder.getHttpServer()
                                 .getFolderByFolderID(itemBean.getId(), settings.token)//接口方法
                                 .subscribeOn(Schedulers.io())
-                                .doOnNext(new Action1<AllFolderBean>() {
+                                .doOnNext(new Consumer<AllFolderBean>() {
                                     @Override
-                                    public void call(AllFolderBean bean) {
+                                    public void accept(AllFolderBean bean) {
                                         if (bean.getCode() == 0) {
                                             //第4级处理：更新文件夹数据库
                                             MLog.d(TAG, "4级文件夹--" + itemBean.getName());
@@ -341,27 +359,27 @@ public class FolderModule {
 
                     }
                 })
-                .concatMap(new Func1<AllFolderBean, Observable<AllFolderItemBean>>() {//（5）item下拿到新的list，将list再转item处理
+                .concatMap(new Function<AllFolderBean, Observable<AllFolderItemBean>>() {//（5）item下拿到新的list，将list再转item处理
                     @Override
-                    public Observable<AllFolderItemBean> call(AllFolderBean allFolderBean) {
+                    public Observable<AllFolderItemBean> apply(AllFolderBean allFolderBean) {
                         if (allFolderBean.getFolders() != null && allFolderBean.getFolders().size() > 0) {
-                            return Observable.from(allFolderBean.getFolders());
+                            return Observable.fromIterable(allFolderBean.getFolders());
                         } else {
                             //下一个循环
                             return Observable.empty();
                         }
                     }
                 })
-                .concatMap(new Func1<AllFolderItemBean, Observable<AllFolderBean>>() {//处理每个item下的文件夹
+                .concatMap(new Function<AllFolderItemBean, Observable<AllFolderBean>>() {//处理每个item下的文件夹
                     @Override
-                    public Observable<AllFolderBean> call(final AllFolderItemBean itemBean) {
+                    public Observable<AllFolderBean> apply(final AllFolderItemBean itemBean) {
 
                         return MyHttpService.Builder.getHttpServer()
                                 .getFolderByFolderID(itemBean.getId(), settings.token)//接口方法
                                 .subscribeOn(Schedulers.io())
-                                .doOnNext(new Action1<AllFolderBean>() {
+                                .doOnNext(new Consumer<AllFolderBean>() {
                                     @Override
-                                    public void call(AllFolderBean bean) {
+                                    public void accept(AllFolderBean bean) {
                                         if (bean.getCode() == 0) {
                                             //第5级处理：更新文件夹数据库
                                             MLog.d(TAG, "5级文件夹--" + itemBean.getName());
@@ -371,27 +389,27 @@ public class FolderModule {
                                 }).subscribeOn(Schedulers.io());
 
                     }
-                }).concatMap(new Func1<AllFolderBean, Observable<AllFolderItemBean>>() {//（5）item下拿到新的list，将list再转item处理
+                }).concatMap(new Function<AllFolderBean, Observable<AllFolderItemBean>>() {//（5）item下拿到新的list，将list再转item处理
+            @Override
+            public Observable<AllFolderItemBean> apply(AllFolderBean allFolderBean) {
+                if (allFolderBean.getFolders() != null && allFolderBean.getFolders().size() > 0) {
+                    return Observable.fromIterable(allFolderBean.getFolders());
+                } else {
+                    //下一个循环
+                    return Observable.empty();
+                }
+            }
+        })
+                .concatMap(new Function<AllFolderItemBean, Observable<AllFolderBean>>() {//处理每个item下的文件夹
                     @Override
-                    public Observable<AllFolderItemBean> call(AllFolderBean allFolderBean) {
-                        if (allFolderBean.getFolders() != null && allFolderBean.getFolders().size() > 0) {
-                            return Observable.from(allFolderBean.getFolders());
-                        } else {
-                            //下一个循环
-                            return Observable.empty();
-                        }
-                    }
-                })
-                .concatMap(new Func1<AllFolderItemBean, Observable<AllFolderBean>>() {//处理每个item下的文件夹
-                    @Override
-                    public Observable<AllFolderBean> call(final AllFolderItemBean itemBean) {
+                    public Observable<AllFolderBean> apply(final AllFolderItemBean itemBean) {
 
                         return MyHttpService.Builder.getHttpServer()
                                 .getFolderByFolderID(itemBean.getId(), settings.token)//接口方法
                                 .subscribeOn(Schedulers.io())
-                                .doOnNext(new Action1<AllFolderBean>() {
+                                .doOnNext(new Consumer<AllFolderBean>() {
                                     @Override
-                                    public void call(AllFolderBean bean) {
+                                    public void accept(AllFolderBean bean) {
                                         if (bean.getCode() == 0) {
                                             //第5级处理：更新文件夹数据库
                                             MLog.d(TAG, "6级文件夹--" + itemBean.getName());
@@ -406,7 +424,7 @@ public class FolderModule {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<AllFolderBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "getAllFolder--onCompleted");
                         listener.onGetFolderSuccess();
                     }
@@ -415,6 +433,11 @@ public class FolderModule {
                     public void onError(Throwable e) {
                         MLog.e("getAllFolder--onError:" + e.toString());
                         listener.onGetFolderFailed(new Exception(e), null);
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        MyRxManager.getInstance().add(d);
                     }
 
                     @Override
@@ -427,7 +450,7 @@ public class FolderModule {
                         }
                     }
                 });
-        MyRxManager.getInstance().add(subscription);
+
     }
 
 
@@ -441,9 +464,9 @@ public class FolderModule {
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .deleteFolder(fodlerId, settings.token)
                 .subscribeOn(Schedulers.io())//固定样式
-                .doOnNext(new Action1<CommonBean>() {
+                .doOnNext(new Consumer<CommonBean>() {
                     @Override
-                    public void call(CommonBean commonBean) {
+                    public void accept(CommonBean commonBean) {
                         if (commonBean.getCode() == 0) {
                             deleteFolderSQL(fodlerId);
                         }
@@ -452,7 +475,7 @@ public class FolderModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "deleteFolder--onCompleted");
                         listener.onDeleteFolderSuccess();
                     }
@@ -460,6 +483,11 @@ public class FolderModule {
                     @Override
                     public void onError(Throwable e) {
                         MLog.e("deleteFolder--onError:" + e.toString());
+
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
                     }
 
@@ -480,13 +508,13 @@ public class FolderModule {
      */
     public void setDefaultFolder(final long fodlerId, final IFolderModuleListener listener) {
 
-        Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .setDefaultFolder(fodlerId, settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "setDefaultFolder--onCompleted");
                         listener.onDefaultFolderSuccess();
                     }
@@ -495,6 +523,11 @@ public class FolderModule {
                     public void onError(Throwable e) {
                         MLog.e("setDefaultFolder--onError:" + e.toString());
                         listener.onDefaultFolderFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -511,9 +544,9 @@ public class FolderModule {
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .renameFolder(text, pid, settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
-                .doOnNext(new Action1<CommonBean>() {
+                .doOnNext(new Consumer<CommonBean>() {
                     @Override
-                    public void call(CommonBean commonBean) {
+                    public void accept(CommonBean commonBean) {
                         TNDb.beginTransaction();
                         try {
                             TNDb.getInstance().execSQL(TNSQLString.CAT_RENAME, text, pid);
@@ -527,7 +560,7 @@ public class FolderModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "renameFolder--onCompleted");
                         listener.onRenameFolderSuccess();
                     }
@@ -536,6 +569,11 @@ public class FolderModule {
                     public void onError(Throwable e) {
                         MLog.e("renameFolder--onError:" + e.toString());
                         listener.onRenameFolderFailed(new Exception(e.toString()), null);
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -557,7 +595,7 @@ public class FolderModule {
                     .observeOn(AndroidSchedulers.mainThread())//固定样式
                     .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                         @Override
-                        public void onCompleted() {
+                        public void onComplete() {
                             MLog.d(TAG, "addFoler--onCompleted");
                             listener.onAddFolderSuccess();
                         }
@@ -566,6 +604,11 @@ public class FolderModule {
                         public void onError(Throwable e) {
                             MLog.e("addFoler--onError:" + e.toString());
                             listener.onAddFolderFailed(new Exception(e.toString()), null);
+                        }
+
+                        @Override
+                        public void onSubscribe(Disposable d) {
+
                         }
 
                         @Override
@@ -582,7 +625,7 @@ public class FolderModule {
                     .observeOn(AndroidSchedulers.mainThread())//固定样式
                     .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                         @Override
-                        public void onCompleted() {
+                        public void onComplete() {
                             MLog.d(TAG, "addFoler--onCompleted");
                             listener.onAddFolderSuccess();
                         }
@@ -591,6 +634,11 @@ public class FolderModule {
                         public void onError(Throwable e) {
                             MLog.e("addFoler--onError:" + e.toString());
                             listener.onAddFolderFailed(new Exception(e.toString()), null);
+                        }
+
+                        @Override
+                        public void onSubscribe(Disposable d) {
+
                         }
 
                         @Override
@@ -612,7 +660,7 @@ public class FolderModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "登录--onCompleted");
                     }
 
@@ -620,6 +668,11 @@ public class FolderModule {
                     public void onError(Throwable e) {
                         MLog.e(TAG, "登录--登录失败异常onError:" + e.toString());
                         listener.onFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -651,7 +704,7 @@ public class FolderModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "mCatDelete--onCompleted");
                     }
 
@@ -659,6 +712,11 @@ public class FolderModule {
                     public void onError(Throwable e) {
                         MLog.e("mGetNoteByNoteId 异常onError:" + e.toString());
                         listener.onDeleteFolderFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -686,7 +744,7 @@ public class FolderModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<AllFolderBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "mParentFolder--onCompleted");
                     }
 
@@ -694,6 +752,11 @@ public class FolderModule {
                     public void onError(Throwable e) {
                         MLog.e(TAG, "mParentFolder--onError:" + e.toString());
                         listener.onParentFolderFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -721,7 +784,7 @@ public class FolderModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<AllFolderBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "mGetFolderByFolderId--onCompleted");
                     }
 
@@ -729,6 +792,11 @@ public class FolderModule {
                     public void onError(Throwable e) {
                         MLog.e(TAG, "mGetFolderByFolderId--onError:" + e.toString());
                         listener.onGetFoldersByFolderIdFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -755,7 +823,7 @@ public class FolderModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "moveFolder--onCompleted");
                     }
 
@@ -763,6 +831,11 @@ public class FolderModule {
                     public void onError(Throwable e) {
                         MLog.e(TAG, "moveFolder--onError:" + e.toString());
                         listener.onFolderMoveFailed("文件夹移动失败，请稍后重试", new Exception("文件夹移动失败，请稍后重试"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override

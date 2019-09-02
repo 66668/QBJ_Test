@@ -10,9 +10,11 @@ import com.thinkernote.ThinkerNote.bean.CommonBean2;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
 import com.thinkernote.ThinkerNote.mvp.http.MyHttpService;
 
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+
 
 /**
  * 登录 m层 具体实现
@@ -35,7 +37,7 @@ public class ChangeUserInfoModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d("mChangePs--onCompleted");
                     }
 
@@ -43,6 +45,11 @@ public class ChangeUserInfoModule {
                     public void onError(Throwable e) {
                         MLog.e("mChangePs--异常onError:" + e.toString());
                         listener.onChangePsFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -71,7 +78,7 @@ public class ChangeUserInfoModule {
                     .observeOn(AndroidSchedulers.mainThread())//固定样式
                     .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                         @Override
-                        public void onCompleted() {
+                        public void onComplete() {
                             MLog.d("mChangeNameOrEmail--onCompleted");
                         }
 
@@ -79,6 +86,11 @@ public class ChangeUserInfoModule {
                         public void onError(Throwable e) {
                             MLog.e("mChangeNameOrEmail--异常onError:" + e.toString());
                             listener.onChangeNameOrEmailFailed("异常", new Exception("接口异常！"));
+                        }
+
+                        @Override
+                        public void onSubscribe(Disposable d) {
+
                         }
 
                         @Override
@@ -104,7 +116,7 @@ public class ChangeUserInfoModule {
                     .observeOn(AndroidSchedulers.mainThread())//固定样式
                     .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                         @Override
-                        public void onCompleted() {
+                        public void onComplete() {
                             MLog.d("mChangeNameOrEmail--onCompleted");
                         }
 
@@ -112,6 +124,11 @@ public class ChangeUserInfoModule {
                         public void onError(Throwable e) {
                             MLog.e("mChangeNameOrEmail--异常onError:" + e.toString());
                             listener.onChangeNameOrEmailFailed("异常", new Exception("接口异常！"));
+                        }
+
+                        @Override
+                        public void onSubscribe(Disposable d) {
+
                         }
 
                         @Override
@@ -145,7 +162,7 @@ public class ChangeUserInfoModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<CommonBean2<ProfileBean>>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "mProfile--onCompleted");
                     }
 
@@ -153,6 +170,11 @@ public class ChangeUserInfoModule {
                     public void onError(Throwable e) {
                         MLog.e(TAG, "mProfile--异常onError:" + e.toString());
                         listener.onProfileFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override

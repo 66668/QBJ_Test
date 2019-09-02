@@ -16,9 +16,9 @@ import com.thinkernote.ThinkerNote.Action.TNAction;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Utils.SPUtil;
 import com.thinkernote.ThinkerNote.base.TNActBase;
-import com.thinkernote.ThinkerNote.mvp.http.rx.RxBus;
-import com.thinkernote.ThinkerNote.mvp.http.rx.RxBusBaseMessage;
-import com.thinkernote.ThinkerNote.mvp.http.rx.RxCodeConstants;
+import com.thinkernote.ThinkerNote.mvp.http.rxbus.RxBus;
+import com.thinkernote.ThinkerNote.mvp.http.rxbus.RxBusBaseMessage;
+import com.thinkernote.ThinkerNote.mvp.http.rxbus.RxCodeConstants;
 
 import org.json.JSONObject;
 
@@ -136,7 +136,7 @@ public class WXEntryActivity extends TNActBase implements IWXAPIEventHandler {
                         SPUtil.putString("nickName", nickName);
                         //设置跳转
                         //需要回调登录界面 RxBus
-                        RxBus.getDefault().post(RxCodeConstants.WEChat_BACK_LOG, new RxBusBaseMessage());
+                        RxBus.getInstance().post(RxCodeConstants.WEChat_BACK_LOG, new RxBusBaseMessage());
                         WXEntryActivity.this.finish();
                     }
 

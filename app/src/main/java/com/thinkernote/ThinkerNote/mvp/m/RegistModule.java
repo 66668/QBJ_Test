@@ -12,9 +12,11 @@ import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
 import com.thinkernote.ThinkerNote.bean.login.VerifyPicBean;
 import com.thinkernote.ThinkerNote.mvp.http.MyHttpService;
 
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+
 
 /**
  * 注册 m层 具体实现
@@ -37,7 +39,7 @@ public class RegistModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<VerifyPicBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "验证码--onCompleted");
                     }
 
@@ -45,6 +47,11 @@ public class RegistModule {
                     public void onError(Throwable e) {
                         MLog.e("验证码 异常onError:" + e.toString());
                         listener.onPicFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -72,7 +79,7 @@ public class RegistModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d("验证码--onCompleted");
                     }
 
@@ -80,6 +87,11 @@ public class RegistModule {
                     public void onError(Throwable e) {
                         MLog.e("验证码--异常onError:" + e.toString());
                         listener.onPhoneVCodeFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -106,7 +118,7 @@ public class RegistModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d("submit--onCompleted");
                     }
 
@@ -114,6 +126,11 @@ public class RegistModule {
                     public void onError(Throwable e) {
                         MLog.e("submit--异常onError:" + e.toString());
                         listener.onSubmitRegistFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -141,7 +158,7 @@ public class RegistModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d("submit--onCompleted");
                     }
 
@@ -149,6 +166,11 @@ public class RegistModule {
                     public void onError(Throwable e) {
                         MLog.e("submit--异常onError:" + e.toString());
                         listener.onSubmitFindPsFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -177,7 +199,7 @@ public class RegistModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d("bind--onCompleted");
                     }
 
@@ -185,6 +207,11 @@ public class RegistModule {
                     public void onError(Throwable e) {
                         MLog.e("bind--异常onError:" + e.toString());
                         listener.onBindPhoneFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -210,7 +237,7 @@ public class RegistModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<LoginBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d("login--onCompleted");
                     }
 
@@ -218,6 +245,11 @@ public class RegistModule {
                     public void onError(Throwable e) {
                         MLog.e("login--异常onError:" + e.toString());
                         listener.onAutoLoginFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -245,7 +277,7 @@ public class RegistModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<CommonBean2<ProfileBean>>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "mProFile--onCompleted");
                     }
 
@@ -253,6 +285,11 @@ public class RegistModule {
                     public void onError(Throwable e) {
                         MLog.e("mProFile 异常onError:" + e.toString());
                         listener.onProfileFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override

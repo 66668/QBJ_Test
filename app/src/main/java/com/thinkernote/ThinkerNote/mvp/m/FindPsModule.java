@@ -12,9 +12,11 @@ import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
 import com.thinkernote.ThinkerNote.bean.login.VerifyPicBean;
 import com.thinkernote.ThinkerNote.mvp.http.MyHttpService;
 
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+
 
 /**
  * 登录 m层 具体实现
@@ -33,11 +35,10 @@ public class FindPsModule {
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .getVerifyPic(settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
-                .unsubscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<VerifyPicBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "验证码--onCompleted");
                     }
 
@@ -45,6 +46,11 @@ public class FindPsModule {
                     public void onError(Throwable e) {
                         MLog.e("验证码 异常onError:" + e.toString());
                         listener.onPicFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -72,7 +78,7 @@ public class FindPsModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d("验证码--onCompleted");
                     }
 
@@ -80,6 +86,11 @@ public class FindPsModule {
                     public void onError(Throwable e) {
                         MLog.e("验证码--异常onError:" + e.toString());
                         listener.onPhoneVCodeFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -107,7 +118,7 @@ public class FindPsModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d("验证码--onCompleted");
                     }
 
@@ -115,6 +126,11 @@ public class FindPsModule {
                     public void onError(Throwable e) {
                         MLog.e("验证码--异常onError:" + e.toString());
                         listener.onMailVCodetFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -142,7 +158,7 @@ public class FindPsModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d("验证码--onCompleted");
                     }
 
@@ -150,6 +166,11 @@ public class FindPsModule {
                     public void onError(Throwable e) {
                         MLog.e("验证码--异常onError:" + e.toString());
                         listener.onSubmitFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -176,7 +197,7 @@ public class FindPsModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<LoginBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d("验证码--onCompleted");
                     }
 
@@ -184,6 +205,11 @@ public class FindPsModule {
                     public void onError(Throwable e) {
                         MLog.e("login--异常onError:" + e.toString());
                         listener.onAutoLoginFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -216,7 +242,7 @@ public class FindPsModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<CommonBean2<ProfileBean>>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "mProFile--onCompleted");
                     }
 
@@ -224,6 +250,11 @@ public class FindPsModule {
                     public void onError(Throwable e) {
                         MLog.e("mProFile 异常onError:" + e.toString());
                         listener.onProfileFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override

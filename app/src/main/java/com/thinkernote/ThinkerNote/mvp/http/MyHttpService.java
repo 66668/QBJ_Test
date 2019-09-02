@@ -25,6 +25,7 @@ import com.thinkernote.ThinkerNote.mvp.http.fileprogress.FileProgressListener;
 
 import java.util.List;
 
+import io.reactivex.Observable;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.http.DELETE;
@@ -40,7 +41,6 @@ import retrofit2.http.Part;
 import retrofit2.http.Query;
 import retrofit2.http.Streaming;
 import retrofit2.http.Url;
-import rx.Observable;
 
 /**
  * Created by jingbin on 16/11/21.
@@ -48,7 +48,6 @@ import rx.Observable;
  * Rxjava的响应式流程+retrofit的注解机制
  * 具体的操作，需要看MVP下的M层操作
  * <p>
- * Observable引用：import rx.Observable
  * 接口说明：所有的接口都有固定参数 token(除 登录/注册两个接口);
  *
  * @PUT 与@POST差别不大，只是网络header需要单独设置

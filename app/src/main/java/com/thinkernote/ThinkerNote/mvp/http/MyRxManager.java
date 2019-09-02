@@ -2,15 +2,16 @@ package com.thinkernote.ThinkerNote.mvp.http;
 
 import java.util.Vector;
 
-import rx.Subscription;
+import io.reactivex.disposables.Disposable;
 
 /**
+ * TODO
  * 请求管理，主动关闭网络请求
  */
 public class MyRxManager {
     private static MyRxManager sInstance = new MyRxManager();
 
-    private Vector<Subscription> list;//保存请求(线程安全)
+    private Vector<Disposable> list;//保存请求(线程安全)
     public boolean isSyncing;//是否在同步中
 
 
@@ -22,7 +23,7 @@ public class MyRxManager {
         list = new Vector<>();
     }
 
-    public void add(Subscription subscription) {
+    public void add(Disposable subscription) {
         list.add(subscription);
     }
 
@@ -33,8 +34,8 @@ public class MyRxManager {
      */
     public boolean isSyncing() {
         isSyncing = false;
-        for (Subscription subscription : list) {
-            if (subscription.isUnsubscribed()) {
+        for (Disposable subscription : list) {
+            if (!subscription.isDisposed()) {
                 return isSyncing = true;
             } else {
                 list.remove(subscription);
@@ -58,7 +59,7 @@ public class MyRxManager {
         isSyncing = false;
     }
 
-    public void remove(Subscription tag) {
+    public void remove(Disposable tag) {
         list.remove(tag);
     }
 
@@ -75,10 +76,10 @@ public class MyRxManager {
         }
         isSyncing = false;//先终止，避免继续执行
         synchronized (MyRxManager.this) {//加锁，多线程变单线程处理
-            Vector<Subscription> cloneList = (Vector<Subscription>) list.clone();
-            for (Subscription subscription : cloneList) {
-                if (subscription.isUnsubscribed()) {
-                    subscription.unsubscribe();
+            Vector<Disposable> cloneList = (Vector<Disposable>) list.clone();
+            for (Disposable subscription : cloneList) {
+                if (!subscription.isDisposed()) {
+                    subscription.dispose();
                 }
             }
         }

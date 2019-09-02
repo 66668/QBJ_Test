@@ -1,4 +1,4 @@
-package com.thinkernote.ThinkerNote.mvp.http.rx;
+package com.thinkernote.ThinkerNote.mvp.http.rxbus;
 
 /**
  * Created by jingbin on 2016/12/2.

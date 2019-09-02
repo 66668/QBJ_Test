@@ -21,14 +21,15 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-import rx.Observable;
-import rx.Observer;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
+
 
 /**
  * 具体实现:
@@ -57,11 +58,11 @@ public class TagModule {
     public void createTagByFirstLaunch(String[] arrayTag, final ITagModuleListener listener) {
         final String[] mFolderName = {""};
         //创建默认的tag
-        Subscription subscription = Observable.from(arrayTag)
+        Observable.fromArray(arrayTag)
                 .subscribeOn(Schedulers.io())
-                .concatMap(new Func1<String, Observable<CommonBean>>() {
+                .concatMap(new Function<String, Observable<CommonBean>>() {
                     @Override
-                    public Observable<CommonBean> call(String folderName) {
+                    public Observable<CommonBean> apply(String folderName) {
                         mFolderName[0] = folderName;
                         //拿到list的item数据 访问接口
                         return MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
@@ -71,29 +72,34 @@ public class TagModule {
                                 .observeOn(AndroidSchedulers.mainThread());//固定样式
                     }
                 }).subscribe(new Observer<CommonBean>() {
-                    @Override
-                    public void onCompleted() {
-                        MLog.d(TAG, "addNewTag--onCompleted");
-                        listener.onAddDefaultTagSuccess();
-                    }
+            @Override
+            public void onComplete() {
+                MLog.d(TAG, "addNewTag--onCompleted");
+                listener.onAddDefaultTagSuccess();
+            }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        listener.onAddTagFailed(new Exception(e.toString()), null);
-                    }
+            @Override
+            public void onError(Throwable e) {
+                listener.onAddTagFailed(new Exception(e.toString()), null);
+            }
 
-                    @Override
-                    public void onNext(CommonBean bean) {
-                        MLog.d(TAG, "addNewTag--onNext" + bean.getMessage());
-                        if (bean.getCode() == 0) {
+            @Override
+            public void onSubscribe(Disposable d) {
+                MyRxManager.getInstance().add(d);
+            }
 
-                        } else if (bean.getMessage().equals("标签已存在")) {
-                            //不处理
-                        } else {
-                        }
-                    }
-                });
-        MyRxManager.getInstance().add(subscription);
+            @Override
+            public void onNext(CommonBean bean) {
+                MLog.d(TAG, "addNewTag--onNext" + bean.getMessage());
+                if (bean.getCode() == 0) {
+
+                } else if (bean.getMessage().equals("标签已存在")) {
+                    //不处理
+                } else {
+                }
+            }
+        });
+
     }
 
     /**
@@ -102,13 +108,13 @@ public class TagModule {
      * @param listener
      */
     public void getAllTags(final ITagModuleListener listener) {
-        Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .syncTagList(settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
-                .doOnNext(new Action1<TagListBean>() {
+                .doOnNext(new Consumer<TagListBean>() {
                     @Override
-                    public void call(TagListBean tagListBean) {
+                    public void accept(TagListBean tagListBean) {
                         //数据库处理
                         insertTagsSQL(tagListBean);
                     }
@@ -116,7 +122,7 @@ public class TagModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<TagListBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "getAllTags--onCompleted");
                         listener.onGetTagSuccess();
                     }
@@ -125,6 +131,11 @@ public class TagModule {
                     public void onError(Throwable e) {
                         MLog.e(TAG, "getAllTags--onError:" + e.toString());
                         listener.onGetTagFailed(new Exception(e.toString()), "异常");
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        MyRxManager.getInstance().add(d);
                     }
 
                     @Override
@@ -138,7 +149,7 @@ public class TagModule {
                     }
 
                 });
-        MyRxManager.getInstance().add(subscription);
+
     }
 
     /**
@@ -147,13 +158,13 @@ public class TagModule {
      * @param listener
      */
     public void getAllTagsBySingle(final ITagModuleListener listener) {
-        Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .syncTagList(settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .unsubscribeOn(Schedulers.io())//固定样式
-                .doOnNext(new Action1<TagListBean>() {
+                .doOnNext(new Consumer<TagListBean>() {
                     @Override
-                    public void call(TagListBean tagListBean) {
+                    public void accept(TagListBean tagListBean) {
                         //数据库处理
                         insertTagsSQL(tagListBean);
                     }
@@ -161,7 +172,7 @@ public class TagModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<TagListBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "getAllTags--onCompleted");
                         listener.onGetTagListSuccess();
                     }
@@ -170,6 +181,11 @@ public class TagModule {
                     public void onError(Throwable e) {
                         MLog.e(TAG, "getAllTags--onError:" + e.toString());
                         listener.onGetTagListFailed(new Exception(e.toString()), "异常");
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -192,12 +208,12 @@ public class TagModule {
      * @param listener
      */
     public void getTagList(final OnTagListListener listener) {
-        Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .getTagList(settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
-                .doOnNext(new Action1<TagListBean>() {
+                .doOnNext(new Consumer<TagListBean>() {
                     @Override
-                    public void call(TagListBean baseBean) {
+                    public void accept(TagListBean baseBean) {
                         List<TagItemBean> beans = baseBean.getTags();
                         updateTagsSQL(beans);
                     }
@@ -205,7 +221,7 @@ public class TagModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<TagListBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "getTagList--onCompleted");
                         listener.onTagListSuccess();
                     }
@@ -214,6 +230,11 @@ public class TagModule {
                     public void onError(Throwable e) {
                         MLog.e("getTagList--onError:" + e.toString());
                         listener.onTagListFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -226,11 +247,11 @@ public class TagModule {
 
     public void deleteTag(final long pid, final ITagModuleListener listener) {
         TNSettings settings = TNSettings.getInstance();
-        Subscription subscription = MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .deleteTag(pid, settings.token)//接口方法
-                .doOnCompleted(new Action0() {
+                .doOnComplete(new Action() {
                     @Override
-                    public void call() {
+                    public void run() throws Exception {
                         TNDb.getInstance().execSQL(TNSQLString.TAG_REAL_DELETE, pid);
                     }
                 })
@@ -238,7 +259,7 @@ public class TagModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "deleteTag--onCompleted");
                         listener.onDeleteTagSuccess();
                     }
@@ -247,6 +268,11 @@ public class TagModule {
                     public void onError(Throwable e) {
                         MLog.e("deleteTag--onError:" + e.toString());
                         listener.onDeleteTagFailed(new Exception("接口异常！"), "异常");
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -263,9 +289,9 @@ public class TagModule {
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .tagRename(text, pid, settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
-                .doOnNext(new Action1<CommonBean>() {
+                .doOnNext(new Consumer<CommonBean>() {
                     @Override
-                    public void call(CommonBean commonBean) {
+                    public void accept(CommonBean commonBean) {
                         //数据库
                         TNDb.getInstance().execSQL(TNSQLString.TAG_RENAME, text, TNUtils.getPingYinIndex(text), pid);
                     }
@@ -273,7 +299,7 @@ public class TagModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "renameTag--onCompleted");
                         listener.onTagRenameSuccess();
                     }
@@ -282,6 +308,11 @@ public class TagModule {
                     public void onError(Throwable e) {
                         MLog.e("renameTag--onError:" + e.toString());
                         listener.onTagRenameFailed(new Exception(e.toString()), null);
+
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
                     }
 
@@ -303,7 +334,7 @@ public class TagModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "addTag--onCompleted");
                         listener.onAddTagSuccess();
                     }
@@ -312,6 +343,11 @@ public class TagModule {
                     public void onError(Throwable e) {
                         MLog.e("addTag--onError:" + e.toString());
                         listener.onAddTagFailed(new Exception(e.toString()), null);
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override

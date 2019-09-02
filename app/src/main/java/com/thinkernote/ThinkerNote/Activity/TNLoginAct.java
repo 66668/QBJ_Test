@@ -37,9 +37,9 @@ import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.login.LoginBean;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
 import com.thinkernote.ThinkerNote.bean.login.QQBean;
-import com.thinkernote.ThinkerNote.mvp.http.rx.RxBus;
-import com.thinkernote.ThinkerNote.mvp.http.rx.RxBusBaseMessage;
-import com.thinkernote.ThinkerNote.mvp.http.rx.RxCodeConstants;
+import com.thinkernote.ThinkerNote.mvp.http.rxbus.RxBus;
+import com.thinkernote.ThinkerNote.mvp.http.rxbus.RxBusBaseMessage;
+import com.thinkernote.ThinkerNote.mvp.http.rxbus.RxCodeConstants;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnLogListener;
 import com.thinkernote.ThinkerNote.mvp.p.LogPresenter;
 import com.thinkernote.ThinkerNote.other.TNLinearLayout;
@@ -47,7 +47,9 @@ import com.thinkernote.ThinkerNote.other.TNLinearLayout.TNLinearLayoutListener;
 
 import org.json.JSONObject;
 
-import rx.functions.Action1;
+import io.reactivex.Observer;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
 /**
  * 登陆 界面
@@ -167,6 +169,10 @@ public class TNLoginAct extends TNActBase implements OnClickListener, OnLogListe
     public void onDestroy() {
         mLoginingDialog.dismiss();
         super.onDestroy();
+        //去除Rxbus的监听
+        if (null != compositeDisposable && !compositeDisposable.isDisposed()) {
+            compositeDisposable.clear();
+        }
     }
 
     @Override
@@ -573,18 +579,41 @@ public class TNLoginAct extends TNActBase implements OnClickListener, OnLogListe
      * 使用RxBus 实现fragment之间的跳转
      * home页跳转到new页
      */
-    private void initRxBus() {
-        RxBus.getDefault().toObservable(RxCodeConstants.WEChat_BACK_LOG, RxBusBaseMessage.class)
-                .subscribe(new Action1<RxBusBaseMessage>() {
-                    @Override
-                    public void call(RxBusBaseMessage rxBusBaseMessage) {
-                        String unionid = SPUtil.getString("unionid", "");
-                        String access_token = SPUtil.getString("access_token", "");
-                        String refresh_token = SPUtil.getString("refresh_token", "");
-                        String nickName = SPUtil.getString("nickName", "");
-                        MLog.d("TNLoginAct-->RxBus", unionid, access_token, refresh_token, nickName);
+    CompositeDisposable compositeDisposable;
 
-                        pLoginThird(9, unionid, System.currentTimeMillis(), access_token, refresh_token, nickName);
+    private void initRxBus() {
+        compositeDisposable = new CompositeDisposable();
+        RxBus.getInstance().toObservable(RxCodeConstants.WEChat_BACK_LOG, RxBusBaseMessage.class)
+                .subscribe(new Observer<RxBusBaseMessage>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        compositeDisposable.add(d);
+                    }
+
+                    @Override
+                    public void onNext(RxBusBaseMessage rxBusBaseMessage) {
+                        final String unionid = SPUtil.getString("unionid", "");
+                        final String access_token = SPUtil.getString("access_token", "");
+                        final String refresh_token = SPUtil.getString("refresh_token", "");
+                        final String nickName = SPUtil.getString("nickName", "");
+                        MLog.d("TNLoginAct-->RxBus", unionid, access_token, refresh_token, nickName);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                pLoginThird(9, unionid, System.currentTimeMillis(), access_token, refresh_token, nickName);
+                            }
+                        });
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
                     }
                 });
     }

@@ -12,12 +12,13 @@ import com.thinkernote.ThinkerNote.mvp.http.URLUtils;
 
 import java.io.File;
 
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * 设置--意见反馈 m层 具体实现
@@ -66,7 +67,7 @@ public class ReportModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<FeedBackBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "FeedBackPic--onCompleted");
                     }
 
@@ -74,6 +75,11 @@ public class ReportModule {
                     public void onError(Throwable e) {
                         MLog.e("FeedBackPic 异常onError:" + e.toString());
                         listener.onPicFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -103,7 +109,7 @@ public class ReportModule {
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
                 .subscribe(new Observer<CommonBean>() {//固定样式，可自定义其他处理
                     @Override
-                    public void onCompleted() {
+                    public void onComplete() {
                         MLog.d(TAG, "FeedBackPic--onCompleted");
                     }
 
@@ -111,6 +117,11 @@ public class ReportModule {
                     public void onError(Throwable e) {
                         MLog.e("FeedBackPic 异常onError:" + e.toString());
                         listener.onSubmitFailed("异常", new Exception("接口异常！"));
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
