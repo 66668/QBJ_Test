@@ -177,6 +177,8 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         mTitleView.setOnFocusChangeListener(this);
         //有的手机不支持软键盘
         mContentView.requestFocus();
+        mContentView.setTextIsSelectable(true);
+        //打开软键盘，补充
         mContentView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -188,7 +190,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
 //                manager.showSoftInputFromInputMethod(mContentView.getWindowToken(), InputMethodManager.SHOW_FORCED);
             }
         });
-        mContentView.setTextIsSelectable(true);
+
         mContentView.setOnFocusChangeListener(this);
         mContentView.addTextChangedListener(this);
     }

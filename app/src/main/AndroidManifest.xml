@@ -134,12 +134,13 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysVisible" />
 
+        <!--编写不出软键盘的补充，不好用   android:windowSoftInputMode="adjustPan|stateAlwaysVisible"     -->
         <activity
             android:name=".Activity.TNNoteEditAct"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/app_name2"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateAlwaysVisible">
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible">
 
             <intent-filter>
                 <action android:name="android.intent.action.SEND_MULTIPLE"></action>
