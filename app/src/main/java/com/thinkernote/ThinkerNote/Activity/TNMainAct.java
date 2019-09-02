@@ -168,7 +168,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeLi
 
         //第一次进来有网或者在wifi情况下自动同步
         if ((createStatus == 0 && TNUtils.isAutoSync()) || mSettings.firstLaunch) {
-            if (MyRxManager.getInstance().isSyncing) {
+            if (MyRxManager.getInstance().isSyncing()) {
                 Toast.makeText(this, "正在同步", Toast.LENGTH_SHORT).show();
                 return;
             }

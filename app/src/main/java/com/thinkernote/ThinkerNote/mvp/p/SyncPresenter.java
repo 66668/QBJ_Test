@@ -149,7 +149,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
 
     //（1）默认文件夹
     private void createFolderByFirstLaunch() {
-        if (!MyRxManager.getInstance().isSyncing) {
+        if (!MyRxManager.getInstance().isSyncing()) {
             MLog.d(TAG, "终止同步--createFolderByFirstLaunch");
             backSuccess("同步取消");
             return;
@@ -166,7 +166,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
 
     //(2) 默认Tag
     private void createTagByFirstLaunch() {
-        if (!MyRxManager.getInstance().isSyncing) {
+        if (!MyRxManager.getInstance().isSyncing()) {
             MLog.d(TAG, "终止同步--createTagByFirstLaunch");
             backSuccess("同步取消");
             return;
@@ -185,7 +185,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * (3)同步老数据
      */
     private void getOldNote() {
-        if (!MyRxManager.getInstance().isSyncing) {
+        if (!MyRxManager.getInstance().isSyncing()) {
             MLog.d(TAG, "终止同步--getOldNote");
             backSuccess("同步取消");
             return;
@@ -211,7 +211,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * (4)获取所有数据
      */
     private void getProFiles() {
-        if (!MyRxManager.getInstance().isSyncing) {
+        if (!MyRxManager.getInstance().isSyncing()) {
             MLog.d(TAG, "终止同步--getProFiles");
             backSuccess("同步取消");
             return;
@@ -236,7 +236,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * 条件：主界面||文件夹列表||文件夹数据为空
      */
     private void getAllFolder() {
-        if (!MyRxManager.getInstance().isSyncing) {
+        if (!MyRxManager.getInstance().isSyncing()) {
             MLog.d(TAG, "终止同步--getAllFolder");
             backSuccess("同步取消");
             return;
@@ -256,7 +256,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * （6）更新默认子文件夹
      */
     private void updateDefaultFolder() {
-        if (!MyRxManager.getInstance().isSyncing) {
+        if (!MyRxManager.getInstance().isSyncing()) {
             MLog.d(TAG, "终止同步--updateDefaultFolder");
             backSuccess("同步取消");
             return;
@@ -289,7 +289,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * (7)更新 标签
      */
     private void getTags() {
-        if (!MyRxManager.getInstance().isSyncing) {
+        if (!MyRxManager.getInstance().isSyncing()) {
             MLog.d(TAG, "终止同步--getTags");
             backSuccess("同步取消");
             return;
@@ -315,7 +315,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * syncState ：1表示未完全同步，2表示完全同步，3表示本地新增，4表示本地编辑，5表示彻底删除，6表示删除到回收站，7表示从回收站还原
      */
     private void updateLocalNotes() {
-        if (!MyRxManager.getInstance().isSyncing) {
+        if (!MyRxManager.getInstance().isSyncing()) {
             MLog.d(TAG, "终止同步--updateLocalNotes");
             backSuccess("同步取消");
             return;
@@ -341,7 +341,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * syncState ：1表示未完全同步，2表示完全同步，3表示本地新增，4表示本地编辑，5表示彻底删除，6表示删除到回收站，7表示从回收站还原
      */
     private void updateRecoveryNotes() {
-        if (!MyRxManager.getInstance().isSyncing) {
+        if (!MyRxManager.getInstance().isSyncing()) {
             MLog.d(TAG, "终止同步--updateRecoveryNotes");
             backSuccess("同步取消");
             return;
@@ -367,7 +367,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * syncState ：1表示未完全同步，2表示完全同步，3表示本地新增，4表示本地编辑，5表示彻底删除，6表示删除到回收站，7表示从回收站还原
      */
     private void deleteNotes() {
-        if (!MyRxManager.getInstance().isSyncing) {
+        if (!MyRxManager.getInstance().isSyncing()) {
             MLog.d(TAG, "终止同步--deleteNotes");
             backSuccess("同步取消");
             return;
@@ -393,7 +393,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * syncState ：1表示未完全同步，2表示完全同步，3表示本地新增，4表示本地编辑，5表示彻底删除，6表示删除到回收站，7表示从回收站还原
      */
     private void clearNotes() {
-        if (!MyRxManager.getInstance().isSyncing) {
+        if (!MyRxManager.getInstance().isSyncing()) {
             MLog.d(TAG, "终止同步--clearNotes");
             backSuccess("同步取消");
             return;
@@ -418,7 +418,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * （12）获取所有笔记id,用于同步相关
      */
     private void getAllNotsId() {
-        if (!MyRxManager.getInstance().isSyncing) {
+        if (!MyRxManager.getInstance().isSyncing()) {
             MLog.d(TAG, "终止同步--getAllNotsId");
             backSuccess("同步取消");
             return;
@@ -440,7 +440,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * syncState ：1表示未完全同步，2表示完全同步，3表示本地新增，4表示本地编辑，5表示彻底删除，6表示删除到回收站，7表示从回收站还原
      */
     private void updateEditNote() {
-        if (!MyRxManager.getInstance().isSyncing) {
+        if (!MyRxManager.getInstance().isSyncing()) {
             MLog.d(TAG, "终止同步--updateEditNote");
             backSuccess("同步取消");
             return;
@@ -465,7 +465,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * （14）云端新笔记同步到本地（12的子步骤）
      */
     private void updateCloudNote() {
-        if (!MyRxManager.getInstance().isSyncing) {
+        if (!MyRxManager.getInstance().isSyncing()) {
             MLog.d(TAG, "终止同步--updateCloudNote");
             backSuccess("同步取消");
             return;
@@ -491,7 +491,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * （15）获取所有回收站笔记
      */
     private void getTrashNotesId() {
-        if (!MyRxManager.getInstance().isSyncing) {
+        if (!MyRxManager.getInstance().isSyncing()) {
             MLog.d(TAG, "终止同步--getTrashNotesId");
             backSuccess("同步取消");
             return;
@@ -517,7 +517,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
      * （16）回收站笔记根据id的处理
      */
     private void updateTrashNotes() {
-        if (!MyRxManager.getInstance().isSyncing) {
+        if (!MyRxManager.getInstance().isSyncing()) {
             MLog.d(TAG, "终止同步--updateTrashNotes");
             backSuccess("同步取消");
             return;

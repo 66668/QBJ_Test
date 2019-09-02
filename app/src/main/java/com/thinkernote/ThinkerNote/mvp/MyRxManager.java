@@ -11,7 +11,7 @@ import io.reactivex.disposables.Disposable;
 public class MyRxManager {
     private static MyRxManager sInstance = new MyRxManager();
 
-    public boolean isSyncing;//是否在同步中
+    private boolean isSyncing;//是否在同步中
 
 
     public static MyRxManager getInstance() {

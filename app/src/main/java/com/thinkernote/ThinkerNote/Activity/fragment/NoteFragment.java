@@ -154,7 +154,7 @@ public class NoteFragment extends TNChildViewBase implements OnItemLongClickList
     public void onRefresh() {
         if (TNUtils.isNetWork()) {
             //主线同步
-            if (MyRxManager.getInstance().isSyncing) {
+            if (MyRxManager.getInstance().isSyncing()) {
                 TNUtilsUi.showNotification(mActivity, R.string.alert_Synchronize_TooMuch, false);
                 mPullListview.onRefreshComplete();
                 return;
