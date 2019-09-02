@@ -89,14 +89,12 @@ public class NoteViewDownloadPresenter implements OnNoteViewDownloadListener {
         //att下载结束，更新mNote
         readyDownloadAtts.removeAll(tmpList);
         mNote = TNDbUtils.getNoteByNoteLocalId(mNote.noteLocalId);
-        MLog.d(TAG, "更新mNote：" + mNote.toString());
         mNote.syncState = mNote.syncState > 2 ? mNote.syncState : 2;
 
         //数据库操作
         if (mNote.attCounts > 0) {
             for (int i = 0; i < mNote.atts.size(); i++) {
                 TNNoteAtt tempAtt = mNote.atts.get(i);
-                MLog.e("更新--TNNoteAtt:" + i + "--" + tempAtt.toString());
                 //保存路径
                 if (i == 0 && tempAtt.type > 10000 && tempAtt.type < 20000) {
 

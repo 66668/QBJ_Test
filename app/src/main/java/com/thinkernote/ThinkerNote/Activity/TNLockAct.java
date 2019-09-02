@@ -64,6 +64,7 @@ public class TNLockAct extends TNActBase implements OnLockPatternListener, OnCli
         mPath = new LinkedList<Integer>();
     }
 
+    @Override
     protected void configView() {
         if (createStatus == 1)
             return;
@@ -109,7 +110,6 @@ public class TNLockAct extends TNActBase implements OnLockPatternListener, OnCli
 
     @Override
     public void onInputFilished(Queue<Integer> path, boolean match) {
-        MLog.i(TAG, "path=" + path + match);
         mPath = path;
         if (mType == 2) {
             if (mPath.equals(mOriginalPath)) {

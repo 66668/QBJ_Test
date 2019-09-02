@@ -693,7 +693,7 @@ public class TNUtilsUi {
                 String baseActName = task.baseActivity.getClassName();
                 MLog.i(TAG, "taskId=" + act.getTaskId());
                 MLog.i(TAG, "baseActName=" + baseActName);
-                MLog.i(TAG, "topActName" + task.topActivity.getClassName());
+                MLog.i(TAG, "topActName=" + task.topActivity.getClassName());
                 return !baseActName
                         .startsWith("com.thinkernote.ThinkerNote.Activity");
             }
@@ -719,6 +719,10 @@ public class TNUtilsUi {
     private static String baseName = "";
     private static boolean screenOff = true;
 
+    /**
+     *  检测是否需要锁屏
+     * @param context
+     */
     public static void checkLockScreen(Context context) {
         final ActivityManager am = (ActivityManager) context
                 .getSystemService(Context.ACTIVITY_SERVICE);
@@ -738,15 +742,19 @@ public class TNUtilsUi {
                 .equals("com.thinkernote.ThinkerNote.Activity.TNMainAct"))
                 || screenOff != screenStatus) {
             MLog.i(TAG, " screenOff:" + screenStatus + " topAct:"
-                    + task.topActivity.getClassName() + " baseAct:"
+                    + task.topActivity.getClassName() + "\nbaseAct:"
                     + task.baseActivity.getClassName());
             // taskId = task.id;
             baseName = baseActName;
             screenOff = screenStatus;
             TNSettings settings = TNSettings.getInstance();
-            if (!settings.needShowLock) {
+            if (screenStatus) {
                 MLog.i(TAG, "set needShowLock = true");
                 settings.needShowLock = true;
+                settings.savePref(false);
+            }else{
+                MLog.i(TAG, "set needShowLock = false");
+                settings.needShowLock = false;
                 settings.savePref(false);
             }
         }

@@ -123,7 +123,7 @@ public class TNActBase extends Activity {
         configView();
         createStatus = 1;
 
-        if (!(TAG.equals("TNLoginAct")) && !(TAG.equals("TNSplashAct")) && !(TAG.equals("TNMainFragAct"))) {
+        if (!(TAG.equals("TNLoginAct")) && !(TAG.equals("TNSplashAct"))) {
             TNUtilsUi.checkLockScreen(this);
             if (settings.needShowLock && settings.needShowLock2 && !isFinishing() && !TNSettings.getInstance().isLogout) {
                 if (!(TAG.equals("TNLockAct") && getTitle().equals("lock"))

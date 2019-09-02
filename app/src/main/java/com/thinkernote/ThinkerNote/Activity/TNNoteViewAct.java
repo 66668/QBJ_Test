@@ -265,7 +265,6 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-                MLog.e("TNNoteViewAct", "WebViewClient--onPageFinished--url" + url);
                 super.onPageFinished(view, url);
 
                 view.loadUrl("javascript:loading()");
@@ -985,7 +984,6 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
 
         if (mNote == null)
             return;
-        MLog.e("startAutoDownload");
         download.start();
     }
 
