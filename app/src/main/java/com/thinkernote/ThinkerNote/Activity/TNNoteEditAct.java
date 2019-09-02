@@ -433,6 +433,9 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                 break;
 
             case R.id.record_start://录音的开始/暂停
+                if (mRecord == null)
+                    mRecord = new TNRecord(handler);
+
                 if (mRecord.isRecording()) {
                     mRecord.pause();
                     ((Button) v).setText(R.string.noteedit_record_start);

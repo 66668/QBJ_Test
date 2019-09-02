@@ -16,6 +16,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 
+/**
+ * 录音封装
+ */
 public class TNRecord implements OnInfoListener, OnErrorListener{
 	private static final String TAG = "TNRecord";
 	private static final int MAX_VU_SIZE = 101;

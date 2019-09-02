@@ -3,32 +3,38 @@
     android:layout_width="fill_parent"
     android:layout_height="44dip"
     android:background="@drawable/bottom_toolbg"
-    android:orientation="horizontal" >
+    android:orientation="horizontal">
 
-    <ProgressBar android:id="@+id/record_progressbar"
+    <ProgressBar
+        android:id="@+id/record_progressbar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="0dip"
         android:layout_height="3dip"
-        android:layout_marginLeft="10dip"
-        android:max="100"
-        android:layout_weight="2"
         android:layout_gravity="center_vertical"
+        android:layout_marginLeft="10dip"
+        android:layout_weight="2"
+        android:max="100"
         android:progress="0" />
-    
-    <TextView android:id="@+id/record_time"
+
+    <TextView
+        android:id="@+id/record_time"
         android:layout_width="0dip"
         android:layout_height="fill_parent"
-        android:gravity="center"
-        android:textSize="14sp"
         android:layout_weight="1"
+        android:gravity="center"
+        android:text="00:00"
         android:textColor="#666666"
-        android:text="00:00"/>
+        android:textSize="14sp" />
 
+    <!--    TODO 暂停/继续的功能有问题，不可用，暂时隐藏-->
     <Button
         android:id="@+id/record_start"
         style="@style/button_grey"
+        android:clickable="false"
+        android:enabled="false"
         android:text="@string/noteedit_record_start"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/record_stop"
