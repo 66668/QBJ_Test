@@ -37,7 +37,7 @@ import com.thinkernote.ThinkerNote.mvp.p.UpgradePresenter;
 import com.thinkernote.ThinkerNote.mvp.p.SyncPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.main.MainUpgradeBean;
-import com.thinkernote.ThinkerNote.mvp.http.MyRxManager;
+import com.thinkernote.ThinkerNote.mvp.MyRxManager;
 import com.thinkernote.ThinkerNote.mvp.http.fileprogress.FileProgressListener;
 
 import java.io.File;
@@ -73,7 +73,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeLi
         mainPresenter = new UpgradePresenter(this, this);
         syncPresenter = new SyncPresenter(this, this);
         setViews();
-        MyRxManager.getInstance().syncOver();//修改状态值
+        MyRxManager.getInstance().setSyncing(false);//修改状态值
         //第一次进入，打开帮助界面
         if (mSettings.firstLaunch) {
             startActivity(TNHelpAct.class);
@@ -140,7 +140,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeLi
 
     @Override
     public void onDestroy() {
-        MyRxManager.getInstance().cancelAll();
+        syncPresenter.finishSync();
         isDestory = true;
         super.onDestroy();
         MLog.d("TNMainAct--onDestroy");
@@ -237,8 +237,9 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeLi
             case R.id.main_sync_btn: {//同步按钮
                 if (TNUtils.isNetWork()) {
                     if (MyRxManager.getInstance().isSyncing()) {
-                        MyRxManager.getInstance().cancelAll();
                         Toast.makeText(TNMainAct.this, "正在结束同步，请稍后", Toast.LENGTH_SHORT).show();
+                        syncPresenter.cancelSync();
+                        endSynchronize(2);
 //                        TNUtilsUi.showNotification(this, R.string.alert_Synchronize_TooMuch, false);
                         return;
                     }
@@ -249,7 +250,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeLi
                 } else {
                     TNUtilsUi.showToast(R.string.alert_Net_NotWork);
                     //结束同步按钮动作
-                    MyRxManager.getInstance().cancelAll();
+                    syncPresenter.cancelSync();
                     endSynchronize(1);
                 }
                 break;

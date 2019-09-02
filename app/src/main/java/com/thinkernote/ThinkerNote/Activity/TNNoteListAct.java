@@ -40,7 +40,7 @@ import com.thinkernote.ThinkerNote.mvp.p.NoteListPresenter;
 import com.thinkernote.ThinkerNote.mvp.p.SyncPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.main.NoteListBean;
-import com.thinkernote.ThinkerNote.mvp.http.MyRxManager;
+import com.thinkernote.ThinkerNote.mvp.MyRxManager;
 
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
@@ -95,7 +95,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
         setContentView(R.layout.notelist);
         MLog.e("TNNoteListAct" + "跳转  TNNoteListAct");
         setViews();
-        MyRxManager.getInstance().syncOver();//初始化值
+        MyRxManager.getInstance().setSyncing(false);//初始化值
         DisplayMetrics metric = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metric);
         mScale = metric.scaledDensity;
@@ -145,7 +145,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
     @Override
     public void onDestroy() {
         mProgressDialog.dismiss();
-        MyRxManager.getInstance().cancelAll();//取消同步
+        syncPresenter.finishSync();
         super.onDestroy();
     }
 

@@ -105,6 +105,10 @@ public class TagFragment extends TNChildViewBase implements
         }
     }
 
+    public void tagDestory(){
+
+    }
+
     private void notifyExpandList() {
         mGroups.clear();
         TNTagGroup group = null;

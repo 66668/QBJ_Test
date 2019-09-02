@@ -15,7 +15,8 @@ import com.thinkernote.ThinkerNote.bean.CommonBean;
 import com.thinkernote.ThinkerNote.bean.main.TagItemBean;
 import com.thinkernote.ThinkerNote.bean.main.TagListBean;
 import com.thinkernote.ThinkerNote.mvp.http.MyHttpService;
-import com.thinkernote.ThinkerNote.mvp.http.MyRxManager;
+import com.thinkernote.ThinkerNote.mvp.MyRxManager;
+import com.thinkernote.ThinkerNote.mvp.p.SyncPresenter;
 
 import org.json.JSONObject;
 
@@ -55,7 +56,7 @@ public class TagModule {
      * @param arrayTag
      * @param listener
      */
-    public void createTagByFirstLaunch(String[] arrayTag, final ITagModuleListener listener) {
+    public void createTagByFirstLaunch(String[] arrayTag, final ITagModuleListener listener, final SyncPresenter.SyncDisposableListener disposableListener) {
         final String[] mFolderName = {""};
         //创建默认的tag
         Observable.fromArray(arrayTag)
@@ -85,7 +86,7 @@ public class TagModule {
 
             @Override
             public void onSubscribe(Disposable d) {
-                MyRxManager.getInstance().add(d);
+                disposableListener.add(d);
             }
 
             @Override
@@ -107,7 +108,7 @@ public class TagModule {
      *
      * @param listener
      */
-    public void getAllTags(final ITagModuleListener listener) {
+    public void getAllTags(final ITagModuleListener listener, final SyncPresenter.SyncDisposableListener disposableListener) {
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .syncTagList(settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
@@ -135,7 +136,7 @@ public class TagModule {
 
                     @Override
                     public void onSubscribe(Disposable d) {
-                        MyRxManager.getInstance().add(d);
+                        disposableListener.add(d);
                     }
 
                     @Override

@@ -259,6 +259,10 @@ public class FolderFragment extends TNChildViewBase implements
 
     }
 
+    public void folderDestory(){
+
+    }
+
     public void dialogCB() {
         configView(2);
     }

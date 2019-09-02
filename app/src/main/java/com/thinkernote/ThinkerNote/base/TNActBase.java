@@ -123,7 +123,7 @@ public class TNActBase extends Activity {
         configView();
         createStatus = 1;
 
-        if (!(TAG.equals("TNLoginAct")) && !(TAG.equals("TNSplashAct"))&& !(TAG.equals("TNMainFragAct"))) {
+        if (!(TAG.equals("TNLoginAct")) && !(TAG.equals("TNSplashAct")) && !(TAG.equals("TNMainFragAct"))) {
             TNUtilsUi.checkLockScreen(this);
             if (settings.needShowLock && settings.needShowLock2 && !isFinishing() && !TNSettings.getInstance().isLogout) {
                 if (!(TAG.equals("TNLockAct") && getTitle().equals("lock"))
@@ -285,7 +285,12 @@ public class TNActBase extends Activity {
         public void handleMessage(Message msg) {
             final TNActBase activity = mFragmentReference.get();
             if (activity != null) {
-                activity.handleMessage(msg);
+                try {
+                    activity.handleMessage(msg);
+                } catch (Exception e) {
+                    MLog.e("SJY", e.toString());
+                }
+
             }
         }
     }

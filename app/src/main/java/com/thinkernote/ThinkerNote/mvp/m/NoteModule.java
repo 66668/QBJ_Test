@@ -26,10 +26,11 @@ import com.thinkernote.ThinkerNote.bean.main.NewNoteBean;
 import com.thinkernote.ThinkerNote.bean.main.NoteListBean;
 import com.thinkernote.ThinkerNote.bean.main.OldNotePicBean;
 import com.thinkernote.ThinkerNote.mvp.http.MyHttpService;
-import com.thinkernote.ThinkerNote.mvp.http.MyRxManager;
+import com.thinkernote.ThinkerNote.mvp.MyRxManager;
 import com.thinkernote.ThinkerNote.mvp.http.RequestBodyUtil;
 import com.thinkernote.ThinkerNote.mvp.http.URLUtils;
 import com.thinkernote.ThinkerNote.mvp.listener.m.INoteModuleListener;
+import com.thinkernote.ThinkerNote.mvp.p.SyncPresenter;
 
 import org.json.JSONObject;
 
@@ -47,9 +48,9 @@ import java.util.concurrent.Executors;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
-import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
 import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
@@ -171,7 +172,7 @@ public class NoteModule {
      * @param isNewDb  是否是老数据
      * @param listener
      */
-    public void updateOldNote(Vector<TNNote> notes, final boolean isNewDb, final INoteModuleListener listener) {
+    public void updateOldNote(Vector<TNNote> notes, final boolean isNewDb, final INoteModuleListener listener, final SyncPresenter.SyncDisposableListener disposableListener) {
         Observable.fromIterable(notes)
                 .concatMap(new Function<TNNote, ObservableSource<TNNote>>() {
                     @Override
@@ -221,7 +222,7 @@ public class NoteModule {
                 .subscribe(new Observer<NewNoteBean>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        MyRxManager.getInstance().add(d);
+                        disposableListener.add(d);
                     }
 
                     @Override
@@ -250,7 +251,7 @@ public class NoteModule {
      * @param notes    syncState=3 的数据
      * @param listener
      */
-    public void updateLocalNewNotes(Vector<TNNote> notes, final INoteModuleListener listener, final boolean isSync) {
+    public void updateLocalNewNotes(Vector<TNNote> notes, final INoteModuleListener listener, final boolean isSync, final SyncPresenter.SyncDisposableListener disposableListener) {
 
         Observable.fromIterable(notes)
                 .concatMap(new Function<TNNote, Observable<TNNote>>() {//
@@ -317,7 +318,7 @@ public class NoteModule {
                     @Override
                     public void onSubscribe(Disposable d) {
                         if (isSync) {//是否是主界面的同步
-                            MyRxManager.getInstance().add(d);
+                            disposableListener.add(d);
                         }
 
                     }
@@ -340,7 +341,7 @@ public class NoteModule {
      * @param notes    syncState=7 的数据
      * @param listener
      */
-    public void updateRecoveryNotes(Vector<TNNote> notes, final INoteModuleListener listener, final boolean isSync) {
+    public void updateRecoveryNotes(Vector<TNNote> notes, final INoteModuleListener listener, final boolean isSync, final SyncPresenter.SyncDisposableListener disposableListener) {
 
         Observable
                 .fromIterable(notes)
@@ -460,7 +461,7 @@ public class NoteModule {
                     @Override
                     public void onSubscribe(Disposable d) {
                         if (isSync) {
-                            MyRxManager.getInstance().add(d);
+                            disposableListener.add(d);
                         }
                     }
 
@@ -482,7 +483,7 @@ public class NoteModule {
      * @param notes
      * @param listener
      */
-    public void deleteNotes(Vector<TNNote> notes, final INoteModuleListener listener, final boolean isSync) {
+    public void deleteNotes(Vector<TNNote> notes, final INoteModuleListener listener, final boolean isSync, final SyncPresenter.SyncDisposableListener disposableListener) {
 
         Observable.fromIterable(notes).concatMap(new Function<TNNote, Observable<Integer>>() {
             @Override
@@ -535,7 +536,7 @@ public class NoteModule {
                     @Override
                     public void onSubscribe(Disposable d) {
                         if (isSync) {
-                            MyRxManager.getInstance().add(d);
+                            disposableListener.add(d);
                         }
                     }
 
@@ -561,7 +562,7 @@ public class NoteModule {
      * @param notes
      * @param listener
      */
-    public void clearNotes(Vector<TNNote> notes, final INoteModuleListener listener, final boolean isSync) {
+    public void clearNotes(Vector<TNNote> notes, final INoteModuleListener listener, final boolean isSync, final SyncPresenter.SyncDisposableListener disposableListener) {
         MLog.d("clearNotes--size=" + notes.size());
         Observable.fromIterable(notes)
                 .concatMap(new Function<TNNote, Observable<Integer>>() {//list转化item
@@ -634,7 +635,7 @@ public class NoteModule {
                     @Override
                     public void onSubscribe(Disposable d) {
                         if (isSync) {
-                            MyRxManager.getInstance().add(d);
+                            disposableListener.add(d);
                         }
                     }
 
@@ -653,7 +654,7 @@ public class NoteModule {
      *
      * @param listener
      */
-    public void getAllNotesId(final INoteModuleListener listener) {
+    public void getAllNotesId(final INoteModuleListener listener, final SyncPresenter.SyncDisposableListener disposableListener) {
         MyHttpService.Builder.getHttpServer()//
                 .syncAllNotesId(settings.token)
                 .doOnNext(new Consumer<AllNotesIdsBean>() {
@@ -681,7 +682,7 @@ public class NoteModule {
 
                     @Override
                     public void onSubscribe(Disposable d) {
-                        MyRxManager.getInstance().add(d);
+                        disposableListener.add(d);
                     }
 
                     @Override
@@ -729,7 +730,6 @@ public class NoteModule {
 
                     @Override
                     public void onSubscribe(Disposable d) {
-                        MyRxManager.getInstance().add(d);
                     }
 
                     @Override
@@ -754,7 +754,7 @@ public class NoteModule {
      * @param editNotes 本地未上传的已编辑笔记
      * @param listener
      */
-    public void updateEditNotes(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> editNotes, final INoteModuleListener listener, final boolean isSync) {
+    public void updateEditNotes(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> editNotes, final INoteModuleListener listener, final boolean isSync, final SyncPresenter.SyncDisposableListener disposableListener) {
         MLog.d("编辑笔记同步--" + editNotes.size() + "--note_ids" + note_ids.size());
         Observable.fromIterable(note_ids)
                 .concatMap(new Function<AllNotesIdsBean.NoteIdItemBean, Observable<CommonBean>>() {
@@ -943,7 +943,7 @@ public class NoteModule {
                     @Override
                     public void onSubscribe(Disposable d) {
                         if (isSync) {
-                            MyRxManager.getInstance().add(d);
+                            disposableListener.add(d);
                         }
                     }
 
@@ -965,7 +965,7 @@ public class NoteModule {
      * @param note_ids 云端所有笔记数据
      * @param listener
      */
-    public void getCloudNote(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> localAllNotes, final INoteModuleListener listener) {
+    public void getCloudNote(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> localAllNotes, final INoteModuleListener listener, final SyncPresenter.SyncDisposableListener disposableListener) {
         Observable.fromIterable(note_ids)
                 .concatMap(new Function<AllNotesIdsBean.NoteIdItemBean, Observable<Integer>>() {
                     @Override
@@ -1011,8 +1011,7 @@ public class NoteModule {
 
                                                     @Override
                                                     public void onSubscribe(Disposable d) {
-
-                                                        //TODO
+                                                        disposableListener.add(d);
                                                     }
 
                                                     @Override
@@ -1073,7 +1072,7 @@ public class NoteModule {
 
                     @Override
                     public void onSubscribe(Disposable d) {
-                        MyRxManager.getInstance().add(d);
+                        disposableListener.add(d);
                     }
 
                     @Override
@@ -1093,7 +1092,7 @@ public class NoteModule {
      *
      * @param listener
      */
-    public void getTrashNotesId(final INoteModuleListener listener) {
+    public void getTrashNotesId(final INoteModuleListener listener, final SyncPresenter.SyncDisposableListener disposableListener) {
         MyHttpService.Builder.getHttpServer()//
                 .getTrashNoteIds(settings.token)
                 .subscribeOn(Schedulers.io())
@@ -1123,7 +1122,7 @@ public class NoteModule {
 
                     @Override
                     public void onSubscribe(Disposable d) {
-                        MyRxManager.getInstance().add(d);
+                        disposableListener.add(d);
                     }
 
                     @Override
@@ -1145,7 +1144,7 @@ public class NoteModule {
      * @param allNotes
      * @param listener
      */
-    public void upateTrashNotes(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> allNotes, final INoteModuleListener listener) {
+    public void upateTrashNotes(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> allNotes, final INoteModuleListener listener, final SyncPresenter.SyncDisposableListener disposableListener) {
         MLog.d("upateTrashNotes--回收站笔记--" + note_ids.size());
         Observable.fromIterable(note_ids)
                 .concatMap(new Function<AllNotesIdsBean.NoteIdItemBean, Observable<Integer>>() {
@@ -1207,9 +1206,7 @@ public class NoteModule {
 
                     @Override
                     public void onSubscribe(Disposable d) {
-
-                        MyRxManager.getInstance().add(d);
-
+                        disposableListener.add(d);
                     }
 
                     @Override

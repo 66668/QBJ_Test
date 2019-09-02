@@ -22,7 +22,7 @@ import com.thinkernote.ThinkerNote.General.TNConst;
 import com.thinkernote.ThinkerNote.General.TNHandleError;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
-import com.thinkernote.ThinkerNote.mvp.http.MyRxManager;
+import com.thinkernote.ThinkerNote.mvp.MyRxManager;
 import com.thinkernote.ThinkerNote.other.HorizontalPager;
 import com.thinkernote.ThinkerNote.other.HorizontalPager.OnScreenSwitchListener;
 import com.thinkernote.ThinkerNote.R;
@@ -438,8 +438,16 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
         }
     }
 
+    /**
+     * 全部笔记/文件夹/标签三个表的切换
+     *
+     * @param screen The new screen index.
+     */
+    private int currentPage = 0;
+
     @Override
     public void onScreenSwitched(int screen) {
+        currentPage = screen;
         mCurrChild = mChildPages.get(screen);
         changeViewForScreen(screen);
     }
@@ -773,6 +781,19 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        switch (currentPage) {
+            case 0://全部笔记
+                ((NoteFragment) mCurrChild).noteDestroy();
+                break;
+            case 1:
+                ((FolderFragment) mCurrChild).folderDestory();
+                break;
+            case 2:
+                ((TagFragment) mCurrChild).tagDestory();
+                break;
+
+        }
+
         finish();
     }
 

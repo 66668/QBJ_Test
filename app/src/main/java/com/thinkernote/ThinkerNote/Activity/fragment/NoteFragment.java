@@ -30,7 +30,7 @@ import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnSyncListener;
 import com.thinkernote.ThinkerNote.mvp.p.SyncPresenter;
 import com.thinkernote.ThinkerNote.base.TNChildViewBase;
-import com.thinkernote.ThinkerNote.mvp.http.MyRxManager;
+import com.thinkernote.ThinkerNote.mvp.MyRxManager;
 
 import java.util.Vector;
 
@@ -110,6 +110,7 @@ public class NoteFragment extends TNChildViewBase implements OnItemLongClickList
         }
     }
 
+
     private void getNativeData() {
         mNotes = TNDbUtils.getNoteListByCount(TNSettings.getInstance().userId, mPageNum * TNConst.PAGE_SIZE, TNSettings.getInstance().sort);
         mAdapter.updateNotes(mNotes);
@@ -182,6 +183,13 @@ public class NoteFragment extends TNChildViewBase implements OnItemLongClickList
     @Override
     public void onSyncFailed(Exception e, String msg) {
         endSynchronize(2);
+    }
+
+    /**
+     * 界面消失的处理
+     */
+    public void noteDestroy() {
+        syncPresenter.finishSync();
     }
 
     // -------------------------------------handler------------------------------------------

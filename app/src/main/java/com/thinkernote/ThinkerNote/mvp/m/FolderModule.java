@@ -20,10 +20,11 @@ import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
 import com.thinkernote.ThinkerNote.bean.main.AllFolderBean;
 import com.thinkernote.ThinkerNote.bean.main.AllFolderItemBean;
 import com.thinkernote.ThinkerNote.mvp.http.MyHttpService;
-import com.thinkernote.ThinkerNote.mvp.http.MyRxManager;
+import com.thinkernote.ThinkerNote.mvp.MyRxManager;
 import com.thinkernote.ThinkerNote.mvp.listener.m.IFolderModuleListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnCatInfoListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnCatListListener;
+import com.thinkernote.ThinkerNote.mvp.p.SyncPresenter;
 
 import org.json.JSONObject;
 
@@ -66,7 +67,7 @@ public class FolderModule {
      * @param arrayFolders
      * @param listener
      */
-    public void createFolderByFirstLaunch(String[] arrayFolders, long id, final IFolderModuleListener listener) {
+    public void createFolderByFirstLaunch(String[] arrayFolders, long id, final IFolderModuleListener listener, final SyncPresenter.SyncDisposableListener disposableListener) {
 
         final String[] mFolderName = {""};
         //创建默认的一级文件夹
@@ -95,7 +96,7 @@ public class FolderModule {
 
                     @Override
                     public void onSubscribe(Disposable d) {
-                        MyRxManager.getInstance().add(d);
+                        disposableListener.add(d);
                     }
 
                     @Override
@@ -114,7 +115,7 @@ public class FolderModule {
     /**
      * 创建 文件夹下的子文件夹
      */
-    public void createFolderByIdByFirstLaunch(Vector<TNCat> cats, final String[] works, final String[] life, final String[] funs, final IFolderModuleListener listener) {
+    public void createFolderByIdByFirstLaunch(Vector<TNCat> cats, final String[] works, final String[] life, final String[] funs, final IFolderModuleListener listener, final SyncPresenter.SyncDisposableListener disposableListener) {
         MLog.d(TAG, "addNewFolder--创建子文件夹");
         Observable.fromIterable(cats)
                 .concatMap(new Function<TNCat, Observable<CommonBean>>() {
@@ -169,7 +170,7 @@ public class FolderModule {
 
                     @Override
                     public void onSubscribe(Disposable d) {
-                        MyRxManager.getInstance().add(d);
+                        disposableListener.add(d);
                     }
 
                     @Override
@@ -191,7 +192,7 @@ public class FolderModule {
      *
      * @param listener
      */
-    public void getProfiles(final IFolderModuleListener listener) {
+    public void getProfiles(final IFolderModuleListener listener, final SyncPresenter.SyncDisposableListener disposableListener) {
 
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .LogNormalProfile(settings.token)//接口方法
@@ -222,7 +223,7 @@ public class FolderModule {
 
                     @Override
                     public void onSubscribe(Disposable d) {
-                        MyRxManager.getInstance().add(d);
+                        disposableListener.add(d);
                     }
 
                     @Override
@@ -246,7 +247,7 @@ public class FolderModule {
      *
      * @param listener
      */
-    public void getAllFolder(final IFolderModuleListener listener) {
+    public void getAllFolder(final IFolderModuleListener listener, final SyncPresenter.SyncDisposableListener disposableListener) {
 
         MyHttpService.Builder.getHttpServer()
                 .getFolder(settings.token) //（1）获取第一个接口数据
@@ -437,7 +438,7 @@ public class FolderModule {
 
                     @Override
                     public void onSubscribe(Disposable d) {
-                        MyRxManager.getInstance().add(d);
+                        disposableListener.add(d);
                     }
 
                     @Override
@@ -508,7 +509,7 @@ public class FolderModule {
      */
     public void setDefaultFolder(final long fodlerId, final IFolderModuleListener listener) {
 
-         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .setDefaultFolder(fodlerId, settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
                 .observeOn(AndroidSchedulers.mainThread())//固定样式
