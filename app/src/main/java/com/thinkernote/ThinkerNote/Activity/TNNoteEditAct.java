@@ -1025,8 +1025,10 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
             }
         };
         mTimer.schedule(mTimerTask,
+//                1000,
+//                2000
                 60 * 1000, //60 * 1000
-                90 * 1000
+                2*60 * 1000
         );//60 * 1000
     }
 
@@ -1129,7 +1131,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                 if (msg.obj == null) {
                     TNUtilsUi.showToast("存储空间不足");
                 } else {
-                    TNUtilsUi.showShortToast(R.string.alert_NoteSave_SaveOK);
+//                    TNUtilsUi.showShortToast(R.string.alert_NoteSave_SaveOK);//
                     mNote = (TNNote) msg.obj;
                     //更新已保存的笔记
                     getIntent().putExtra("NoteForEdit", mNote.noteLocalId);
