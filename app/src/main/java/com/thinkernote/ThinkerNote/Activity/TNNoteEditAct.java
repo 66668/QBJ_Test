@@ -89,8 +89,10 @@ import org.json.JSONObject;
 public class TNNoteEditAct extends TNActBase implements OnClickListener,
         OnFocusChangeListener, TextWatcher,
         OnPoPuMenuItemClickListener, OnSyncListener {
+    private static final String TAG = "NOTE";
     //正常登录的同步常量
-    private static final int SAVE_OVER = 102;
+    private static final int AUTO_SAVE = 1;//2min本地自动保存
+    private static final int SAVE_LOCAL = 102;
     private static final int START_SYNC = 103;
     private static final int MAX_CONTENT_LEN = 4 * 100 * 1024;
 
@@ -118,9 +120,8 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
 
     private Timer mTimer;
     private TimerTask mTimerTask;
-    private boolean isAutoSave = true;//默认是自动保存的
     //p
-    SyncPresenter presener;
+    private SyncPresenter syncPresenter;
 
 
     @Override
@@ -128,7 +129,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.note_edit);
         initAct();
-        presener = new SyncPresenter(this, this);
+        syncPresenter = new SyncPresenter(this, this);
         //开启百度定位
         if (savedInstanceState == null) {
 //            TNLBSService.getInstance().startLocation();
@@ -400,7 +401,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.noteedit_save: {//保存
+            case R.id.noteedit_save: {//保存并退出
                 TNUtilsUi.hideKeyboard(this, R.id.noteedit_save);
                 saveInput();
                 if (mRecord != null && !mRecord.isStop()) {
@@ -408,7 +409,6 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                     mRecord.asynStop(8);
                     break;
                 }
-                isAutoSave = false;
                 saveNote();
                 break;
             }
@@ -948,7 +948,6 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                 new CommonDialog.DialogCallBack() {
                     @Override
                     public void sureBack() {
-                        isAutoSave = false;//退出不属于自动保存
                         saveNote();
                     }
 
@@ -971,7 +970,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         if (checkNote()) {
             handleProgressDialog("show");
             mNote.prepareToSave();
-            pNoteSave(mNote, false);//true false
+            pNoteSave(mNote, true);//保存到后台
         }
     }
 
@@ -1020,7 +1019,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         mTimerTask = new TimerTask() {
             public void run() {
                 Message message = new Message();
-                message.what = 1;
+                message.what = AUTO_SAVE;
                 handler.sendMessage(message);
             }
         };
@@ -1056,9 +1055,8 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
     @Override
     public void handleMessage(Message msg) {
         switch (msg.what) {
-            case 1:
+            case AUTO_SAVE:
                 //自动保存
-                isAutoSave = true;
                 Log.d("SJY", "2min自动保存 ");
                 saveInput();
                 if (mNote.isModified() && checkNote()) {
@@ -1124,8 +1122,8 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                 setCursorLocation();
                 TNUtilsUi.showShortToast(R.string.alert_NoteEdit_Record_Error);
                 break;
-            case SAVE_OVER://只保存，不同步
-                MLog.d("saveNote", "保存但不同步");
+            case SAVE_LOCAL://只保存，不同步
+                MLog.d(TAG, "保存但不同步");
                 handleProgressDialog("hide");
                 if (msg.obj == null) {
                     TNUtilsUi.showToast("存储空间不足");
@@ -1141,16 +1139,10 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                     }
                 }
                 //自动保存状态，不退出编辑
-                if (isAutoSave) {
-                    isAutoSave = false;
-                } else {
-                    finish();
-                }
 
                 break;
             case START_SYNC://保存并同步
-                MLog.d("saveNote", "保存并同步");
-
+                MLog.d(TAG, "保存并同步");
                 handleProgressDialog("hide");
                 TNUtilsUi.showShortToast(R.string.alert_NoteSave_SaveOK);
                 if (msg.obj == null) {
@@ -1158,17 +1150,11 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                 } else {
                     //获取note
                     mNote = (TNNote) msg.obj;
-
                     if (MyRxManager.getInstance().isSyncing()) {
                         finish();
                         return;
                     }
                     TNUtilsUi.showNotification(this, R.string.alert_NoteView_Synchronizing, false);
-                    //
-                    MLog.d("saveNote", "打印保存内容：" + mNote.toString());
-                    for (TNNoteAtt att : mNote.atts) {
-                        MLog.e("遍历打印存储信息TNNoteAtt:" + att.toString());
-                    }
                     syncEdit();
                     break;
 
@@ -1177,9 +1163,9 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         super.handleMessage(msg);
     }
 
+    //    同步结束
     private void endSynchronize() {
         mProgressDialog.hide();
-        MLog.d("同步edit--同步结束");
         finish();
     }
 
@@ -1261,7 +1247,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                     } else {
                         msg.obj = note2;
                         TNDb.getInstance().execSQL(TNSQLString.CAT_UPDATE_LASTUPDATETIME, System.currentTimeMillis() / 1000, note2.catId);
-                        MLog.d("saveNote", "保存的内容：" + note2.toString());
+                        MLog.d(TAG, "保存的内容：" + note2.toString());
 
                     }
                     TNDb.setTransactionSuccessful();
@@ -1272,11 +1258,11 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                 //执行完异步，移除what=1的消息队列
                 handler.removeMessages(1);
                 //通知更新UI
-                if (isNeedSync) {
+                if (isNeedSync) {//结束编辑退出，同步到后台
                     msg.what = START_SYNC;
                     handler.sendMessage(msg);
-                } else {
-                    msg.what = SAVE_OVER;
+                } else {//编辑下，自动保存到本地
+                    msg.what = SAVE_LOCAL;
                     handler.sendMessage(msg);
                 }
             }
@@ -1297,7 +1283,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         try {
 
             if (exsitAtts.size() != 0) {//有图
-                MLog.d("saveNote", "save attr", "exsitAtts.size()=" + exsitAtts.size() + "--有图");
+                MLog.d(TAG, "save attr", "exsitAtts.size()=" + exsitAtts.size() + "--有图");
 
                 //循环判断是否与本地同步，新增没有就删除本地
                 for (int k = 0; k < exsitAtts.size(); k++) {
@@ -1328,7 +1314,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                                 att.attId,
                                 att.width,
                                 att.height});
-                        MLog.d("saveNote", "attLocalSave--attLocalId=" + attLocalId);
+                        MLog.d(TAG, "attLocalSave--attLocalId=" + attLocalId);
                         // copy file to path
                         String tPath = TNUtilsAtt.getAttPath(attLocalId, att.type);
                         //结束 save attr 直接返回
@@ -1339,7 +1325,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                         //tPath = tPath + TNUtilsAtt.getAttSuffix(att.type);
                         TNUtilsAtt.copyFile(att.path, tPath);
                         TNUtilsAtt.recursionDeleteDir(new File(att.path));
-                        MLog.d("saveNote", "save attr", att.path + " >> " + tPath + "(" + att.digest + ")");
+                        MLog.d(TAG, "save attr", att.path + " >> " + tPath + "(" + att.digest + ")");
 
                         //本地笔记保存文件路径
                         TNDb.getInstance().execSQL(TNSQLString.ATT_PATH, tPath, attLocalId);
@@ -1348,7 +1334,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                 }
             } else {//无图
 
-                MLog.d("saveNote", "save attr", "exsitAtts.size()=0--无图");
+                MLog.d(TAG, "save attr", "exsitAtts.size()=0--无图");
                 for (int i = 0; i < note.atts.size(); i++) {
                     TNNoteAtt att = note.atts.get(i);
                     // insert
@@ -1371,7 +1357,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
             //如果笔记的第一个附件是图片，则设置笔记的缩略图
             Vector<TNNoteAtt> noteAttrs = TNDbUtils.getAttrsByNoteLocalId(note.noteLocalId);
             if (noteAttrs.size() > 0) {//有图
-                MLog.d("saveNote", "save attr 第一个附件是图片");
+                MLog.d(TAG, "save attr 第一个附件是图片");
                 TNNoteAtt temp = noteAttrs.get(0);
                 if (temp.type > 10000 && temp.type < 20000) {
                     TNDb.getInstance().execSQL(TNSQLString.NOTE_UPDATE_THUMBNAIL, temp.path, note.noteLocalId);
@@ -1387,7 +1373,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
 
     private void syncEdit() {
         mProgressDialog.show();
-        presener.synchronizeData("EDIT");
+        syncPresenter.synchronizeData("EDIT");
     }
     //========================================回调========================================
 

@@ -290,6 +290,7 @@ public class TNChangeUserInfoAct extends TNActBase implements OnClickListener, O
     @Override
     public void onChangeNameOrEmailFailed(String msg, Exception e) {
         mProgressDialog.hide();
+        TNUtilsUi.showShortToast(msg);
     }
 
     @Override

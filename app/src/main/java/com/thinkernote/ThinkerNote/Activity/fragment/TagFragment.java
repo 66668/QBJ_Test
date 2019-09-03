@@ -105,7 +105,7 @@ public class TagFragment extends TNChildViewBase implements
         }
     }
 
-    public void tagDestory(){
+    public void tagDestory() {
 
     }
 
@@ -202,7 +202,9 @@ public class TagFragment extends TNChildViewBase implements
                 .getPackedPositionChild(packed);
         MLog.i(TAG, "groupPosition=" + groupPosition + " childPosition="
                 + childPosition);
-
+        if (childPosition < 0) {//
+            return false;
+        }
         TNTag tag = mGroups.get(groupPosition).tags.get(childPosition);
         mBundle.putSerializable("currentTag", tag);
         mActivity.addTagMenu(R.layout.menu_tag);

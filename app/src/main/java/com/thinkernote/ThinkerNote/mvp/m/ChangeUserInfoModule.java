@@ -95,11 +95,11 @@ public class ChangeUserInfoModule {
 
                         @Override
                         public void onNext(CommonBean bean) {
-                            MLog.d("mChangeNameOrEmail-onNext");
+                            MLog.d("mChangeNameOrEmail-onNext--" + bean.toString());
 
                             //处理返回结果
                             if (bean.getCode() == 0) {
-                                listener.onChangeNameOrEmailSuccess(bean,nameOrEmail, type);
+                                listener.onChangeNameOrEmailSuccess(bean, nameOrEmail, type);
                             } else {
                                 listener.onChangeNameOrEmailFailed(bean.getMessage(), null);
                             }
@@ -133,11 +133,11 @@ public class ChangeUserInfoModule {
 
                         @Override
                         public void onNext(CommonBean bean) {
-                            MLog.d("mChangeNameOrEmail-onNext");
+                            MLog.d("mChangeNameOrEmail-onNext--" + bean.toString());
 
                             //处理返回结果
                             if (bean.getCode() == 0) {
-                                listener.onChangeNameOrEmailSuccess(bean,nameOrEmail, type);
+                                listener.onChangeNameOrEmailSuccess(bean, nameOrEmail, type);
                             } else {
                                 listener.onChangeNameOrEmailFailed(bean.getMessage(), null);
                             }
