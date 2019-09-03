@@ -939,6 +939,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
     private void backDialog() {
         saveInput();
         if (!mNote.isModified() && (mRecord == null || mRecord.isStop())) {
+            MLog.d("SJY", "保存到本地退出");
             toFinish();
             return;
         }
@@ -1025,7 +1026,8 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         };
         mTimer.schedule(mTimerTask,
                 60 * 1000, //60 * 1000
-                90 * 1000);//60 * 1000
+                90 * 1000
+        );//60 * 1000
     }
 
     private void handleProgressDialog(String type) {
@@ -1061,8 +1063,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                 saveInput();
                 if (mNote.isModified() && checkNote()) {
                     mNote.prepareToSave();
-                    //异步执行
-                    Log.d("SJY", "2min自动保存-异步执行");
+                    Log.d("SJY", "2min自动保存-数据库保存");
                     pNoteSave(mNote, false);
                 }
                 break;
