@@ -8,8 +8,8 @@ android {
         applicationId "com.thinkernote.ThinkerNote"
         minSdkVersion 23//8-12 异步还能用，13+异步升级不能用 12
         targetSdkVersion 28//说明：28+需要大改代码，一些类不支持了/sjy-2019-04-23
-        versionCode 55
-        versionName "5.8.4"
+        versionCode 56
+        versionName "5.8.5"
 
         // 语音转文字没有对应的64位so包，所以只能使用32位的，配置如下：
         ndk {
