@@ -100,7 +100,7 @@ public class TNLoginAct extends TNActBase implements OnClickListener, OnLogListe
         //初始化 p
         logPresener = new LogPresenter(this, this);
         // 设置主界面不调用锁屏
-        TNSettings.getInstance().needShowLock2 = false;
+        TNSettings.getInstance().needShowLock_using = false;
     }
 
     private void initView() {

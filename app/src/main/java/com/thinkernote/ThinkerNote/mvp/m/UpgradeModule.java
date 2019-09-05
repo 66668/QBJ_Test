@@ -67,7 +67,7 @@ public class UpgradeModule {
 
                         //处理返回结果
                         if (bean.getCode() == 0) {
-                            MLog.d(TAG, "upgrade-成功" + bean.getData().toString());
+                            MLog.d(TAG, "upgrade-成功");
                             listener.onUpgradeSuccess(bean.getData());
                         } else {
                             listener.onUpgradeFailed(bean.getMsg(), null);

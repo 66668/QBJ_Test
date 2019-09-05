@@ -123,11 +123,33 @@ public class TNActBase extends Activity {
         configView();
         createStatus = 1;
 
-        if (!(TAG.equals("TNLoginAct")) && !(TAG.equals("TNSplashAct"))) {
+        //锁屏判断机制
+        if (!TAG.equals("TNLockAct") || !TAG.equals("TNSplashAct") && settings.lockPattern.size() > 0) {
+            //登陆成功后，可以开启锁屏配置了
+            TNSettings.getInstance().needShowLock_using = true;
+        } else {
+            //登陆成功后，可以开启锁屏配置了
+            TNSettings.getInstance().needShowLock_using = false;
+        }
+
+        if (settings.needShowLock_launch && !TNSettings.getInstance().isLogout && !TAG.equals("TNLockAct")) {//重新开启软件的锁屏
+            settings.needShowLock_launch = false;
+            if (settings.lockPattern.size() > 0) {
+                MLog.d("launch--锁");
+                Bundle b = new Bundle();
+                b.putInt("Type", 2);
+                b.putString("OriginalPath", settings.lockPattern.toString());
+                //解锁界面不可以使用singleTop模式,使用默认模式
+                MLog.e(TAG, "show TNLockAct");
+                Intent intent = new Intent(this, TNLockAct.class);
+                intent.putExtras(b);
+                startActivity(intent);
+            }
+        } else if (!(TAG.equals("TNLoginAct")) && !TAG.equals("TNSplashAct") && !TAG.equals("TNLockAct")) {//软件不关闭的锁屏判断
             TNUtilsUi.checkLockScreen(this);
-            if (settings.needShowLock && settings.needShowLock2 && !isFinishing() && !TNSettings.getInstance().isLogout) {
-                if (!(TAG.equals("TNLockAct") && getTitle().equals("lock"))
-                        && settings.lockPattern.size() > 0) {
+            if (settings.needShowLock && settings.needShowLock_using && !isFinishing() && !TNSettings.getInstance().isLogout) {
+                if (settings.lockPattern.size() > 0) {//getTitle().equals("lock") &&
+                    MLog.d("using--锁");
                     Bundle b = new Bundle();
                     b.putInt("Type", 2);
                     b.putString("OriginalPath", settings.lockPattern.toString());

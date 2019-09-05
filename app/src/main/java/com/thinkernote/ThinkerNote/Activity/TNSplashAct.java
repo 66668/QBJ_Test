@@ -125,9 +125,9 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
 //			Intent serviceIntent = new Intent(TNSplashAct.this, TNPushService.class);
 //			startService(serviceIntent);
 //		}
-        //设置重新登陆-不开启锁屏
-        TNSettings.getInstance().needShowLock2 = false;
 
+        //设置重新登陆-不开启锁屏
+        TNSettings.getInstance().needShowLock_using = false;
         if (getIntent().hasExtra(Intent.EXTRA_INTENT)) {
             extraBundle = new Bundle();
             extraBundle.putParcelable(Intent.EXTRA_INTENT,
@@ -182,6 +182,8 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
                     if (user == null) {
                         startActivity(TNLoginAct.class, extraBundle);
                     } else {
+                        //打开软件，需要锁判断
+                        TNSettings.getInstance().needShowLock_launch = true;
                         startToMain(TNMainAct.class, extraBundle);
                     }
                     finish();
@@ -190,6 +192,7 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
                     login(settings.loginname, passWord);
 
                 } else {
+
                     startActivity(TNLoginAct.class, extraBundle);
                     finish();
                 }
@@ -287,6 +290,8 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
             Bundle b = new Bundle();
             settings.isLogout = false;
             settings.savePref(false);
+            //打开软件，需要锁判断
+            TNSettings.getInstance().needShowLock_launch = true;
             startToMain(TNMainAct.class, b);
             finish();
         }

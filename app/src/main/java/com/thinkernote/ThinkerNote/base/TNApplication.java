@@ -31,12 +31,9 @@ public class TNApplication extends Application {
     public void onCreate() {
         super.onCreate();
         application = this;
-
+        //og初始化
+        MLog.init(true, "SJY");
         initialize();
-
-        //新网络框架 log初始化
-        MLog.init(true, "SJY");//release版 false
-
         //新网络框架 初始化
         HttpUtils.getInstance().init(this, MLog.DEBUG);
 

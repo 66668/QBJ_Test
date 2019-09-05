@@ -720,7 +720,7 @@ public class TNUtilsUi {
     private static boolean screenOff = true;
 
     /**
-     *  检测是否需要锁屏
+     *  检测系统是否触发解锁
      * @param context
      */
     public static void checkLockScreen(Context context) {

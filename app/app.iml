@@ -89,18 +89,18 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 29 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/Qingbiji_5.8.4/app/libs/alipaySdk-20180601.jar:unspecified@jar" level="project" />
-    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/Qingbiji_5.8.4/app/libs/android-async-http-1.4.4.jar:unspecified@jar" level="project" />
-    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/Qingbiji_5.8.4/app/libs/android_api.jar:unspecified@jar" level="project" />
-    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/Qingbiji_5.8.4/app/libs/BaiduLBS_Android.jar:unspecified@jar" level="project" />
-    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/Qingbiji_5.8.4/app/libs/httpmime-4.1.jar:unspecified@jar" level="project" />
-    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/Qingbiji_5.8.4/app/libs/Msc.jar:unspecified@jar" level="project" />
-    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/Qingbiji_5.8.4/app/libs/mta-sdk-1.6.2.jar:unspecified@jar" level="project" />
-    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/Qingbiji_5.8.4/app/libs/open_sdk.jar:unspecified@jar" level="project" />
-    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/Qingbiji_5.8.4/app/libs/pinyin4j-2.5.0.jar:unspecified@jar" level="project" />
-    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/Qingbiji_5.8.4/app/libs/commons-lang3-3.1.jar:unspecified@jar" level="project" />
-    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/Qingbiji_5.8.4/app/libs/Sunflower.jar:unspecified@jar" level="project" />
-    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/Qingbiji_5.8.4/app/libs/libammsdk.jar:unspecified@jar" level="project" />
+    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/QBJ_5.8.5/app/libs/alipaySdk-20180601.jar:unspecified@jar" level="project" />
+    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/QBJ_5.8.5/app/libs/android-async-http-1.4.4.jar:unspecified@jar" level="project" />
+    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/QBJ_5.8.5/app/libs/android_api.jar:unspecified@jar" level="project" />
+    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/QBJ_5.8.5/app/libs/BaiduLBS_Android.jar:unspecified@jar" level="project" />
+    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/QBJ_5.8.5/app/libs/httpmime-4.1.jar:unspecified@jar" level="project" />
+    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/QBJ_5.8.5/app/libs/Msc.jar:unspecified@jar" level="project" />
+    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/QBJ_5.8.5/app/libs/mta-sdk-1.6.2.jar:unspecified@jar" level="project" />
+    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/QBJ_5.8.5/app/libs/open_sdk.jar:unspecified@jar" level="project" />
+    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/QBJ_5.8.5/app/libs/pinyin4j-2.5.0.jar:unspecified@jar" level="project" />
+    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/QBJ_5.8.5/app/libs/commons-lang3-3.1.jar:unspecified@jar" level="project" />
+    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/QBJ_5.8.5/app/libs/Sunflower.jar:unspecified@jar" level="project" />
+    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/QBJ_5.8.5/app/libs/libammsdk.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="Gradle: androidx.collection:collection:1.1.0@jar" level="project" />
     <orderEntry type="library" name="Gradle: androidx.lifecycle:lifecycle-common:2.1.0-rc01@jar" level="project" />
     <orderEntry type="library" name="Gradle: androidx.arch.core:core-common:2.1.0-rc01@jar" level="project" />
@@ -117,7 +117,7 @@
     <orderEntry type="library" name="Gradle: io.reactivex.rxjava2:rxjava:2.2.12@jar" level="project" />
     <orderEntry type="library" name="Gradle: org.reactivestreams:reactive-streams:1.0.2@jar" level="project" />
     <orderEntry type="library" name="Gradle: com.google.code.gson:gson:2.8.5@jar" level="project" />
-    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/Qingbiji_5.8.4/app/libs/core-4.3.1-openDefaultRelease.aar:unspecified@jar" level="project" />
+    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/QBJ_5.8.5/app/libs/core-4.3.1-openDefaultRelease.aar:unspecified@jar" level="project" />
     <orderEntry type="library" name="Gradle: androidx.appcompat:appcompat:1.1.0-rc01@aar" level="project" />
     <orderEntry type="library" name="Gradle: androidx.legacy:legacy-support-v4:1.0.0@aar" level="project" />
     <orderEntry type="library" name="Gradle: androidx.fragment:fragment:1.1.0-rc01@aar" level="project" />
