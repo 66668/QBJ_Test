@@ -53,7 +53,7 @@ public class SplashModule {
 
                     @Override
                     public void onNext(LoginBean bean) {
-                        MLog.d(TAG, "mLogin-onNext");
+                        MLog.d(TAG, "mLogin-onNext"+bean.toString());
 
                         //处理返回结果
                         if (bean.getCode() == 0) {

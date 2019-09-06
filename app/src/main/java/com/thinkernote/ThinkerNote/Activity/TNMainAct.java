@@ -29,6 +29,7 @@ import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Utils.TNActivityManager;
+import com.thinkernote.ThinkerNote.dialog.CommonDialog;
 import com.thinkernote.ThinkerNote.dialog.CustomDialog;
 import com.thinkernote.ThinkerNote.dialog.UpdateDialog;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnUpgradeListener;
@@ -430,6 +431,22 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeLi
 
         //
         if (newVersionCode > info.versionCode) {
+            //需要判断手机是否支持最低版本
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                CommonDialog dialog = new CommonDialog(this, "有最新版，您的手机版本过低，新版本软件不支持升级!,建议在android6.0以上的手机更新最新版本", new CommonDialog.DialogCallBack() {
+                    @Override
+                    public void sureBack() {
+
+                    }
+
+                    @Override
+                    public void cancelBack() {
+
+                    }
+                });
+                dialog.show();
+                return;
+            }
 
             upgradeDialog = new UpdateDialog(this, info.versionName, newVersionName, description, new UpdateDialog.DialogCallBack() {
                 @Override
@@ -501,6 +518,9 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeLi
             return;
         }
         MLog.e(msg);
+        if (upgradeDialog != null) {
+            upgradeDialog.dismiss();
+        }
         endSynchronize(2);
         TNUtilsUi.showToast(msg);
     }

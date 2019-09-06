@@ -57,6 +57,9 @@ public class LoginBean extends CommonBean implements Serializable {
                 ", user_id=" + user_id +
                 ", token='" + token + '\'' +
                 ", expire_at='" + expire_at + '\'' +
+                '}' + "CommonBean{" +
+                "code=" + getCode() +
+                ", message='" + getMessage() + '\'' +
                 '}';
     }
 }

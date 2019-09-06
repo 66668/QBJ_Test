@@ -407,6 +407,22 @@ public class TNUserInfoAct extends TNActBase implements OnClickListener,
             MLog.d(TAG, newVersionName + "," + newSize);
 
             if (newVersionCode > info.versionCode) {
+                //需要判断手机是否支持最低版本
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                    CommonDialog dialog = new CommonDialog(this, "有最新版，您的手机版本过低，新版本软件不支持升级!,建议在android6.0以上的手机更新最新版本", new CommonDialog.DialogCallBack() {
+                        @Override
+                        public void sureBack() {
+
+                        }
+
+                        @Override
+                        public void cancelBack() {
+
+                        }
+                    });
+                    dialog.show();
+                    return;
+                }
                 upgradeDialog = new UpdateDialog(this, info.versionName, newVersionName, description, new UpdateDialog.DialogCallBack() {
                     @Override
                     public void sureBack() {
@@ -470,6 +486,7 @@ public class TNUserInfoAct extends TNActBase implements OnClickListener,
 
     @Override
     public void onDownloadFailed(String msg, Exception e) {
+        upgradeDialog.dismiss();
         TNUtilsUi.showToast(msg);
     }
 

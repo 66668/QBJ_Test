@@ -197,6 +197,7 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
                     finish();
                 }
                 isRunning = false;
+
             }
         }, 2000);
     }
@@ -209,6 +210,7 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
 
     //-----------------------------------p层调用-------------------------------------
     private void login(String name, String ps) {
+        MLog.d("SJY", "TNSplashAct--login--" + name + "--" + ps);
         presener.plogin(name, ps);
     }
 
@@ -217,6 +219,7 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
     }
 
     //-----------------------------------接口返回回调-------------------------------------
+    //重新登陆
     @Override
     public void onSuccess(Object obj) {
         loginBean = (LoginBean) obj;
@@ -237,9 +240,9 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
         //更新
         updateProfile();
 
-
     }
 
+    //重新登陆
     @Override
     public void onFailed(String msg, Exception e) {
         MLog.e(msg);
@@ -250,7 +253,6 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
         startActivity(TNLoginAct.class, b);
         finish();
     }
-
 
     @Override
     public void onProfileSuccess(Object obj) {
