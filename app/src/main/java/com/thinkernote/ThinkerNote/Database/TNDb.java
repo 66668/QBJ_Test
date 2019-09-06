@@ -182,7 +182,6 @@ public class TNDb extends SQLiteOpenHelper {
         return null;
     }
 
-    //TODO 不用 delete
     public void executeSQL(TNAction aAction) {
 //        MLog.d("TNDB--executeSQL", aAction.inputs.toString());
         try {

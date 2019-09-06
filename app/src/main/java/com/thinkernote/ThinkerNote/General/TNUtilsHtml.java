@@ -158,8 +158,6 @@ public class TNUtilsHtml {
         return str;
     }
 
-    //TODO html bug
-
     /**
      * @param content
      * @return

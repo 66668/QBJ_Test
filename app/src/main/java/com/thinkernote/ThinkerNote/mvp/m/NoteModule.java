@@ -1503,7 +1503,6 @@ public class NoteModule {
     }
 
     /**
-     * TODO 没有将下载的文件保存给note
      * 一条笔记下载详情（完全同步）
      * 两个接口串行，for循环接口调用
      * <p>

@@ -323,7 +323,7 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
 
             //================================02 文件夹相关的点击事件================================
             case R.id.folder_menu_sync: {
-                MLog.d("TNMainFragAct--文件夹--完全同步");
+                MLog.d("TNMainFragAct--文件夹--完全同步--" + mCurrCat.catName + "--" + mCurrCat.catId);
                 mMenuBuilder.destroy();
                 if (mCurrCat == null)
                     break;
