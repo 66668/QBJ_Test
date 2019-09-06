@@ -348,6 +348,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
                 mMenuBuilder.destroy();
                 TNNote note = TNDbUtils.getNoteByNoteLocalId(mCurNoteId);
                 if (note.noteId == -1) {
+                    TNUtilsUi.showToast("该笔记是本地笔记，请先同步");
                     break;
                 }
                 showSyncDialog(note.noteId);

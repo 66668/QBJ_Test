@@ -1,6 +1,7 @@
 package com.thinkernote.ThinkerNote.mvp.m;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 
 import com.thinkernote.ThinkerNote.DBHelper.NoteAttrDbHelper;
@@ -1502,7 +1503,8 @@ public class NoteModule {
     }
 
     /**
-     * 一条笔记下载详情
+     * TODO 没有将下载的文件保存给note
+     * 一条笔记下载详情（完全同步）
      * 两个接口串行，for循环接口调用
      * <p>
      */
@@ -1516,7 +1518,7 @@ public class NoteModule {
                     public void accept(CommonBean3<GetNoteByNoteIdBean> bean) {
                         //更新数据库
                         if (bean.getCode() == 0) {
-                            MLog.e("getDetailByNoteId--获取笔记详情--doOnError");
+                            MLog.d("getDetailByNoteId--getNoteByNoteId--更新笔记数据库");
                             updataCloudNoteSQL(bean.getNote());
                         }
                     }
@@ -1525,12 +1527,14 @@ public class NoteModule {
                     @Override
                     public void accept(Throwable e) {
                         MLog.e("getDetailByNoteId--获取笔记详情--doOnError");
+                        listener.onDownloadNoteFailed(new Exception(e.toString()), null);
                     }
                 })
                 .concatMap(new Function<CommonBean3<GetNoteByNoteIdBean>, Observable<Boolean>>() {
                     @Override
                     public Observable<Boolean> apply(CommonBean3<GetNoteByNoteIdBean> dataBean) {
                         if (dataBean.getCode() == 0) {
+                            MLog.d("getDetailByNoteId--concatMap");
                             TNNote note = TNDbUtils.getNoteByNoteId(noteId);
                             Vector<TNNoteAtt> atts = note.atts;
 
@@ -1539,10 +1543,10 @@ public class NoteModule {
                                 return Observable.fromIterable(atts)
                                         .concatMap(new Function<TNNoteAtt, Observable<InputStream>>() {
                                             @Override
-                                            public Observable<InputStream> apply(TNNoteAtt att) {
+                                            public Observable<InputStream> apply(final TNNoteAtt att) {
 
                                                 final String path = TNUtilsAtt.getAttPath(att.attId, att.type);
-                                                MLog.d("下载附件路径：" + path);
+                                                MLog.d("getDetailByNoteId--附件路径：" + path);
                                                 if (path == null) {
                                                     //下一个循环
                                                     return Observable.empty();
@@ -1567,6 +1571,8 @@ public class NoteModule {
                                                                 //保存下载文件
                                                                 MLog.e("getDetailByNoteId--保存文件--doOnNext");
                                                                 writeFile(inputStream, new File(path));
+                                                                //下载的文件，更新note日志
+                                                                saveFileSQL(att, att.attId, path);
                                                             }
                                                         })
                                                         .doOnError(new Consumer<Throwable>() {
@@ -1631,6 +1637,27 @@ public class NoteModule {
 
     //================================================处理相关（数据库处理已经是异步状态）================================================
 
+    /**
+     * /下载文件后，更新note日志
+     */
+    private void saveFileSQL(TNNoteAtt att, long attId, String path) {
+        File file = new File(path);
+        if (!file.exists()) {
+            MLog.e("SJY", "文件下载完没有路径了？");
+            return;
+        }
+        int width = 0;
+        int height = 0;
+        if (att.type > 10000 && att.type < 20000) {
+            BitmapFactory.Options bfo = TNUtilsAtt.getImageSize(path);
+            width = bfo.outWidth;
+            height = bfo.outHeight;
+        }
+        TNDb.getInstance().execSQL(TNSQLString.ATT_SET_DOWNLOADED, path, width, height, 2, attId);
+//        if (att != null) {
+//            att.path = path;
+//        }
+    }
 
     /**
      * 将输入流写入文件
@@ -1639,7 +1666,6 @@ public class NoteModule {
      * @param file
      */
     private void writeFile(InputStream inputString, File file) {
-
         if (file.exists()) {
             file.delete();
         } else {
