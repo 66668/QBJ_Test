@@ -188,8 +188,13 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
                     }
                     finish();
                 } else if ((settings.expertTime != 0) && (settings.expertTime * 1000 - System.currentTimeMillis() < 0)) {
-                    passWord = settings.password;//回调中需要使用
-                    login(settings.loginname, passWord);
+                    try {
+                        passWord = settings.password;//回调中需要使用
+                        login(settings.loginname, passWord);
+                    } catch (Exception e) {
+                        //不确定是否是这里崩溃 try catch可删除
+                        toLogin();
+                    }
 
                 } else {
 
@@ -206,6 +211,15 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         // 屏蔽任何按键
         return true;
+    }
+
+    private void toLogin() {
+        TNSettings settings = TNSettings.getInstance();
+        Bundle b = new Bundle();
+        settings.isLogout = true;
+        settings.savePref(false);
+        startActivity(TNLoginAct.class, b);
+        finish();
     }
 
     //-----------------------------------p层调用-------------------------------------
@@ -246,12 +260,7 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
     @Override
     public void onFailed(String msg, Exception e) {
         MLog.e(msg);
-        TNSettings settings = TNSettings.getInstance();
-        Bundle b = new Bundle();
-        settings.isLogout = true;
-        settings.savePref(false);
-        startActivity(TNLoginAct.class, b);
-        finish();
+        toLogin();
     }
 
     @Override
@@ -302,11 +311,6 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
     @Override
     public void onProfileFailed(String msg, Exception e) {
         MLog.e(msg);
-        TNSettings settings = TNSettings.getInstance();
-        Bundle b = new Bundle();
-        settings.isLogout = true;
-        settings.savePref(false);
-        startActivity(TNLoginAct.class, b);
-        finish();
+        toLogin();
     }
 }
