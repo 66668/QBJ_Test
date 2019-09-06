@@ -12,11 +12,15 @@ import com.thinkernote.ThinkerNote.Database.TNSQLString;
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsAtt;
 import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.mvp.MyRxManager;
 import com.thinkernote.ThinkerNote.mvp.m.NoteViewDownloadModule;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnNoteViewDownloadListener;
 
 import java.io.File;
 import java.util.Vector;
+
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
 /**
  * 笔记详情--下载文件的类
@@ -46,6 +50,7 @@ public class NoteViewDownloadPresenter implements OnNoteViewDownloadListener {
         downloadingAtts = new Vector<TNNoteAtt>();
 
         module = new NoteViewDownloadModule(act, this);
+        compositeDisposable = new CompositeDisposable();
     }
 
     public void setNewNote(TNNote note) {
@@ -132,14 +137,36 @@ public class NoteViewDownloadPresenter implements OnNoteViewDownloadListener {
 
 
     //===========================接口调用=================================
+    CompositeDisposable compositeDisposable;
+
+    /**
+     * 手动结束Rx请求
+     */
+    public void cancelDownload() {
+        if (compositeDisposable != null) {
+            compositeDisposable.dispose();
+            compositeDisposable.clear();
+        }
+    }
+
     //调用接口
     private void singledownload(TNNoteAtt tnNoteAtt, TNNote tnNote) {
-        module.singleDownload(tnNoteAtt, tnNote);
+        module.singleDownload(tnNoteAtt, tnNote, new NoteViewDownloadModule.DisposeListener() {
+            @Override
+            public void disposeCallback(Disposable d) {
+                compositeDisposable.add(d);
+            }
+        });
     }
 
     //调用接口
     private void listDownload(TNNoteAtt tnNoteAtt, TNNote tnNote, int position) {
-        module.listDownload(tnNoteAtt, tnNote, position);
+        module.listDownload(tnNoteAtt, tnNote, position, new NoteViewDownloadModule.DisposeListener() {
+            @Override
+            public void disposeCallback(Disposable d) {
+                compositeDisposable.add(d);
+            }
+        });
     }
     //===========================接口返回=================================
 

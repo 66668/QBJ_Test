@@ -30,11 +30,15 @@ import okhttp3.ResponseBody;
 /**
  * 下载文件 m层 具体实现
  */
-public class NoteViewDownloadModule  {
+public class NoteViewDownloadModule {
 
     private Context context;
     private static final String TAG = "SJY";
     private OnNoteViewDownloadListener listener;
+
+    public interface DisposeListener {
+        void disposeCallback(Disposable d);
+    }
 
     public NoteViewDownloadModule(Context context, OnNoteViewDownloadListener listener) {
         this.listener = listener;
@@ -42,7 +46,7 @@ public class NoteViewDownloadModule  {
     }
 
 
-    public void listDownload(final TNNoteAtt att, final TNNote tnNote, final int position) {
+    public void listDownload(final TNNoteAtt att, final TNNote tnNote, final int position, final DisposeListener disposelistener) {
 
         // check file downloadSize
         File file = null;
@@ -93,12 +97,12 @@ public class NoteViewDownloadModule  {
                     @Override
                     public void onComplete() {
                         MLog.d(TAG, "listDownload--onCompleted");
-                        listener.onListDownloadSuccess( tnNote, newAtt, position);
+                        listener.onListDownloadSuccess(tnNote, newAtt, position);
                     }
 
                     @Override
                     public void onSubscribe(Disposable d) {
-
+                        disposelistener.disposeCallback(d);
                     }
 
                     @Override
@@ -115,7 +119,7 @@ public class NoteViewDownloadModule  {
                 });
     }
 
-    public void singleDownload(final TNNoteAtt att, final TNNote tnNote) {
+    public void singleDownload(final TNNoteAtt att, final TNNote tnNote,final DisposeListener disposelistener) {
         File file = null;
         if (!TextUtils.isEmpty(att.path)) {
             file = new File(att.path);
@@ -170,7 +174,7 @@ public class NoteViewDownloadModule  {
 
                     @Override
                     public void onSubscribe(Disposable d) {
-
+                        disposelistener.disposeCallback(d);
                     }
 
                     @Override

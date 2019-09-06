@@ -1,10 +1,5 @@
 package com.thinkernote.ThinkerNote.mvp;
 
-import com.thinkernote.ThinkerNote.Utils.MLog;
-
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-
 /**
  * 请求管理，主动关闭网络请求
  */

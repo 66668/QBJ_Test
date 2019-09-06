@@ -350,8 +350,18 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
         mProgressDialog.dismiss();
         if (mPopuMenu != null)
             mPopuMenu.dismiss();
-        presenter = null;
+
         super.onDestroy();
+
+        if (presenter != null) {
+            presenter = null;
+        }
+
+        if (download != null) {
+            download.cancelDownload();
+            download = null;
+        }
+
     }
 
 

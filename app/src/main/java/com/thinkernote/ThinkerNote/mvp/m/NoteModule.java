@@ -2184,7 +2184,6 @@ public class NoteModule {
                 MLog.e(TAG, "文件夹不存在：" + e.toString());
             }
         } else {
-            MLog.d(TAG, "setNoteResult--" + msg);
         }
 
     }
