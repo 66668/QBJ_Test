@@ -186,7 +186,6 @@ public class NoteFragment extends TNChildViewBase implements OnItemLongClickList
      * 界面消失的处理
      */
     public void noteDestroy() {
-        MLog.e("SJY","NoteFragment--onDestroy");
         //本界面触发了同步才走同步取消
         if (isFragSyncing) {
             syncPresenter.cancelSync();

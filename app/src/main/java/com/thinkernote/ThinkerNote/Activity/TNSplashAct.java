@@ -47,13 +47,11 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
     private LoginBean loginBean;
     private ProfileBean profileBean;
 
-
     // Activity methods
     //-------------------------------------------------------------------------------
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MLog.d("SJY", "TNSplashAct--onCreate");
         //解决首次安装按home键置入后台，从桌面图标点击重新启动的问题
         if (!isTaskRoot()) {
             Intent intent = getIntent();
@@ -117,44 +115,45 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
     }
 
     private void initViews() {
+        try {
 
-        setViews();
-        //
-        presener = new SplashPresenter(this, this);
-//		if(!TNSettings.getInstance().serviceRuning){
-//			Intent serviceIntent = new Intent(TNSplashAct.this, TNPushService.class);
-//			startService(serviceIntent);
-//		}
 
-        //设置重新登陆-不开启锁屏
-        TNSettings.getInstance().needShowLock_using = false;
-        if (getIntent().hasExtra(Intent.EXTRA_INTENT)) {
-            extraBundle = new Bundle();
-            extraBundle.putParcelable(Intent.EXTRA_INTENT,
-                    (Intent) getIntent().getExtras().get(Intent.EXTRA_INTENT));
-        }
+            setViews();
+            //
+            presener = new SplashPresenter(this, this);
 
-        if (TNSettings.getInstance().hasDbError) {
-            CommonDialog dialog = new CommonDialog(this, R.string.alert_DBErrorHint,
-                    new CommonDialog.DialogCallBack() {
-                        @Override
-                        public void sureBack() {
-                            //重置 数据库
+            //设置重新登陆-不开启锁屏
+            TNSettings.getInstance().needShowLock_using = false;
+            if (getIntent().hasExtra(Intent.EXTRA_INTENT)) {
+                extraBundle = new Bundle();
+                extraBundle.putParcelable(Intent.EXTRA_INTENT,
+                        (Intent) getIntent().getExtras().get(Intent.EXTRA_INTENT));
+            }
 
-                            resetDb();
-                            startRun();
-                            TNSettings.getInstance().hasDbError = false;
-                            TNSettings.getInstance().savePref(false);
-                        }
+            if (TNSettings.getInstance().hasDbError) {
+                CommonDialog dialog = new CommonDialog(this, R.string.alert_DBErrorHint,
+                        new CommonDialog.DialogCallBack() {
+                            @Override
+                            public void sureBack() {
+                                //重置 数据库
 
-                        @Override
-                        public void cancelBack() {
-                        }
+                                resetDb();
+                                startRun();
+                                TNSettings.getInstance().hasDbError = false;
+                                TNSettings.getInstance().savePref(false);
+                            }
 
-                    });
-            dialog.show();
-        } else {
-            startRun();
+                            @Override
+                            public void cancelBack() {
+                            }
+
+                        });
+                dialog.show();
+            } else {
+                startRun();
+            }
+        } catch (Exception e) {
+            toLogin();
         }
     }
 
@@ -171,38 +170,33 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
         isRunning = true;
 
         final TNSettings settings = TNSettings.getInstance();
-
         new Handler().postDelayed(new Runnable() {
-
             @Override
             public void run() {
-                if (settings.isLogin()) {
-                    //如果user表被异常清空
-                    TNUser user = TNDbUtils.getUser(settings.userId);
-                    if (user == null) {
-                        startActivity(TNLoginAct.class, extraBundle);
-                    } else {
-                        //打开软件，需要锁判断
-                        TNSettings.getInstance().needShowLock_launch = true;
-                        startToMain(TNMainAct.class, extraBundle);
-                    }
-                    finish();
-                } else if ((settings.expertTime != 0) && (settings.expertTime * 1000 - System.currentTimeMillis() < 0)) {
-                    try {
+                try {
+                    if (settings.isLogin()) {
+                        //如果user表被异常清空
+                        TNUser user = TNDbUtils.getUser(settings.userId);
+                        if (user == null) {
+                            startActivity(TNLoginAct.class, extraBundle);
+                        } else {
+                            //打开软件，需要锁判断
+                            TNSettings.getInstance().needShowLock_launch = true;
+                            startToMain(TNMainAct.class, extraBundle);
+                        }
+                        finish();
+                    } else if ((settings.expertTime != 0) && (settings.expertTime * 1000 - System.currentTimeMillis() < 0)) {
                         passWord = settings.password;//回调中需要使用
                         login(settings.loginname, passWord);
-                    } catch (Exception e) {
-                        //不确定是否是这里崩溃 try catch可删除
-                        toLogin();
+                    } else {
+
+                        startActivity(TNLoginAct.class, extraBundle);
+                        finish();
                     }
-
-                } else {
-
-                    startActivity(TNLoginAct.class, extraBundle);
-                    finish();
+                    isRunning = false;
+                } catch (Exception e) {
+                    toLogin();
                 }
-                isRunning = false;
-
             }
         }, 2000);
     }

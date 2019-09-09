@@ -109,7 +109,6 @@ public class TagFragment extends TNChildViewBase implements
     }
 
     public void tagDestory() {
-        MLog.e("SJY", "TagFragment--onDestroy");
         if (isFragSyncing) {
             syncPresenter.cancelSync();
         }

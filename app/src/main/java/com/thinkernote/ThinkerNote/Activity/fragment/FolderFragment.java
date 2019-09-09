@@ -275,7 +275,6 @@ public class FolderFragment extends TNChildViewBase implements
     }
 
     public void folderDestory() {
-        MLog.e("SJY","FolderFragment--onDestroy");
         if(isFragSyncing){
             presenter.cancelSync();
         }
