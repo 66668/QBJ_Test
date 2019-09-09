@@ -24,6 +24,7 @@ import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
+import com.thinkernote.ThinkerNote.mvp.MyRxManager;
 import com.thinkernote.ThinkerNote.other.PullToRefreshExpandableListView;
 import com.thinkernote.ThinkerNote.other.PullToRefreshExpandableListView.OnHeadViewVisibleChangeListener;
 import com.thinkernote.ThinkerNote.other.PullToRefreshExpandableListView.OnRefreshListener;
@@ -57,6 +58,7 @@ public class TagFragment extends TNChildViewBase implements
     //p
     private FragmentTagPresenter presenter;
     private SyncPresenter syncPresenter;
+    private boolean isFragSyncing;//判断本界面是否正在同步
 
     public TagFragment(TNMainFragAct activity) {
         mActivity = activity;
@@ -65,6 +67,7 @@ public class TagFragment extends TNChildViewBase implements
         //p
         presenter = new FragmentTagPresenter(mActivity, this);
         syncPresenter = new SyncPresenter(mActivity, this);
+        isFragSyncing = false;
         init();
     }
 
@@ -106,6 +109,10 @@ public class TagFragment extends TNChildViewBase implements
     }
 
     public void tagDestory() {
+        MLog.e("SJY", "TagFragment--onDestroy");
+        if (isFragSyncing) {
+            syncPresenter.cancelSync();
+        }
 
     }
 
@@ -213,8 +220,21 @@ public class TagFragment extends TNChildViewBase implements
 
     @Override
     public void onRefresh() {
-        TNUtilsUi.showNotification(mActivity, R.string.alert_NoteView_Synchronizing, false);
-        syncPresenter.synchronizeData("TAG");
+        if (TNUtils.isNetWork()) {
+            //主线同步
+            if (MyRxManager.getInstance().isSyncing()) {
+                TNUtilsUi.showNotification(mActivity, R.string.alert_Synchronize_TooMuch, false);
+                mListview.onRefreshComplete();
+                return;
+            }
+            TNUtilsUi.showNotification(mActivity, R.string.alert_NoteView_Synchronizing, false);
+            isFragSyncing = true;
+            syncPresenter.synchronizeData("TAG");
+        } else {
+            mListview.onRefreshComplete();
+            TNUtilsUi.showToast(R.string.alert_Net_NotWork);
+        }
+
     }
 
     public void dialogCallBackSyncCancell() {
@@ -354,6 +374,7 @@ public class TagFragment extends TNChildViewBase implements
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                isFragSyncing = false;
                 mListview.onRefreshComplete();
                 configView(1);
                 if (state == 0) {

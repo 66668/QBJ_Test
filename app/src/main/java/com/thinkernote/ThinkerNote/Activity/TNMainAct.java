@@ -73,13 +73,13 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeLi
         TNActivityManager.getInstance().finishOtherActivity(this);
         mainPresenter = new UpgradePresenter(this, this);
         syncPresenter = new SyncPresenter(this, this);
-        setViews();
+        MLog.e("MainAct" + TAG);
         MyRxManager.getInstance().setSyncing(false);//修改状态值
+        setViews();
         //第一次进入，打开帮助界面
         if (mSettings.firstLaunch) {
             startActivity(TNHelpAct.class);
         }
-
         //检查更新
         if (savedInstanceState == null) {
             if (TNUtils.isNetWork()) {
@@ -140,7 +140,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeLi
 
     @Override
     public void onDestroy() {
-        syncPresenter.finishSync();
+        syncPresenter.cancelSync();
         isDestory = true;
         super.onDestroy();
         MLog.d("TNMainAct--onDestroy");

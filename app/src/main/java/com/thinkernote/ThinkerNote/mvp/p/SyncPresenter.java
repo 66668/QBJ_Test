@@ -87,9 +87,6 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
     }
 
     //============================p层============================
-    public void finishSync() {
-        cancelSync();
-    }
 
     /**
      * 手动结束请求
@@ -99,7 +96,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
             disposable.dispose();
             disposable.clear();
             MyRxManager.getInstance().setSyncing(false);
-            MLog.d("disposable.isDisposed()--"+disposable.isDisposed());
+            MLog.d("disposable.isDisposed()--" + disposable.isDisposed());
             return disposable.isDisposed();
         } else {
             MyRxManager.getInstance().setSyncing(false);
@@ -498,7 +495,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
         }
         if (type.equals("EDIT")) {
             //结束
-            finishSync();
+            cancelSync();
             onView.onSyncEditSuccess();
         } else {
             MLog.d(TAG, "同步--获取所有回收站笔记id");

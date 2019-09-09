@@ -58,6 +58,7 @@ public class NoteFragment extends TNChildViewBase implements OnItemLongClickList
 
     //p
     private SyncPresenter syncPresenter;
+    private boolean isFragSyncing;//判断本界面是否正在同步
 
     private TNSettings mSettings = TNSettings.getInstance();
 
@@ -67,6 +68,7 @@ public class NoteFragment extends TNChildViewBase implements OnItemLongClickList
 
         //p
         syncPresenter = new SyncPresenter(mActivity, this);
+        isFragSyncing = false;
         init();
     }
 
@@ -159,14 +161,9 @@ public class NoteFragment extends TNChildViewBase implements OnItemLongClickList
                 mPullListview.onRefreshComplete();
                 return;
             }
-            //
-            if (MyRxManager.getInstance().isSyncing()) {
-                TNUtilsUi.showNotification(mActivity, R.string.alert_Synchronize_TooMuch, false);
-                mPullListview.onRefreshComplete();
-                return;
-            }
             mPageNum = 1;
             TNUtilsUi.showNotification(mActivity, R.string.alert_NoteView_Synchronizing, false);
+            isFragSyncing = true;
             syncPresenter.synchronizeData("NOTE");
         } else {
             mPullListview.onRefreshComplete();
@@ -189,7 +186,11 @@ public class NoteFragment extends TNChildViewBase implements OnItemLongClickList
      * 界面消失的处理
      */
     public void noteDestroy() {
-        syncPresenter.finishSync();
+        MLog.e("SJY","NoteFragment--onDestroy");
+        //本界面触发了同步才走同步取消
+        if (isFragSyncing) {
+            syncPresenter.cancelSync();
+        }
     }
 
     // -------------------------------------handler------------------------------------------
@@ -204,6 +205,7 @@ public class NoteFragment extends TNChildViewBase implements OnItemLongClickList
             @Override
             public void run() {
                 MLog.d("frag同步--全部笔记--同步结束");
+                isFragSyncing = false;
                 mPullListview.onRefreshComplete();
                 if (state == 0) {
                     //正常结束

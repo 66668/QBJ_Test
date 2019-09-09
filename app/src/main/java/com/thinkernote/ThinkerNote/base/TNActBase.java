@@ -42,7 +42,6 @@ public class TNActBase extends Activity {
         dialogs = new Vector<Dialog>();
 
         createStatus = (savedInstanceState == null) ? 0 : 2;
-
         //进入动画
         overridePendingTransition(R.anim.pull_in_from_right, R.anim.hold);
 

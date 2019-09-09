@@ -38,6 +38,7 @@ import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsAtt;
 import com.thinkernote.ThinkerNote.General.TNUtilsHtml;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
+import com.thinkernote.ThinkerNote.mvp.MyRxManager;
 import com.thinkernote.ThinkerNote.other.PullToRefreshExpandableListView;
 import com.thinkernote.ThinkerNote.other.PullToRefreshExpandableListView.OnRefreshListener;
 import com.thinkernote.ThinkerNote.R;
@@ -67,6 +68,7 @@ public class FolderFragment extends TNChildViewBase implements
     private LinearLayout mLoadingView;
     //p
     SyncPresenter presenter;
+    private boolean isFragSyncing;//判断本界面是否正在同步
 
 
     private TNCatListAdapter mCatlistAdapter = null;
@@ -77,6 +79,7 @@ public class FolderFragment extends TNChildViewBase implements
         mSettings = TNSettings.getInstance();
         //p
         presenter = new SyncPresenter(mActivity, this);
+        isFragSyncing = false;
         init();
     }
 
@@ -254,13 +257,28 @@ public class FolderFragment extends TNChildViewBase implements
 
     @Override
     public void onRefresh() {
-        TNUtilsUi.showNotification(mActivity, R.string.alert_NoteView_Synchronizing, false);
-        pSynchronizeData();
+        if (TNUtils.isNetWork()) {
+            //主线同步
+            if (MyRxManager.getInstance().isSyncing()) {
+                TNUtilsUi.showNotification(mActivity, R.string.alert_Synchronize_TooMuch, false);
+                mCatListView.onRefreshComplete();
+                return;
+            }
+            TNUtilsUi.showNotification(mActivity, R.string.alert_NoteView_Synchronizing, false);
+            pSynchronizeData();
+        } else {
+            mCatListView.onRefreshComplete();
+            TNUtilsUi.showToast(R.string.alert_Net_NotWork);
+        }
+
 
     }
 
-    public void folderDestory(){
-
+    public void folderDestory() {
+        MLog.e("SJY","FolderFragment--onDestroy");
+        if(isFragSyncing){
+            presenter.cancelSync();
+        }
     }
 
     public void dialogCB() {
@@ -529,7 +547,6 @@ public class FolderFragment extends TNChildViewBase implements
     }
 
     private void getNativeCatList() {
-        MLog.i(TAG, "getCatlist");
         mCatList.clear();
         mNoteList.clear();
         if (mPCat.catId == -1) {
@@ -572,7 +589,6 @@ public class FolderFragment extends TNChildViewBase implements
         int groupId;
     }
 
-
     /**
      * 同步结束后的操作
      *
@@ -582,6 +598,7 @@ public class FolderFragment extends TNChildViewBase implements
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                isFragSyncing = false;
                 mCatListView.onRefreshComplete();
                 if (state == 0) {
                     //正常结束
@@ -606,12 +623,12 @@ public class FolderFragment extends TNChildViewBase implements
     //-------------------------------------p层调用 同步所有数据----------------------------------------
 
     private void pSynchronizeData() {
+        isFragSyncing = true;
         presenter.synchronizeData("FOLDER");
     }
 
     @Override
     public void onSyncSuccess(String obj) {
-
         endSynchronize(0);
     }
 

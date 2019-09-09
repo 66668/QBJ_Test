@@ -780,17 +780,19 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        switch (currentPage) {
-            case 0://全部笔记
-                ((NoteFragment) mCurrChild).noteDestroy();
-                break;
-            case 1:
-                ((FolderFragment) mCurrChild).folderDestory();
-                break;
-            case 2:
-                ((TagFragment) mCurrChild).tagDestory();
-                break;
-
+        //关闭所有的资源
+        for (int i = 0; i < mChildPages.size(); i++) {
+            switch (i) {
+                case 0://全部笔记
+                    ((NoteFragment) mChildPages.get(i)).noteDestroy();
+                    break;
+                case 1:
+                    ((FolderFragment) mChildPages.get(i)).folderDestory();
+                    break;
+                case 2:
+                    ((TagFragment) mChildPages.get(i)).tagDestory();
+                    break;
+            }
         }
 
         finish();

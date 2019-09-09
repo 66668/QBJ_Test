@@ -92,7 +92,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.notelist);
-        MLog.e("TNNoteListAct" + "跳转  TNNoteListAct");
+        MLog.e("TNNoteListAct" + "--" + TAG);
         setViews();
         MyRxManager.getInstance().setSyncing(false);//初始化值
         DisplayMetrics metric = new DisplayMetrics();
@@ -144,7 +144,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
     @Override
     public void onDestroy() {
         mProgressDialog.dismiss();
-        syncPresenter.finishSync();
+        syncPresenter.cancelSync();
         super.onDestroy();
     }
 

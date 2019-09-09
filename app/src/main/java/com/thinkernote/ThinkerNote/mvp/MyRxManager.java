@@ -1,9 +1,12 @@
 package com.thinkernote.ThinkerNote.mvp;
 
+import com.thinkernote.ThinkerNote.Utils.MLog;
+
 /**
  * 请求管理，主动关闭网络请求
  */
 public class MyRxManager {
+    private static String TAG = "Rx";
     private static MyRxManager sInstance = new MyRxManager();
 
     private boolean isSyncing;//是否在同步中
