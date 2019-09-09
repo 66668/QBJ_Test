@@ -287,31 +287,6 @@ public class TNLoginAct extends TNActBase implements OnClickListener, OnLogListe
     private void getQQUnionId(final String accessToken, final String refreshToken) {
         String url = "https://graph.qq.com/oauth2.0/me?access_token=" + accessToken + "&unionid=1";
         pGetQQUnionId(url, accessToken, refreshToken);
-
-//        AsyncHttpClient client = new AsyncHttpClient();
-//        client.get(url, new AsyncHttpResponseHandler() {
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, byte[] data) {
-//                super.onSuccess(statusCode, headers, data);
-//                String s = new String(data);
-//                String[] split = s.split(":");
-//                s = split[split.length - 1];
-//                split = s.split("\"");
-//                s = split[1];
-//                String unionId = s;
-//                //
-//
-//                pLoginThird(3, unionId, System.currentTimeMillis(), accessToken, refreshToken, "QQ" + System.currentTimeMillis());
-//
-//            }
-//
-//            @Override
-//            public void onFailure(int statusCode, Header[] headers, byte[] data, Throwable e) {
-//                super.onFailure(statusCode, headers, data, e);
-//                Toast.makeText(getApplicationContext(), "Auth Fail", Toast.LENGTH_LONG).show();
-//            }
-//        });
-
     }
 
 
@@ -469,6 +444,7 @@ public class TNLoginAct extends TNActBase implements OnClickListener, OnLogListe
         }
     }
 
+    //=====================================qq登陆===========================================
     @Override
     public void onQQUnionIdSuccess(Object obj, String accessToken, String refreshToken) {
         QQBean bean = (QQBean) obj;
@@ -600,6 +576,7 @@ public class TNLoginAct extends TNActBase implements OnClickListener, OnLogListe
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                mLoginingDialog.show();
                                 pLoginThird(9, unionid, System.currentTimeMillis(), access_token, refresh_token, nickName);
                             }
                         });

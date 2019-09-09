@@ -1,6 +1,6 @@
 package com.thinkernote.ThinkerNote.Data;
 
-import com.thinkernote.ThinkerNote.Action.TNAction.TNRunner;
+import com.thinkernote.ThinkerNote.General.TNRunner;
 
 public class TNPreferenceChild {
 	String childName;

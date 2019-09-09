@@ -1,4 +1,4 @@
-package com.thinkernote.ThinkerNote.mvp.http;
+package com.thinkernote.ThinkerNote.mvp.http.url_main;
 
 
 import com.thinkernote.ThinkerNote.Utils.MLog;
@@ -21,6 +21,7 @@ import com.thinkernote.ThinkerNote.bean.main.OldNotePicBean;
 import com.thinkernote.ThinkerNote.bean.main.TagListBean;
 import com.thinkernote.ThinkerNote.bean.main.WxpayBean;
 import com.thinkernote.ThinkerNote.bean.settings.FeedBackBean;
+import com.thinkernote.ThinkerNote.mvp.http.URLUtils;
 import com.thinkernote.ThinkerNote.mvp.http.fileprogress.FileProgressListener;
 
 import java.util.List;
@@ -133,6 +134,32 @@ public interface MyHttpService {
     @Streaming
     @GET
     Observable<ResponseBody> getQQUnionID(@Url String url);
+
+    /**
+     * 获取access_token等等的信息(微信)
+     * <p>
+     * 正确返回：
+     * 错误返回：
+     *
+     * @param url
+     * @return
+     */
+    @Streaming
+    @GET
+    Observable<ResponseBody> getWchatToken(@Url String url);
+
+    /**
+     * 获取微信info信息(微信)
+     * <p>
+     * 正确返回：
+     * 错误返回：
+     *
+     * @param url
+     * @return
+     */
+    @Streaming
+    @GET
+    Observable<ResponseBody> getWchatInfo(@Url String url);
 
     /**
      * 02 第三方登录：qq登录/sina登录/wechat登录
@@ -450,7 +477,6 @@ public interface MyHttpService {
 
 
     /**
-     *
      * @return
      */
     @Headers("Content-Type:application/x-www-form-urlencoded")
@@ -461,7 +487,6 @@ public interface MyHttpService {
             , @Field("session_token") String session_token);
 
     /**
-     *
      * @return
      */
     @FormUrlEncoded
@@ -481,7 +506,6 @@ public interface MyHttpService {
             , @Field("session_token") String session_token);
 
     /**
-     *
      * @return
      */
     @Headers("Content-Type:application/x-www-form-urlencoded")
@@ -702,7 +726,6 @@ public interface MyHttpService {
             , @Field("session_token") String session_token);
 
     /**
-     *
      * @return
      */
     @FormUrlEncoded

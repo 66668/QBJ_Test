@@ -77,10 +77,6 @@ import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-//import com.iflytek.speech.SpeechError;
-//import com.iflytek.speech.SynthesizerPlayer;
-//import com.iflytek.speech.SynthesizerPlayerListener;
-
 /**
  * 笔记详情
  */

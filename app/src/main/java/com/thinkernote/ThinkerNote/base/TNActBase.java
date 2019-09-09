@@ -1,20 +1,6 @@
 package com.thinkernote.ThinkerNote.base;
 
-import java.lang.ref.WeakReference;
-import java.util.Vector;
-
-import com.baidu.mobstat.StatService;
-import com.thinkernote.ThinkerNote.Utils.TNActivityManager;
-import com.thinkernote.ThinkerNote.Activity.TNLockAct;
-import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote.Action.TNAction;
-import com.thinkernote.ThinkerNote.General.TNSettings;
-import com.thinkernote.ThinkerNote.General.TNUtilsUi;
-import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote.dialog.MenuDialog;
-
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,6 +8,18 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
+
+import com.baidu.mobstat.StatService;
+import com.thinkernote.ThinkerNote.Activity.TNLockAct;
+import com.thinkernote.ThinkerNote.General.TNSettings;
+import com.thinkernote.ThinkerNote.General.TNUtilsUi;
+import com.thinkernote.ThinkerNote.R;
+import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.Utils.TNActivityManager;
+import com.thinkernote.ThinkerNote.dialog.MenuDialog;
+
+import java.lang.ref.WeakReference;
+import java.util.Vector;
 
 public class TNActBase extends Activity {
     private static final String kThinkerNotePackage = TNSettings.kThinkerNotePackage;
@@ -77,7 +75,6 @@ public class TNActBase extends Activity {
 
     @Override
     public void finish() {
-        TNAction.unregister(this);
         super.finish();
     }
 
@@ -188,7 +185,6 @@ public class TNActBase extends Activity {
 
     @Override
     public void onDestroy() {
-        TNAction.unregister(this);
         TNActivityManager.getInstance().deleteActivity(this);
         for (Dialog dialog : dialogs) {
             MLog.e(TAG, "dismiss:" + dialog + " showing:" + dialog.isShowing());
@@ -328,11 +324,4 @@ public class TNActBase extends Activity {
     }
     //===================================handler软引用 --结束==========================================
 
-    public void RespondChangeSkin(TNAction aAction) {
-        setViews();
-    }
-
-    public void addDialog(AlertDialog dialog) {
-        dialogs.add(dialog);
-    }
 }

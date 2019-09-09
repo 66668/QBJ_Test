@@ -8,7 +8,7 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-import com.thinkernote.ThinkerNote.Action.TNAction.TNRunner;
+import com.thinkernote.ThinkerNote.General.TNRunner;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 

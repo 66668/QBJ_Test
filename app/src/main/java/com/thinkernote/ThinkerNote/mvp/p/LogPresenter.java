@@ -4,20 +4,28 @@ import android.content.Context;
 
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnLogListener;
+import com.thinkernote.ThinkerNote.mvp.listener.v.OnWchatListener;
 import com.thinkernote.ThinkerNote.mvp.m.LogModule;
 
 /**
  * 登录 p层 具体实现
  */
-public class LogPresenter implements  OnLogListener {
+public class LogPresenter implements OnLogListener, OnWchatListener {
     private Context context;
     private OnLogListener onLogView;
+    private OnWchatListener onWchatView;
     //p层调用M层方法
     private LogModule logModule;
 
     public LogPresenter(Context context, OnLogListener logListener) {
         this.context = context;
         this.onLogView = logListener;
+        logModule = new LogModule(context);
+    }
+
+    public LogPresenter(Context context, OnWchatListener logListener) {
+        this.context = context;
+        this.onWchatView = logListener;
         logModule = new LogModule(context);
     }
 
@@ -45,6 +53,15 @@ public class LogPresenter implements  OnLogListener {
 
     public void getQQUnionId(String url, String accessToken, String refreshToken) {
         logModule.mGetQQUnionId(this, url, accessToken, refreshToken);
+    }
+
+    /**
+     * module有两个连续调用的接口
+     *
+     * @param url
+     */
+    public void getWchatToken(String url) {
+        logModule.getWchatToken(url, this);
     }
 
     //==========================结果回调==============================
@@ -87,5 +104,18 @@ public class LogPresenter implements  OnLogListener {
     public void onLogProfileFailed(String msg, Exception e) {
         onLogView.onLogProfileFailed(msg, e);
     }
-    //========================================================
+
+
+    //============================微信登陆相关============================
+    //第一次接口，获取token
+
+    @Override
+    public void onWchatSuccess() {
+        onWchatView.onWchatSuccess();
+    }
+
+    @Override
+    public void onWchatFailed(String msg, Exception e) {
+        onWchatView.onWchatFailed(msg, e);
+    }
 }

@@ -5,6 +5,12 @@ import android.content.Context;
 import com.google.gson.Gson;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.Utils.SPUtil;
+import com.thinkernote.ThinkerNote.bean.login.WchatInfoBean;
+import com.thinkernote.ThinkerNote.bean.login.WchatTokenBean;
+import com.thinkernote.ThinkerNote.mvp.http.rxbus.RxBus;
+import com.thinkernote.ThinkerNote.mvp.http.rxbus.RxBusBaseMessage;
+import com.thinkernote.ThinkerNote.mvp.http.rxbus.RxCodeConstants;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnLogListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnUserinfoListener;
 import com.thinkernote.ThinkerNote.bean.CommonBean;
@@ -12,11 +18,12 @@ import com.thinkernote.ThinkerNote.bean.CommonBean2;
 import com.thinkernote.ThinkerNote.bean.login.LoginBean;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
 import com.thinkernote.ThinkerNote.bean.login.QQBean;
-import com.thinkernote.ThinkerNote.mvp.http.MyHttpService;
-
-import org.reactivestreams.Subscriber;
+import com.thinkernote.ThinkerNote.mvp.http.url_main.MyHttpService;
+import com.thinkernote.ThinkerNote.mvp.listener.v.OnWchatListener;
+import com.thinkernote.ThinkerNote.wxapi.WXEntryActivity;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -116,10 +123,10 @@ public class LogModule {
                             //拿到原始json,需要删除外层 callback();拿到 {"client_id":"101399197","openid":"5B0CB916D4A9BDB5D838A3F66AC0B684","unionid":"UID_CAE5B3A01604A9F7B709D3BF934E7AA4"}
                             String jsonStr = new String(responseBody.bytes());
                             //拿到标准json
-                            String jsonData = jsonStr.substring(jsonStr.indexOf('(')+1, jsonStr.lastIndexOf(')'));
+                            String jsonData = jsonStr.substring(jsonStr.indexOf('(') + 1, jsonStr.lastIndexOf(')'));
                             MLog.d("qq返回---jsonStr:" + jsonStr + "\njsonData:" + jsonData);
                             if (jsonData.contains("unionid")) {
-                                //再使用Retrofit自带的JSON解析（或者别的什么）
+                                //再使用Retrofit自带的JSON解析（或者别的json解析都可以）
                                 QQBean bean = new Gson().fromJson(jsonData, QQBean.class);
                                 listener.onQQUnionIdSuccess(bean, accessToken, refreshToken);
                             } else {
@@ -127,6 +134,120 @@ public class LogModule {
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
+                        }
+                    }
+                });
+
+    }
+
+    /**
+     * 微信登陆（1）先获取token
+     *
+     * @param code
+     * @param listener
+     */
+    public void getWchatToken(String code, final OnWchatListener listener) {
+        /*
+         * 将你前面得到的AppID、AppSecret、code，拼接成URL 获取access_token等等的信息(微信)
+         */
+        String url = getWchatCodeRequest(code);
+
+        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                .getWchatToken(url)//接口方法
+                .subscribeOn(Schedulers.io())//固定样式
+                .observeOn(AndroidSchedulers.mainThread())//固定样式
+                .subscribe(new Observer<ResponseBody>() {
+                    @Override
+                    public void onComplete() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        listener.onWchatFailed("获取微信token失败", null);
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(ResponseBody responseBody) {
+                        try {
+                            String jsonStr = new String(responseBody.bytes());
+                            if (jsonStr.contains("access_token")) {
+                                WchatTokenBean bean = new Gson().fromJson(jsonStr, WchatTokenBean.class);
+                                String access_token = bean.getAccess_token();
+                                String openid = bean.getOpenid();
+                                String refresh_token = bean.getRefresh_token();
+                                String get_user_info_url = getWchatUserInfo(access_token, openid);
+                                //
+                                getWchatInfo(get_user_info_url, access_token, refresh_token, listener);
+                            } else {
+                                listener.onWchatFailed("获取微信token失败", null);
+                            }
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            listener.onWchatFailed("获取微信token失败", null);
+                        }
+                    }
+                });
+
+    }
+
+    /**
+     * 微信登陆（2）获取info
+     *
+     * @param url
+     * @param access_token
+     * @param refresh_token
+     * @param listener
+     */
+    public void getWchatInfo(String url, final String access_token, final String refresh_token, final OnWchatListener listener) {
+        MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
+                .getWchatInfo(url)//接口方法
+                .subscribeOn(Schedulers.io())//固定样式
+                .observeOn(AndroidSchedulers.mainThread())//固定样式
+                .subscribe(new Observer<ResponseBody>() {
+                    @Override
+                    public void onComplete() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        listener.onWchatFailed("获取微信Info失败", null);
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(ResponseBody responseBody) {
+                        try {
+                            String jsonStr = new String(responseBody.bytes());
+                            if (jsonStr.contains("unionid")) {
+                                WchatInfoBean bean = new Gson().fromJson(jsonStr, WchatInfoBean.class);
+                                String unionid = bean.getUnionid();
+                                String nickName = bean.getNickname();
+                                //
+                                //数据返回,登录界面处理,无法使用 intent值跳转
+                                SPUtil.putString("unionid", unionid);
+                                SPUtil.putString("access_token", access_token);
+                                SPUtil.putString("refresh_token", refresh_token);
+                                SPUtil.putString("nickName", nickName);
+                                listener.onWchatSuccess();
+                            } else {
+                                listener.onWchatFailed("获取微信Info失败", null);
+                            }
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            listener.onWchatFailed("获取微信Info失败", null);
                         }
                     }
                 });
@@ -254,4 +375,43 @@ public class LogModule {
                 });
     }
 
+    /**
+     * 微信登陆相关处理
+     */
+    private String GetCodeRequest = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code";
+
+    private String GetUserInfo = "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID";
+
+    private String WX_APP_ID = "wx2c2721939e9d54e3";
+    private String WX_APP_SECRET = "51c4ca7f07d5e761f82028e49c05936a";
+
+    private String getWchatCodeRequest(String code) {
+        String result = null;
+        GetCodeRequest = GetCodeRequest.replace("APPID",
+                urlEnodeUTF8(WX_APP_ID));
+        GetCodeRequest = GetCodeRequest.replace("SECRET",
+                urlEnodeUTF8(WX_APP_SECRET));
+        GetCodeRequest = GetCodeRequest.replace("CODE", urlEnodeUTF8(code));
+        result = GetCodeRequest;
+        return result;
+    }
+
+    private String getWchatUserInfo(String access_token, String openid) {
+        String result = null;
+        GetUserInfo = GetUserInfo.replace("ACCESS_TOKEN",
+                urlEnodeUTF8(access_token));
+        GetUserInfo = GetUserInfo.replace("OPENID", urlEnodeUTF8(openid));
+        result = GetUserInfo;
+        return result;
+    }
+
+    private String urlEnodeUTF8(String str) {
+        String result = str;
+        try {
+            result = URLEncoder.encode(str, "UTF-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 }

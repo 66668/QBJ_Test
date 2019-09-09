@@ -7,7 +7,7 @@ import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnReportListener;
 import com.thinkernote.ThinkerNote.bean.CommonBean;
 import com.thinkernote.ThinkerNote.bean.settings.FeedBackBean;
-import com.thinkernote.ThinkerNote.mvp.http.MyHttpService;
+import com.thinkernote.ThinkerNote.mvp.http.url_main.MyHttpService;
 import com.thinkernote.ThinkerNote.mvp.http.URLUtils;
 
 import java.io.File;

@@ -8,7 +8,7 @@ import com.thinkernote.ThinkerNote.mvp.listener.v.OnPayListener;
 import com.thinkernote.ThinkerNote.bean.CommonBean1;
 import com.thinkernote.ThinkerNote.bean.main.AlipayBean;
 import com.thinkernote.ThinkerNote.bean.main.WxpayBean;
-import com.thinkernote.ThinkerNote.mvp.http.MyHttpService;
+import com.thinkernote.ThinkerNote.mvp.http.url_main.MyHttpService;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;

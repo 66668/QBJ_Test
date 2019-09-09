@@ -11,8 +11,7 @@ import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Service.LocationService;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote.mvp.http.HttpUtils;
-import com.thinkernote.ThinkerNote.mvp.http.third.WeichatHttpUtils;
+import com.thinkernote.ThinkerNote.mvp.http.url_main.HttpUtils;
 
 /**
  * sjy 0607
@@ -35,8 +34,6 @@ public class TNApplication extends Application {
         //新网络框架 初始化
         HttpUtils.getInstance().init(this, MLog.DEBUG);
 
-        //微信初始化网络
-        WeichatHttpUtils.getInstance().init(this, MLog.DEBUG);
 
         //leakcanary初始化（打包时清除）
 //        if (LeakCanary.isInAnalyzerProcess(this)) {

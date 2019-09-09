@@ -1,4 +1,4 @@
-package com.thinkernote.ThinkerNote.mvp.http;
+package com.thinkernote.ThinkerNote.mvp.http.url_main;
 
 import android.content.Context;
 import android.util.Log;
@@ -11,6 +11,10 @@ import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.Utils.CheckNetworkUtils;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.base.Constants;
+import com.thinkernote.ThinkerNote.mvp.http.HttpHead;
+import com.thinkernote.ThinkerNote.mvp.http.NullOnEmptyConverterFactory;
+import com.thinkernote.ThinkerNote.mvp.http.ParamNames;
+import com.thinkernote.ThinkerNote.mvp.http.URLUtils;
 import com.thinkernote.ThinkerNote.mvp.http.fileprogress.FileProgressInterceptor;
 import com.thinkernote.ThinkerNote.mvp.http.fileprogress.FileProgressListener;
 

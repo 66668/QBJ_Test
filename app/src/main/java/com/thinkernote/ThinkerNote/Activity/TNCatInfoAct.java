@@ -10,7 +10,6 @@ import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 
-import com.thinkernote.ThinkerNote.Action.TNAction.TNRunner;
 import com.thinkernote.ThinkerNote.Adapter.TNPreferenceAdapter;
 import com.thinkernote.ThinkerNote.Data.TNCat;
 import com.thinkernote.ThinkerNote.Data.TNPreferenceChild;
@@ -18,16 +17,17 @@ import com.thinkernote.ThinkerNote.Data.TNPreferenceGroup;
 import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.Database.TNSQLString;
+import com.thinkernote.ThinkerNote.General.TNRunner;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.dialog.CommonDialog;
 import com.thinkernote.ThinkerNote.mvp.MyRxManager;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnCatInfoListener;
 import com.thinkernote.ThinkerNote.mvp.p.CatInfoPresenter;
-import com.thinkernote.ThinkerNote.base.TNActBase;
 
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
@@ -83,7 +83,6 @@ public class TNCatInfoAct extends TNActBase
     //-------------------------------------------------------------------------------
     protected void configView() {
         getCatInfos();
-
         ((BaseExpandableListAdapter) mListView.getExpandableListAdapter()).notifyDataSetChanged();
         for (int i = 0; i < mGroups.size(); i++) {
             mListView.expandGroup(i);

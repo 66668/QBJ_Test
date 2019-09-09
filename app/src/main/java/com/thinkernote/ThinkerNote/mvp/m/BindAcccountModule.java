@@ -9,7 +9,7 @@ import com.thinkernote.ThinkerNote.bean.CommonBean;
 import com.thinkernote.ThinkerNote.bean.CommonBean2;
 import com.thinkernote.ThinkerNote.bean.login.LoginBean;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
-import com.thinkernote.ThinkerNote.mvp.http.MyHttpService;
+import com.thinkernote.ThinkerNote.mvp.http.url_main.MyHttpService;
 
 
 import io.reactivex.Observer;

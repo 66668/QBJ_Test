@@ -8,7 +8,7 @@ import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 
-import com.thinkernote.ThinkerNote.Action.TNAction.TNRunner;
+import com.thinkernote.ThinkerNote.General.TNRunner;
 import com.thinkernote.ThinkerNote.Adapter.TNPreferenceAdapter;
 import com.thinkernote.ThinkerNote.Data.TNPreferenceChild;
 import com.thinkernote.ThinkerNote.Data.TNPreferenceGroup;
@@ -16,10 +16,10 @@ import com.thinkernote.ThinkerNote.Data.TNTag;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote.dialog.CommonDialog;
-import com.thinkernote.ThinkerNote.mvp.p.TagInfoPresenter;
-import com.thinkernote.ThinkerNote.mvp.listener.v.OnTagInfoListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
+import com.thinkernote.ThinkerNote.dialog.CommonDialog;
+import com.thinkernote.ThinkerNote.mvp.listener.v.OnTagInfoListener;
+import com.thinkernote.ThinkerNote.mvp.p.TagInfoPresenter;
 
 import java.util.Vector;
 

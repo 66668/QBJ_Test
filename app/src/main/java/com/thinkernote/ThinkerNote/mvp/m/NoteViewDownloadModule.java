@@ -11,7 +11,7 @@ import com.thinkernote.ThinkerNote.General.TNUtilsAtt;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnNoteViewDownloadListener;
-import com.thinkernote.ThinkerNote.mvp.http.MyHttpService;
+import com.thinkernote.ThinkerNote.mvp.http.url_main.MyHttpService;
 import com.thinkernote.ThinkerNote.mvp.http.URLUtils;
 
 import java.io.File;

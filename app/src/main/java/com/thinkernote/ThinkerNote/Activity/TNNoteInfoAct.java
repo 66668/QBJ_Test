@@ -18,7 +18,7 @@ import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.LinearLayout;
 
-import com.thinkernote.ThinkerNote.Action.TNAction.TNRunner;
+import com.thinkernote.ThinkerNote.General.TNRunner;
 import com.thinkernote.ThinkerNote.Adapter.TNPreferenceAdapter;
 import com.thinkernote.ThinkerNote.Data.TNCat;
 import com.thinkernote.ThinkerNote.Data.TNNote;
