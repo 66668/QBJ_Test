@@ -284,6 +284,11 @@ public class TNSQLString {
                     "FROM `Note`" +
                     "WHERE `trash` = 0 AND `syncState` != 5 AND `userId` = ? ";
 
+    public final static String NOTE_GET_ALL_BY_FOLDER =
+            "SELECT * " +
+                    "FROM `Note`" +
+                    "WHERE `trash` = 0 AND `syncState` != 5 AND `userId` = ? AND `catId` = ?";
+
     public final static String NOTE_COUNT_BYCAT =
             "SELECT count(*) FROM `Note` " +
                     "WHERE `trash` = 0 AND `syncState` != 5 AND `catId` = ? AND `userId` = ?";

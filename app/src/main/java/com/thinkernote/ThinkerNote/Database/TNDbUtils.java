@@ -146,7 +146,16 @@ public class TNDbUtils {
             TNNote note = getNote(data.get(i));
             notes.add(note);
         }
+        return notes;
+    }
 
+    public static Vector<TNNote> getFolderAllNoteList(long userId,long folderId) {
+        Vector<TNNote> notes = new Vector<TNNote>();
+        Vector<Vector<String>> data = NoteDbHelper.getFolderAllNoteList(userId,folderId);
+        for (int i = 0; i < data.size(); i++) {
+            TNNote note = getNote(data.get(i));
+            notes.add(note);
+        }
         return notes;
     }
 
@@ -332,7 +341,7 @@ public class TNDbUtils {
         } catch (Exception e) {
             e.printStackTrace();
             //该异常只在TNMainAct的2-11-2的数据处理函数使用，这里只使用try catch 不处理即可 sjy
-            MLog.e("TNDbUtils--getNoteByOldDb:"+e.toString());
+            MLog.e("TNDbUtils--getNoteByOldDb:" + e.toString());
         }
         Vector<TNNoteAtt> atts = getAttrsByNoteLocalIdByOldDb(note.noteLocalId);
 

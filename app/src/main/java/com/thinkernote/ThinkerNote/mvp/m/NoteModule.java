@@ -703,14 +703,14 @@ public class NoteModule {
      *
      * @param listener
      */
-    public void getAllNotesId(long folderId, final INoteModuleListener listener) {
+    public void getFolderAllNotesId(final long folderId, final INoteModuleListener listener) {
         MyHttpService.Builder.getHttpServer()//
                 .GetFolderNoteIds(folderId, settings.token)
                 .doOnNext(new Consumer<AllNotesIdsBean>() {
                     @Override
                     public void accept(AllNotesIdsBean bean) {
                         if (bean.getCode() == 0) {
-                            synCloudNoteById(bean.getNote_ids());
+                            synCloudNoteById(bean.getNote_ids(),folderId);
                         }
                     }
                 })
@@ -1868,6 +1868,42 @@ public class NoteModule {
     private void synCloudNoteById(final List<AllNotesIdsBean.NoteIdItemBean> cloudIds) {
 
         Vector<TNNote> allNotes = TNDbUtils.getAllNoteList(TNSettings.getInstance().userId);
+
+        for (int i = 0; i < allNotes.size(); i++) {
+            boolean isExit = false;
+            TNNote note = allNotes.get(i);
+            for (int j = 0; j < cloudIds.size(); j++) {
+                if (note.noteId == cloudIds.get(j).getId()) {
+                    isExit = true;
+                    break;
+                }
+            }
+            if (!isExit && note.syncState != 7) {
+                TNDb.beginTransaction();
+                try {
+                    //
+                    MLog.d("删除本地笔记--" + note.title);
+                    TNDb.getInstance().deleteSQL(TNSQLString.NOTE_DELETE_BY_NOTEID, new Object[]{note.noteId});
+
+                    TNDb.setTransactionSuccessful();
+                } catch (Exception e) {
+                    MLog.e("synCloudNoteById" + e.toString());
+                    TNDb.endTransaction();
+                } finally {
+                    TNDb.endTransaction();
+                }
+            }
+        }
+
+    }
+
+    /**
+     * 与云端同步数据比较，以云端为主，本地不存在的就删除（异步中进行的）
+     */
+    private void synCloudNoteById(final List<AllNotesIdsBean.NoteIdItemBean> cloudIds, long folderId) {
+
+        Vector<TNNote> allNotes = TNDbUtils.getFolderAllNoteList(TNSettings.getInstance().userId, folderId);
+
         for (int i = 0; i < allNotes.size(); i++) {
             boolean isExit = false;
             TNNote note = allNotes.get(i);

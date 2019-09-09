@@ -44,7 +44,6 @@ import static com.thinkernote.ThinkerNote.Utils.MLog.i;
 /**
  * 主页--我的笔记
  * 样式：act+3个frag
- * 说明：syncCats的2-10和2-11-2，与main不同
  * <p>
  * sjy 0704
  */
