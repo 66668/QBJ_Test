@@ -19,21 +19,20 @@ import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.Database.TNSQLString;
 import com.thinkernote.ThinkerNote.General.TNConst;
-import com.thinkernote.ThinkerNote.General.TNHandleError;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
-import com.thinkernote.ThinkerNote.mvp.MyRxManager;
-import com.thinkernote.ThinkerNote.other.HorizontalPager;
-import com.thinkernote.ThinkerNote.other.HorizontalPager.OnScreenSwitchListener;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.base.TNActBase;
+import com.thinkernote.ThinkerNote.base.TNChildViewBase;
 import com.thinkernote.ThinkerNote.dialog.CommonDialog;
+import com.thinkernote.ThinkerNote.mvp.MyRxManager;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnPagerListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnSyncListener;
 import com.thinkernote.ThinkerNote.mvp.p.MainFragPresenter;
 import com.thinkernote.ThinkerNote.mvp.p.SyncFolderPresenter;
-import com.thinkernote.ThinkerNote.base.TNActBase;
-import com.thinkernote.ThinkerNote.base.TNChildViewBase;
+import com.thinkernote.ThinkerNote.other.HorizontalPager;
+import com.thinkernote.ThinkerNote.other.HorizontalPager.OnScreenSwitchListener;
 
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
@@ -261,8 +260,9 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
                     b.putLong("NoteLocalId", mCurrNote.noteLocalId);
                     startActivity(TNNoteEditAct.class, b);
                 } else {
-                    TNHandleError.handleErrorCode(this,
-                            this.getResources().getString(R.string.alert_NoteView_NotCompleted));
+                    Toast.makeText(this,
+                            R.string.alert_NoteView_NotCompleted,
+                            Toast.LENGTH_SHORT).show();
                 }
                 break;
             }

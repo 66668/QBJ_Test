@@ -12,7 +12,6 @@ import com.tencent.mm.sdk.modelmsg.SendAuth;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
-import com.thinkernote.ThinkerNote.Action.TNAction;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Utils.SPUtil;
 import com.thinkernote.ThinkerNote.base.TNActBase;
@@ -125,8 +124,6 @@ public class WXEntryActivity extends TNActBase implements IWXAPIEventHandler {
                         String nickName = response.getString("nickname");
                         //
                         MLog.d("触发微信登录界面");
-                        //
-//                        TNAction.runActionAsync(TNActionType.LoginThird, 9, unionid, System.currentTimeMillis(), access_token, refresh_token, nickName);
 
                         //数据返回,登录界面处理,无法使用 intent值跳转
                         MLog.d("触发微信登录界面", unionid, access_token, refresh_token, nickName);
@@ -202,7 +199,6 @@ public class WXEntryActivity extends TNActBase implements IWXAPIEventHandler {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        TNAction.unregister(this);
     }
 
 }

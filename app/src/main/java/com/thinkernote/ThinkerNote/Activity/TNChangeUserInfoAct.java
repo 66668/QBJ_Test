@@ -1,20 +1,5 @@
 package com.thinkernote.ThinkerNote.Activity;
 
-import com.thinkernote.ThinkerNote.DBHelper.UserDbHelper;
-import com.thinkernote.ThinkerNote.Database.TNDb;
-import com.thinkernote.ThinkerNote.Database.TNDbUtils;
-import com.thinkernote.ThinkerNote.Database.TNSQLString;
-import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote.General.TNHandleError;
-import com.thinkernote.ThinkerNote.General.TNSettings;
-import com.thinkernote.ThinkerNote.General.TNUtils;
-import com.thinkernote.ThinkerNote.General.TNUtilsUi;
-import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote.mvp.p.ChangeUserInfoPresenter;
-import com.thinkernote.ThinkerNote.mvp.listener.v.OnChangeUserInfoListener;
-import com.thinkernote.ThinkerNote.base.TNActBase;
-import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
-
 import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Message;
@@ -22,6 +7,20 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.thinkernote.ThinkerNote.DBHelper.UserDbHelper;
+import com.thinkernote.ThinkerNote.Database.TNDb;
+import com.thinkernote.ThinkerNote.Database.TNDbUtils;
+import com.thinkernote.ThinkerNote.Database.TNSQLString;
+import com.thinkernote.ThinkerNote.General.TNSettings;
+import com.thinkernote.ThinkerNote.General.TNUtils;
+import com.thinkernote.ThinkerNote.General.TNUtilsUi;
+import com.thinkernote.ThinkerNote.R;
+import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.base.TNActBase;
+import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
+import com.thinkernote.ThinkerNote.mvp.listener.v.OnChangeUserInfoListener;
+import com.thinkernote.ThinkerNote.mvp.p.ChangeUserInfoPresenter;
 
 import org.json.JSONObject;
 
@@ -106,20 +105,18 @@ public class TNChangeUserInfoAct extends TNActBase implements OnClickListener, O
             String newUserName = mUserNameView.getText()
                     .toString().trim();
             if (newUserName.length() == 0) {
-                TNHandleError.handleErrorCode(this,
-                        TNUtils.getAppContext().getResources().getString(R.string.alert_UserInfo_NewUserNameBlank));
+                TNUtilsUi.showToast(R.string.alert_UserInfo_NewUserNameBlank);
                 return;
             }
 
             if (!TNUtils.checkRegex(TNUtils.USERNAME_REGEX, newUserName)) {
-                TNUtilsUi.alert(this, R.string.alert_Reg_UsernameWrong);
+                TNUtilsUi.showToast(R.string.alert_Reg_UsernameWrong);
                 return;
             }
 
             String userPwd = mUserNamePswView.getText().toString();
             if (userPwd.length() == 0) {
-                TNHandleError.handleErrorCode(this,
-                        TNUtils.getAppContext().getResources().getString(R.string.alert_UserInfo_UserPwdBlank));
+                TNUtilsUi.showToast(R.string.alert_UserInfo_UserPwdBlank);
                 return;
             }
             mProgressDialog.show();
@@ -129,33 +126,28 @@ public class TNChangeUserInfoAct extends TNActBase implements OnClickListener, O
         } else if ("password".equals(mType)) {
             String newPwd = mNewPswView.getText().toString().trim();
             if (newPwd.length() == 0) {
-                TNHandleError.handleErrorCode(this,
-                        TNUtils.getAppContext().getResources().getString(R.string.alert_UserInfo_NewPwdBlank));
+                TNUtilsUi.showToast(R.string.alert_UserInfo_NewPwdBlank);
                 return;
             }
             if (newPwd.length() > 20) {
-                TNUtilsUi.alert(this,
-                        R.string.alert_UserInfo_Password_Long);
+                TNUtilsUi.showToast(R.string.alert_UserInfo_Password_Long);
                 return;
             }
             String confirmPwd = mNewPswAgainView.getText()
                     .toString().trim();
             if (!confirmPwd.equals(newPwd)) {
-                TNHandleError.handleErrorCode(this,
-                        TNUtils.getAppContext().getResources().getString(R.string.alert_UserInfo_ConfirmPwdUnmatch));
+                TNUtilsUi.showToast(R.string.alert_UserInfo_ConfirmPwdUnmatch);
                 return;
             }
 
             String oldPwd = mOldPswView.getText()
                     .toString().trim();
             if (oldPwd.length() == 0) {
-                TNHandleError.handleErrorCode(this,
-                        TNUtils.getAppContext().getResources().getString(R.string.alert_UserInfo_OldPwdBlank));
+                TNUtilsUi.showToast(R.string.alert_UserInfo_OldPwdBlank);
                 return;
             }
 //			if (!TNSettings.getInstance().password.equals(oldPwd)){
-//				TNHandleError.handleErrorCode(this,
-//						TNUtils.getAppContext().getResources().getString(R.string.alert_UserInfo_UserPwdWrong));
+//            TNUtilsUi.showToast(R.string.alert_UserInfo_UserPwdWrong);
 //				return;
 //			}
             // try modify password
@@ -166,20 +158,17 @@ public class TNChangeUserInfoAct extends TNActBase implements OnClickListener, O
         } else {
             String newEmail = mEmailView.getText().toString().trim();
             if (newEmail.length() == 0) {
-                TNHandleError.handleErrorCode(this,
-                        TNUtils.getAppContext().getResources().getString(R.string.alert_UserInfo_NewEmailBlank));
+                TNUtilsUi.showToast(R.string.alert_UserInfo_NewEmailBlank);
                 return;
             }
             if (!TNUtils.checkRegex(TNUtils.FULL_EMAIL_REGEX, newEmail)) {
-                TNHandleError.handleErrorCode(this,
-                        TNUtils.getAppContext().getResources().getString(R.string.alert_UserInfo_EmailWrong));
+                TNUtilsUi.showToast(R.string.alert_UserInfo_EmailWrong);
                 return;
             }
 
             String userPwd = mEmailPswView.getText().toString().trim();
             if (userPwd.length() == 0) {
-                TNHandleError.handleErrorCode(this,
-                        TNUtils.getAppContext().getResources().getString(R.string.alert_UserInfo_UserPwdBlank));
+                TNUtilsUi.showToast(R.string.alert_UserInfo_UserPwdBlank);
                 return;
             }
             mProgressDialog.show();
@@ -234,7 +223,7 @@ public class TNChangeUserInfoAct extends TNActBase implements OnClickListener, O
                 try {
                     //
                     TNSettings settings = TNSettings.getInstance();
-                    TNDb.getInstance().execSQL(TNSQLString.USER_UPDATE_PWD, newPs, settings.userId );
+                    TNDb.getInstance().execSQL(TNSQLString.USER_UPDATE_PWD, newPs, settings.userId);
                     TNDb.setTransactionSuccessful();
                     settings.password = newPs;
                     settings.savePref(false);
@@ -266,12 +255,12 @@ public class TNChangeUserInfoAct extends TNActBase implements OnClickListener, O
                     if (type.equals("userName")) {
                         settings.username = nameOrEmail;
                         settings.loginname = nameOrEmail;
-                        String userId = settings.userId+"";
+                        String userId = settings.userId + "";
                         TNDb.getInstance().execSQL(TNSQLString.USER_UPDATE_NAME, nameOrEmail, userId);
                     } else {
                         settings.email = nameOrEmail;
-                        String userId = settings.userId+"";
-                        TNDb.getInstance().execSQL(TNSQLString.USER_UPDATE_EMAIL,nameOrEmail, userId);
+                        String userId = settings.userId + "";
+                        TNDb.getInstance().execSQL(TNSQLString.USER_UPDATE_EMAIL, nameOrEmail, userId);
                     }
                     //
                     TNDb.setTransactionSuccessful();

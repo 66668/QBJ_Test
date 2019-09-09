@@ -3,13 +3,8 @@ package com.thinkernote.ThinkerNote.Database;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.thinkernote.ThinkerNote.Action.TNAction;
-import com.thinkernote.ThinkerNote.Action.TNAction.TNActionResult;
-import com.thinkernote.ThinkerNote.General.TNActionType2;
-import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsAtt;
 import com.thinkernote.ThinkerNote.Utils.MLog;
@@ -36,9 +31,6 @@ public class TNDb2 extends SQLiteOpenHelper {
         super(TNUtils.getAppContext(), DB_NAME, null, DB_VER);
 
         db = getWritableDatabase();
-
-        TNAction.regRunner(TNActionType2.Db_Execute, this, "executeSQL");
-        TNAction.regRunner(TNActionType2.DBReset, this, "DBReset");
     }
 
     public static TNDb2 getInstance() {
@@ -187,63 +179,63 @@ public class TNDb2 extends SQLiteOpenHelper {
         return null;
     }
 
-    public void executeSQL(TNAction aAction) {
-//        MLog.d(TAG, aAction.inputs.toString());
-        try {
-            String sql = (String) aAction.inputs.get(0);
-            if (sql.startsWith("SELECT")) {
-                String[] args = new String[aAction.inputs.size() - 1];
-                for (int i = 1; i < aAction.inputs.size(); i++) {
-                    args[i - 1] = aAction.inputs.get(i).toString();
-                }
-                Cursor cursor = db.rawQuery(sql, args);
-
-                Vector<Vector<String>> allData = new Vector<Vector<String>>();
-                while (cursor.moveToNext()) {
-                    Vector<String> rowData = new Vector<String>();
-                    for (int i = 0; i < cursor.getColumnCount(); i++) {
-                        String value = cursor.getString(i);
-                        if (value != null)
-                            rowData.add(value);
-                        else
-                            rowData.add("0");
-                    }
-                    allData.add(rowData);
-                }
-                aAction.outputs.add(allData);
-                cursor.close();
-            } else if (sql.startsWith("INSERT")) {
-                int start = 0, end = 0;
-                String tableName = "";
-                ContentValues values = new ContentValues();
-
-                start = sql.indexOf("`");
-                end = sql.indexOf("`", start + 1);
-                tableName = sql.substring(start, end + 1);
-                //Log.i(TAG, "tableName:" + tableName + start + end);
-
-                for (int i = 1; i < aAction.inputs.size(); i++) {
-                    start = sql.indexOf("`", end + 1);
-                    end = sql.indexOf("`", start + 1);
-                    values.put(sql.substring(start, end + 1), aAction.inputs.get(i).toString());
-                }
-                //Log.i(TAG, "values:" + values);
-                long id = db.insertOrThrow(tableName, null, values);
-                aAction.outputs.add(id);
-            } else {
-                Object[] args = new Object[aAction.inputs.size() - 1];
-                for (int i = 1; i < aAction.inputs.size(); i++) {
-                    args[i - 1] = aAction.inputs.get(i);
-                }
-                db.execSQL(sql, args);
-
-            }
-            aAction.result = TNActionResult.Finished;
-        } catch (SQLiteException e) {
-            e.printStackTrace();
-            MLog.e("数据库2异常："+e.toString());
-        }
-    }
+//    public void executeSQL(TNAction aAction) {
+////        MLog.d(TAG, aAction.inputs.toString());
+//        try {
+//            String sql = (String) aAction.inputs.get(0);
+//            if (sql.startsWith("SELECT")) {
+//                String[] args = new String[aAction.inputs.size() - 1];
+//                for (int i = 1; i < aAction.inputs.size(); i++) {
+//                    args[i - 1] = aAction.inputs.get(i).toString();
+//                }
+//                Cursor cursor = db.rawQuery(sql, args);
+//
+//                Vector<Vector<String>> allData = new Vector<Vector<String>>();
+//                while (cursor.moveToNext()) {
+//                    Vector<String> rowData = new Vector<String>();
+//                    for (int i = 0; i < cursor.getColumnCount(); i++) {
+//                        String value = cursor.getString(i);
+//                        if (value != null)
+//                            rowData.add(value);
+//                        else
+//                            rowData.add("0");
+//                    }
+//                    allData.add(rowData);
+//                }
+//                aAction.outputs.add(allData);
+//                cursor.close();
+//            } else if (sql.startsWith("INSERT")) {
+//                int start = 0, end = 0;
+//                String tableName = "";
+//                ContentValues values = new ContentValues();
+//
+//                start = sql.indexOf("`");
+//                end = sql.indexOf("`", start + 1);
+//                tableName = sql.substring(start, end + 1);
+//                //Log.i(TAG, "tableName:" + tableName + start + end);
+//
+//                for (int i = 1; i < aAction.inputs.size(); i++) {
+//                    start = sql.indexOf("`", end + 1);
+//                    end = sql.indexOf("`", start + 1);
+//                    values.put(sql.substring(start, end + 1), aAction.inputs.get(i).toString());
+//                }
+//                //Log.i(TAG, "values:" + values);
+//                long id = db.insertOrThrow(tableName, null, values);
+//                aAction.outputs.add(id);
+//            } else {
+//                Object[] args = new Object[aAction.inputs.size() - 1];
+//                for (int i = 1; i < aAction.inputs.size(); i++) {
+//                    args[i - 1] = aAction.inputs.get(i);
+//                }
+//                db.execSQL(sql, args);
+//
+//            }
+//            aAction.result = TNActionResult.Finished;
+//        } catch (SQLiteException e) {
+//            e.printStackTrace();
+//            MLog.e("数据库2异常：" + e.toString());
+//        }
+//    }
 
     public static void beginTransaction() {
         getInstance().db.beginTransaction();
@@ -257,17 +249,6 @@ public class TNDb2 extends SQLiteOpenHelper {
         getInstance().db.endTransaction();
     }
 
-    public static String getData(TNAction aAction, int row, int col) {
-        @SuppressWarnings("unchecked")
-        Vector<Vector<String>> allData = (Vector<Vector<String>>) aAction.outputs.get(0);
-        return allData.get(row).get(col);
-    }
-
-    public static int getSize(TNAction aAction) {
-        @SuppressWarnings("unchecked")
-        Vector<Vector<String>> allData = (Vector<Vector<String>>) aAction.outputs.get(0);
-        return allData.size();
-    }
 
     public static boolean isChanges(int aChange) {
         return (getInstance().changeBits & aChange) != 0;
@@ -283,40 +264,40 @@ public class TNDb2 extends SQLiteOpenHelper {
             getInstance().changeBits -= aChange;
     }
 
-    public void DBReset(TNAction aAction) {
-        beginTransaction();
-        try {
-            //drop tables
-            getInstance().db.execSQL(TNSQLString2.SETTING_DROP_TABLE);
-            getInstance().db.execSQL(TNSQLString2.USER_DROP_TABLE);
-            getInstance().db.execSQL(TNSQLString2.CAT_DROP_TABLE);
-            getInstance().db.execSQL(TNSQLString2.TAG_DROP_TABLE);
-            getInstance().db.execSQL(TNSQLString2.NOTE_DROP_TABLE);
-            getInstance().db.execSQL(TNSQLString2.NOTETAG_DROP_TABLE);
-            getInstance().db.execSQL(TNSQLString2.ATT_DROP_TABLE);
-            getInstance().db.execSQL(TNSQLString2.BINDING_DROP_TABLE);
-            getInstance().db.execSQL(TNSQLString2.PROJECT_DROP_TABLE);
-            getInstance().db.execSQL(TNSQLString2.COMMENT_DROP_TABLE);
-            getInstance().db.execSQL(TNSQLString2.UNREADNOTE_DROP_TABLE);
-
-            //create tables
-            getInstance().db.execSQL(TNSQLString2.SETTING_CREATE_TABLE);
-            getInstance().db.execSQL(TNSQLString2.USER_CREATE_TABLE);
-            getInstance().db.execSQL(TNSQLString2.CAT_CREATE_TABLE);
-            getInstance().db.execSQL(TNSQLString2.TAG_CREATE_TABLE);
-            getInstance().db.execSQL(TNSQLString2.NOTE_CREATE_TABLE);
-            getInstance().db.execSQL(TNSQLString2.NOTETAG_CREATE_TABLE);
-            getInstance().db.execSQL(TNSQLString2.ATT_CREATE_TABLE);
-            getInstance().db.execSQL(TNSQLString2.BINDING_CREATE_TABLE);
-            getInstance().db.execSQL(TNSQLString2.PROJECT_CREATE_TABLE);
-            getInstance().db.execSQL(TNSQLString2.COMMENT_CREATE_TABLE_NEW);
-            getInstance().db.execSQL(TNSQLString2.UNREADNOTE_CREATE_TABLE_NEW);
-
-            setTransactionSuccessful();
-        } finally {
-            endTransaction();
-        }
-    }
+//    public void DBReset(TNAction aAction) {
+//        beginTransaction();
+//        try {
+//            //drop tables
+//            getInstance().db.execSQL(TNSQLString2.SETTING_DROP_TABLE);
+//            getInstance().db.execSQL(TNSQLString2.USER_DROP_TABLE);
+//            getInstance().db.execSQL(TNSQLString2.CAT_DROP_TABLE);
+//            getInstance().db.execSQL(TNSQLString2.TAG_DROP_TABLE);
+//            getInstance().db.execSQL(TNSQLString2.NOTE_DROP_TABLE);
+//            getInstance().db.execSQL(TNSQLString2.NOTETAG_DROP_TABLE);
+//            getInstance().db.execSQL(TNSQLString2.ATT_DROP_TABLE);
+//            getInstance().db.execSQL(TNSQLString2.BINDING_DROP_TABLE);
+//            getInstance().db.execSQL(TNSQLString2.PROJECT_DROP_TABLE);
+//            getInstance().db.execSQL(TNSQLString2.COMMENT_DROP_TABLE);
+//            getInstance().db.execSQL(TNSQLString2.UNREADNOTE_DROP_TABLE);
+//
+//            //create tables
+//            getInstance().db.execSQL(TNSQLString2.SETTING_CREATE_TABLE);
+//            getInstance().db.execSQL(TNSQLString2.USER_CREATE_TABLE);
+//            getInstance().db.execSQL(TNSQLString2.CAT_CREATE_TABLE);
+//            getInstance().db.execSQL(TNSQLString2.TAG_CREATE_TABLE);
+//            getInstance().db.execSQL(TNSQLString2.NOTE_CREATE_TABLE);
+//            getInstance().db.execSQL(TNSQLString2.NOTETAG_CREATE_TABLE);
+//            getInstance().db.execSQL(TNSQLString2.ATT_CREATE_TABLE);
+//            getInstance().db.execSQL(TNSQLString2.BINDING_CREATE_TABLE);
+//            getInstance().db.execSQL(TNSQLString2.PROJECT_CREATE_TABLE);
+//            getInstance().db.execSQL(TNSQLString2.COMMENT_CREATE_TABLE_NEW);
+//            getInstance().db.execSQL(TNSQLString2.UNREADNOTE_CREATE_TABLE_NEW);
+//
+//            setTransactionSuccessful();
+//        } finally {
+//            endTransaction();
+//        }
+//    }
 
     /**
      * 新方式 sjy 0620

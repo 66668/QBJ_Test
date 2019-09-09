@@ -23,7 +23,6 @@ import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.Database.TNSQLString;
 import com.thinkernote.ThinkerNote.General.TNConst;
-import com.thinkernote.ThinkerNote.General.TNHandleError;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
@@ -33,14 +32,14 @@ import com.thinkernote.ThinkerNote.PullToRefresh.PullToRefreshBase.OnRefreshList
 import com.thinkernote.ThinkerNote.PullToRefresh.PullToRefreshListView;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.base.TNActBase;
+import com.thinkernote.ThinkerNote.bean.main.NoteListBean;
 import com.thinkernote.ThinkerNote.dialog.CommonDialog;
+import com.thinkernote.ThinkerNote.mvp.MyRxManager;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnNoteListListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnSyncListener;
 import com.thinkernote.ThinkerNote.mvp.p.NoteListPresenter;
 import com.thinkernote.ThinkerNote.mvp.p.SyncPresenter;
-import com.thinkernote.ThinkerNote.base.TNActBase;
-import com.thinkernote.ThinkerNote.bean.main.NoteListBean;
-import com.thinkernote.ThinkerNote.mvp.MyRxManager;
 
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
@@ -306,8 +305,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
                         b.putLong("NoteLocalId", note.noteLocalId);
                         startActivity(TNNoteEditAct.class, b);
                     } else {
-                        TNHandleError.handleErrorCode(this,
-                                this.getResources().getString(R.string.alert_NoteView_NotCompleted));
+                        TNUtilsUi.showToast(R.string.alert_NoteView_NotCompleted);
                     }
                 }
                 break;
@@ -317,8 +315,7 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
                 mMenuBuilder.destroy();
                 TNNote note = TNDbUtils.getNoteByNoteLocalId(mCurNoteId);
                 if (note.syncState != 2) {
-                    TNHandleError.handleErrorCode(this,
-                            this.getResources().getString(R.string.alert_NoteList_NotCompleted_ChangTag));
+                    TNUtilsUi.showToast(R.string.alert_NoteList_NotCompleted_ChangTag);
                     break;
                 }
                 Bundle b = new Bundle();

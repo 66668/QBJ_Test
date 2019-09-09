@@ -50,7 +50,6 @@ import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.Database.TNSQLString;
 import com.thinkernote.ThinkerNote.General.TNConst;
-import com.thinkernote.ThinkerNote.General.TNHandleError;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsAtt;
@@ -60,9 +59,9 @@ import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote.dialog.CommonDialog;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.main.GetNoteByNoteIdBean;
+import com.thinkernote.ThinkerNote.dialog.CommonDialog;
 import com.thinkernote.ThinkerNote.mvp.MyRxManager;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnNoteViewListener;
 import com.thinkernote.ThinkerNote.mvp.p.NoteViewDownloadPresenter;
@@ -979,8 +978,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
                 b.putLong("NoteForEdit", mNote.noteLocalId);
                 startActivity(TNNoteEditAct.class, b);
             } else {
-                TNHandleError.handleErrorCode(this,
-                        this.getResources().getString(R.string.alert_NoteView_NotCompleted));
+                TNUtilsUi.showToast(R.string.alert_NoteView_NotCompleted);
             }
         }
     }

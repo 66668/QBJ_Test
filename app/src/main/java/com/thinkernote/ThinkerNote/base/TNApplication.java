@@ -1,11 +1,9 @@
 package com.thinkernote.ThinkerNote.base;
 
 import android.app.Application;
-import android.os.AsyncTask;
 
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
-import com.thinkernote.ThinkerNote.Action.TNAction;
 import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDb2;
 import com.thinkernote.ThinkerNote.General.TNSettings;
@@ -31,7 +29,7 @@ public class TNApplication extends Application {
     public void onCreate() {
         super.onCreate();
         application = this;
-        //og初始化
+        //log初始化
         MLog.init(true, "SJY");
         initialize();
         //新网络框架 初始化
@@ -55,7 +53,7 @@ public class TNApplication extends Application {
         settings.appContext = this;
         settings.readPref();
 
-        // db initialize
+        // 数据库初始化
         TNDb.getInstance();
         TNDb2.getInstance();
 
@@ -74,20 +72,6 @@ public class TNApplication extends Application {
         param.append(SpeechConstant.ENGINE_MODE + "=" + SpeechConstant.MODE_MSC);
         SpeechUtility.createUtility(this, param.toString());
 
-    }
-
-    public void DbReportError(TNAction aAction) {
-        MLog.i(TAG, "DbReportError s" + TNSettings.getInstance().topAct);
-        //TNUtilsUi.showToast("DB ERROR!!");
-        if (TNSettings.getInstance().topAct != null) {
-            TNUtilsUi.showNotification(TNSettings.getInstance().topAct,
-                    R.string.alert_DBError, true);
-        }
-        TNSettings.getInstance().hasDbError = true;
-        TNSettings.getInstance().savePref(false);
-
-        aAction.finished();
-        MLog.i(TAG, "DbReportError e");
     }
 
     // 检测db错误 /TNDb.java使用

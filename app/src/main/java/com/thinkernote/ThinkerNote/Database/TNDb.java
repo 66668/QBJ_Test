@@ -1,21 +1,17 @@
 package com.thinkernote.ThinkerNote.Database;
 
-import java.util.Vector;
-
-import com.thinkernote.ThinkerNote.Action.TNAction;
-import com.thinkernote.ThinkerNote.Action.TNAction.TNActionResult;
-import com.thinkernote.ThinkerNote.General.TNActionType;
-import com.thinkernote.ThinkerNote.General.TNSettings;
-import com.thinkernote.ThinkerNote.General.TNUtils;
-import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote.base.TNApplication;
-
-import android.app.Application;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.thinkernote.ThinkerNote.General.TNSettings;
+import com.thinkernote.ThinkerNote.General.TNUtils;
+import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.base.TNApplication;
+
+import java.util.Vector;
 
 /**
  * 数据库操纵
@@ -33,11 +29,6 @@ public class TNDb extends SQLiteOpenHelper {
         super(TNUtils.getAppContext(), DB_NAME, null, DB_VER);
 
         db = getWritableDatabase();
-
-        //TODO 需要修改 优化
-        TNAction.regRunner(TNActionType.Db_Execute, this, "executeSQL");
-        TNAction.regRunner(TNActionType.DBReset, this, "DBReset");
-//        resetDb();
 
     }
 
@@ -93,28 +84,28 @@ public class TNDb extends SQLiteOpenHelper {
         }
     }
 
-    public void DBReset(TNAction aAction) {
-        beginTransaction();
-        try {
-            //drop tables
-            getInstance().db.execSQL(TNSQLString.USER_DROP_TABLE);
-            getInstance().db.execSQL(TNSQLString.CAT_DROP_TABLE);
-            getInstance().db.execSQL(TNSQLString.TAG_DROP_TABLE);
-            getInstance().db.execSQL(TNSQLString.NOTE_DROP_TABLE);
-            getInstance().db.execSQL(TNSQLString.ATT_DROP_TABLE);
-
-            //create tables
-            getInstance().db.execSQL(TNSQLString.USER_CREATE_TABLE);
-            getInstance().db.execSQL(TNSQLString.CAT_CREATE_TABLE);
-            getInstance().db.execSQL(TNSQLString.TAG_CREATE_TABLE);
-            getInstance().db.execSQL(TNSQLString.NOTE_CREATE_TABLE);
-            getInstance().db.execSQL(TNSQLString.ATT_CREATE_TABLE);
-
-            setTransactionSuccessful();
-        } finally {
-            endTransaction();
-        }
-    }
+//    public void DBReset(TNAction aAction) {
+//        beginTransaction();
+//        try {
+//            //drop tables
+//            getInstance().db.execSQL(TNSQLString.USER_DROP_TABLE);
+//            getInstance().db.execSQL(TNSQLString.CAT_DROP_TABLE);
+//            getInstance().db.execSQL(TNSQLString.TAG_DROP_TABLE);
+//            getInstance().db.execSQL(TNSQLString.NOTE_DROP_TABLE);
+//            getInstance().db.execSQL(TNSQLString.ATT_DROP_TABLE);
+//
+//            //create tables
+//            getInstance().db.execSQL(TNSQLString.USER_CREATE_TABLE);
+//            getInstance().db.execSQL(TNSQLString.CAT_CREATE_TABLE);
+//            getInstance().db.execSQL(TNSQLString.TAG_CREATE_TABLE);
+//            getInstance().db.execSQL(TNSQLString.NOTE_CREATE_TABLE);
+//            getInstance().db.execSQL(TNSQLString.ATT_CREATE_TABLE);
+//
+//            setTransactionSuccessful();
+//        } finally {
+//            endTransaction();
+//        }
+//    }
 
     private long insert(String sql, String[] args) {
         int start = 0, end = 0;
@@ -182,61 +173,61 @@ public class TNDb extends SQLiteOpenHelper {
         return null;
     }
 
-    public void executeSQL(TNAction aAction) {
-//        MLog.d("TNDB--executeSQL", aAction.inputs.toString());
-        try {
-            String sql = (String) aAction.inputs.get(0);
-            if (sql.startsWith("SELECT")) {
-                String[] args = new String[aAction.inputs.size() - 1];
-                for (int i = 1; i < aAction.inputs.size(); i++) {
-                    args[i - 1] = aAction.inputs.get(i).toString();
-                }
-                Cursor cursor = db.rawQuery(sql, args);
-
-                Vector<Vector<String>> allData = new Vector<Vector<String>>();
-                while (cursor.moveToNext()) {
-                    Vector<String> rowData = new Vector<String>();
-                    for (int i = 0; i < cursor.getColumnCount(); i++) {
-                        String value = cursor.getString(i);
-                        if (value != null)
-                            rowData.add(value);
-                        else
-                            rowData.add("0");
-                    }
-                    allData.add(rowData);
-                }
-                aAction.outputs.add(allData);
-                cursor.close();
-            } else if (sql.startsWith("INSERT")) {
-                int start = 0, end = 0;
-                String tableName = "";
-                ContentValues values = new ContentValues();
-
-                start = sql.indexOf("`");
-                end = sql.indexOf("`", start + 1);
-                tableName = sql.substring(start, end + 1);
-
-                for (int i = 1; i < aAction.inputs.size(); i++) {
-                    start = sql.indexOf("`", end + 1);
-                    end = sql.indexOf("`", start + 1);
-                    values.put(sql.substring(start, end + 1), aAction.inputs.get(i).toString());
-                }
-                long id = db.insertOrThrow(tableName, null, values);
-                aAction.outputs.add(id);
-            } else {
-                Object[] args = new Object[aAction.inputs.size() - 1];
-                for (int i = 1; i < aAction.inputs.size(); i++) {
-                    args[i - 1] = aAction.inputs.get(i);
-                }
-                db.execSQL(sql, args);
-
-            }
-            aAction.result = TNActionResult.Finished;
-        } catch (SQLiteException e) {
-            e.printStackTrace();
-            MLog.e("数据库异常：" + e.toString());
-        }
-    }
+//    public void executeSQL(TNAction aAction) {
+////        MLog.d("TNDB--executeSQL", aAction.inputs.toString());
+//        try {
+//            String sql = (String) aAction.inputs.get(0);
+//            if (sql.startsWith("SELECT")) {
+//                String[] args = new String[aAction.inputs.size() - 1];
+//                for (int i = 1; i < aAction.inputs.size(); i++) {
+//                    args[i - 1] = aAction.inputs.get(i).toString();
+//                }
+//                Cursor cursor = db.rawQuery(sql, args);
+//
+//                Vector<Vector<String>> allData = new Vector<Vector<String>>();
+//                while (cursor.moveToNext()) {
+//                    Vector<String> rowData = new Vector<String>();
+//                    for (int i = 0; i < cursor.getColumnCount(); i++) {
+//                        String value = cursor.getString(i);
+//                        if (value != null)
+//                            rowData.add(value);
+//                        else
+//                            rowData.add("0");
+//                    }
+//                    allData.add(rowData);
+//                }
+//                aAction.outputs.add(allData);
+//                cursor.close();
+//            } else if (sql.startsWith("INSERT")) {
+//                int start = 0, end = 0;
+//                String tableName = "";
+//                ContentValues values = new ContentValues();
+//
+//                start = sql.indexOf("`");
+//                end = sql.indexOf("`", start + 1);
+//                tableName = sql.substring(start, end + 1);
+//
+//                for (int i = 1; i < aAction.inputs.size(); i++) {
+//                    start = sql.indexOf("`", end + 1);
+//                    end = sql.indexOf("`", start + 1);
+//                    values.put(sql.substring(start, end + 1), aAction.inputs.get(i).toString());
+//                }
+//                long id = db.insertOrThrow(tableName, null, values);
+//                aAction.outputs.add(id);
+//            } else {
+//                Object[] args = new Object[aAction.inputs.size() - 1];
+//                for (int i = 1; i < aAction.inputs.size(); i++) {
+//                    args[i - 1] = aAction.inputs.get(i);
+//                }
+//                db.execSQL(sql, args);
+//
+//            }
+//            aAction.result = TNActionResult.Finished;
+//        } catch (SQLiteException e) {
+//            e.printStackTrace();
+//            MLog.e("数据库异常：" + e.toString());
+//        }
+//    }
 //==================================sjy 更改 开始======================================
 
 

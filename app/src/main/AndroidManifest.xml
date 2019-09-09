@@ -219,11 +219,6 @@
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
 
-        <activity
-            android:name=".Activity.unuse.TNToEmailAct"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
 
         <activity
             android:name=".Activity.TNLockAct"
