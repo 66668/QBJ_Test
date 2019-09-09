@@ -90,7 +90,6 @@
     <orderEntry type="jdk" jdkName="Android API 29 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/QBJ_5.8.5/app/libs/alipaySdk-20180601.jar:unspecified@jar" level="project" />
-    <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/QBJ_5.8.5/app/libs/android-async-http-1.4.4.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/QBJ_5.8.5/app/libs/android_api.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/QBJ_5.8.5/app/libs/BaiduLBS_Android.jar:unspecified@jar" level="project" />
     <orderEntry type="library" name="Gradle: __local_aars__:/Users/sjy/开发源码/qingbiji_vcode/QBJ_5.8.5/app/libs/httpmime-4.1.jar:unspecified@jar" level="project" />

@@ -6,8 +6,8 @@ android {
 
     defaultConfig {
         applicationId "com.thinkernote.ThinkerNote"
-        minSdkVersion 23//8-12 异步还能用，13+异步升级不能用 12
-        targetSdkVersion 28//说明：28+需要大改代码，一些类不支持了/sjy-2019-04-23
+        minSdkVersion 23
+        targetSdkVersion 28
         versionCode 56
         versionName "5.8.5"
 
@@ -85,8 +85,6 @@ dependencies {
 
     //libs包依赖
     implementation files('libs/alipaySdk-20180601.jar')
-    //TODO 后期删除
-    implementation files('libs/android-async-http-1.4.4.jar')
     implementation files('libs/android_api.jar')
 
     //旧版百度定位
