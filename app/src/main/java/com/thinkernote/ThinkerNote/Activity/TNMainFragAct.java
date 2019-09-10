@@ -20,6 +20,7 @@ import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.Database.TNSQLString;
 import com.thinkernote.ThinkerNote.General.TNConst;
 import com.thinkernote.ThinkerNote.General.TNSettings;
+import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
@@ -290,7 +291,7 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
                 mMenuBuilder.destroy();
                 if (mCurrNote == null || mCurrNote.noteId == -1)
                     break;
-                showSyncDialog(mCurrNote.noteId);
+                showSyncNoteDialog(mCurrNote.noteId);
 
                 break;
             }
@@ -554,10 +555,10 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
     }
 
     /**
-     * 完全同步SynceDataByNoteId
+     * 内容完全同步
      */
-    private void showSyncDialog(final long noteId) {
-        dialog = new CommonDialog(this, R.string.alert_MainCats_SynchronizeNoteAll,
+    private void showSyncNoteDialog(final long noteId) {
+        dialog = new CommonDialog(this, R.string.alert_MainCats_SynchronizeNote,
                 "完全同步",
                 "取消",
                 new CommonDialog.DialogCallBack() {
@@ -567,7 +568,7 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
                             TNUtilsUi.showNotification(TNMainFragAct.this, R.string.alert_NoteView_Synchronizing, false);
                             //监听
                             MLog.d("同步GetDataByNoteId");
-                            presenter.getDetailByNoteId(noteId);
+                            getDetailByNoteId(noteId);
                         }
                     }
 
@@ -583,19 +584,15 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
     /**
      * 完全同步syncCats
      */
-    private void showSyncCatDialog(final long noteId) {
+    private void showSyncCatDialog(final long folderId) {
         dialog = new CommonDialog(this, R.string.alert_MainCats_SynchronizeNoteAll,
                 "完全同步",
                 "取消",
                 new CommonDialog.DialogCallBack() {
                     @Override
                     public void sureBack() {
-                        if (!MyRxManager.getInstance().isSyncing()) {
-                            TNUtilsUi.showNotification(TNMainFragAct.this, R.string.alert_NoteView_Synchronizing, false);
-                            //监听
-                            MLog.d("同步Cats下所有笔记");
-                            pSynceCat(noteId);
-                        }
+                        MLog.d("同步Cats下所有笔记");
+                        synceCat(folderId);
                     }
 
                     @Override
@@ -751,7 +748,6 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
             }
         }
         return super.onKeyDown(keyCode, event);
-
     }
 
     public void dialogCB() {
@@ -794,7 +790,13 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
                     break;
             }
         }
+        mProgressDialog = null;
 
+        //关闭文件夹同步
+        if (MyRxManager.getInstance().isFolderSyncing()) {
+            folderPresenter.cancelSync();
+        }
+        //
         finish();
     }
 
@@ -810,15 +812,17 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
             dialog.dismiss();
             dialog = null;
         }
+        mProgressDialog.hide();
 
-        TNUtilsUi.showToast("同步完成");
 
         if (type == 1) {
             TNUtilsUi.showNotification(this, R.string.alert_SynchronizeCancell, true);
         } else if (type == 0) {
             TNUtilsUi.showNotification(this, R.string.alert_MainCats_Synchronized, true);
+            TNUtilsUi.showToast("同步完成");
         } else {
             TNUtilsUi.showNotification(this, R.string.alert_Synchronize_Stoped, true);
+            TNUtilsUi.showToast("同步终止");
         }
         configView();
     }
@@ -832,20 +836,23 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                mProgressDialog.hide();
                 if (dialog != null) {
                     dialog.dismiss();
                     dialog = null;
                 }
-                TNUtilsUi.showToast("同步完成");
+
                 if (type == 0) {
                     TNUtilsUi.showNotification(TNMainFragAct.this, R.string.alert_SynchronizeCancell, true);
                     mSettings.originalSyncTime = System.currentTimeMillis();
                     mSettings.savePref(false);
                 } else if (type == 1) {
                     TNUtilsUi.showNotification(TNMainFragAct.this, R.string.alert_MainCats_Synchronized, true);
+                    TNUtilsUi.showToast("同步完成");
                 } else {
                     TNUtilsUi.showNotification(TNMainFragAct.this,
                             R.string.alert_Synchronize_Stoped, true);
+                    TNUtilsUi.showToast("同步失败");
                 }
                 configView();
             }
@@ -879,22 +886,6 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
 
     }
 
-    //--------------------------------p层调用--------------------------------------
-
-    private void setDefaultFolder(long catId) {
-        presenter.setDefaultFolder(catId);
-    }
-
-    private void pDeleteTag(long tagId) {
-        presenter.deleteTag(tagId);
-    }
-
-    private void pCatDelete(TNCat cat) {
-        MLog.d("TNMainFragAct删除文件夹");
-        presenter.deleteFolder(cat.catId);
-    }
-
-
     // 弹窗触发删除
     private void pDialogDelete(final long noteLocalId) {
         ExecutorService service = Executors.newSingleThreadExecutor();
@@ -918,12 +909,58 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
 
     }
 
+
+    //--------------------------------p层调用--------------------------------------
+
+    private void setDefaultFolder(long catId) {
+        if (TNUtils.isNetWork()) {
+            presenter.setDefaultFolder(catId);
+        } else {
+            TNUtilsUi.showToast(R.string.alert_Net_NotWork);
+        }
+
+    }
+
+    private void getDetailByNoteId(long noteId) {
+        if (TNUtils.isNetWork()) {
+            mProgressDialog.hide();
+            presenter.getDetailByNoteId(noteId);
+        } else {
+            TNUtilsUi.showToast(R.string.alert_Net_NotWork);
+            //结束同步按钮动作
+            mProgressDialog.hide();
+        }
+
+    }
+
+    private void pDeleteTag(long tagId) {
+        presenter.deleteTag(tagId);
+    }
+
+    private void pCatDelete(TNCat cat) {
+        MLog.d("TNMainFragAct删除文件夹");
+        presenter.deleteFolder(cat.catId);
+    }
+
+
     /**
      * @param catId
      */
+    private void synceCat(long catId) {
+        if (TNUtils.isNetWork()) {
+            if (MyRxManager.getInstance().isSyncing()) {
+                TNUtilsUi.showToast("主页正在同步，请稍后");
+                return;
+            }
+            mProgressDialog.show();
+            folderPresenter.SynchronizeFolder(catId);
+        } else {
+            //结束同步按钮动作
+            endSyncCats(2);
+            TNUtilsUi.showToast(R.string.alert_Net_NotWork);
+        }
 
-    private void pSynceCat(long catId) {
-        folderPresenter.SynchronizeFolder(catId);
+
     }
 
 
@@ -932,12 +969,14 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
     //同步SyncFolder回调
     @Override
     public void onSyncSuccess(String obj) {
+        MyRxManager.getInstance().setFolderSyncing(false);
         endSyncCats(1);
     }
 
     @Override
     public void onSyncFailed(Exception e, String msg) {
-        endSyncCats(1);
+        MyRxManager.getInstance().setFolderSyncing(false);
+        endSyncCats(2);
     }
 
     @Override

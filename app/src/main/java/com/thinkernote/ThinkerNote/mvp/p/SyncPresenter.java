@@ -13,6 +13,7 @@ import com.thinkernote.ThinkerNote.mvp.listener.m.IFolderModuleListener;
 import com.thinkernote.ThinkerNote.mvp.listener.m.INoteModuleListener;
 import com.thinkernote.ThinkerNote.mvp.listener.m.ITagModuleListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnSyncListener;
+import com.thinkernote.ThinkerNote.mvp.listener.v.SyncDisposableListener;
 import com.thinkernote.ThinkerNote.mvp.m.FolderModule;
 import com.thinkernote.ThinkerNote.mvp.m.NoteModule;
 import com.thinkernote.ThinkerNote.mvp.m.TagModule;
@@ -81,13 +82,6 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
     //取消接口容器
     private CompositeDisposable disposable;
 
-    //
-    public interface SyncDisposableListener {
-        void add(Disposable d);
-    }
-
-    //============================p层============================
-
     /**
      * 手动结束请求
      */
@@ -103,7 +97,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
             return true;
         }
     }
-
+    //============================p层============================
     /**
      * 同步按钮 同步块顺序执行
      * 同步执行后，（1）--（16）会自动执行，除非跑异常终止

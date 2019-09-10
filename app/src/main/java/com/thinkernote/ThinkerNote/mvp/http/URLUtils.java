@@ -11,9 +11,6 @@ public class URLUtils {
     public final static String API_BASE_URL = "https://s.qingbiji.cn/";//正式1
 //    public final static String API_BASE_URL = "http://new.qingbiji.cn/";//正式2
 
-    //TODO 后期集成
-    public final static String WEICHAT_BASE_URL = "https://api.weixin.qq.com";//微信登陆BaseURL
-
     /**
      * =============================================================================================
      * ============================================通用=================================================

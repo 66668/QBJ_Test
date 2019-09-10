@@ -3,6 +3,7 @@ package com.thinkernote.ThinkerNote.mvp.m;
 import android.content.Context;
 
 import com.google.gson.Gson;
+import com.thinkernote.ThinkerNote.General.TNConst;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Utils.SPUtil;
@@ -382,15 +383,12 @@ public class LogModule {
 
     private String GetUserInfo = "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID";
 
-    private String WX_APP_ID = "wx2c2721939e9d54e3";
-    private String WX_APP_SECRET = "51c4ca7f07d5e761f82028e49c05936a";
-
     private String getWchatCodeRequest(String code) {
         String result = null;
         GetCodeRequest = GetCodeRequest.replace("APPID",
-                urlEnodeUTF8(WX_APP_ID));
+                urlEnodeUTF8(TNConst.WX_APP_ID));
         GetCodeRequest = GetCodeRequest.replace("SECRET",
-                urlEnodeUTF8(WX_APP_SECRET));
+                urlEnodeUTF8(TNConst.WX_APP_SECRET));
         GetCodeRequest = GetCodeRequest.replace("CODE", urlEnodeUTF8(code));
         result = GetCodeRequest;
         return result;

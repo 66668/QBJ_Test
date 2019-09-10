@@ -32,19 +32,44 @@
             android:textColor="#ff000000"
             android:textSize="20sp" />
     </RelativeLayout>
-    <TextView
-        android:id="@id/content"
-        android:background="@android:color/white"
+
+    <RelativeLayout
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:minHeight="50dp"
         android:layout_gravity="center_horizontal"
-        android:gravity="center_vertical"
-        android:lines="5"
-        android:padding="10dp"
-        android:textSize="14sp"
-        android:text="afganbdoa"
-        android:textColor="#ff000000" />
+        android:background="@android:color/white"
+        android:gravity="center_vertical">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@id/content"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginLeft="10dip"
+                    android:layout_marginRight="10dip"
+                    android:background="@android:color/white"
+                    android:gravity="center_vertical"
+                    android:minLines="3"
+                    android:padding="10dp"
+                    android:text="afganbdoa"
+                    android:textColor="#ff000000"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+        </ScrollView>
+    </RelativeLayout>
+
 
     <LinearLayout
         android:layout_width="300dp"

@@ -7,14 +7,19 @@ import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.General.TNConst;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.mvp.MyRxManager;
 import com.thinkernote.ThinkerNote.mvp.listener.m.INoteModuleListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnSyncListener;
+import com.thinkernote.ThinkerNote.mvp.listener.v.SyncDisposableListener;
 import com.thinkernote.ThinkerNote.mvp.m.NoteModule;
 import com.thinkernote.ThinkerNote.bean.main.AllNotesIdsBean;
 import com.thinkernote.ThinkerNote.bean.main.NoteListBean;
 
 import java.util.List;
 import java.util.Vector;
+
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
 /**
  * <p>
@@ -39,8 +44,37 @@ public class SyncFolderPresenter implements INoteModuleListener {
         noteModule = new NoteModule(context);
     }
 
+    //取消接口容器
+    private CompositeDisposable disposable;
+
+
+    /**
+     * 手动结束请求
+     */
+    public boolean cancelSync() {
+        if (disposable != null) {
+            disposable.dispose();
+            disposable.clear();
+            MyRxManager.getInstance().setFolderSyncing(false);
+            MLog.d("disposable.isDisposed()--" + disposable.isDisposed());
+            return disposable.isDisposed();
+        } else {
+            MyRxManager.getInstance().setFolderSyncing(false);
+            return true;
+        }
+    }
+
     public void SynchronizeFolder(long folderId) {
         this.folderId = folderId;
+        //清空容器
+        if (disposable == null) {
+            disposable = new CompositeDisposable();
+        } else {
+            disposable.clear();
+            disposable = new CompositeDisposable();
+        }
+        MyRxManager.getInstance().setFolderSyncing(true);
+        //
         updateLocalNotes();
     }
 
@@ -54,7 +88,13 @@ public class SyncFolderPresenter implements INoteModuleListener {
         MLog.d(TAG, "文件夹同步--上传本地folder下新增笔记");
         Vector<TNNote> localNewNotes = TNDbUtils.getNoteListBySyncStateByCatId(TNSettings.getInstance().userId, 3, folderId);
         if (localNewNotes != null && localNewNotes.size() > 0) {
-            noteModule.updateLocalNewNotes(localNewNotes, this, false, null);
+            noteModule.updateLocalNewNotes(localNewNotes, this, true, new SyncDisposableListener() {
+
+                @Override
+                public void add(Disposable d) {
+                    disposable.add(d);
+                }
+            });
         } else {
             //(9)
             updateRecoveryNotes();
@@ -69,7 +109,13 @@ public class SyncFolderPresenter implements INoteModuleListener {
         MLog.d(TAG, "文件夹同步--还原回收站笔记");
         Vector<TNNote> recoveryNotes = TNDbUtils.getNoteListBySyncStateByCatId(TNSettings.getInstance().userId, 7, folderId);
         if (recoveryNotes != null && recoveryNotes.size() > 0) {
-            noteModule.updateRecoveryNotes(recoveryNotes, this, false, null);
+            noteModule.updateRecoveryNotes(recoveryNotes, this, true, new SyncDisposableListener() {
+
+                @Override
+                public void add(Disposable d) {
+                    disposable.add(d);
+                }
+            });
         } else {
             //（10）
             deleteNotes();
@@ -84,7 +130,13 @@ public class SyncFolderPresenter implements INoteModuleListener {
         MLog.d(TAG, "文件夹同步--删除到回收站");
         Vector<TNNote> mDeleteNotes = TNDbUtils.getNoteListBySyncStateByCatId(TNSettings.getInstance().userId, 6, folderId);
         if (mDeleteNotes != null && mDeleteNotes.size() > 0) {
-            noteModule.deleteNotes(mDeleteNotes, this, false, null);
+            noteModule.deleteNotes(mDeleteNotes, this, true, new SyncDisposableListener() {
+
+                @Override
+                public void add(Disposable d) {
+                    disposable.add(d);
+                }
+            });
         } else {
             //（11）
             clearNotes();
@@ -99,7 +151,13 @@ public class SyncFolderPresenter implements INoteModuleListener {
         MLog.d(TAG, "文件夹同步--彻底删除");
         Vector<TNNote> mClaerNotes = TNDbUtils.getNoteListBySyncStateByCatId(TNSettings.getInstance().userId, 5, folderId);
         if (mClaerNotes != null && mClaerNotes.size() > 0) {
-            noteModule.clearNotes(mClaerNotes, this, false, null);
+            noteModule.clearNotes(mClaerNotes, this, true, new SyncDisposableListener() {
+
+                @Override
+                public void add(Disposable d) {
+                    disposable.add(d);
+                }
+            });
         } else {
             //（12）
             getAllNotsId();
@@ -124,7 +182,13 @@ public class SyncFolderPresenter implements INoteModuleListener {
         MLog.d(TAG, "文件夹同步--编辑笔记");
         Vector<TNNote> editNotes = TNDbUtils.getNoteListBySyncStateByCatId(TNSettings.getInstance().userId, 4, folderId);
         if (editNotes != null && editNotes.size() > 0 && all_note_ids != null && all_note_ids.size() > 0) {
-            noteModule.updateEditNotes(all_note_ids, editNotes, this, false, null);
+            noteModule.updateEditNotes(all_note_ids, editNotes, this, true, new SyncDisposableListener() {
+
+                @Override
+                public void add(Disposable d) {
+                    disposable.add(d);
+                }
+            });
         } else {
             //(14)
             updateCloudNote();
@@ -139,6 +203,27 @@ public class SyncFolderPresenter implements INoteModuleListener {
         Vector<TNNote> allNotes = TNDbUtils.getNoteListByCatId(TNSettings.getInstance().userId, folderId, TNSettings.getInstance().sort, TNConst.MAX_PAGE_SIZE);
         if (all_note_ids != null && all_note_ids.size() > 0 && allNotes != null && allNotes.size() > 0) {
             noteModule.getCloudNoteByFolderId(all_note_ids, folderId, this);
+        } else {
+            //（15）
+            getDetailNoteByfolderId();
+        }
+    }
+
+    /**
+     * 再下载每一条详细笔记
+     */
+    private void getDetailNoteByfolderId() {
+        MLog.d(TAG, "文件夹同步--下载每一条笔记详情");
+        //获取文件夹下所有的笔记
+        Vector<TNNote> allNotes = TNDbUtils.getNoteListByCatId(TNSettings.getInstance().userId, folderId, TNSettings.getInstance().sort, TNConst.MAX_PAGE_SIZE);
+        if (allNotes != null && allNotes.size() > 0) {
+            noteModule.getDetailNoteByFolderId(allNotes, this, true, new SyncDisposableListener() {
+
+                @Override
+                public void add(Disposable d) {
+                    disposable.add(d);
+                }
+            });
         } else {
             //（15）
             onView.onSyncSuccess("同步成功");
@@ -240,7 +325,8 @@ public class SyncFolderPresenter implements INoteModuleListener {
     //(14)加载云端笔记
     @Override
     public void onCloudNoteSuccess() {
-        onView.onSyncSuccess("同步成功");
+        //(15)
+        getDetailNoteByfolderId();
     }
 
     @Override
@@ -248,6 +334,17 @@ public class SyncFolderPresenter implements INoteModuleListener {
         onView.onSyncFailed(e, msg);
     }
 
+
+    //(15)
+    @Override
+    public void onDownloadNoteSuccess() {
+        onView.onSyncSuccess("同步成功");
+    }
+
+    @Override
+    public void onDownloadNoteFailed(Exception e, String msg) {
+        onView.onSyncFailed(e, msg);
+    }
 
     //=====================同步块不走如下回调============================
 
@@ -278,17 +375,7 @@ public class SyncFolderPresenter implements INoteModuleListener {
 
     }
 
-    @Override
-    public void onDownloadNoteSuccess() {
 
-    }
-
-    @Override
-    public void onDownloadNoteFailed(Exception e, String msg) {
-
-    }
-
-    //(15)获取回收站笔记id
     @Override
     public void onGetTrashNoteIdSuccess() {
     }
@@ -301,7 +388,6 @@ public class SyncFolderPresenter implements INoteModuleListener {
     public void onGetTrashNoteIdFailed(Exception e, String msg) {
     }
 
-    //（16）同步的最后一个接口
     @Override
     public void onGetTrashNoteSuccess() {
     }

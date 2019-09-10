@@ -9,8 +9,8 @@ public class MyRxManager {
     private static String TAG = "Rx";
     private static MyRxManager sInstance = new MyRxManager();
 
-    private boolean isSyncing;//是否在同步中
-
+    private boolean isSyncing;//是否在主页同步中
+    private boolean isFolderSyncing;//是否在文件夹同步中
 
     public static MyRxManager getInstance() {
         return sInstance;
@@ -21,13 +21,12 @@ public class MyRxManager {
     }
 
     /**
-     * 是否在请求中（目前只用于大块同步中，单个接口不调用）
+     * 是否在请求中（目前只用于主页同步中，单个接口不调用）
      *
      * @return
      */
     public boolean isSyncing() {
         return isSyncing;
-
     }
 
     /**
@@ -37,4 +36,16 @@ public class MyRxManager {
         this.isSyncing = b;
     }
 
+    /**
+     * 文件夹是否在同步
+     *
+     * @return
+     */
+    public boolean isFolderSyncing() {
+        return isFolderSyncing;
+    }
+
+    public void setFolderSyncing(boolean folderSyncing) {
+        isFolderSyncing = folderSyncing;
+    }
 }

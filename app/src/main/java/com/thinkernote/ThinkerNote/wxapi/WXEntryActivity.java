@@ -10,6 +10,7 @@ import com.tencent.mm.sdk.modelmsg.SendAuth;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
+import com.thinkernote.ThinkerNote.General.TNConst;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.base.TNActBase;
@@ -25,7 +26,6 @@ import com.thinkernote.ThinkerNote.mvp.p.LogPresenter;
 public class WXEntryActivity extends TNActBase implements IWXAPIEventHandler, OnWchatListener {
     private static final int BACK_RESULT_CODE = 11;
     private IWXAPI api;
-    private String WX_APP_ID = "wx2c2721939e9d54e3";
     LogPresenter presenter;
 
     // 获取第一步的code后，请求以下链接获取access_token
@@ -33,7 +33,7 @@ public class WXEntryActivity extends TNActBase implements IWXAPIEventHandler, On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         presenter = new LogPresenter(this, this);
-        api = WXAPIFactory.createWXAPI(this, WX_APP_ID, false);
+        api = WXAPIFactory.createWXAPI(this, TNConst.WX_APP_ID, false);
         api.handleIntent(getIntent(), this);
 
     }

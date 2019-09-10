@@ -9,13 +9,13 @@ import com.thinkernote.ThinkerNote.Database.TNSQLString;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote.mvp.listener.m.ITagModuleListener;
-import com.thinkernote.ThinkerNote.mvp.listener.v.OnTagListListener;
 import com.thinkernote.ThinkerNote.bean.CommonBean;
 import com.thinkernote.ThinkerNote.bean.main.TagItemBean;
 import com.thinkernote.ThinkerNote.bean.main.TagListBean;
 import com.thinkernote.ThinkerNote.mvp.http.url_main.MyHttpService;
-import com.thinkernote.ThinkerNote.mvp.p.SyncPresenter;
+import com.thinkernote.ThinkerNote.mvp.listener.m.ITagModuleListener;
+import com.thinkernote.ThinkerNote.mvp.listener.v.OnTagListListener;
+import com.thinkernote.ThinkerNote.mvp.listener.v.SyncDisposableListener;
 
 import org.json.JSONObject;
 
@@ -55,7 +55,7 @@ public class TagModule {
      * @param arrayTag
      * @param listener
      */
-    public void createTagByFirstLaunch(String[] arrayTag, final ITagModuleListener listener, final SyncPresenter.SyncDisposableListener disposableListener) {
+    public void createTagByFirstLaunch(String[] arrayTag, final ITagModuleListener listener, final SyncDisposableListener disposableListener) {
         final String[] mFolderName = {""};
         //创建默认的tag
         Observable.fromArray(arrayTag)
@@ -107,7 +107,7 @@ public class TagModule {
      *
      * @param listener
      */
-    public void getAllTags(final ITagModuleListener listener, final SyncPresenter.SyncDisposableListener disposableListener) {
+    public void getAllTags(final ITagModuleListener listener, final SyncDisposableListener disposableListener) {
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .syncTagList(settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式

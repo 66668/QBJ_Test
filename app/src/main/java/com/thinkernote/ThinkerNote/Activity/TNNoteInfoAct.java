@@ -408,7 +408,7 @@ public class TNNoteInfoAct extends TNActBase implements OnClickListener, OnChild
                 try {
                     //
                     TNDb.getInstance().execSQL(TNSQLString.NOTE_CHANGE_CREATETIME, createTime, syncState, lastUpdate, noteLocalId);
-                    TNDb.getInstance().execSQL(TNSQLString.CAT_UPDATE_LASTUPDATETIME,System.currentTimeMillis() / 1000, note.catId);
+                    TNDb.getInstance().execSQL(TNSQLString.CAT_UPDATE_LASTUPDATETIME, System.currentTimeMillis() / 1000, note.catId);
                     TNDb.setTransactionSuccessful();
                 } finally {
                     TNDb.endTransaction();

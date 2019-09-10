@@ -46,6 +46,7 @@ public class TNConst {
 	public static final String QQ_SCOPE = "all";
 	
 	public static final String WX_APP_ID = "wx2c2721939e9d54e3";
+	public static final String WX_APP_SECRET = "51c4ca7f07d5e761f82028e49c05936a";
 	
 	public static final String ERROR_CODE = "未知网络错误";
 	

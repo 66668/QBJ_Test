@@ -42,7 +42,8 @@
 	<string name="alert_pictureCompression_Msg">您是否选择默认对大图片上传时进行压缩以节省流量？</string>
 		
 	<string name="alert_MainCats_Synchronized">同步完成</string>
-	<string name="alert_MainCats_SynchronizeNoteAll">此操作将同步该文件夹下所有内容到本地，但不包含附件。\n\n需要网络传输的数据可能较多，推荐在Wifi网络条件下进行。</string>
+	<string name="alert_MainCats_SynchronizeNote">此操作将同步该笔记所有数据到本地。\n\n需要网络传输的数据可能较多，推荐在Wifi网络条件下进行。</string>
+	<string name="alert_MainCats_SynchronizeNoteAll">此操作将同步该文件夹下所有内容到本地，且包含附件。\n 已经同步的笔记在该操作下不再下载同步，请单独同步。\n同步过程中无法取消（断网可中断），请在Wifi网络条件下进行，速度更快 </string>
 	<string name="alert_Projects_SynchronizeAll">此操作将同步个人和所有群组的文件夹、笔记标题到本地，不包括笔记附件。</string>
 	    
 	<string name="alert_Net_UnknownError">未知网络错误。</string>
