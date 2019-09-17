@@ -356,6 +356,10 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
             download.cancelDownload();
             download = null;
         }
+        if(dialog!=null){
+            dialog.dismiss();
+            dialog = null;
+        }
 
     }
 

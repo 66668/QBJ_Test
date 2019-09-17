@@ -68,7 +68,6 @@ public class TNApplication extends Application {
         // 设置使用v5+
         param.append(SpeechConstant.ENGINE_MODE + "=" + SpeechConstant.MODE_MSC);
         SpeechUtility.createUtility(this, param.toString());
-
     }
 
     // 检测db错误 /TNDb.java使用

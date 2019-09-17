@@ -29,17 +29,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
-import com.iflytek.cloud.ErrorCode;
-import com.iflytek.cloud.InitListener;
-import com.iflytek.cloud.RecognizerResult;
-import com.iflytek.cloud.SpeechError;
-import com.iflytek.cloud.ui.RecognizerDialog;
-import com.iflytek.cloud.ui.RecognizerDialogListener;
 import com.thinkernote.ThinkerNote.BuildConfig;
 import com.thinkernote.ThinkerNote.DBHelper.NoteAttrDbHelper;
 import com.thinkernote.ThinkerNote.Data.TNNote;
@@ -50,37 +46,32 @@ import com.thinkernote.ThinkerNote.Database.TNSQLString;
 import com.thinkernote.ThinkerNote.General.TNConst;
 import com.thinkernote.ThinkerNote.General.TNRecord;
 import com.thinkernote.ThinkerNote.General.TNSettings;
+import com.thinkernote.ThinkerNote.General.TNSpeek;
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsAtt;
 import com.thinkernote.ThinkerNote.General.TNUtilsDialog;
 import com.thinkernote.ThinkerNote.General.TNUtilsHtml;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
-import com.thinkernote.ThinkerNote.mvp.MyRxManager;
-import com.thinkernote.ThinkerNote.other.PoPuMenuView;
-import com.thinkernote.ThinkerNote.other.PoPuMenuView.OnPoPuMenuItemClickListener;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Service.LocationService;
-import com.thinkernote.ThinkerNote.Utils.JsonParser;
 import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.dialog.CommonDialog;
+import com.thinkernote.ThinkerNote.mvp.MyRxManager;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnSyncListener;
 import com.thinkernote.ThinkerNote.mvp.p.SyncPresenter;
-import com.thinkernote.ThinkerNote.base.TNActBase;
+import com.thinkernote.ThinkerNote.other.PoPuMenuView;
+import com.thinkernote.ThinkerNote.other.PoPuMenuView.OnPoPuMenuItemClickListener;
 
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * 主页--写笔记界面
@@ -89,6 +80,7 @@ import org.json.JSONObject;
 public class TNNoteEditAct extends TNActBase implements OnClickListener,
         OnFocusChangeListener, TextWatcher,
         OnPoPuMenuItemClickListener, OnSyncListener {
+
     private static final String TAG = "NOTE";
     //正常登录的同步常量
     private static final int AUTO_SAVE = 1;//2min本地自动保存
@@ -97,32 +89,39 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
     private static final int MAX_CONTENT_LEN = 4 * 100 * 1024;
 
     private TNNote mNote = null;//全局笔记，最终操作都是这一个笔记
+    private TNNoteAtt mCurrentAtt;
     private Uri mCameraUri = null;
     private boolean mIsStartOtherAct = false;
-    //语音相关
-    private RecognizerDialog mIatDialog;
-    // 用HashMap存储听写结果
-    private HashMap<String, String> mIatResults = new LinkedHashMap<String, String>();
-
-    //
     private int mSelection = -1;
+    private float mScale;
+
+    //功能封装
+    private TNRecord mRecord;//录音
+    private TNSpeek mSpeek;//语音转文字
+    // 保存倒计时
+    private Timer mTimer;
+    private TimerTask mTimerTask;
+    //p层
+    private SyncPresenter syncPresenter;
+
+    //================布局控件=================
+    //toolbar控制布局
+    private RelativeLayout ly_speek;
+    private LinearLayout ly_record;
+    private LinearLayout ly_note;
+    private TextView speek_start;
+    private Button speek_stop;
+    private ImageView speek_img;
+    private TextView mRecordTime;
+    private ProgressBar mRecordAmplitudeProgress;
     private EditText mTitleView;
     private EditText mContentView;
     private PoPuMenuView mPopuMenu;
     private LinearLayout mAttsLayout;
     private ProgressDialog mProgressDialog = null;
-    private TNNoteAtt mCurrentAtt;
-    private float mScale;
 
-    private TNRecord mRecord;
-    private TextView mRecordTime;
-    private ProgressBar mRecordAmplitudeProgress;
 
-    private Timer mTimer;
-    private TimerTask mTimerTask;
-    //p
-    private SyncPresenter syncPresenter;
-
+    //================================初始化+复写=================================
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,7 +163,12 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         mAttsLayout = (LinearLayout) findViewById(R.id.noteedit_atts_linearlayout);
         mRecordTime = (TextView) findViewById(R.id.record_time);
         mRecordAmplitudeProgress = (ProgressBar) findViewById(R.id.record_progressbar);
-
+        ly_speek = findViewById(R.id.noteedit_speek_layout);
+        ly_record = findViewById(R.id.noteedit_record_layout);
+        ly_note = findViewById(R.id.noteedit_toolbar_layout);
+        speek_start = findViewById(R.id.speek_start);
+        speek_stop = findViewById(R.id.speek_stop);
+        speek_img = findViewById(R.id.speek_img);
 
         findViewById(R.id.noteedit_save).setOnClickListener(this);
         findViewById(R.id.noteedit_camera).setOnClickListener(this);
@@ -174,6 +178,9 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         findViewById(R.id.noteedit_speakinput).setOnClickListener(this);
         findViewById(R.id.record_start).setOnClickListener(this);
         findViewById(R.id.record_stop).setOnClickListener(this);
+        findViewById(R.id.record_stop).setOnClickListener(this);
+        speek_start.setOnClickListener(this);
+        speek_stop.setOnClickListener(this);
 
         mTitleView.setOnFocusChangeListener(this);
         //有的手机不支持软键盘
@@ -206,7 +213,6 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                 // edit note
                 mNote = TNDbUtils.getNoteByNoteLocalId(id);
         } else {
-            MLog.d("initNote==创建新笔记");
             mNote = TNNote.newNote();
 
             Intent it = getIntent();
@@ -286,19 +292,35 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         mContentView.setSelection(mNote.content.length());
     }
 
+    private void refreshAttsView() {
+        mAttsLayout.removeAllViews();
+        boolean needRefresh = false;
+        for (TNNoteAtt att : mNote.atts) {
+            //此判断是为了解决特殊用户在查看附件时把附件删除引起的问题
+            if (new File(att.path).length() <= 0) {
+                mNote.atts.remove(att);
+                String temp = String.format("<tn-media hash=\"%s\"></tn-media>", att.digest);
+                mNote.content = mNote.content.replaceAll(temp, "");
+                needRefresh = true;
+                break;
+            }
+            ImageView attView = new ImageView(this);
+            setAttView(attView, att);
+            mAttsLayout.addView(attView);
+        }
+        if (needRefresh) {
+            configView();
+        }
+        mAttsLayout.setGravity(Gravity.CENTER);
+    }
 
-    private void startTargetAct(String target) {
-        if (target == null) {
-            return;
+    private void initContentView() {
+        int attViewHeight = 0;
+        if (mNote.atts != null && mNote.atts.size() > 0) {
+            attViewHeight = 85 + 38;
         }
-        if (target.equals("camera")) {
-            startCamera();
-        } else if (target.equals("doodle")) {
-            startActForResult(TNTuYaAct.class, null, R.id.noteedit_doodle);
-        } else if (target.equals("record")) {
-            getIntent().removeExtra("Target");
-            startRecord();
-        }
+        mContentView.setMinLines((getWindowManager().getDefaultDisplay()
+                .getHeight() - TNUtils.dipToPx(this, 90) - attViewHeight) / mContentView.getLineHeight());
     }
 
     @Override
@@ -315,11 +337,9 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         }
         handleProgressDialog("dismiss");
 
-        if (mIatDialog != null)
-            mIatDialog.dismiss();
-
         super.onDestroy();
     }
+
 
     /**
      * 缓存机制
@@ -359,45 +379,6 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         getCursorLocation();
     }
 
-    private void setCursorLocation() {
-        if (mTitleView.hasFocus()) {
-            setSelectTion(mTitleView);
-        } else if (mContentView.hasFocus()) {
-            setSelectTion(mContentView);
-        } else {
-            if (mTitleView.getText().length() == 0) {
-                mTitleView.requestFocus();
-                mSelection = 0;
-                setSelectTion(mTitleView);
-            } else {
-                mContentView.requestFocus();
-                mSelection = mContentView.getText().length();
-                setSelectTion(mContentView);
-            }
-        }
-    }
-
-    private void getCursorLocation() {
-        if (mTitleView.hasFocus()) {
-            mSelection = mTitleView.getSelectionStart();
-        } else if (mContentView.hasFocus()) {
-            mSelection = mContentView.getSelectionStart();
-        }
-    }
-
-    private void setSelectTion(EditText editText) {
-        try {
-            if (mSelection < 0) {
-                mSelection = editText.getText().length();
-            }
-            editText.setSelection(mSelection);
-        } catch (Exception e) {
-            mSelection = editText.getText().length();
-            editText.setSelection(mSelection);
-
-        }
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -428,9 +409,6 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
             case R.id.noteedit_camera://相机
                 startCamera();
                 break;
-            case R.id.noteedit_speakinput://语音
-                showIatDialog();
-                break;
 
             case R.id.record_start://录音的开始/暂停
                 if (mRecord == null)
@@ -450,50 +428,65 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                 handleProgressDialog("show");
                 mRecord.asynStop(7);
                 break;
+            case R.id.noteedit_speakinput://语音
+                if (TNUtils.checkNetwork(this)) {
+                    startSpeek();
+                } else {
+                    TNUtilsUi.showToast(R.string.alert_Net_NotWork);
+                }
+
+                break;
+            case R.id.speek_start://语音重新开始
+                if (speek_start.getText().toString().contains("正在听")) {
+                    return;
+                }
+                if (mSpeek == null) {
+                    mSpeek = new TNSpeek(this);
+                    //重新连接回调
+                    mSpeek.setCallBack(speekCallBack);
+                }
+                mSpeek.speekStart();
+                break;
+            case R.id.speek_stop://语音 关闭
+                showToolbar("note");
+                endSpeek();
+                break;
+
+
         }
     }
 
-    private void startCamera() {
-        try {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            ContentValues values = new ContentValues();
-            values.put(Media.TITLE, "image");
-            mCameraUri = getContentResolver().insert(
-                    Media.EXTERNAL_CONTENT_URI, values);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, mCameraUri);
-            TNUtilsDialog.startIntentForResult(this, intent,
-                    R.string.alert_NoteEdit_NoCamera, R.id.noteedit_camera);
-        } catch (IllegalArgumentException e) {
-            // 目前仅在1.6，HTC Magic发生过
-            // getContentResolver().insert可能产生异常
-            // java.lang.IllegalArgumentException: Unknown URL
-            // content://media/external/images/media
-        } catch (Exception e) {
-        }
-    }
-
-    private void startRecord() {
-        if (mRecord == null)
-            mRecord = new TNRecord(handler);
-
-        showToolbar("record");
-        mRecord.start();
-        ((Button) findViewById(R.id.record_start)).setText(R.string.noteedit_record_pause);
-    }
-
+    /**
+     * 工具栏切换
+     *
+     * @param type
+     */
     private void showToolbar(String type) {
         if (type.equals("record")) {
-            findViewById(R.id.noteedit_toolbar_layout).setVisibility(View.GONE);
-            findViewById(R.id.noteedit_record_layout).setVisibility(
-                    View.VISIBLE);
-        } else if (type.equals("play")) {
-
-        } else {
-            findViewById(R.id.noteedit_toolbar_layout).setVisibility(
-                    View.VISIBLE);
-            findViewById(R.id.noteedit_record_layout).setVisibility(View.GONE);
+            ly_note.setVisibility(View.GONE);
+            ly_record.setVisibility(View.VISIBLE);
+            ly_speek.setVisibility(View.GONE);
+        } else if (type.equals("speek")) {
+            ly_note.setVisibility(View.GONE);
+            ly_speek.setVisibility(View.VISIBLE);
+            ly_record.setVisibility(View.GONE);
+        } else if (type.equals("note")) {
+            ly_record.setVisibility(View.GONE);
+            ly_note.setVisibility(View.VISIBLE);
+            ly_speek.setVisibility(View.GONE);
         }
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            backDialog();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    //================================回调+监听=================================
 
     @Override
     public void onPoPuMenuItemClick(int id) {
@@ -580,253 +573,11 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
     }
 
     /**
-     * 插入当前时间
+     * 笔记输入监听
      *
-     * @param et
+     * @param v
+     * @param hasFocus
      */
-    private void insertCurrentTime(EditText et) {
-        int index = et.getSelectionStart();
-        String date = "【"
-                + TNUtilsUi.formatHighPrecisionDate(this,
-                System.currentTimeMillis()) + "】";
-        StringBuffer sb = new StringBuffer(et.getText().toString());
-        sb.insert(index, date);
-        et.setText(sb.toString());
-        Selection.setSelection(et.getText(), index + date.length());
-    }
-
-    /**
-     * 其他
-     */
-    private void setOtherBtnPopuMenu() {
-        if (mPopuMenu != null) {
-            mPopuMenu.dismiss();
-        }
-        mPopuMenu = new PoPuMenuView(this);
-        mPopuMenu.addItem(R.id.noteedit_picture,
-                getString(R.string.noteedit_popomenu_picture), mScale);
-        if (!TNSettings.getInstance().isInProject()) {
-            mPopuMenu.addItem(R.id.noteedit_tag,
-                    getString(R.string.noteedit_popomenu_tag), mScale);
-        }
-        mPopuMenu.addItem(R.id.noteedit_addatt,
-                getString(R.string.noteedit_popomenu_addatt), mScale);
-        mPopuMenu.addItem(R.id.noteedit_insertcurrenttime,
-                getString(R.string.noteedit_popomenu_insertcurrenttime), mScale);
-        mPopuMenu.addItem(R.id.noteedit_folders,
-                getString(R.string.noteedit_popomenu_folders), mScale);
-        mPopuMenu.setOnPoPuMenuItemClickListener(this);
-    }
-
-    private void setAttBtnPopuMenu() {
-        if (mPopuMenu != null) {
-            mPopuMenu.dismiss();
-        }
-        mPopuMenu = new PoPuMenuView(this);
-        mPopuMenu.addItem(R.id.noteedit_att_look,
-                getString(R.string.noteedit_popomenu_lookatt), mScale);
-        mPopuMenu.addItem(R.id.noteedit_att_delete,
-                getString(R.string.noteedit_popomenu_deleteatt), mScale);
-        mPopuMenu.setOnPoPuMenuItemClickListener(this);
-    }
-
-    private void initContentView() {
-        int attViewHeight = 0;
-        if (mNote.atts != null && mNote.atts.size() > 0) {
-            attViewHeight = 85 + 38;
-        }
-        mContentView.setMinLines((getWindowManager().getDefaultDisplay()
-                .getHeight() - TNUtils.dipToPx(this, 90) - attViewHeight) / mContentView.getLineHeight());
-    }
-
-    private void saveInput() {
-        String title = mTitleView.getText().toString().trim();
-        if (!title.equals(mNote.title)) {
-            mNote.title = title;
-        }
-
-        String content = mContentView.getText().toString();
-        if (!content.equals(mNote.content)) {
-            mNote.content = content;
-        }
-
-        if (mNote.title.length() == 0) {
-            mNote.title = this.getString(R.string.noteedit_title);
-        }
-
-    }
-
-    private void refreshAttsView() {
-        mAttsLayout.removeAllViews();
-        boolean needRefresh = false;
-        for (TNNoteAtt att : mNote.atts) {
-            //此判断是为了解决特殊用户在查看附件时把附件删除引起的问题
-            if (new File(att.path).length() <= 0) {
-                mNote.atts.remove(att);
-                String temp = String.format("<tn-media hash=\"%s\"></tn-media>", att.digest);
-                mNote.content = mNote.content.replaceAll(temp, "");
-                needRefresh = true;
-                break;
-            }
-            ImageView attView = new ImageView(this);
-            setAttView(attView, att);
-            mAttsLayout.addView(attView);
-        }
-        if (needRefresh) {
-            configView();
-        }
-        mAttsLayout.setGravity(Gravity.CENTER);
-    }
-
-    private void setAttView(ImageView attView, final TNNoteAtt att) {
-        LayoutParams layoutParams = new LayoutParams(
-                100, LayoutParams.WRAP_CONTENT);
-
-        if (att.type > 10000 && att.type < 20000) {
-            Bitmap thumbnail = TNUtilsAtt.makeThumbnailBitmap(att.path,
-                    100, 73);
-            if (thumbnail != null) {
-                attView.setImageBitmap(thumbnail);
-            } else {
-                attView.setImageURI(Uri.parse(att.path));
-            }
-            layoutParams.setMargins((int) (2 * mScale), (int) (4 * mScale), (int) (2 * mScale), (int) (4 * mScale));
-        } else if (att.type > 20000 && att.type < 30000)
-            TNUtilsSkin.setImageViewDrawable(this, attView, R.drawable.ic_audio);
-        else if (att.type == 40001)
-            TNUtilsSkin.setImageViewDrawable(this, attView, R.drawable.ic_pdf);
-        else if (att.type == 40002)
-            TNUtilsSkin.setImageViewDrawable(this, attView, R.drawable.ic_txt);
-        else if (att.type == 40003 || att.type == 40010)
-            TNUtilsSkin.setImageViewDrawable(this, attView, R.drawable.ic_word);
-        else if (att.type == 40005 || att.type == 40011)
-            TNUtilsSkin.setImageViewDrawable(this, attView, R.drawable.ic_ppt);
-        else if (att.type == 40009 || att.type == 40012)
-            TNUtilsSkin.setImageViewDrawable(this, attView, R.drawable.ic_excel);
-        else
-            TNUtilsSkin.setImageViewDrawable(this, attView, R.drawable.ic_unknown);
-
-        attView.setLayoutParams(layoutParams);
-
-        attView.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                setAttBtnPopuMenu();
-                mPopuMenu.show(v);
-                mCurrentAtt = att;
-            }
-        });
-    }
-
-    private String formatTime(int minute, int secend) {
-        String time = "";
-        if (minute < 10) {
-            time += "0";
-        }
-        time += String.valueOf(minute);
-        time += ":";
-        if (secend < 10) {
-            time += "0";
-        }
-        time += String.valueOf(secend);
-        return time;
-    }
-
-    public void toFinish() {
-        finish();
-    }
-
-    private void showIatDialog() {
-        if (TNUtils.checkNetwork(this)) {
-            if (mIatDialog == null) {
-                mIatDialog = new RecognizerDialog(TNNoteEditAct.this, mInitListener);
-                mIatDialog.setListener(mRecognizerDialogListener);
-            }
-            mIatDialog.show();
-        }
-    }
-
-    /**
-     * 初始化监听器。
-     */
-    private InitListener mInitListener = new InitListener() {
-
-        @Override
-        public void onInit(int code) {
-            Log.d(TAG, "SpeechRecognizer init() code = " + code);
-            if (code != ErrorCode.SUCCESS) {
-                MLog.e("初始化失败，错误码：" + code);
-                TNUtilsUi.showToast("语音初始化失败，不可用");
-            }
-        }
-    };
-    /**
-     * 听写UI监听器
-     */
-    private RecognizerDialogListener mRecognizerDialogListener = new RecognizerDialogListener() {
-        public void onResult(RecognizerResult results, boolean isLast) {
-//            printTransResult(results);
-            StringBuffer builder = printResult(results);
-            EditText currentText = null;
-            if (mTitleView.isFocused()) {
-                currentText = mTitleView;
-            } else if (mContentView.isFocused()) {
-                currentText = mContentView;
-            }
-
-            if (currentText != null) {
-                int start = currentText.getSelectionStart();
-                int end = currentText.getSelectionEnd();
-                currentText.getText().replace(Math.min(start, end),
-                        Math.max(start, end), builder);
-                currentText.setSelection(Math.min(start, end) + builder.length(),
-                        Math.min(start, end) + builder.length());
-            }
-        }
-
-        /**
-         * 识别回调错误.
-         */
-        public void onError(SpeechError error) {
-            MLog.i(TAG, "iat onEnd:" + error);
-            if (error != null) {
-                TNUtilsUi.showToast(error.toString());
-            }
-        }
-
-    };
-
-    private StringBuffer printResult(RecognizerResult results) {
-        mIatResults.clear();
-        String text = JsonParser.parseIatResult(results.getResultString());
-
-        String sn = null;
-        // 读取json结果中的sn字段
-        try {
-            JSONObject resultJson = new JSONObject(results.getResultString());
-            sn = resultJson.optString("sn");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        mIatResults.put(sn, text);
-
-        StringBuffer resultBuffer = new StringBuffer();
-        for (String key : mIatResults.keySet()) {
-            resultBuffer.append(mIatResults.get(key));
-        }
-        return resultBuffer;
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-            backDialog();
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         if (v.getId() == R.id.noteedit_input_title && !hasFocus) {
@@ -876,6 +627,13 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                 + " count:" + count);
     }
 
+    /**
+     * 界面返回处理
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -910,150 +668,6 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         }
     }
 
-    private void addAtt(final String path, boolean delete) {
-        if (path == null) {
-            return;
-        }
-
-        if (mNote.atts.size() > 200) {
-            TNUtilsUi.alert(this, R.string.alert_Att_too_Much);
-            return;
-        }
-
-        File file = new File(path);
-        if (file.getName().indexOf(" ") > -1) {
-            TNUtilsUi.alert(this, R.string.alert_Att_Name_FormatWrong);
-            return;
-        }
-        if (file.length() <= 0) {
-            TNUtilsUi.alert(this, R.string.alert_NoteEdit_AttSizeWrong);
-        } else if (file.length() > TNConst.ATT_MAX_LENTH) {
-            TNUtilsUi.alert(this, R.string.alert_NoteEdit_AttTooLong);
-        } else {
-            mNote.atts.add(TNNoteAtt.newAtt(file, this));
-            if (delete)
-                file.delete();
-        }
-    }
-
-    private void backDialog() {
-        saveInput();
-        if (!mNote.isModified() && (mRecord == null || mRecord.isStop())) {
-            MLog.d("SJY", "保存到本地退出");
-            toFinish();
-            return;
-        }
-        CommonDialog dialog = new CommonDialog(this, R.string.alert_NoteEdit_SaveMsg,
-                "保存",
-                "不保存",
-                new CommonDialog.DialogCallBack() {
-                    @Override
-                    public void sureBack() {
-                        saveNote();
-                    }
-
-                    @Override
-                    public void cancelBack() {
-                        if (mRecord != null && !mRecord.isStop()) {
-                            mRecord.cancle();
-                        }
-                        toFinish();
-                    }
-
-                });
-        dialog.show();
-    }
-
-    /**
-     * 保存按钮/back/
-     */
-    private void saveNote() {
-        if (checkNote()) {
-            handleProgressDialog("show");
-            mNote.prepareToSave();
-            pNoteSave(mNote, true);//保存到后台
-        }
-    }
-
-    private boolean checkNote() {
-        int length = mNote.content.length();
-        if (length > MAX_CONTENT_LEN) {
-            TNUtilsUi.alert(this, R.string.alert_NoteEdit_ContentTooLong);
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    private String getPath(Uri uri) {
-        try {
-            String[] projection = {Media.DATA};
-
-            Cursor cursor = managedQuery(uri, projection, null, null, null);
-            if (cursor != null) {
-                // HERE YOU WILL GET A NULLPOINTER IF CURSOR IS NULL
-                // THIS CAN BE, IF YOU USED OI FILE MANAGER FOR PICKING THE
-                // MEDIA
-                int column_index = cursor
-                        .getColumnIndexOrThrow(Media.DATA);
-                cursor.moveToFirst();
-                return cursor.getString(column_index);
-            } else {
-                return uri.getPath();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
-     * 2min自动保存笔记,不退出
-     */
-    private void startTimer() {
-        if (mTimer != null) {
-            mTimer.cancel();
-            mTimer = null;
-            mTimerTask = null;
-        }
-        mTimer = new Timer();
-        mTimerTask = new TimerTask() {
-            public void run() {
-                Message message = new Message();
-                message.what = AUTO_SAVE;
-                handler.sendMessage(message);
-            }
-        };
-        mTimer.schedule(mTimerTask,
-//                1000,
-//                2000
-                60 * 1000, //60 * 1000
-                2*60 * 1000
-        );//60 * 1000
-    }
-
-    private void handleProgressDialog(String type) {
-        try {
-            if (type.equals("show")) {
-                if (mProgressDialog == null) {
-                    mProgressDialog = TNUtilsUi.progressDialog(this, R.string.in_progress);
-                }
-                mProgressDialog.show();
-            } else if (type.equals("hide")) {
-                if (mProgressDialog != null) {
-                    mProgressDialog.hide();
-                }
-            } else if (type.equals("dismiss")) {
-                if (mProgressDialog != null) {
-                    mProgressDialog.dismiss();
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
     //==========================================handler======================================
 
     @Override
@@ -1086,7 +700,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                 setCursorLocation();
                 TNUtilsUi.alert(TNNoteEditAct.this, R.string.alert_NoteEdit_Record_Interrupt);
                 break;
-            case 6://空间不够
+            case 6://空间不够(TNRecord发送的处理)
                 TNUtilsUi.alert(TNNoteEditAct.this, R.string.alert_NoSDCard);
                 showToolbar("note");
                 break;
@@ -1165,6 +779,481 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         }
         super.handleMessage(msg);
     }
+
+
+    /**
+     * ==================功能选择==================
+     */
+    private void startTargetAct(String target) {
+        if (target == null) {
+            return;
+        }
+        if (target.equals("camera")) {
+            startCamera();
+        } else if (target.equals("doodle")) {
+            startActForResult(TNTuYaAct.class, null, R.id.noteedit_doodle);
+        } else if (target.equals("record")) {
+            getIntent().removeExtra("Target");
+            startRecord();
+        }
+    }
+
+    /**
+     * ==================其他==================
+     */
+    private void setOtherBtnPopuMenu() {
+        if (mPopuMenu != null) {
+            mPopuMenu.dismiss();
+        }
+        mPopuMenu = new PoPuMenuView(this);
+        mPopuMenu.addItem(R.id.noteedit_picture,
+                getString(R.string.noteedit_popomenu_picture), mScale);
+        if (!TNSettings.getInstance().isInProject()) {
+            mPopuMenu.addItem(R.id.noteedit_tag,
+                    getString(R.string.noteedit_popomenu_tag), mScale);
+        }
+        mPopuMenu.addItem(R.id.noteedit_addatt,
+                getString(R.string.noteedit_popomenu_addatt), mScale);
+        mPopuMenu.addItem(R.id.noteedit_insertcurrenttime,
+                getString(R.string.noteedit_popomenu_insertcurrenttime), mScale);
+        mPopuMenu.addItem(R.id.noteedit_folders,
+                getString(R.string.noteedit_popomenu_folders), mScale);
+        mPopuMenu.setOnPoPuMenuItemClickListener(this);
+    }
+
+    /**
+     * ==============系统相机==============
+     */
+    private void startCamera() {
+        try {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            ContentValues values = new ContentValues();
+            values.put(Media.TITLE, "image");
+            mCameraUri = getContentResolver().insert(
+                    Media.EXTERNAL_CONTENT_URI, values);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, mCameraUri);
+            TNUtilsDialog.startIntentForResult(this, intent,
+                    R.string.alert_NoteEdit_NoCamera, R.id.noteedit_camera);
+        } catch (IllegalArgumentException e) {
+            // 目前仅在1.6，HTC Magic发生过
+            // getContentResolver().insert可能产生异常
+            // java.lang.IllegalArgumentException: Unknown URL
+            // content://media/external/images/media
+        } catch (Exception e) {
+        }
+    }
+
+    /**
+     * ==============附件处理==============
+     */
+    private void setAttBtnPopuMenu() {
+        if (mPopuMenu != null) {
+            mPopuMenu.dismiss();
+        }
+        mPopuMenu = new PoPuMenuView(this);
+        mPopuMenu.addItem(R.id.noteedit_att_look,
+                getString(R.string.noteedit_popomenu_lookatt), mScale);
+        mPopuMenu.addItem(R.id.noteedit_att_delete,
+                getString(R.string.noteedit_popomenu_deleteatt), mScale);
+        mPopuMenu.setOnPoPuMenuItemClickListener(this);
+    }
+
+
+    /**
+     * ==============开始录音==============
+     */
+    private void startRecord() {
+        if (mRecord == null)
+            mRecord = new TNRecord(handler);
+
+        showToolbar("record");
+        mRecord.start();
+        ((Button) findViewById(R.id.record_start)).setText(R.string.noteedit_record_pause);
+    }
+
+    /**
+     * ==============开始语音==============
+     */
+    private void startSpeek() {
+        if (mSpeek == null)
+            mSpeek = new TNSpeek(this);
+        //重新连接回调
+        mSpeek.setCallBack(speekCallBack);
+        showToolbar("speek");
+        mSpeek.speekStart();
+    }
+
+    private void endSpeek() {
+        mSpeek.setCallBack(null);
+    }
+
+
+    /**
+     * 自定义语音转文字 回调
+     */
+    TNSpeek.SpeekCallBack speekCallBack = new TNSpeek.SpeekCallBack() {
+
+        @Override
+        public void onShowError() {
+            speek_start.setText(R.string.noteedit_speek_error);
+        }
+
+        @Override
+        public void onShowSpeeking() {
+            speek_start.setText(R.string.noteedit_speeking);
+        }
+
+        @Override
+        public void onShowRestart() {
+            speek_start.setText(R.string.noteedit_speek_start);
+        }
+
+        @Override
+        public void onShowImgChanged(int i) {
+            if (i == 0 || i == 1 || i == 2) {
+                speek_img.setBackground(ContextCompat.getDrawable(TNNoteEditAct.this, R.mipmap.recorder_player2));//1
+            } else if (i == 3 || i == 4) {
+                speek_img.setBackground(ContextCompat.getDrawable(TNNoteEditAct.this, R.mipmap.recorder_player3));//2
+            } else if (i == 5 || i == 6) {
+                speek_img.setBackground(ContextCompat.getDrawable(TNNoteEditAct.this, R.mipmap.recorder_player4));//3
+            } else if (i == 7 || i == 8) {
+                speek_img.setBackground(ContextCompat.getDrawable(TNNoteEditAct.this, R.mipmap.recorder_player5));//4
+            } else if (i == 9 || i == 10) {
+                speek_img.setBackground(ContextCompat.getDrawable(TNNoteEditAct.this, R.mipmap.recorder_player6));//5
+            } else if (i == 9 || i == 10) {
+                speek_img.setBackground(ContextCompat.getDrawable(TNNoteEditAct.this, R.mipmap.recorder_player7));//6
+            } else if (i > 11) {
+                speek_img.setBackground(ContextCompat.getDrawable(TNNoteEditAct.this, R.mipmap.recorder_player8));//7
+            } else {
+                speek_img.setBackground(ContextCompat.getDrawable(TNNoteEditAct.this, R.mipmap.recorder_player2)); //1
+            }
+        }
+
+        @Override
+        public void onResultBack(StringBuffer builder) {
+            EditText currentText = null;
+            if (mTitleView.isFocused()) {
+                currentText = mTitleView;
+            } else if (mContentView.isFocused()) {
+                currentText = mContentView;
+            }
+
+            if (currentText != null) {
+                int start = currentText.getSelectionStart();
+                int end = currentText.getSelectionEnd();
+                currentText.getText().replace(Math.min(start, end),
+                        Math.max(start, end), builder);
+                currentText.setSelection(Math.min(start, end) + builder.length(),
+                        Math.min(start, end) + builder.length());
+            }
+        }
+    };
+
+
+    /**
+     * 保存按钮/back/
+     */
+    private void saveNote() {
+        if (checkNote()) {
+            handleProgressDialog("show");
+            mNote.prepareToSave();
+            pNoteSave(mNote, true);//保存到后台
+        }
+    }
+
+    /**
+     * 保存笔记
+     */
+    private void backDialog() {
+        saveInput();
+        if (!mNote.isModified() && (mRecord == null || mRecord.isStop())) {
+            MLog.d("SJY", "保存到本地退出");
+            toFinish();
+            return;
+        }
+        CommonDialog dialog = new CommonDialog(this, R.string.alert_NoteEdit_SaveMsg,
+                "保存",
+                "不保存",
+                new CommonDialog.DialogCallBack() {
+                    @Override
+                    public void sureBack() {
+                        saveNote();
+                    }
+
+                    @Override
+                    public void cancelBack() {
+                        toFinish();
+                    }
+
+                });
+        dialog.show();
+    }
+
+
+    /**
+     * 保存笔记
+     */
+    private void saveInput() {
+        String title = mTitleView.getText().toString().trim();
+        if (!title.equals(mNote.title)) {
+            mNote.title = title;
+        }
+
+        String content = mContentView.getText().toString();
+        if (!content.equals(mNote.content)) {
+            mNote.content = content;
+        }
+
+        if (mNote.title.length() == 0) {
+            mNote.title = this.getString(R.string.noteedit_title);
+        }
+
+    }
+
+
+    //================================方法处理=================================
+
+
+    private void toFinish() {
+        if (mRecord != null && !mRecord.isStop()) {
+            mRecord.cancle();
+        }
+
+        if (mSpeek != null) {
+            mSpeek.speekEnd();
+            mSpeek = null;
+        }
+        finish();
+    }
+
+
+    private void setCursorLocation() {
+        if (mTitleView.hasFocus()) {
+            setSelectTion(mTitleView);
+        } else if (mContentView.hasFocus()) {
+            setSelectTion(mContentView);
+        } else {
+            if (mTitleView.getText().length() == 0) {
+                mTitleView.requestFocus();
+                mSelection = 0;
+                setSelectTion(mTitleView);
+            } else {
+                mContentView.requestFocus();
+                mSelection = mContentView.getText().length();
+                setSelectTion(mContentView);
+            }
+        }
+    }
+
+    private void getCursorLocation() {
+        if (mTitleView.hasFocus()) {
+            mSelection = mTitleView.getSelectionStart();
+        } else if (mContentView.hasFocus()) {
+            mSelection = mContentView.getSelectionStart();
+        }
+    }
+
+    private void setSelectTion(EditText editText) {
+        try {
+            if (mSelection < 0) {
+                mSelection = editText.getText().length();
+            }
+            editText.setSelection(mSelection);
+        } catch (Exception e) {
+            mSelection = editText.getText().length();
+            editText.setSelection(mSelection);
+
+        }
+    }
+
+    /**
+     * 插入当前时间
+     *
+     * @param et
+     */
+    private void insertCurrentTime(EditText et) {
+        int index = et.getSelectionStart();
+        String date = "【"
+                + TNUtilsUi.formatHighPrecisionDate(this,
+                System.currentTimeMillis()) + "】";
+        StringBuffer sb = new StringBuffer(et.getText().toString());
+        sb.insert(index, date);
+        et.setText(sb.toString());
+        Selection.setSelection(et.getText(), index + date.length());
+    }
+
+    /**
+     * 添加附件
+     *
+     * @param path
+     * @param delete
+     */
+    private void addAtt(final String path, boolean delete) {
+        if (path == null) {
+            return;
+        }
+
+        if (mNote.atts.size() > 200) {
+            TNUtilsUi.alert(this, R.string.alert_Att_too_Much);
+            return;
+        }
+
+        File file = new File(path);
+        if (file.getName().indexOf(" ") > -1) {
+            TNUtilsUi.alert(this, R.string.alert_Att_Name_FormatWrong);
+            return;
+        }
+        if (file.length() <= 0) {
+            TNUtilsUi.alert(this, R.string.alert_NoteEdit_AttSizeWrong);
+        } else if (file.length() > TNConst.ATT_MAX_LENTH) {
+            TNUtilsUi.alert(this, R.string.alert_NoteEdit_AttTooLong);
+        } else {
+            mNote.atts.add(TNNoteAtt.newAtt(file, this));
+            if (delete)
+                file.delete();
+        }
+    }
+
+    /**
+     * 附件
+     *
+     * @param attView
+     * @param att
+     */
+    private void setAttView(ImageView attView, final TNNoteAtt att) {
+        LayoutParams layoutParams = new LayoutParams(
+                100, LayoutParams.WRAP_CONTENT);
+
+        if (att.type > 10000 && att.type < 20000) {
+            Bitmap thumbnail = TNUtilsAtt.makeThumbnailBitmap(att.path,
+                    100, 73);
+            if (thumbnail != null) {
+                attView.setImageBitmap(thumbnail);
+            } else {
+                attView.setImageURI(Uri.parse(att.path));
+            }
+            layoutParams.setMargins((int) (2 * mScale), (int) (4 * mScale), (int) (2 * mScale), (int) (4 * mScale));
+        } else if (att.type > 20000 && att.type < 30000)
+            TNUtilsSkin.setImageViewDrawable(this, attView, R.drawable.ic_audio);
+        else if (att.type == 40001)
+            TNUtilsSkin.setImageViewDrawable(this, attView, R.drawable.ic_pdf);
+        else if (att.type == 40002)
+            TNUtilsSkin.setImageViewDrawable(this, attView, R.drawable.ic_txt);
+        else if (att.type == 40003 || att.type == 40010)
+            TNUtilsSkin.setImageViewDrawable(this, attView, R.drawable.ic_word);
+        else if (att.type == 40005 || att.type == 40011)
+            TNUtilsSkin.setImageViewDrawable(this, attView, R.drawable.ic_ppt);
+        else if (att.type == 40009 || att.type == 40012)
+            TNUtilsSkin.setImageViewDrawable(this, attView, R.drawable.ic_excel);
+        else
+            TNUtilsSkin.setImageViewDrawable(this, attView, R.drawable.ic_unknown);
+
+        attView.setLayoutParams(layoutParams);
+
+        attView.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                setAttBtnPopuMenu();
+                mPopuMenu.show(v);
+                mCurrentAtt = att;
+            }
+        });
+    }
+
+    private String formatTime(int minute, int secend) {
+        String time = "";
+        if (minute < 10) {
+            time += "0";
+        }
+        time += String.valueOf(minute);
+        time += ":";
+        if (secend < 10) {
+            time += "0";
+        }
+        time += String.valueOf(secend);
+        return time;
+    }
+
+
+    private boolean checkNote() {
+        int length = mNote.content.length();
+        if (length > MAX_CONTENT_LEN) {
+            TNUtilsUi.alert(this, R.string.alert_NoteEdit_ContentTooLong);
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private String getPath(Uri uri) {
+        try {
+            String[] projection = {Media.DATA};
+
+            Cursor cursor = managedQuery(uri, projection, null, null, null);
+            if (cursor != null) {
+                // HERE YOU WILL GET A NULLPOINTER IF CURSOR IS NULL
+                // THIS CAN BE, IF YOU USED OI FILE MANAGER FOR PICKING THE
+                // MEDIA
+                int column_index = cursor
+                        .getColumnIndexOrThrow(Media.DATA);
+                cursor.moveToFirst();
+                return cursor.getString(column_index);
+            } else {
+                return uri.getPath();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * 2min自动保存笔记,不退出
+     */
+    private void startTimer() {
+        if (mTimer != null) {
+            mTimer.cancel();
+            mTimer = null;
+            mTimerTask = null;
+        }
+        mTimer = new Timer();
+        mTimerTask = new TimerTask() {
+            public void run() {
+                Message message = new Message();
+                message.what = AUTO_SAVE;
+                handler.sendMessage(message);
+            }
+        };
+        mTimer.schedule(mTimerTask,
+//                1000,
+//                2000
+                60 * 1000, //60 * 1000
+                2 * 60 * 1000
+        );//60 * 1000
+    }
+
+    private void handleProgressDialog(String type) {
+        try {
+            if (type.equals("show")) {
+                if (mProgressDialog == null) {
+                    mProgressDialog = TNUtilsUi.progressDialog(this, R.string.in_progress);
+                }
+                mProgressDialog.show();
+            } else if (type.equals("hide")) {
+                if (mProgressDialog != null) {
+                    mProgressDialog.hide();
+                }
+            } else if (type.equals("dismiss")) {
+                if (mProgressDialog != null) {
+                    mProgressDialog.dismiss();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     //    同步结束
     private void endSynchronize() {
@@ -1273,7 +1362,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
     }
 
     /**
-     * 子线程的方法
+     * 附件保存到本地
      * save attr
      *
      * @param tnNote
@@ -1372,7 +1461,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         return note;
     }
 
-    //========================================p层调用 ========================================
+    //========================================p层调用========================================
 
     private void syncEdit() {
         mProgressDialog.show();

@@ -1,11 +1,5 @@
 package com.thinkernote.ThinkerNote.PullToRefresh;
 
-import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote.Activity.TNMainAct;
-import com.thinkernote.ThinkerNote.General.TNSettings;
-import com.thinkernote.ThinkerNote.General.TNUtils;
-import com.thinkernote.ThinkerNote.General.TNUtilsUi;
-
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -19,6 +13,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.thinkernote.ThinkerNote.General.TNSettings;
+import com.thinkernote.ThinkerNote.General.TNUtilsUi;
+import com.thinkernote.ThinkerNote.R;
 
 
 public class LoadingLayout extends FrameLayout {

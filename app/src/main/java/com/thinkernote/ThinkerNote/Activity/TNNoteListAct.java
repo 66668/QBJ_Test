@@ -146,6 +146,10 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
         mProgressDialog.dismiss();
         syncPresenter.cancelSync();
         super.onDestroy();
+        if(dialog!=null){
+            dialog.dismiss();
+            dialog = null;
+        }
     }
 
     @Override

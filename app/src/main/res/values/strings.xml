@@ -179,6 +179,11 @@
     <string name="noteedit_record_stop">停止</string>
     <string name="noteedit_record_time" formatted="false">%s:%s</string>
 
+    <string name="noteedit_speeking">正在听...</string>
+    <string name="noteedit_speek_start">继续</string>
+    <string name="noteedit_speek_error">不可用</string>
+    <string name="noteedit_speek_end">关闭</string>
+
     <string name="noteedit_popomenu_folders">选择文件夹</string>
     <string name="noteedit_popomenu_picture">添加相片</string>
     <string name="noteedit_popomenu_tag">选择标签</string>
@@ -580,6 +585,7 @@
     <string name="pagetags_alltag_count" formatted="false">全部标签(%d)</string>
 
     <string name="ak_alert_NoAppCanOpen">没有应用能处理该操作。请下载相关程序后再试。</string>
+
 
     <!-- Color -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->

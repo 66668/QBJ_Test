@@ -790,7 +790,14 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
                     break;
             }
         }
-        mProgressDialog = null;
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
+        }
+
+        if (dialog != null) {
+            dialog.dismiss();
+            dialog = null;
+        }
 
         //关闭文件夹同步
         if (MyRxManager.getInstance().isFolderSyncing()) {
