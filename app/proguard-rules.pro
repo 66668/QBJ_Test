@@ -140,12 +140,22 @@
     public static int e(...);
 }
 
-
-
+#############################################
+#
+# androidx的混淆配置
+#
+#############################################
+-keep class com.google.android.material.** {*;}
+-keep class androidx.** {*;}
+-keep public class * extends androidx.**
+-keep interface androidx.** {*;}
+-dontwarn com.google.android.material.**
+-dontnote com.google.android.material.**
+-dontwarn androidx.**
 
 #############################################
 #
-# Android开发中第三方类库的混淆处理
+# Android开发中第三方类库的混淆处理(轻笔记特有处理)
 #
 #############################################
 
@@ -171,7 +181,7 @@
 }
 
 
-# Retrofit
+# Retrofit2
 -keep class retrofit2.** { *; }
 -dontwarn retrofit2.**
 -keepattributes Signature
@@ -179,33 +189,6 @@
 -dontwarn okio.**
 -dontwarn javax.annotation.**
 
-
-# 高德相关依赖
-# 集合包:3D地图3.3.2 导航1.8.0 定位2.5.0
--dontwarn com.amap.api.**
--dontwarn com.autonavi.**
--keep class com.amap.api.**{*;}
--keep class com.autonavi.**{*;}
-# 地图服务
--dontwarn com.amap.api.services.**
--keep class com.map.api.services.** {*;}
-# 3D地图
--dontwarn com.amap.api.mapcore.**
--dontwarn com.amap.api.maps.**
--dontwarn com.autonavi.amap.mapcore.**
--keep class com.amap.api.mapcore.**{*;}
--keep class com.amap.api.maps.**{*;}
--keep class com.autonavi.amap.mapcore.**{*;}
-# 定位
--dontwarn com.amap.api.location.**
--dontwarn com.aps.**
--keep class com.amap.api.location.**{*;}
--keep class com.aps.**{*;}
-# 导航
--dontwarn com.amap.api.navi.**
--dontwarn com.autonavi.**
--keep class com.amap.api.navi.** {*;}
--keep class com.autonavi.** {*;}
 
 #百度地图混淆
 -keep class com.baidu.** {*;}
@@ -216,3 +199,16 @@
 -keep class com.tencent.mm.opensdk.** { *;}
 -keep class com.tencent.wxop.** {  *;}
 -keep class com.tencent.mm.sdk.** {*;}
+
+#讯飞语音混淆
+-dontwarn com.iflytek.speek.**
+-keep class com.iflytek.** {*;}
+-keep class com.iflytek.speek.** {*;}
+-keepattributes Signature
+
+
+#拼音转文字混淆（pinyin4j-2.5.0.jar）
+-dontwarn net.sourceforge.pinyin4j.**
+-keep class net.sourceforge.pinyin4j.**{*;}
+-keep class net.sourceforge.pinyin4j.format.**{*;}
+-keep class net.sourceforge.pinyin4j.format.exception.**{*;}
