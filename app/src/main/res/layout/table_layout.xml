@@ -124,13 +124,14 @@
             android:layout_height="fill_parent"
             android:layout_gravity="right"
             layout="@layout/table_toolbar_notes" />
-        
-        <include android:id="@+id/table_toolbar_layout_cats"
+
+        <include
+            android:id="@+id/table_toolbar_layout_cats"
+            layout="@layout/table_toolbar_cats"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:layout_gravity="right"
-            layout="@layout/table_toolbar_cats" />
-        
+            android:layout_gravity="right" />
+
         <include android:id="@+id/table_toolbar_layout_tags"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"

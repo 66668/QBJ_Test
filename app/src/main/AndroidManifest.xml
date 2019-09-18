@@ -3,103 +3,87 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.thinkernote.ThinkerNote">
 
-    <uses-permission android:name="android.permission.BAIDU_LOCATION_SERVICE" />
-    <!--<uses-permission android:name="android.permission.WRITE_APN_SETTINGS" />-->
-    <!--录音权限-->
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <!--相机权限-->
+    <uses-permission android:name="android.permission.BAIDU_LOCATION_SERVICE" /> <!-- <uses-permission android:name="android.permission.WRITE_APN_SETTINGS" /> -->
+    <!-- 录音权限 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" /> <!-- 相机权限 -->
     <uses-permission android:name="android.permission.CAMERA" />
-
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission
         android:name="android.permission.READ_LOGS"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
-    <!-- SD卡读取权限，用户写入离线定位数据-->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> <!-- SD卡读取权限，用户写入离线定位数据 -->
     <uses-permission
         android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.GET_TASKS" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <!--8.0打开文件需要的权限-->
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-
-    <!--网络框架必要权限    开始-->
-    <!-- 访问网络，网络定位需要上网-->
-    <uses-permission android:name="android.permission.INTERNET" />
-
-    <!-- 这个权限用于进行网络定位-->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!-- 获取运营商信息，用于支持提供运营商信息相关的接口-->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!-- 这个权限用于访问GPS定位-->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!-- 用于读取手机当前的状态-->   <!-- 用于调用 JNI -->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位-->
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位-->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <!-- 写入扩展存储，向扩展卡写入数据，用于写入离线定位数据-->
+    <uses-permission android:name="android.permission.BLUETOOTH" /> <!-- 8.0打开文件需要的权限 -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" /> <!-- 网络框架必要权限    开始 -->
+    <!-- 访问网络，网络定位需要上网 -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- 这个权限用于进行网络定位 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- 获取运营商信息，用于支持提供运营商信息相关的接口 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 这个权限用于访问GPS定位 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- 用于读取手机当前的状态 -->
+    <!-- 用于调用 JNI -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" /> <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位 -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 写入扩展存储，向扩展卡写入数据，用于写入离线定位数据 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <!--网络框架必要权限    结束-->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- 网络框架必要权限    结束 -->
     <uses-permission
         android:name="android.permission.CHANGE_CONFIGURATION"
         tools:ignore="ProtectedPermissions" />
     <uses-permission
         android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
-    <!---->
+
     <application
         android:name=".base.TNApplication"
         android:icon="@drawable/launcher"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.NoTitleBar">
-        <!--andriod9版本兼容设置-->
+        <!-- app小部件4*3布局-->
+        <receiver android:name=".appwidget.TNAppWidget43">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/tnapp_widget43_info" />
+        </receiver>
+
+        <!-- andriod9版本兼容设置 -->
         <uses-library
             android:name="org.apache.http.legacy"
-            android:required="false" />
-        <!-- 百度统计分析 start ================================================================ -->
+            android:required="false" /> <!-- 百度统计分析 start ================================================================ -->
         <!-- 百度 渠道商编号 -->
         <meta-data
             android:name="BaiduMobAd_CHANNEL"
-            android:value="thinkernote" />
-        <!-- 您从百度网站获取的APP KEY -->
+            android:value="thinkernote" /> <!-- 您从百度网站获取的APP KEY -->
         <meta-data
             android:name="BaiduMobAd_STAT_ID"
-            android:value="9853d4b43d" />
-        <!-- 以下 -->
+            android:value="9853d4b43d" /> <!-- 以下 -->
         <!-- 是否开启错误日志统计，默认为false -->
         <meta-data
             android:name="BaiduMobAd_EXCEPTION_LOG"
-            android:value="true" />
-        <!-- 日志发送策略，可选值：APP_START、ONCE_A_DAY、SET_TIME_INTERVAL，默认为APP_START -->
+            android:value="true" /> <!-- 日志发送策略，可选值：APP_START、ONCE_A_DAY、SET_TIME_INTERVAL，默认为APP_START -->
         <meta-data
             android:name="BaiduMobAd_SEND_STRATEGY"
-            android:value="APP_START" />
-        <!-- 日志仅在wifi网络下发送，默认为false -->
+            android:value="APP_START" /> <!-- 日志仅在wifi网络下发送，默认为false -->
         <meta-data
             android:name="BaiduMobAd_ONLY_WIFI"
-            android:value="false" />
-        <!-- 百度统计分析 end ================================================================ -->
-
+            android:value="false" /> <!-- 百度统计分析 end ================================================================ -->
         <!-- 百度定位  start ================================================================= -->
-        <!--开发者申请的AK 账号信息见readme.md-->
+        <!-- 开发者申请的AK 账号信息见readme.md -->
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="P726XL75U1osiDzewotN1XNeQjNrfyWb"></meta-data>
+            android:value="P726XL75U1osiDzewotN1XNeQjNrfyWb" />
 
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
-            android:process=":remote">
-
-        </service>
-        <!-- 百度定位 end ================================================================= -->
-
-        <!--============================android7.0+ 使用应用间共享文件 设置 开始============================-->
+            android:process=":remote"></service> <!-- 百度定位 end ================================================================= -->
+        <!-- ============================android7.0+ 使用应用间共享文件 设置 开始============================ -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.thinkernote.ThinkerNote.FileProvider"
@@ -108,207 +92,168 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths" />
-        </provider>
-
-        <!--============================android7.0+ 使用应用间共享文件 设置 结束============================-->
+        </provider> <!-- ============================android7.0+ 使用应用间共享文件 设置 结束============================ -->
         <activity
             android:name=".Activity.TNSplashAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".Activity.TNLoginAct"
             android:configChanges="keyboardHidden|orientation"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" />
-
         <activity
             android:name=".Activity.TNRegistAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysVisible" />
-
-        <!--编写不出软键盘的补充，不好用   android:windowSoftInputMode="adjustPan|stateAlwaysVisible"     -->
+            android:windowSoftInputMode="stateAlwaysVisible" /> <!-- 编写不出软键盘的补充，不好用   android:windowSoftInputMode="adjustPan|stateAlwaysVisible" -->
         <activity
             android:name=".Activity.TNNoteEditAct"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/app_name2"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible">
-
             <intent-filter>
-                <action android:name="android.intent.action.SEND_MULTIPLE"></action>
-                <action android:name="android.intent.action.SEND"></action>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <action android:name="android.intent.action.SEND" />
 
-                <category android:name="android.intent.category.DEFAULT"></category>
-                <data android:mimeType="*/*"></data>
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="*/*" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".Activity.TNNoteListAct"
             android:configChanges="keyboardHidden|orientation"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activity.TNTagListAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activity.TNNoteViewAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activity.TNTextEditAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
-
         <activity
             android:name=".Activity.TNCatListAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activity.TNFileListAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activity.TNUserInfoAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activity.TNAboutAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activity.TNCatInfoAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activity.TNTagInfoAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activity.TNNoteInfoAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activity.TNReportAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
-
         <activity
             android:name=".Activity.TNHtmlViewAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-
-
         <activity
             android:name=".Activity.TNLockAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activity.TNHelpAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activity.unuse.TNTestAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activity.TNMainAct"
             android:configChanges="keyboardHidden|orientation"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activity.TNSearchAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activity.unuse.TNAttListAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-
-
         <activity
             android:name=".Activity.TNTuYaAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activity.TNRemindAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activity.unuse.TNNetSearchAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
-
         <activity
             android:name=".Activity.TNSettingsAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activity.TNMainFragAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activity.TNPayTipAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activity.TNBindPhoneAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activity.TNChangeUserInfoAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activity.TNFindPasswordAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activity.TNBindAccountAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".Activity.ViewImageActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait" />
-
-        <!-- alipay -->
+            android:screenOrientation="portrait" /> <!-- alipay -->
         <activity
             android:name="com.alipay.sdk.app.H5PayActivity"
             android:configChanges="orientation|keyboardHidden|navigation"
@@ -319,9 +264,10 @@
             android:configChanges="orientation|keyboardHidden|navigation"
             android:exported="false"
             android:screenOrientation="behind" />
-
-        <!--微信 显示界面 android:theme="@android:style/Theme.Translucent.NoTitleBar"
-        不显示界面 android:theme="@android:style/Theme.NoDisplay-->
+        <!--
+微信 显示界面 android:theme="@android:style/Theme.Translucent.NoTitleBar"
+        不显示界面 android:theme="@android:style/Theme.NoDisplay
+        -->
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -329,7 +275,6 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-
         <activity
             android:name="com.tencent.tauth.AuthActivity"
             android:launchMode="singleTask"
@@ -343,16 +288,14 @@
 
                 <data android:scheme="101399197" />
             </intent-filter>
-        </activity>
-
-        <!-- serrvice 百度地图注册服务 -->
-        <service android:name=".Service.LocationService"></service>
+        </activity> <!-- serrvice 百度地图注册服务 -->
+        <service android:name=".Service.LocationService" />
 
         <receiver android:name=".Register.AppRegister">
             <intent-filter>
                 <action android:name="com.tencent.mm.plugin.openapi.Intent.ACTION_REFRESH_WXAPP" />
             </intent-filter>
         </receiver>
-
     </application>
+
 </manifest>
