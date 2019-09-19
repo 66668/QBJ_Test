@@ -410,7 +410,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                 break;
             }
             case R.id.noteedit_doodle: {//涂鸦
-                startActForResult(TNTuYaAct.class, null, R.id.noteedit_doodle);
+                startActForResult(TNNoteDrawAct.class, null, R.id.noteedit_doodle);
                 break;
             }
             case R.id.noteedit_camera://相机
@@ -798,7 +798,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         if (target.equals("camera")) {
             startCamera();
         } else if (target.equals("doodle")) {
-            startActForResult(TNTuYaAct.class, null, R.id.noteedit_doodle);
+            startActForResult(TNNoteDrawAct.class, null, R.id.noteedit_doodle);
         } else if (target.equals("record")) {
             getIntent().removeExtra("Target");
             startRecord();
