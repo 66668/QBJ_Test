@@ -110,6 +110,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
     private LinearLayout ly_record;
     private LinearLayout ly_note;
     private TextView speek_start;
+    private TextView tv_back;//返回按钮，适配9.0+无返回按钮的情况
     private Button speek_stop;
     private ImageView speek_img;
     private TextView mRecordTime;
@@ -169,6 +170,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         speek_start = findViewById(R.id.speek_start);
         speek_stop = findViewById(R.id.speek_stop);
         speek_img = findViewById(R.id.speek_img);
+        tv_back = findViewById(R.id.tv_back);
 
         findViewById(R.id.noteedit_save).setOnClickListener(this);
         findViewById(R.id.noteedit_camera).setOnClickListener(this);
@@ -181,6 +183,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         findViewById(R.id.record_stop).setOnClickListener(this);
         speek_start.setOnClickListener(this);
         speek_stop.setOnClickListener(this);
+        tv_back.setOnClickListener(this);
 
         mTitleView.setOnFocusChangeListener(this);
         //有的手机不支持软键盘
@@ -394,6 +397,10 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                 break;
             }
 
+            case R.id.tv_back://返回
+                MLog.d("返回");
+                backDialog();
+                break;
             case R.id.noteedit_other://其他功能
                 setOtherBtnPopuMenu();
                 mPopuMenu.show(v);

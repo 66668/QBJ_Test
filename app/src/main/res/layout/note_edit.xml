@@ -80,13 +80,16 @@
         android:layout_height="46dip"
         android:background="@drawable/toolbg"
         android:paddingBottom="2dip">
+        <TextView
+            android:id="@+id/tv_back"
+            style="@style/toolbar_back" />
 
         <EditText
             android:id="@+id/noteedit_input_title"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="left|center_vertical"
-            android:layout_marginLeft="4dip"
+            android:layout_marginLeft="35dp"
             android:layout_marginTop="2dip"
             android:layout_marginRight="52dip"
             android:layout_marginBottom="2dip"
