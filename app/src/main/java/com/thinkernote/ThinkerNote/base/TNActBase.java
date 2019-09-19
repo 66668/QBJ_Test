@@ -35,8 +35,6 @@ public class TNActBase extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        System.gc();
-
         TNActivityManager.getInstance().addActivity(this);
 
         dialogs = new Vector<Dialog>();
