@@ -20,15 +20,19 @@ import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.thinkernote.ThinkerNote.General.TNConst;
+import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
+import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Utils.PayResult;
 import com.thinkernote.ThinkerNote.mvp.p.PayPresenter;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnPayListener;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.main.AlipayBean;
 import com.thinkernote.ThinkerNote.bean.main.WxpayBean;
+
+import org.json.JSONObject;
 
 import java.util.Map;
 
@@ -222,27 +226,27 @@ public class TNPayTipAct extends TNActBase implements OnClickListener, android.w
         payThread.start();
     }
 
-//    private void payWx(JSONObject json) {
-//
-//        if (null != json && !json.has("retcode")) {
-//
-//            PayReq req = new PayReq();
-//            req.appId = (String) TNUtils.getFromJSON(json, "appid");
-//            req.partnerId = (String) TNUtils.getFromJSON(json, "partnerid");
-//            req.prepayId = (String) TNUtils.getFromJSON(json, "prepayid");
-//            req.nonceStr = (String) TNUtils.getFromJSON(json, "noncestr");
-//            req.timeStamp = (String) TNUtils.getFromJSON(json, "timestamp");
-//            req.packageValue = (String) TNUtils.getFromJSON(json, "package");
-//            req.sign = (String) TNUtils.getFromJSON(json, "sign");
-//            req.extData = "app data"; // optional
-//            Toast.makeText(TNPayTipAct.this, "正常调起支付", Toast.LENGTH_SHORT).show();
-//            // 在支付之前，如果应用没有注册到微信，应该先调用IWXMsg.registerApp将应用注册到微信
-//            api.sendReq(req);
-//        } else {
-//            Log.d("PAY_GET", "返回错误" + TNUtils.getFromJSON(json, "msg"));
-//            Toast.makeText(TNPayTipAct.this, "返回错误" + TNUtils.getFromJSON(json, "msg"), Toast.LENGTH_SHORT).show();
-//        }
-//    }
+    private void payWx(JSONObject json) {
+
+        if (null != json && !json.has("retcode")) {
+
+            PayReq req = new PayReq();
+            req.appId = (String) TNUtils.getFromJSON(json, "appid");
+            req.partnerId = (String) TNUtils.getFromJSON(json, "partnerid");
+            req.prepayId = (String) TNUtils.getFromJSON(json, "prepayid");
+            req.nonceStr = (String) TNUtils.getFromJSON(json, "noncestr");
+            req.timeStamp = (String) TNUtils.getFromJSON(json, "timestamp");
+            req.packageValue = (String) TNUtils.getFromJSON(json, "package");
+            req.sign = (String) TNUtils.getFromJSON(json, "sign");
+            req.extData = "app data"; // optional
+            Toast.makeText(TNPayTipAct.this, "正常调起支付", Toast.LENGTH_SHORT).show();
+            // 在支付之前，如果应用没有注册到微信，应该先调用IWXMsg.registerApp将应用注册到微信
+            api.sendReq(req);
+        } else {
+            MLog.d("PAY_GET", "返回错误" + TNUtils.getFromJSON(json, "msg"));
+            Toast.makeText(TNPayTipAct.this, "返回错误" + TNUtils.getFromJSON(json, "msg"), Toast.LENGTH_SHORT).show();
+        }
+    }
 
     private void payWx(WxpayBean bean) {
 

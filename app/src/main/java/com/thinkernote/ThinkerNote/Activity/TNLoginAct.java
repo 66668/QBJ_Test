@@ -17,7 +17,6 @@ import com.sina.weibo.sdk.auth.AuthInfo;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WbConnectErrorMessage;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
-
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
@@ -359,13 +358,10 @@ public class TNLoginAct extends TNActBase implements OnClickListener, OnLogListe
         }
     }
 
-
     //--------------------------------------其他重写-----------------------------------------
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        MLog.d("登录返回结果处理" + requestCode + "--" + resultCode);
-
         //qq
         if (mTencent != null) {
             mTencent.onActivityResult(requestCode, resultCode, data);
@@ -535,7 +531,6 @@ public class TNLoginAct extends TNActBase implements OnClickListener, OnLogListe
         //
         settings.isLogout = false;
         settings.savePref(false);
-        MLog.d("TNLoginAct--TNMainAct");
 
         startActivity(TNMainAct.class);
         finish();
@@ -573,7 +568,6 @@ public class TNLoginAct extends TNActBase implements OnClickListener, OnLogListe
                         final String access_token = SPUtil.getString("access_token", "");
                         final String refresh_token = SPUtil.getString("refresh_token", "");
                         final String nickName = SPUtil.getString("nickName", "");
-                        MLog.d("TNLoginAct-->RxBus", unionid, access_token, refresh_token, nickName);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {

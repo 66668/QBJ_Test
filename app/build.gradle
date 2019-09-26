@@ -95,8 +95,8 @@ dependencies {
     //讯飞语音合成
     implementation files('libs/Sunflower.jar')
 
-    //微信依赖
-    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:5.1.6'
+    //微信依赖 https://bintray.com/wechat-sdk-team/maven
+    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:5.4.0'
 
     //
 

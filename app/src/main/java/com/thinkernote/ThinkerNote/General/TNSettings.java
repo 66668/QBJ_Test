@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.text.TextUtils;
 
 import java.util.Queue;
 
@@ -122,7 +123,9 @@ public class TNSettings {
 
     public boolean isLogin() {
         //7天 设置重新登陆
-        if (expertTime * 1000 - System.currentTimeMillis() > 0 && loginname.length() != 0
+        if (loginname == null || TextUtils.isEmpty(loginname) || token == null || TextUtils.isEmpty(token)) {//有空
+            return false;
+        } else if (expertTime * 1000 - System.currentTimeMillis() > 0 && loginname.length() != 0//在允许范围
                 && token.length() != 0 && !isLogout) {
             return true;
         } else {

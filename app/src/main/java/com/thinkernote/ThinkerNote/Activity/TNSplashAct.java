@@ -17,13 +17,12 @@ import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote.dialog.CommonDialog;
-import com.thinkernote.ThinkerNote.mvp.http.URLUtils;
-import com.thinkernote.ThinkerNote.mvp.listener.v.OnSplashListener;
-import com.thinkernote.ThinkerNote.mvp.p.SplashPresenter;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.login.LoginBean;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
+import com.thinkernote.ThinkerNote.dialog.CommonDialog;
+import com.thinkernote.ThinkerNote.mvp.listener.v.OnSplashListener;
+import com.thinkernote.ThinkerNote.mvp.p.SplashPresenter;
 import com.thinkernote.ThinkerNote.permission.PermissionHelper;
 import com.thinkernote.ThinkerNote.permission.PermissionInterface;
 
@@ -35,6 +34,7 @@ import org.json.JSONObject;
 public class TNSplashAct extends TNActBase implements OnSplashListener {
     //权限申请
     private PermissionHelper mPermissionHelper;
+    private TNSettings settings;
     // Class members
     //-------------------------------------------------------------------------------
 
@@ -116,14 +116,13 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
 
     private void initViews() {
         try {
-
-
             setViews();
             //
             presener = new SplashPresenter(this, this);
-
-            //设置重新登陆-不开启锁屏
-            TNSettings.getInstance().needShowLock_using = false;
+            settings = TNSettings.getInstance();
+            //设置初始化值：重新登陆-不开启锁屏
+            settings.needShowLock_using = false;
+            //
             if (getIntent().hasExtra(Intent.EXTRA_INTENT)) {
                 extraBundle = new Bundle();
                 extraBundle.putParcelable(Intent.EXTRA_INTENT,
@@ -138,9 +137,9 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
                                 //重置 数据库
 
                                 resetDb();
-                                startRun();
                                 TNSettings.getInstance().hasDbError = false;
                                 TNSettings.getInstance().savePref(false);
+                                startRun();
                             }
 
                             @Override
@@ -169,27 +168,27 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
         if (isRunning) return;
         isRunning = true;
 
-        final TNSettings settings = TNSettings.getInstance();
+        settings = TNSettings.getInstance();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 try {
                     if (settings.isLogin()) {
-                        //如果user表被异常清空
+                        //如果user表被异常清空，重新登陆
                         TNUser user = TNDbUtils.getUser(settings.userId);
                         if (user == null) {
                             startActivity(TNLoginAct.class, extraBundle);
-                        } else {
+                        } else {//已经登陆没超时，继续保持登陆
                             //打开软件，需要锁判断
                             TNSettings.getInstance().needShowLock_launch = true;
                             startToMain(TNMainAct.class, extraBundle);
                         }
                         finish();
-                    } else if ((settings.expertTime != 0) && (settings.expertTime * 1000 - System.currentTimeMillis() < 0)) {
+                    } else if ((settings.expertTime != 0) && (settings.expertTime * 1000 - System.currentTimeMillis() < 0)) {//重新登陆
                         passWord = settings.password;//回调中需要使用
+                        //重新走自动登陆接口
                         login(settings.loginname, passWord);
-                    } else {
-
+                    } else {//重新登陆
                         startActivity(TNLoginAct.class, extraBundle);
                         finish();
                     }
@@ -208,7 +207,7 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
     }
 
     private void toLogin() {
-        TNSettings settings = TNSettings.getInstance();
+        settings = TNSettings.getInstance();
         Bundle b = new Bundle();
         settings.isLogout = true;
         settings.savePref(false);
@@ -218,8 +217,12 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
 
     //-----------------------------------p层调用-------------------------------------
     private void login(String name, String ps) {
-        MLog.d("SJY", "TNSplashAct--login--" + name + "--" + ps);
-        presener.plogin(name, ps);
+        if (name == null || ps == null || TextUtils.isEmpty(name) || TextUtils.isEmpty(ps)) {
+            toLogin();
+        } else {
+            presener.plogin(name, ps);
+        }
+
     }
 
     private void updateProfile() {
@@ -232,7 +235,7 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
     public void onSuccess(Object obj) {
         loginBean = (LoginBean) obj;
 
-        TNSettings settings = TNSettings.getInstance();
+        settings = TNSettings.getInstance();
         settings.isLogout = false;
 
         //
@@ -261,7 +264,7 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
     public void onProfileSuccess(Object obj) {
         profileBean = (ProfileBean) obj;
         //
-        TNSettings settings = TNSettings.getInstance();
+        settings = TNSettings.getInstance();
         long userId = TNDbUtils.getUserId(settings.username);
 
         settings.phone = profileBean.getPhone();
