@@ -7,7 +7,7 @@
     <RelativeLayout
         android:id="@+id/topbar"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="45dp"
         android:background="@drawable/appwidget_topbar_bg">
 
         <ImageView
@@ -30,15 +30,28 @@
             android:textSize="14sp" />
 
         <ImageView
+            android:id="@+id/img_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
             android:src="@drawable/newnote" />
+
+        <ImageButton
+            android:id="@+id/btn_sync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="45dp"
+            android:background="@drawable/btn_trans_selector_light_colored"
+            android:src="@drawable/main_sync_btn"
+            android:visibility="visible" />
     </RelativeLayout>
 
     <FrameLayout
+        android:background="@drawable/appwidget_list_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/topbar">
@@ -54,12 +67,14 @@
             android:gravity="center"
             android:padding="10dp"
             android:text="没有登录，去登录"
-            android:textColor="#053AF5" />
+            android:textColor="#053AF5"
+            android:visibility="gone" />
         <!-- listView-->
         <ListView
             android:id="@+id/listView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:visibility="visible" />
 
 
     </FrameLayout>

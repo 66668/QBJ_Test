@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 
 /**
  * 反射执行
+ * TODO 后期修改，禁用反射，混淆出问题
  */
 public class TNRunner {
     private Object mTarget;
@@ -46,6 +47,8 @@ public class TNRunner {
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return ret;

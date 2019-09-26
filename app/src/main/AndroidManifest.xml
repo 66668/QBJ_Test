@@ -36,6 +36,7 @@
         android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
 
+
     <application
         android:name=".base.TNApplication"
         android:icon="@drawable/launcher"
@@ -43,13 +44,20 @@
         android:theme="@android:style/Theme.NoTitleBar">
         <!--===========================app小部件===================================== -->
         <!-- app小部件4*3布局-->
-        <receiver android:name=".appwidget.TNAppWidget43">
+        <receiver android:name=".appwidget43.TNAppWidget43">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <!--启动过滤 -->
+                <!-- widget启动 app -->
                 <action android:name="com.thinkernote.ThinkerNote.appwidget.action.START" />
-                <!--新笔记过滤 -->
+                <!-- widget 自动启动 -->
+                <action android:name="com.thinkernote.ThinkerNote.appwidget.action.AUTO" />
+                <!-- widget启动 列表item -->
+                <action android:name="com.thinkernote.ThinkerNote.appwidget.action.LISTITEM" />
+                <!--widget启动 写笔记 -->
                 <action android:name="com.thinkernote.ThinkerNote.appwidget.action.ADD" />
+                <!--widget启动 刷新 -->
+                <action android:name="com.thinkernote.ThinkerNote.appwidget.action.REFRESH" />
+
             </intent-filter>
 
             <meta-data
@@ -57,7 +65,50 @@
                 android:resource="@xml/tnapp_widget43_info" />
         </receiver>
 
-        <!--  ==============================andriod9版本兼容设置 ==============================-->
+        <!--app小部件的服务 需要加BIND_REMOTEVIEWS权限-->
+        <service
+            android:name=".appwidget43.TNWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS">
+            <intent-filter>
+                <!--widget启动 刷新 -->
+                <action android:name="com.thinkernote.ThinkerNote.appwidget.action.REFRESH" />
+                <!-- widget 自动启动 -->
+                <action android:name="com.thinkernote.ThinkerNote.appwidget.action.AUTO" />
+            </intent-filter>
+        </service>
+
+        <!-- app小部件 守护进程 -->
+        <receiver
+            android:name=".appwidget43.TNDaemonReceiver"
+            android:exported="true"
+            android:permission="com.opencdk.appwidget.permission.APP_WIDGET">
+            <intent-filter android:priority="0x6fffffff">
+
+                <action android:name="com.opencdk.appwidget.action.DAEMON_RECEIVER" />
+
+                <!-- 【必须】 系统广播：开屏和网络切换 -->
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+
+                <!-- 【可选】 一些常用的系统广播，增强widget service的复活机会，请根据需要选择。当然，你也可以添加APP自定义的一些广播让启动service -->
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.bluetooth.adapter.action.STATE_CHANGED" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+            </intent-filter>
+            <!-- 【可选】 usb相关的系统广播，增强widget service的复活机会，请根据需要添加 -->
+            <intent-filter android:priority="0x6fffffff">
+                <action android:name="android.intent.action.MEDIA_UNMOUNTED" />
+                <action android:name="android.intent.action.MEDIA_REMOVED" />
+                <action android:name="android.intent.action.MEDIA_CHECKING" />
+                <action android:name="android.intent.action.MEDIA_EJECT" />
+
+                <data android:scheme="file" />
+            </intent-filter>
+        </receiver>
+
+
+        <!--  ==============================andriod 9版本兼容设置 ==============================-->
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
@@ -112,6 +163,13 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <!--小部件跳转的过滤监听-->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="qbj_appwidget" />
             </intent-filter>
         </activity>
         <activity

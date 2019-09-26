@@ -148,6 +148,7 @@ public class NoteFragment extends TNChildViewBase implements OnItemLongClickList
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Bundle b = new Bundle();
+        //说明：小部件的传值参数SCHEME_ITEMKEY = "NoteLocalId",保持一致
         b.putLong("NoteLocalId", id);
         mActivity.startActivity(TNNoteViewAct.class, b);
     }

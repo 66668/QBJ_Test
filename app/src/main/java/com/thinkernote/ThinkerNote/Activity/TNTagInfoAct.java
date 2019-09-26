@@ -24,6 +24,7 @@ import com.thinkernote.ThinkerNote.mvp.p.TagInfoPresenter;
 import java.util.Vector;
 
 /**
+ *  有反射方法执行，禁止混淆
  * 标签属性
  * sjy 0625
  */

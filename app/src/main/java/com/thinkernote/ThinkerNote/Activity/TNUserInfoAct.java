@@ -47,6 +47,7 @@ import java.util.LinkedList;
 import java.util.Vector;
 
 /**
+ * 有反射方法执行，禁止混淆
  * 主页--设置界面
  * sjy 0614
  */

@@ -152,6 +152,27 @@
 -dontwarn com.google.android.material.**
 -dontnote com.google.android.material.**
 -dontwarn androidx.**
+-keep,allowobfuscation @interface androidx.annotation.Keep
+
+-keep @androidx.annotation.Keep class *
+-keepclassmembers class * {
+    @androidx.annotation.Keep *;
+}
+
+
+#############################################
+#
+# 项目中，有反射执行的方法，禁止混淆，共6个
+#
+#############################################
+-keep class com.thinkernote.ThinkerNote.Activity.TNAboutAct
+-keep class com.thinkernote.ThinkerNote.Activity.TNUserInfoAct
+-keep class com.thinkernote.ThinkerNote.Activity.TNCatInfoAct
+-keep class com.thinkernote.ThinkerNote.Activity.TNNoteInfoAct
+-keep class com.thinkernote.ThinkerNote.Activity.TNSettingsAct
+-keep class com.thinkernote.ThinkerNote.Activity.TNTagInfoAct
+-keep class com.thinkernote.ThinkerNote.General.TNRunner
+-keep class com.thinkernote.ThinkerNote.Data.TNPreferenceChild
 
 #############################################
 #

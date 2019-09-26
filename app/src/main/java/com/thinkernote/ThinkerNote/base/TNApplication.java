@@ -18,6 +18,7 @@ import com.thinkernote.ThinkerNote.mvp.http.url_main.HttpUtils;
  */
 public class TNApplication extends Application {
     private static final String TAG = "TNApplication";
+    private boolean isEnryMain = false;//用于小部件判断欢迎页是否再使用。
     private static TNApplication application;
 
     public static TNApplication getInstance() {
@@ -28,6 +29,7 @@ public class TNApplication extends Application {
     public void onCreate() {
         super.onCreate();
         application = this;
+        isEnryMain = false;
         //log初始化
         MLog.init(true, "SJY");
         initialize();
@@ -97,4 +99,14 @@ public class TNApplication extends Application {
 
         MLog.i("DbReportError e");
     }
+
+    //========================用于小部件==============================
+    public boolean isEnryMain() {
+        return isEnryMain;
+    }
+
+    public void setEnryMain(boolean enryMain) {
+        isEnryMain = enryMain;
+    }
+    //======================================================
 }

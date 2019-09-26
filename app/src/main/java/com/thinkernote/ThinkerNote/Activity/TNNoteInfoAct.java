@@ -49,6 +49,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
+ *  有反射方法执行，禁止混淆
  * menu 属性
  * sjy 0615
  */

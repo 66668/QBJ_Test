@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/appwidget_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:background="@drawable/listitem_trans_selector"
+    android:orientation="horizontal" >
+
+    <FrameLayout
+        android:layout_width="78dip"
+        android:layout_height="fill_parent"
+        android:layout_marginLeft="1dip"
+        android:layout_marginRight="1dip" >
+
+        <ImageView
+            android:id="@+id/item_thumbnail1"
+            android:contentDescription="@string/contentDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/notelist_thumbnail_note" >
+        </ImageView>
+
+        <ImageView
+            android:id="@+id/item_thumbnail_bg"
+            android:contentDescription="@string/contentDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/thumbnail_bg"
+            android:visibility="visible" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dip"
+            android:orientation="horizontal"
+            android:paddingRight="4dip" >
+
+            <TextView
+                android:id="@+id/appwidget_item_title"
+                android:layout_width="0dip"
+                android:layout_height="20dip"
+                android:layout_weight="1"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:text="TextView"
+                android:textColor="#FF000000"
+                android:textSize="15sp" >
+            </TextView>
+
+            <TextView
+                android:id="@+id/appwidget_item_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="8dp"
+                android:singleLine="true"
+                android:text="TextView"
+                android:textColor="#FF4485d6"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/appwidget_item_content"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="5dip"
+            android:maxLines="2"
+            android:paddingBottom="5dip"
+            android:layout_marginRight="10dp"
+            android:text="TextView"
+            android:textColor="#FF656565"
+            android:textSize="12sp" >
+        </TextView>
+    </LinearLayout>
+
+</LinearLayout>

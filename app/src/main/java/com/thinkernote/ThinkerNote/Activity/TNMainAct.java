@@ -8,8 +8,10 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,6 +31,8 @@ import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Utils.TNActivityManager;
+import com.thinkernote.ThinkerNote.appwidget43.TNAppWidegtConst;
+import com.thinkernote.ThinkerNote.base.TNApplication;
 import com.thinkernote.ThinkerNote.dialog.CommonDialog;
 import com.thinkernote.ThinkerNote.dialog.CustomDialog;
 import com.thinkernote.ThinkerNote.dialog.UpdateDialog;
@@ -69,13 +73,14 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        setViews();
         //关闭其他界面
         TNActivityManager.getInstance().finishOtherActivity(this);
         mainPresenter = new UpgradePresenter(this, this);
         syncPresenter = new SyncPresenter(this, this);
-        MLog.e("MainAct" + TAG);
-        MyRxManager.getInstance().setSyncing(false);//修改状态值
-        setViews();
+        MyRxManager.getInstance().setSyncing(false);//修改：初始状态值
+        TNApplication.getInstance().setEnryMain(true);//标记已进入主界面（用于小部件判断）
+        handleIntent();
         //第一次进入，打开帮助界面
         if (mSettings.firstLaunch) {
             startActivity(TNHelpAct.class);
@@ -94,6 +99,14 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeLi
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        setIntent(intent);
+        //小部件
+        try {
+            handleIntent();
+        } catch (Exception e) {
+            Log.e(TAG, "", e);
+        }
+        //
         int flag = intent.getIntExtra("FLAG", -1);
         if (flag == 1) {
             CustomDialog.Builder builder = new CustomDialog.Builder(this);
@@ -109,6 +122,36 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeLi
         }
     }
 
+    /**
+     * 处理跳转，这里处理小部件相关内容
+     */
+    private void handleIntent() {
+        final Intent intent = getIntent();
+        if (intent != null) {
+            String scheme = intent.getScheme();
+            if (TNAppWidegtConst.SCHEME.equalsIgnoreCase(scheme)) {//SCHEME协议判断
+                handler.postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        try {
+                            //读取SCHEME协议中传递的参数信息
+                            Uri uri = intent.getData();
+                            //跳转指定act
+                            String targetClass = uri.getQueryParameter("className");
+                            Intent transferIntent = new Intent();
+                            transferIntent.putExtras(intent);
+                            transferIntent.setClassName(TNMainAct.this, targetClass);
+                            startActivity(transferIntent);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            MLog.e("小部件跳转异常=" + e.toString());
+                        }
+                    }
+                }, 100);
+            }
+        }
+    }
 
     protected void setViews() {
         TNUtilsSkin.setImageViewDrawable(this, null, R.id.main_divide, R.drawable.main_divide);
@@ -143,6 +186,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeLi
         syncPresenter.cancelSync();
         isDestory = true;
         super.onDestroy();
+        TNApplication.getInstance().setEnryMain(false);//用于小部件判断
         MLog.d("TNMainAct--onDestroy");
     }
 
@@ -231,7 +275,6 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeLi
 
             case R.id.main_exchange: {//设置
                 startActivity(TNUserInfoAct.class);
-                //debug:
                 break;
             }
             case R.id.main_sync_btn: {//同步按钮

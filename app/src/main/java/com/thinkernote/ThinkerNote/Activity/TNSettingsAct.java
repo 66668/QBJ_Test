@@ -38,6 +38,7 @@ import com.thinkernote.ThinkerNote.mvp.p.SettingsPresenter;
 import java.util.Vector;
 
 /**
+ *  有反射方法执行，禁止混淆
  * 主页--设置--多个功能共用界面：用户信息/个性化设置/空间信息
  */
 public class TNSettingsAct extends TNActBase implements OnClickListener, OnChildClickListener, OnGroupClickListener

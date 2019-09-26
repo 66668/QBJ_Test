@@ -34,6 +34,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
+ *  有反射方法执行，禁止混淆
  * 文件夹信息
  */
 public class TNCatInfoAct extends TNActBase

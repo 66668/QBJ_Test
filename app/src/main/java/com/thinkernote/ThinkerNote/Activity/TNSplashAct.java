@@ -17,7 +17,9 @@ import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.appwidget43.TNAppWidegtConst;
 import com.thinkernote.ThinkerNote.base.TNActBase;
+import com.thinkernote.ThinkerNote.base.TNApplication;
 import com.thinkernote.ThinkerNote.bean.login.LoginBean;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
 import com.thinkernote.ThinkerNote.dialog.CommonDialog;
@@ -167,37 +169,60 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
     private void startRun() {
         if (isRunning) return;
         isRunning = true;
-
         settings = TNSettings.getInstance();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (settings.isLogin()) {
-                        //如果user表被异常清空，重新登陆
-                        TNUser user = TNDbUtils.getUser(settings.userId);
-                        if (user == null) {
-                            startActivity(TNLoginAct.class, extraBundle);
-                        } else {//已经登陆没超时，继续保持登陆
-                            //打开软件，需要锁判断
-                            TNSettings.getInstance().needShowLock_launch = true;
-                            startToMain(TNMainAct.class, extraBundle);
-                        }
-                        finish();
-                    } else if ((settings.expertTime != 0) && (settings.expertTime * 1000 - System.currentTimeMillis() < 0)) {//重新登陆
-                        passWord = settings.password;//回调中需要使用
-                        //重新走自动登陆接口
-                        login(settings.loginname, passWord);
-                    } else {//重新登陆
-                        startActivity(TNLoginAct.class, extraBundle);
-                        finish();
-                    }
-                    isRunning = false;
-                } catch (Exception e) {
-                    toLogin();
-                }
+        Intent intent = getIntent();
+        if (TNApplication.getInstance().isEnryMain() && intent != null) {
+            MLog.d("SJY", "小部件判断--home存在");
+            //程序已经存在，只需判断
+            if (TNAppWidegtConst.SCHEME.equalsIgnoreCase(intent.getScheme())) {
+                Intent newIntent = new Intent(intent);
+                //打开软件，需要锁判断
+                TNSettings.getInstance().needShowLock_launch = true;
+                newIntent.setClass(this, TNMainAct.class);
+                newIntent.putExtras(intent.getExtras());
+                startActivity(newIntent);
+                finish();
+            } else {
+                //打开软件，需要锁判断
+                TNSettings.getInstance().needShowLock_launch = true;
+                intent.setClass(this, TNMainAct.class);
+                intent.setData(intent.getData());
+                startActivity(intent);
+                finish();
             }
-        }, 2000);
+        } else {
+            MLog.d("SJY", "正常启动app");
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (settings.isLogin()) {
+                            //如果user表被异常清空，重新登陆
+                            TNUser user = TNDbUtils.getUser(settings.userId);
+                            if (user == null) {
+                                startActivity(TNLoginAct.class, extraBundle);
+                            } else {//已经登陆没超时，继续保持登陆
+                                //打开软件，需要锁判断
+                                TNSettings.getInstance().needShowLock_launch = true;
+                                startToMain(TNMainAct.class, extraBundle);
+                            }
+                            finish();
+                        } else if ((settings.expertTime != 0) && (settings.expertTime * 1000 - System.currentTimeMillis() < 0)) {//重新登陆
+                            passWord = settings.password;//回调中需要使用
+                            //重新走自动登陆接口
+                            login(settings.loginname, passWord);
+                        } else {//重新登陆
+                            startActivity(TNLoginAct.class, extraBundle);
+                            finish();
+                        }
+                        isRunning = false;
+                    } catch (Exception e) {
+                        toLogin();
+                    }
+                }
+            }, 2000);
+        }
+
     }
 
     @Override
