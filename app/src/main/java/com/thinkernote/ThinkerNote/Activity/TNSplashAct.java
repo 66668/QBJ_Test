@@ -170,21 +170,17 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
         if (isRunning) return;
         isRunning = true;
         settings = TNSettings.getInstance();
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         if (TNApplication.getInstance().isEnryMain() && intent != null) {
             MLog.d("SJY", "小部件判断--home存在");
             //程序已经存在，只需判断
             if (TNAppWidegtConst.SCHEME.equalsIgnoreCase(intent.getScheme())) {
                 Intent newIntent = new Intent(intent);
-                //打开软件，需要锁判断
-                TNSettings.getInstance().needShowLock_launch = true;
                 newIntent.setClass(this, TNMainAct.class);
                 newIntent.putExtras(intent.getExtras());
                 startActivity(newIntent);
                 finish();
             } else {
-                //打开软件，需要锁判断
-                TNSettings.getInstance().needShowLock_launch = true;
                 intent.setClass(this, TNMainAct.class);
                 intent.setData(intent.getData());
                 startActivity(intent);
@@ -201,12 +197,24 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
                             TNUser user = TNDbUtils.getUser(settings.userId);
                             if (user == null) {
                                 startActivity(TNLoginAct.class, extraBundle);
+                                finish();
                             } else {//已经登陆没超时，继续保持登陆
-                                //打开软件，需要锁判断
-                                TNSettings.getInstance().needShowLock_launch = true;
-                                startToMain(TNMainAct.class, extraBundle);
+
+                                if (TNAppWidegtConst.SCHEME.equalsIgnoreCase(intent.getScheme())) {//正常启动，只有可登陆下才能进入详情
+                                    Intent newIntent = new Intent(intent);
+                                    newIntent.setClass(TNSplashAct.this, TNMainAct.class);
+                                    newIntent.putExtras(intent.getExtras());
+                                    startActivity(newIntent);
+                                    finish();
+                                    return;
+                                } else {
+                                    //打开软件，需要锁判断
+                                    TNSettings.getInstance().needShowLock_launch = true;
+                                    startToMain(TNMainAct.class, extraBundle);
+                                    finish();
+                                }
                             }
-                            finish();
+
                         } else if ((settings.expertTime != 0) && (settings.expertTime * 1000 - System.currentTimeMillis() < 0)) {//重新登陆
                             passWord = settings.password;//回调中需要使用
                             //重新走自动登陆接口
