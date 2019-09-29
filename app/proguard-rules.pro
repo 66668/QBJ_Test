@@ -159,21 +159,6 @@
     @androidx.annotation.Keep *;
 }
 
-
-#############################################
-#
-# 项目中，有反射执行的方法，禁止混淆，共6个
-#
-#############################################
--keep class com.thinkernote.ThinkerNote.Activity.TNAboutAct
--keep class com.thinkernote.ThinkerNote.Activity.TNUserInfoAct
--keep class com.thinkernote.ThinkerNote.Activity.TNCatInfoAct
--keep class com.thinkernote.ThinkerNote.Activity.TNNoteInfoAct
--keep class com.thinkernote.ThinkerNote.Activity.TNSettingsAct
--keep class com.thinkernote.ThinkerNote.Activity.TNTagInfoAct
--keep class com.thinkernote.ThinkerNote.General.TNRunner
--keep class com.thinkernote.ThinkerNote.Data.TNPreferenceChild
-
 #############################################
 #
 # Android开发中第三方类库的混淆处理(轻笔记特有处理)

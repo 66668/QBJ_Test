@@ -8,7 +8,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
@@ -49,9 +48,7 @@ import java.io.File;
 
 /**
  * 主界面
- * 说明：进入主界面：会同时执行2个异步：onCreate的更新 和 onResume下的configView的同步
- * 同步功能说明：由10多个接口串行调用，比较复杂，所以要注意调用顺序
- * sjy 0702
+ *
  */
 public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeListener, OnSyncListener {
 
@@ -274,7 +271,7 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeLi
                 break;
 
             case R.id.main_exchange: {//设置
-                startActivity(TNUserInfoAct.class);
+                startActivity(TNMainSettingAct.class);
                 break;
             }
             case R.id.main_sync_btn: {//同步按钮

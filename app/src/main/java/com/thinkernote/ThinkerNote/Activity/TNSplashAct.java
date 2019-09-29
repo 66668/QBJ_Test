@@ -188,7 +188,7 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
             }
         } else {
             MLog.d("SJY", "正常启动app");
-            new Handler().postDelayed(new Runnable() {
+            handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     try {

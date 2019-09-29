@@ -1,4 +1,4 @@
-package com.thinkernote.ThinkerNote.Activity;
+package com.thinkernote.ThinkerNote.Activity.settings;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.thinkernote.ThinkerNote.Activity.TNLoginAct;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;

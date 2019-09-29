@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.baidu.mobstat.StatService;
-import com.thinkernote.ThinkerNote.Activity.TNLockAct;
+import com.thinkernote.ThinkerNote.Activity.settings.TNLockAct;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
@@ -55,8 +55,7 @@ public class TNActBase extends Activity {
                 finish();
                 return;
             }
-        } else if (TAG.equals("TNLoginAct") || TAG.equals("TNSplashAct")
-                || TAG.equals("TNAboutAct")) {
+        } else if (TAG.equals("TNLoginAct") || TAG.equals("TNSplashAct")) {
             settings.isLogout = false;
         } else {
             if (settings.isLogout /*|| settings.isGoHome*/) {
@@ -108,7 +107,7 @@ public class TNActBase extends Activity {
 
         // 直接安装包启动，再home退出，再进入，将分别产生2个task。一个task退出将导致另一个task出错。
         if (!TAG.equals("TNSplashAct") && !TAG.equals("TNLoginAct") && !TAG.equals("TNMainAct")
-                && !TAG.equals("TNAboutAct") && settings.userId <= 0 && !isFinishing()
+                && settings.userId <= 0 && !isFinishing()
                 && !TAG.equals("TNRegistAct") && !TAG.equals("TNFindPasswordAct") && !TAG.equals("TNBindAccountAct")) {
             finish();
             return;
@@ -125,7 +124,6 @@ public class TNActBase extends Activity {
             //登陆成功后，可以开启锁屏配置了
             TNSettings.getInstance().needShowLock_using = false;
         }
-
         if (settings.needShowLock_launch && !TNSettings.getInstance().isLogout && !TAG.equals("TNLockAct")) {//重新开启软件的锁屏
             settings.needShowLock_launch = false;
             if (settings.lockPattern.size() > 0) {

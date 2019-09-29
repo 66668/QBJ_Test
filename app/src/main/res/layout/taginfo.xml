@@ -1,35 +1,151 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/taginfo_page"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/page_bg"
+    android:orientation="vertical">
 
     <!-- tool bar -->
 
     <FrameLayout
         android:id="@+id/taginfo_toolbar_layout"
         android:layout_width="fill_parent"
-        android:background="@drawable/toolbg"
-        android:layout_height="46dip" >
+        android:layout_height="46dip"
+        android:background="@drawable/toolbg">
 
-        <TextView 
+        <TextView
             android:id="@+id/taginfo_back"
             style="@style/toolbar_back"
-            android:text="标签属性"/>
+            android:text="标签属性" />
     </FrameLayout>
+    <!-- 分组-->
+    <TextView
+        android:id="@+id/tv_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/preference_group_bg"
+        android:gravity="center_vertical"
+        android:paddingLeft="15dp"
+        android:text="标签"
+        android:textColor="#ff626262"
+        android:textSize="14sp" />
 
-    <ExpandableListView
-        android:id="@+id/taginfo_expandablelistview"
+    <LinearLayout
+        android:id="@+id/ly_tagName"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:cacheColorHint="#00000000"
-        android:divider="@null"
-        android:dividerHeight="0dip"
-        android:fadingEdge="none"
-        android:fastScrollEnabled="true"
-        android:footerDividersEnabled="true"
-        android:groupIndicator="@null"
-        android:listSelector="@null" />
+        android:layout_height="wrap_content"
+        android:background="@drawable/preference_child_bg_normal"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dip"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="@string/taginfo_name"
+                android:textColor="#ff000000"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tv_tagName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ff707070"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dip"
+            android:contentDescription="@string/contentDescription"
+            android:src="@drawable/arrows"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ly_noteCount"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/preference_child_bg_normal"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dip"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="@string/taginfo_notecount"
+                android:textColor="#ff000000"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tv_noteCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ff707070"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dip"
+            android:contentDescription="@string/contentDescription"
+            android:src="@drawable/arrows"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ly_del"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/preference_child_bg_normal"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dip"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="@string/taginfo_delete"
+                android:textColor="#ff000000"
+                android:textSize="18sp" />
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dip"
+            android:contentDescription="@string/contentDescription"
+            android:src="@drawable/arrows"
+            />
+    </LinearLayout>
+
 
 </LinearLayout>

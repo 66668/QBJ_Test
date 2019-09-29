@@ -9,25 +9,17 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
-import com.thinkernote.ThinkerNote.General.TNRunner;
-import com.thinkernote.ThinkerNote.Data.TNPreferenceChild;
+import com.thinkernote.ThinkerNote.Activity.settings.TNCommonSettingsAct;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
-import com.thinkernote.ThinkerNote.General.TNUtilsDialog;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
@@ -44,19 +36,14 @@ import com.thinkernote.ThinkerNote.mvp.p.UserInfoPresenter;
 
 import java.io.File;
 import java.util.LinkedList;
-import java.util.Vector;
 
 /**
- * 有反射方法执行，禁止混淆
- * 主页--设置界面
+ * 主页--设置
+ * 样式：recylerView
  * sjy 0614
  */
-public class TNUserInfoAct extends TNActBase implements OnClickListener,
-        OnItemClickListener, OnUserinfoListener, OnUpgradeListener {
+public class TNMainSettingAct extends TNActBase implements OnClickListener, OnUserinfoListener, OnUpgradeListener {
 
-    private ListView mListView;
-    private Vector<TNPreferenceChild> mChilds;
-    private TNPreferenceChild mCurrentChild;
     private String mDownLoadAPKPath = "";
     private TNSettings mSettings = TNSettings.getInstance();
     File installFile;//安装包file
@@ -68,26 +55,23 @@ public class TNUserInfoAct extends TNActBase implements OnClickListener,
     //更新弹窗的自定义监听（确定按钮的监听）
     private UpdateDialog upgradeDialog;
 
+    //--------------------控件相关----------------------------
+    LinearLayout ly_update, ly_set, ly_user, ly_space, ly_pay, ly_about;
+    TextView tv_version;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.userinfo);
+        setContentView(R.layout.act_settings_main);
         setViews();
+        initView();
         //
         presener = new UserInfoPresenter(this, this);
         upgradePresenter = new UpgradePresenter(this, this);
-
-        mChilds = new Vector<TNPreferenceChild>();
-        getSettings();
-
-        mListView = (ListView) findViewById(R.id.userinfo_listview);
-        mListView.setAdapter(new TNUserInfoListAdapter());
-        mListView.setOnItemClickListener(this);
     }
 
     @Override
     protected void configView() {
-        ((BaseAdapter) mListView.getAdapter()).notifyDataSetChanged();
     }
 
     @Override
@@ -101,60 +85,79 @@ public class TNUserInfoAct extends TNActBase implements OnClickListener,
         findViewById(R.id.userinfo_logout).setOnClickListener(this);
     }
 
-    private void getSettings() {
-        mChilds.clear();
-        TNPreferenceChild child = null;
+    /**
+     *
+     */
+    private void initView() {
+        ly_about = findViewById(R.id.ly_about);
+        ly_pay = findViewById(R.id.ly_pay);
+        ly_update = findViewById(R.id.ly_update);
+        ly_user = findViewById(R.id.ly_user);
+        ly_space = findViewById(R.id.ly_space);
+        ly_set = findViewById(R.id.ly_set);
+        tv_version = findViewById(R.id.tv_version);
 
-        // 软件更新
-        child = new TNPreferenceChild(getString(R.string.userinfo_update), "当前版本：" + getAppVersionName(this), true, new TNRunner(this, "updateSoftware"));
-        mChilds.add(child);
+        ly_about.setOnClickListener(this);
+        ly_user.setOnClickListener(this);
+        ly_update.setOnClickListener(this);
+        ly_space.setOnClickListener(this);
+        ly_pay.setOnClickListener(this);
+        ly_set.setOnClickListener(this);
+        //
+        tv_version.setText("当前版本：" + getAppVersionName(this));
 
-        // 用户信息
-        child = new TNPreferenceChild(getString(R.string.userinfo_userinfo), getString(R.string.userinfo_userinfo_child), true, new TNRunner(this, "runActivity"));
-        child.setOther("USER_INFO");
-        mChilds.add(child);
-
-        //设置
-        child = new TNPreferenceChild(getString(R.string.userinfo_settings), getString(R.string.userinfo_settings_child), true, new TNRunner(this, "runActivity"));
-        child.setOther("SETTING");
-        mChilds.add(child);
-
-        //关于我们
-        child = new TNPreferenceChild(getString(R.string.userinfo_about), getString(R.string.userinfo_about_child), true, new TNRunner(this, "runActivity"));
-        child.setOther("ABOUT");
-        mChilds.add(child);
-
-//		// 语音设置
-//		child = new TNPreferenceChild(getString(R.string.userinfo_audio_settings), getString(R.string.userinfo_audio_settings_child), true, new TNRunner(this, "runActivity"));
-//		child.setOther("AUDIO_SETTING");
-//		mChilds.add(child);
-
-        // 空间奖励和贡献
-        child = new TNPreferenceChild(getString(R.string.userinfo_spaceinfo), getString(R.string.userinfo_spaceinfo_child), true, new TNRunner(this, "runActivity"));
-        child.setOther("SPACE_INFO");
-        mChilds.add(child);
-
-//		// 友情推荐
-//		{// 微团队
-//			child = new TNPreferenceChild(getString(R.string.userinfo_wetuandui), null, true, new TNRunner(this, "openApp"));
-//			child.setLogoId(R.drawable.ic_wetuandui);
-//			child.setOther("com.thinkernote.Team");
-//			mChilds.add(child);
-//		}
-//		{// 360浏览器
-//			child = new TNPreferenceChild(getString(R.string.userinfo_360browser), null, true, new TNRunner(this, "openApp"));
-//			child.setLogoId(R.drawable.ic_360);
-//			child.setOther("com.qihoo.browser");
-//			mChilds.add(child);
-//		}
-        {// 打赏
-            child = new TNPreferenceChild(getString(R.string.userinfo_pay), null, true, new TNRunner(this, "runActivity"));
-            child.setLogoId(R.drawable.pay_tip);
-            child.setOther("PAY_TIP");
-            mChilds.add(child);
-        }
     }
 
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.userinfo_back://
+                finish();
+                break;
+
+            case R.id.userinfo_logout://
+                logout();
+
+                break;
+            case R.id.ly_update://检查更新
+                upgrade();
+                break;
+            case R.id.ly_pay://打赏
+                startActivity(TNPayTipAct.class);
+                break;
+            case R.id.ly_about://关于我们
+                Bundle b1 = new Bundle();
+                b1.putString("Type", "ABOUT_US");
+                startActivity(TNCommonSettingsAct.class, b1);
+                break;
+            case R.id.ly_set://个性设置
+                Bundle b2 = new Bundle();
+                b2.putString("Type", "SETTING");
+                startActivity(TNCommonSettingsAct.class, b2);
+                break;
+            case R.id.ly_user://用户
+                Bundle b3 = new Bundle();
+                b3.putString("Type", "USER_INFO");
+                startActivity(TNCommonSettingsAct.class, b3);
+                break;
+            case R.id.ly_space://空间
+                Bundle b4 = new Bundle();
+                b4.putString("Type", "SPACE_INFO");
+                startActivity(TNCommonSettingsAct.class, b4);
+                break;
+
+        }
+
+
+    }
+
+    /**
+     * 获取版本号
+     *
+     * @param context
+     * @return
+     */
     public String getAppVersionName(Context context) {
         String appVersionName = "";
         try {
@@ -168,128 +171,7 @@ public class TNUserInfoAct extends TNActBase implements OnClickListener,
         return appVersionName;
     }
 
-
-    private class TNUserInfoListAdapter extends BaseAdapter {
-
-        @Override
-        public int getCount() {
-            return mChilds.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return mChilds.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = (LinearLayout) layoutInflater.inflate(
-                        R.layout.preference_child, null);
-            }
-            convertView.findViewById(R.id.child_layout).setBackgroundDrawable(
-                    TNUtilsSkin.getPreferenceItemStatusDrawable(TNUserInfoAct.this));
-
-            TNPreferenceChild child = (TNPreferenceChild) getItem(position);
-            if (child.getLogoId() > 0) {
-                convertView.findViewById(R.id.child_logo).setVisibility(View.VISIBLE);
-                TNUtilsSkin.setImageViewDrawable(TNUserInfoAct.this, convertView, R.id.child_logo, child.getLogoId());
-            } else
-                convertView.findViewById(R.id.child_logo).setVisibility(View.GONE);
-
-            ((TextView) convertView.findViewById(R.id.child_name)).setText(child.getChildName());
-            if (child.getInfo() == null)
-                convertView.findViewById(R.id.child_info).setVisibility(View.GONE);
-            else {
-                convertView.findViewById(R.id.child_info).setVisibility(View.VISIBLE);
-                ((TextView) convertView.findViewById(R.id.child_info)).setText(child.getInfo());
-            }
-            if (child.isVisibleMoreBtn())
-                convertView.findViewById(R.id.child_more).setVisibility(View.VISIBLE);
-            else
-                convertView.findViewById(R.id.child_more).setVisibility(View.INVISIBLE);
-
-            return convertView;
-        }
-
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position,
-                            long id) {
-        mCurrentChild = mChilds.get(position);
-        if (mCurrentChild.getTargetMethod() != null) {
-            mCurrentChild.getTargetMethod().run();
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.userinfo_back:
-                finish();
-                break;
-
-            case R.id.userinfo_logout:
-                logout();
-
-                break;
-        }
-    }
-
-    // child item click methods
     // ----------------------------------------------------------------------------------
-
-    public void runActivity() {
-        String activityName = mCurrentChild.getOther();
-        if (activityName != null && activityName.length() > 0) {
-            if ("ABOUT".equals(activityName)) {
-                startActivity(TNAboutAct.class);//关于我们
-
-            } else if ("PAY_TIP".equals(activityName)) {
-                startActivity(TNPayTipAct.class);//打赏
-
-            } else {
-                Bundle b = new Bundle();
-                b.putString("Type", mCurrentChild.getOther());
-                startActivity(TNSettingsAct.class, b);
-            }
-        }
-    }
-
-
-    public void openRecommend() {
-        Intent intent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse(mCurrentChild.getOther()));
-        TNUtilsDialog.startIntent(this, intent,
-                R.string.alert_About_CantOpenWeb);
-    }
-
-    public void openApp() {
-        TNUtilsUi.openAppForStore(this, mCurrentChild.getOther());
-    }
-
-    public void downloadApp() {
-        CommonDialog dialog = new CommonDialog(this, R.string.alert_UserInfo_DownloadApp,
-                new CommonDialog.DialogCallBack() {
-                    @Override
-                    public void sureBack() {
-                        openRecommend();
-                    }
-
-                    @Override
-                    public void cancelBack() {
-                    }
-
-                });
-        dialog.show();
-    }
 
 
     @Override
@@ -325,10 +207,6 @@ public class TNUserInfoAct extends TNActBase implements OnClickListener,
 
     //-----------------------------------------p层调用--------------------------------------------
 
-    //检查更新
-    public void updateSoftware() {
-        upgrade();
-    }
 
     private void logout() {
         presener.pLogout();

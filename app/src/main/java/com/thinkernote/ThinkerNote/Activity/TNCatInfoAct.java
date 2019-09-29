@@ -5,19 +5,15 @@ import android.os.Bundle;
 import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
-import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
-import com.thinkernote.ThinkerNote.Adapter.TNPreferenceAdapter;
 import com.thinkernote.ThinkerNote.Data.TNCat;
-import com.thinkernote.ThinkerNote.Data.TNPreferenceChild;
-import com.thinkernote.ThinkerNote.Data.TNPreferenceGroup;
 import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.Database.TNSQLString;
-import com.thinkernote.ThinkerNote.General.TNRunner;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
@@ -29,25 +25,16 @@ import com.thinkernote.ThinkerNote.mvp.MyRxManager;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnCatInfoListener;
 import com.thinkernote.ThinkerNote.mvp.p.CatInfoPresenter;
 
-import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- *  有反射方法执行，禁止混淆
- * 文件夹信息
+ * 文件夹信息(属性)
  */
 public class TNCatInfoAct extends TNActBase
-        implements OnClickListener, OnChildClickListener, OnGroupClickListener, OnCatInfoListener {
+        implements OnClickListener, OnGroupClickListener, OnCatInfoListener {
     public static final int CAT_DELETE = 107;//
 
-    /* Bundle:
-     * CatLocalId
-     */
-
-    private ExpandableListView mListView;
-    private Vector<TNPreferenceGroup> mGroups;
-    private TNPreferenceChild mCurrChild;
     private long mCatId;
     private TNCat mCurrentCat;
     private CommonDialog dialog;//GetDataByNoteId的弹窗；
@@ -55,23 +42,82 @@ public class TNCatInfoAct extends TNActBase
     //p
     CatInfoPresenter presenter;
 
+    //
+    LinearLayout ly_cat, ly_catGroup, ly_note, ly_default, ly_delete, ly_setDefault;
+    TextView tv_cat, tv_catGroup, tv_note, tv_default;
+
     // Activity methods
     //-------------------------------------------------------------------------------
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.catinfo);
+        setContentView(R.layout.act_catinfo);
+        initMyView();
         setViews();
-        presenter = new CatInfoPresenter(this, this);
         mCatId = getIntent().getLongExtra("CatId", -1);
+        showView();
+        presenter = new CatInfoPresenter(this, this);
+    }
 
-        mGroups = new Vector<TNPreferenceGroup>();
+    /**
+     *
+     */
+    private void initMyView() {
+        ly_cat = findViewById(R.id.ly_cat);
+        ly_catGroup = findViewById(R.id.ly_catGroup);
+        ly_note = findViewById(R.id.ly_note);
+        ly_default = findViewById(R.id.ly_default);
+        ly_setDefault = findViewById(R.id.ly_setDefault);
+        ly_delete = findViewById(R.id.ly_delete);
 
-        mListView = (ExpandableListView) findViewById(R.id.catinfo_expandablelistview);
-        mListView.setAdapter(new TNPreferenceAdapter(this, mGroups));
 
-        mListView.setOnGroupClickListener(this);
-        mListView.setOnChildClickListener(this);
+        tv_cat = findViewById(R.id.tv_cat);
+        tv_catGroup = findViewById(R.id.tv_catGroup);
+        tv_note = findViewById(R.id.tv_note);
+        tv_default = findViewById(R.id.tv_default);
+
+        ly_cat.setOnClickListener(this);
+        ly_catGroup.setOnClickListener(this);
+        ly_delete.setOnClickListener(this);
+        ly_setDefault.setOnClickListener(this);
+
+    }
+
+    private void showView() {
+        //填充信息
+        TNSettings setting = TNSettings.getInstance();
+        mCurrentCat = TNDbUtils.getCat(mCatId);
+        tv_cat.setText(mCurrentCat.catName);
+        //
+        String info = mCurrentCat.catName;
+        if (mCurrentCat.pCatId > 0)
+            info = TNDbUtils.getCat(mCurrentCat.pCatId).catName;
+        else
+            info = getString(R.string.catinfo_nogroup);
+        tv_catGroup.setText(info);
+        //
+        tv_note.setText(String.valueOf(mCurrentCat.noteCounts));
+
+        //
+        if (mCurrentCat.catId == setting.defaultCatId) {
+            tv_default.setText(R.string.catinfo_yes);
+        } else {
+            tv_default.setText(R.string.catinfo_no);
+        }
+
+        //
+        if (mCurrentCat.catId != setting.defaultCatId) {
+            ly_delete.setVisibility(View.VISIBLE);
+        } else {
+            ly_delete.setVisibility(View.GONE);
+        }
+
+        //设为默认文件夹
+        if (mCurrentCat.catId != setting.defaultCatId) {
+            ly_setDefault.setVisibility(View.VISIBLE);
+        } else {
+            ly_setDefault.setVisibility(View.GONE);
+        }
     }
 
     protected void setViews() {
@@ -83,58 +129,6 @@ public class TNCatInfoAct extends TNActBase
     // configView
     //-------------------------------------------------------------------------------
     protected void configView() {
-        getCatInfos();
-        ((BaseExpandableListAdapter) mListView.getExpandableListAdapter()).notifyDataSetChanged();
-        for (int i = 0; i < mGroups.size(); i++) {
-            mListView.expandGroup(i);
-        }
-    }
-
-    private void getCatInfos() {
-        TNSettings setting = TNSettings.getInstance();
-        mCurrentCat = TNDbUtils.getCat(mCatId);
-
-        mGroups.clear();
-        TNPreferenceGroup group = null;
-
-        //文件夹
-        group = new TNPreferenceGroup(getString(R.string.catinfo_folder));
-        {    //名称
-            {
-                boolean visibleMoreBtn = true;
-                group.addChild(new TNPreferenceChild(getString(R.string.catinfo_name), mCurrentCat.catName, visibleMoreBtn, new TNRunner(this, "changeFolderName")));
-            }
-            {//所属文件夹
-                String info = mCurrentCat.catName;
-                if (mCurrentCat.pCatId > 0)
-                    info = TNDbUtils.getCat(mCurrentCat.pCatId).catName;
-                else
-                    info = getString(R.string.catinfo_nogroup);
-                boolean visibleMoreBtn = true;
-                group.addChild(new TNPreferenceChild(getString(R.string.catinfo_group), info, visibleMoreBtn, new TNRunner(this, "changeFolderParent")));
-            }
-            {//笔记数量
-                group.addChild(new TNPreferenceChild(getString(R.string.catinfo_notecount), String.valueOf(mCurrentCat.noteCounts), false, null));
-            }
-            {//默认文件夹
-                String info = getString(R.string.catinfo_no);
-                if (mCurrentCat.catId == setting.defaultCatId) {
-                    info = getString(R.string.catinfo_yes);
-                }
-                group.addChild(new TNPreferenceChild(getString(R.string.catinfo_isdefault), info, false, null));
-            }
-            {//删除
-                if (mCurrentCat.catId != setting.defaultCatId) {
-                    boolean visibleMoreBtn = true;
-                    group.addChild(new TNPreferenceChild(getString(R.string.catinfo_delete), null, visibleMoreBtn, new TNRunner(this, "deleteFolder")));
-                }
-            }
-            //设为默认文件夹
-            if (mCurrentCat.catId != setting.defaultCatId) {
-                group.addChild(new TNPreferenceChild(getString(R.string.catinfo_setdefault), null, true, new TNRunner(this, "setdefault")));
-            }
-        }
-        mGroups.add(group);
     }
 
     //Child click methods
@@ -184,18 +178,6 @@ public class TNCatInfoAct extends TNActBase
         return true;
     }
 
-    @Override
-    public boolean onChildClick(ExpandableListView parent, View v,
-                                int groupPosition, int childPosition, long id) {
-        mCurrChild = mGroups.get(groupPosition).getChilds().get(childPosition);
-
-        if (mCurrChild.getTargetMethod() != null) {
-            mCurrChild.getTargetMethod().run();
-            return true;
-        }
-        return false;
-    }
-
     // implements OnClickListener
     //-------------------------------------------------------------------------------
     @Override
@@ -203,6 +185,18 @@ public class TNCatInfoAct extends TNActBase
         switch (v.getId()) {
             case R.id.catinfo_back:
                 finish();
+                break;
+            case R.id.ly_cat:
+                changeFolderName();
+                break;
+            case R.id.ly_catGroup:
+                changeFolderParent();
+                break;
+            case R.id.ly_delete:
+                deleteFolder();
+                break;
+            case R.id.ly_setDefault:
+                setdefault();
                 break;
         }
     }

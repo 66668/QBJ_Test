@@ -225,13 +225,10 @@
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.TNUserInfoAct"
+            android:name=".Activity.TNMainSettingAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".Activity.TNAboutAct"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name=".Activity.TNCatInfoAct"
             android:configChanges="keyboardHidden|orientation"
@@ -254,17 +251,14 @@
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.TNLockAct"
+            android:name=".Activity.settings.TNLockAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activity.TNHelpAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".Activity.unuse.TNTestAct"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name=".Activity.TNMainAct"
             android:configChanges="keyboardHidden|orientation"
@@ -274,10 +268,7 @@
             android:name=".Activity.TNSearchAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".Activity.unuse.TNAttListAct"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name=".Activity.TNNoteDrawAct"
             android:configChanges="keyboardHidden|orientation"
@@ -286,13 +277,9 @@
             android:name=".Activity.TNRemindAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
+
         <activity
-            android:name=".Activity.unuse.TNNetSearchAct"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
-        <activity
-            android:name=".Activity.TNSettingsAct"
+            android:name=".Activity.settings.TNCommonSettingsAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
         <activity

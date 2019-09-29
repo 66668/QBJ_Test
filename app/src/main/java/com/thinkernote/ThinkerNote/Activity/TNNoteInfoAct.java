@@ -12,18 +12,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.AnimationUtils;
-import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
-import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
-import com.thinkernote.ThinkerNote.General.TNRunner;
-import com.thinkernote.ThinkerNote.Adapter.TNPreferenceAdapter;
 import com.thinkernote.ThinkerNote.Data.TNCat;
 import com.thinkernote.ThinkerNote.Data.TNNote;
-import com.thinkernote.ThinkerNote.Data.TNPreferenceChild;
-import com.thinkernote.ThinkerNote.Data.TNPreferenceGroup;
 import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.Database.TNSQLString;
@@ -44,16 +39,14 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- *  有反射方法执行，禁止混淆
  * menu 属性
  * sjy 0615
  */
-public class TNNoteInfoAct extends TNActBase implements OnClickListener, OnChildClickListener, OnGroupClickListener {
+public class TNNoteInfoAct extends TNActBase implements OnClickListener, OnGroupClickListener {
     public static final int TAGINFO = 101;//1
 
     /*
@@ -63,9 +56,6 @@ public class TNNoteInfoAct extends TNActBase implements OnClickListener, OnChild
     private Dialog mProgressDialog = null;
     private long mCreateTime;
 
-    private ExpandableListView mListView;
-    private Vector<TNPreferenceGroup> mGroups;
-    private TNPreferenceChild mCurrChild;
 
     private long mNoteLocalId;
     private TNNote mNote;
@@ -73,25 +63,22 @@ public class TNNoteInfoAct extends TNActBase implements OnClickListener, OnChild
     private WheelView mYearWheel, mMonthWheel, mDayWheel, mHourWheel, mMinuteWheel;
     private LinearLayout mWheelLayout;
     private int mYear;
+    //
+    LinearLayout ly_createTime, ly_creater;
+    TextView tv_catName, tv_sync, tv_creater, tv_createTime, tv_lastTime, tv_count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.noteinfo);
+        setContentView(R.layout.act_noteinfo);
         mNoteLocalId = getIntent().getExtras().getLong("NoteLocalId");
         mNote = TNDbUtils.getNoteByNoteLocalId(mNoteLocalId);
-
+        initMyView();
+        initOther();
         setViews();
+    }
 
-        mGroups = new Vector<TNPreferenceGroup>();
-        mListView = (ExpandableListView) findViewById(R.id.noteinfo_expandablelistview);
-        mListView.setAdapter(new TNPreferenceAdapter(this, mGroups));
-        mListView.setOnGroupClickListener(this);
-        mListView.setOnChildClickListener(this);
-
-        // initialize
-        findViewById(R.id.noteinfo_back).setOnClickListener(this);
-        registerForContextMenu(findViewById(R.id.share_url_menu));
+    private void initOther() {
 
         mProgressDialog = TNUtilsUi.progressDialog(this, R.string.in_progress);
 
@@ -103,75 +90,60 @@ public class TNNoteInfoAct extends TNActBase implements OnClickListener, OnChild
         mWheelLayout = (LinearLayout) findViewById(R.id.ak_fram_editalarm_wheellayout);
         findViewById(R.id.ak_fram_editalarm_wheel_cancel).setOnClickListener(this);
         findViewById(R.id.ak_fram_editalarm_wheel_ok).setOnClickListener(this);
+    }
 
+    /**
+     *
+     */
+    private void initMyView() {
+        ly_createTime = findViewById(R.id.ly_createTime);
+        ly_creater = findViewById(R.id.ly_creater);
+
+        ly_createTime.setOnClickListener(this);
+        findViewById(R.id.noteinfo_back).setOnClickListener(this);
+
+        tv_catName = findViewById(R.id.tv_catName);
+        tv_sync = findViewById(R.id.tv_sync);
+        tv_creater = findViewById(R.id.tv_creater);
+        tv_createTime = findViewById(R.id.tv_createTime);
+        tv_lastTime = findViewById(R.id.tv_lastTime);
+        tv_count = findViewById(R.id.tv_count);
+        registerForContextMenu(findViewById(R.id.share_url_menu));
+
+    }
+
+    /**
+     * 显示内容
+     */
+    private void showView() {
+        TNSettings settings = TNSettings.getInstance();
+        TNCat cat = TNDbUtils.getCat(mNote.catId);
+        String catName = cat == null ? "" : cat.catName;
+        tv_catName.setText(catName);
+
+        //
+        String sync = getString(R.string.noteinfo_no);
+        if (mNote != null && mNote.syncState == 2) {
+            sync = getString(R.string.noteinfo_yes);
+        }
+        tv_sync.setText(sync);
+
+        //
+        if (settings.isInProject()) {
+            ly_creater.setVisibility(View.VISIBLE);
+            tv_creater.setText(mNote.creatorNick);
+        } else {
+            ly_creater.setVisibility(View.GONE);
+        }
+
+        //
+        tv_createTime.setText(formatDate(mNote.createTime));
+        tv_count.setText(String.valueOf(mNote.content.length()));
     }
 
     @Override
     protected void configView() {
-        getSettings();
-        ((BaseExpandableListAdapter) mListView.getExpandableListAdapter()).notifyDataSetChanged();
-        for (int i = 0; i < mGroups.size(); i++) {
-            mListView.expandGroup(i);
-        }
-    }
-
-    private void getSettings() {
-        TNSettings settings = TNSettings.getInstance();
-
-        mGroups.clear();
-        TNPreferenceGroup group = null;
-        // TNPreferenceChild child = null;
-
-        TNCat cat = TNDbUtils.getCat(mNote.catId);
-        String catName = cat == null ? "" : cat.catName;
-        // 笔记
-        group = new TNPreferenceGroup(getString(R.string.noteinfo_note));
-        { // 所在文件夹
-            group.addChild(new TNPreferenceChild(getString(R.string.noteinfo_folder), catName, false, null));
-            {// 是否同步
-                String info = getString(R.string.noteinfo_no);
-                if (mNote != null && mNote.syncState == 2) {
-                    info = getString(R.string.noteinfo_yes);
-                }
-                group.addChild(new TNPreferenceChild(getString(R.string.noteinfo_issync), info, false, null));
-            }
-        }
-        mGroups.add(group);
-
-        // 其他属性
-        group = new TNPreferenceGroup(getString(R.string.noteinfo_note_other));
-        { // 创建人
-            if (settings.isInProject()) {
-                group.addChild(
-                        new TNPreferenceChild(getString(R.string.noteinfo_cretor), mNote.creatorNick, false, null));
-            }
-            // //创建客户端
-            // group.addChild(new
-            // TNPreferenceChild(getString(R.string.noteinfo_client),
-            // note.client, false, null));
-            {// 创建时间
-                TNRunner targetMethod = null;
-                targetMethod = new TNRunner(this, "changeCreateTime");
-                group.addChild(new TNPreferenceChild(getString(R.string.noteinfo_createtime),
-                        formatDate(mNote.createTime), true, targetMethod));
-            }
-            // 最近更新时间
-            group.addChild(new TNPreferenceChild(getString(R.string.noteinfo_lastupdate), formatDate(mNote.lastUpdate),
-                    false, null));
-            // {//创建位置
-            // String info = getString(R.string.noteinfo_location_unknown);
-            // if(mNote.lbsAddress != null && mNote.lbsAddress.length() > 0 &&
-            // !mNote.lbsAddress.equals("0"))
-            // info = mNote.lbsAddress;
-            // group.addChild(new
-            // TNPreferenceChild(getString(R.string.noteinfo_location), info,
-            // false, null));
-            // }
-            // 字数
-            group.addChild(new TNPreferenceChild(getString(R.string.noteinfo_wordcount),
-                    String.valueOf(mNote.content.length()), false, null));
-        }
-        mGroups.add(group);
+        showView();
 
     }
 
@@ -241,15 +213,6 @@ public class TNNoteInfoAct extends TNActBase implements OnClickListener, OnChild
         super.onDestroy();
     }
 
-    @Override
-    public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-        mCurrChild = mGroups.get(groupPosition).getChilds().get(childPosition);
-
-        if (mCurrChild.getTargetMethod() != null) {
-            mCurrChild.getTargetMethod().run();
-        }
-        return false;
-    }
 
     @Override
     public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
@@ -269,6 +232,9 @@ public class TNNoteInfoAct extends TNActBase implements OnClickListener, OnChild
                 setSelectTime();
                 hidWheelView(true);
                 break;
+            case R.id.ly_createTime:
+                showWheelView();
+                break;
         }
     }
 
@@ -282,11 +248,7 @@ public class TNNoteInfoAct extends TNActBase implements OnClickListener, OnChild
         return formated;
     }
 
-    // child click methods
     // ----------------------------------------------------------------------------------
-    public void changeCreateTime() {
-        showWheelView();
-    }
 
     // new add time selector
     private void showWheelView() {
