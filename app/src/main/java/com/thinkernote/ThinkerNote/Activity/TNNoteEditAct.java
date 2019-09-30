@@ -390,7 +390,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                 saveInput();
                 if (mRecord != null && !mRecord.isStop()) {
                     handleProgressDialog("show");
-                    mRecord.asynStop(8);
+                    mRecord.asynStop(8);//关闭录音
                     break;
                 }
                 saveNote();
@@ -765,8 +765,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                 //自动保存状态，不退出编辑
 
                 break;
-            case START_SYNC://保存并同步
-                MLog.d(TAG, "保存并同步");
+            case START_SYNC://保存并同步到后台
                 handleProgressDialog("hide");
                 TNUtilsUi.showShortToast(R.string.alert_NoteSave_SaveOK);
                 if (msg.obj == null) {
@@ -1264,14 +1263,20 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
 
     //    同步结束
     private void endSynchronize() {
-        mProgressDialog.hide();
-        finish();
+        try {
+            handleProgressDialog("hide");
+            TNNoteEditAct.this.finish();
+        } catch (Exception e) {
+            TNNoteEditAct.this.finish();
+        }
+
     }
 
     //==========================================数据库操作======================================
 
     /**
      * 数据库操作 线程操作
+     * 自动保存，不上传后台，完成按钮保存，上传后台
      *
      * @param note
      */
@@ -1354,8 +1359,8 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                     TNDb.endTransaction();
                 }
 
-                //执行完异步，移除what=1的消息队列
-                handler.removeMessages(1);
+                //执行完异步，移除what=AUTO_SAVE的消息队列
+                handler.removeMessages(AUTO_SAVE);
                 //通知更新UI
                 if (isNeedSync) {//结束编辑退出，同步到后台
                     msg.what = START_SYNC;
@@ -1471,7 +1476,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
     //========================================p层调用========================================
 
     private void syncEdit() {
-        mProgressDialog.show();
+        handleProgressDialog("show");
         syncPresenter.synchronizeData("EDIT");
     }
     //========================================回调========================================
