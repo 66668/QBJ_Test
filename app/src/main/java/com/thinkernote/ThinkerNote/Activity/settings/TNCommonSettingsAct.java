@@ -16,9 +16,7 @@ import android.widget.TextView;
 
 import com.thinkernote.ThinkerNote.Activity.TNBindPhoneAct;
 import com.thinkernote.ThinkerNote.Activity.TNCatListAct;
-import com.thinkernote.ThinkerNote.Activity.TNChangeUserInfoAct;
 import com.thinkernote.ThinkerNote.Activity.TNHtmlViewAct;
-import com.thinkernote.ThinkerNote.Activity.TNReportAct;
 import com.thinkernote.ThinkerNote.Data.TNCat;
 import com.thinkernote.ThinkerNote.Data.TNUser;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;

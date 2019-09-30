@@ -170,6 +170,11 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
         if (isRunning) return;
         isRunning = true;
         settings = TNSettings.getInstance();
+        // 测试
+//        passWord = settings.password;//回调中需要使用
+//        //重新走自动登陆接口
+//        login(settings.loginname, passWord);
+
         final Intent intent = getIntent();
         if (TNApplication.getInstance().isEnryMain() && intent != null) {
             MLog.d("SJY", "小部件判断--home存在");

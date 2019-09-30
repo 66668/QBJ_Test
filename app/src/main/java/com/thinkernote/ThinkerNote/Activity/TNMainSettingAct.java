@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
 import com.thinkernote.ThinkerNote.Activity.settings.TNCommonSettingsAct;
+import com.thinkernote.ThinkerNote.Activity.settings.TNPayTipAct;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsSkin;

@@ -1,4 +1,4 @@
-package com.thinkernote.ThinkerNote.Activity;
+package com.thinkernote.ThinkerNote.Activity.settings;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;

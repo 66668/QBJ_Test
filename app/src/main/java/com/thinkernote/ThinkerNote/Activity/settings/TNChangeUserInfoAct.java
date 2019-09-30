@@ -1,4 +1,4 @@
-package com.thinkernote.ThinkerNote.Activity;
+package com.thinkernote.ThinkerNote.Activity.settings;
 
 import android.app.Dialog;
 import android.os.Bundle;

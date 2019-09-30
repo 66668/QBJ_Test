@@ -18,7 +18,7 @@ public class TNAppWidget43 extends AppWidgetProvider {
     private static final String TAG = "AppWidget";
 
     public final static String APP_START = "com.thinkernote.ThinkerNote.appwidget.action.START";//
-    public final static String APP_AUTO = "com.thinkernote.ThinkerNote.appwidget.action.AUTO";//TODO 原本用于list自动刷新
+    public final static String APP_AUTO = "com.thinkernote.ThinkerNote.appwidget.action.AUTO";//原本用于list自动刷新
     public final static String APP_ADD = "com.thinkernote.ThinkerNote.appwidget.action.ADD";
     public final static String APP_REFRESH = "com.thinkernote.ThinkerNote.appwidget.action.REFRESH";//手动刷新
     public final static String APP_ITEM_DETAIL = "com.thinkernote.ThinkerNote.appwidget.action.LISTITEM";
@@ -27,7 +27,7 @@ public class TNAppWidget43 extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "TNAppWidget43--onReceive");
-        //各种跳转的设置 TODO
+        //各种跳转的设置
         switch (intent.getAction()) {
             case APP_START:
                 //判断登陆在跳转

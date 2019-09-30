@@ -1,4 +1,4 @@
-package com.thinkernote.ThinkerNote.Activity;
+package com.thinkernote.ThinkerNote.Activity.settings;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -22,6 +22,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.thinkernote.ThinkerNote.Activity.ViewImageActivity;
 import com.thinkernote.ThinkerNote.Adapter.PlusPhotoAdapter;
 import com.thinkernote.ThinkerNote.Adapter.PlusPhotoAdapter.OnClickedListener;
 import com.thinkernote.ThinkerNote.General.TNSettings;

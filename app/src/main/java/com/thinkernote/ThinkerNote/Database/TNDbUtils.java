@@ -149,9 +149,9 @@ public class TNDbUtils {
         return notes;
     }
 
-    public static Vector<TNNote> getFolderAllNoteList(long userId,long folderId) {
+    public static Vector<TNNote> getFolderAllNoteList(long userId, long folderId) {
         Vector<TNNote> notes = new Vector<TNNote>();
-        Vector<Vector<String>> data = NoteDbHelper.getFolderAllNoteList(userId,folderId);
+        Vector<Vector<String>> data = NoteDbHelper.getFolderAllNoteList(userId, folderId);
         for (int i = 0; i < data.size(); i++) {
             TNNote note = getNote(data.get(i));
             notes.add(note);
@@ -299,6 +299,9 @@ public class TNDbUtils {
         return noteAtts;
     }
 
+    /**
+     * 清除缓存
+     */
     public static void clearCache() {
         CatDbHelper.clearCats();
 //		UserDbHelper.clearUsers();清缓存不清空user信息

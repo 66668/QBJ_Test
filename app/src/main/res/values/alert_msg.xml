@@ -111,7 +111,7 @@
 	<string name="alert_Att_NoteExist" formatted="false">附件%s丢失</string>
 	
 	<string name="alert_About_InputPwd">请输入您的密码：</string>
-	<string name="alert_About_ClearCacheHint">此操作将清空当前用户的手机缓存数据。操作之前请确保所有笔记已经上传。\n确定要清除？</string>
+	<string name="alert_About_ClearCacheHint">此操作将清空当前用户的手机缓存数据,包括以前下载的附件文件,操作之前请确保所有笔记已经上传。\n如果sd卡中有备份数据，将不清除。\n确定要清除？</string>
 	<string name="alert_About_CantSendEmail">没有应用能发送邮件。请下载相关程序后再试。</string>
 	<string name="alert_About_CantSendSMS">不能发送到短信，请检查短信设置后再重试。</string>
 	<string name="alert_About_CantOpenWeb">没有应用能打开网页。请下载相关程序后再试。</string>

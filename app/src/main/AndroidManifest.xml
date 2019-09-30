@@ -242,7 +242,7 @@
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.TNReportAct"
+            android:name=".Activity.settings.TNReportAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
@@ -287,7 +287,7 @@
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.TNPayTipAct"
+            android:name=".Activity.settings.TNPayTipAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
         <activity
@@ -295,11 +295,11 @@
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.TNChangeUserInfoAct"
+            android:name=".Activity.settings.TNChangeUserInfoAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.TNFindPasswordAct"
+            android:name=".Activity.settings.TNFindPasswordAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
         <activity

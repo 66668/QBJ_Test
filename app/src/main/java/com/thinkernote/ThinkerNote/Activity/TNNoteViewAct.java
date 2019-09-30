@@ -294,25 +294,6 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
         //从item获取笔记id/或者从小部件跳转获取笔记id，保持SCHEME_ITEMKEY= "NoteLocalId"
         mNoteLocalId = intent.getExtras().getLong("NoteLocalId"); //获取跳转 mNoteLocalId
 
-        //TODO  测试
-        String action = intent.getAction();
-        if (Intent.ACTION_VIEW.equals(action)) {
-            Uri uri = intent.getData();
-            if (uri != null) {
-                String host = uri.getHost();
-                String dataString = intent.getDataString();
-                String id = uri.getQueryParameter("id");
-                String path = uri.getPath();
-                String path1 = uri.getEncodedPath();
-                String queryString = uri.getQuery();
-                MLog.d("SJY", "host:" + host);
-                MLog.d("SJY", "dataString:" + dataString);
-                MLog.d("SJY", "id:" + id);
-                MLog.d("SJY", "path:" + path);
-                MLog.d("SJY", "path1:" + path1);
-                MLog.d("SJY", "queryString:" + queryString);
-            }
-        }
     }
 
     //讯飞语音初始化

@@ -1,4 +1,4 @@
-package com.thinkernote.ThinkerNote.Activity;
+package com.thinkernote.ThinkerNote.Activity.settings;
 
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
@@ -18,6 +18,7 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
+import com.thinkernote.ThinkerNote.Activity.TNMainAct;
 import com.thinkernote.ThinkerNote.DBHelper.UserDbHelper;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.General.TNSettings;

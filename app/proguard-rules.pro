@@ -164,6 +164,9 @@
 # Android开发中第三方类库的混淆处理(轻笔记特有处理)
 #
 #############################################
+# 包处理
+#详情页不混淆
+-keep class com.thinkernote.ThinkerNote.Activity.TNNoteViewAct
 
 # OkHttp3
 -dontwarn okio.**
