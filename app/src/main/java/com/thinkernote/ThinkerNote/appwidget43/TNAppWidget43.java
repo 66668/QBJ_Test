@@ -37,9 +37,10 @@ public class TNAppWidget43 extends AppWidgetProvider {
                 break;
             case APP_ADD:
                 //判断登陆在跳转
-                Intent newsListIntent = new Intent(context, TNNoteEditAct.class);
-                newsListIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                context.startActivity(newsListIntent);
+                Intent addIntent = new Intent(context, TNNoteEditAct.class);
+                addIntent.setAction(TNAppWidget43.APP_ADD);
+                addIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                context.startActivity(addIntent);
                 break;
             case APP_REFRESH:
                 TNRemoteViews remoteViews = new TNRemoteViews(context);
@@ -58,7 +59,6 @@ public class TNAppWidget43 extends AppWidgetProvider {
                 Intent newIntent = new Intent();
                 //自定义跳转参数，使用的地方获取参数，就可以跳转到指定act
                 String uri = TNAppWidegtConst.SCHEME_HOST + "?className=com.thinkernote.ThinkerNote.Activity.TNNoteViewAct";
-                Log.d(TAG, "uri=" + uri);
                 Uri data = Uri.parse(uri);
                 newIntent.setData(data);
                 newIntent.putExtras(extras);

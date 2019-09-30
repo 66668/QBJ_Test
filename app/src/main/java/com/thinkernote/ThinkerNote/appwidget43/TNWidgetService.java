@@ -18,7 +18,6 @@ public class TNWidgetService extends RemoteViewsService implements Runnable {
 
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        MLog.d(TAG, "TNWidgetService--RemoteViewsFactory");
         return new TNListRemoteViewsFactory(this.getApplicationContext(), intent);
     }
 
@@ -55,7 +54,6 @@ public class TNWidgetService extends RemoteViewsService implements Runnable {
      */
     @Override
     public void run() {
-        MLog.d(TAG, "TNWidgetService定时线程");
         // 实时发送一个更新的广播
         final String pref_key = "appwidget_news_refresh_time";
         final long updatePeriod = 10 * 60 * 1000;//10min更新

@@ -36,7 +36,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            android:src="@drawable/newnote" />
+            android:src="@mipmap/aw_add" />
 
         <ImageButton
             android:id="@+id/btn_sync"
@@ -46,7 +46,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="45dp"
             android:background="@drawable/btn_trans_selector_light_colored"
-            android:src="@drawable/main_sync_btn"
+            android:src="@mipmap/aw_fresh"
             android:visibility="visible" />
     </RelativeLayout>
 

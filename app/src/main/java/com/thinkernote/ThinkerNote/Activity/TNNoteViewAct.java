@@ -411,10 +411,17 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
         configView();
     }
 
-
+    @Override
     protected void configView() {
         mNote = TNDbUtils.getNoteByNoteLocalId(mNoteLocalId);
-
+        /**
+         * 小部件不自动更新，避免空笔记
+         */
+        if (mNote == null) {
+            TNUtilsUi.showToast("笔记不存在，请同步刷新");
+            this.finish();
+        }
+        //
         if (createStatus == 0) {
             download.setNewNote(mNote);
         } else {

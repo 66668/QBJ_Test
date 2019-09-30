@@ -45,11 +45,10 @@ public class TNActBase extends Activity {
 
     }
 
+    @Override
     protected void onStart() {
         super.onStart();
-
         TNSettings settings = TNSettings.getInstance();
-
         if (TAG.equals("TNMainAct")) {
             if (settings.isLogout) {
                 finish();
@@ -58,20 +57,16 @@ public class TNActBase extends Activity {
         } else if (TAG.equals("TNLoginAct") || TAG.equals("TNSplashAct")) {
             settings.isLogout = false;
         } else {
-            if (settings.isLogout /*|| settings.isGoHome*/) {
+            if (settings.isLogout) {
                 if (TAG.equals("TNNoteEditAct") && TNUtilsUi.isCallFromOutside(this)) {
                     settings.isLogout = false;
                 }
+                MLog.d("SJY", "TNActBase--onStart--finish");
+                MLog.d("SJY", "关闭TNNoteEditAct");
                 finish();
                 return;
             }
         }
-    }
-
-
-    @Override
-    public void finish() {
-        super.finish();
     }
 
     @Override
@@ -106,9 +101,16 @@ public class TNActBase extends Activity {
         TNSettings.getInstance().topAct = this;
 
         // 直接安装包启动，再home退出，再进入，将分别产生2个task。一个task退出将导致另一个task出错。
-        if (!TAG.equals("TNSplashAct") && !TAG.equals("TNLoginAct") && !TAG.equals("TNMainAct")
-                && settings.userId <= 0 && !isFinishing()
-                && !TAG.equals("TNRegistAct") && !TAG.equals("TNFindPasswordAct") && !TAG.equals("TNBindAccountAct")) {
+        if (!TAG.equals("TNSplashAct") &&
+                !TAG.equals("TNLoginAct") &&
+                !TAG.equals("TNMainAct") &&
+                settings.userId <= 0 &&
+                !isFinishing() &&
+                !TAG.equals("TNRegistAct") &&
+                !TAG.equals("TNFindPasswordAct") &&
+                !TAG.equals("TNNoteEditAct") && //appWidget适配
+                !TAG.equals("TNBindAccountAct")) {
+            MLog.d("SJY", "TNActBase--onResume--finish");
             finish();
             return;
         }

@@ -14,6 +14,7 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.Images.Media;
 import android.text.Editable;
 import android.text.Selection;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -40,6 +41,7 @@ import com.thinkernote.ThinkerNote.BuildConfig;
 import com.thinkernote.ThinkerNote.DBHelper.NoteAttrDbHelper;
 import com.thinkernote.ThinkerNote.Data.TNNote;
 import com.thinkernote.ThinkerNote.Data.TNNoteAtt;
+import com.thinkernote.ThinkerNote.Data.TNUser;
 import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.Database.TNSQLString;
@@ -128,6 +130,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.note_edit);
+
         initAct();
         syncPresenter = new SyncPresenter(this, this);
         //开启百度定位
@@ -136,8 +139,10 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
             LocationService.getInstance().start();
         }
         if (savedInstanceState == null) {
+            MLog.d("SJY", "TNNoteEditAct--onCreate--01");
             initNote();
-        } else {//获取缓存笔记
+        } else {//获取onRestoreInstance笔记
+            MLog.d("SJY", "TNNoteEditAct--onCreate--02");
             Serializable obj = (TNNote) savedInstanceState
                     .getSerializable("NOTE");
             Uri uri = savedInstanceState.getParcelable("CAMERA_URI");
@@ -206,7 +211,11 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         mContentView.addTextChangedListener(this);
     }
 
+    /**
+     * 处理appwidget的判断
+     */
     private void initNote() {
+
         if (getIntent().hasExtra("NoteForEdit")) {
             long id = getIntent().getLongExtra("NoteForEdit", -1);
             // edit note
@@ -220,38 +229,56 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
 
             Intent it = getIntent();
             if (it != null && it.getAction() != null) {
-                Bundle extras = it.getExtras();
-                if (extras.containsKey(Intent.EXTRA_STREAM)) {
-                    Object extraStream = extras.get(Intent.EXTRA_STREAM);
-                    if (Uri.class.isInstance(extraStream)) {
-                        Uri uri = (Uri) extraStream;
-                        String path = getPath(uri);
-                        if (path != null) {
-                            File file = new File(getPath(uri));
-                            mNote.atts.add(TNNoteAtt.newAtt(file, this));
-                        }
-                    } else if (ArrayList.class.isInstance(extraStream)) {
-                        @SuppressWarnings("unchecked")
-                        ArrayList<Uri> uris = (ArrayList<Uri>) extraStream;
-                        for (Uri uri : uris) {
-                            File file = new File(getPath(uri));
-                            mNote.atts.add(TNNoteAtt.newAtt(file, this));
+                if (it.getAction().equals("com.thinkernote.ThinkerNote.appwidget.action.ADD")) { //优先处理appwidget
+                    //判断用户是否登陆 (判断userId)
+                    TNSettings settings = TNSettings.getInstance();
+                    TNUser user = TNDbUtils.getUser(settings.userId);
+                    if (user == null ||
+                            !settings.isLogin() ||
+                            (settings.expertTime != 0 && (settings.expertTime * 1000 - System.currentTimeMillis() < 0))
+                    ) {
+                        TNUtilsUi.showToast("请先登录！");
+                        startActivity(this, TNLoginAct.class);
+                        this.finish();
+                        return;
+                    } else {
+
+                    }
+                } else {
+                    Bundle extras = it.getExtras();
+
+                    if (extras.containsKey(Intent.EXTRA_STREAM)) {
+                        Object extraStream = extras.get(Intent.EXTRA_STREAM);
+                        if (Uri.class.isInstance(extraStream)) {
+                            Uri uri = (Uri) extraStream;
+                            String path = getPath(uri);
+                            if (path != null) {
+                                File file = new File(getPath(uri));
+                                mNote.atts.add(TNNoteAtt.newAtt(file, this));
+                            }
+                        } else if (ArrayList.class.isInstance(extraStream)) {
+                            @SuppressWarnings("unchecked")
+                            ArrayList<Uri> uris = (ArrayList<Uri>) extraStream;
+                            for (Uri uri : uris) {
+                                File file = new File(getPath(uri));
+                                mNote.atts.add(TNNoteAtt.newAtt(file, this));
+                            }
                         }
                     }
-                }
-                if (extras.containsKey(Intent.EXTRA_SUBJECT)) {
-                    Object subject = extras.get(Intent.EXTRA_SUBJECT);
-                    if (subject == null) {
-                        mNote.title = "";
-                    } else
-                        mNote.title = subject.toString();
-                }
-                if (extras.containsKey(Intent.EXTRA_TEXT)) {
-                    Object text = extras.get(Intent.EXTRA_TEXT);
-                    if (text == null)
-                        mNote.content = "";
-                    else
-                        mNote.content = text.toString();
+                    if (extras.containsKey(Intent.EXTRA_SUBJECT)) {
+                        Object subject = extras.get(Intent.EXTRA_SUBJECT);
+                        if (subject == null) {
+                            mNote.title = "";
+                        } else
+                            mNote.title = subject.toString();
+                    }
+                    if (extras.containsKey(Intent.EXTRA_TEXT)) {
+                        Object text = extras.get(Intent.EXTRA_TEXT);
+                        if (text == null)
+                            mNote.content = "";
+                        else
+                            mNote.content = text.toString();
+                    }
                 }
             }
 
