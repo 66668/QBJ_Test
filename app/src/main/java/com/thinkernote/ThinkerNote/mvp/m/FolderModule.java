@@ -200,10 +200,11 @@ public class FolderModule {
                 .doOnNext(new Consumer<CommonBean2<ProfileBean>>() {
                     @Override
                     public void accept(CommonBean2<ProfileBean> bean) {
+                        MLog.e("异常--" + bean.toString());
                         if (bean.getCode() == 0) {
-
+                            updateProfileSQL(bean.getProfile());
                         }
-                        updateProfileSQL(bean.getProfile());
+
                     }
                 })
                 .subscribeOn(Schedulers.io())
@@ -868,6 +869,8 @@ public class FolderModule {
      * @param profileBean
      */
     private void updateProfileSQL(final ProfileBean profileBean) {
+        if (profileBean == null)
+            return;
         executorService.execute(new Runnable() {
             @Override
             public void run() {
