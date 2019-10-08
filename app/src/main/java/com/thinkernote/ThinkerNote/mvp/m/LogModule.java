@@ -3,7 +3,7 @@ package com.thinkernote.ThinkerNote.mvp.m;
 import android.content.Context;
 
 import com.google.gson.Gson;
-import com.thinkernote.ThinkerNote.General.TNConst;
+import com.thinkernote.ThinkerNote.base.TNConst;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 import com.thinkernote.ThinkerNote.Utils.SPUtil;

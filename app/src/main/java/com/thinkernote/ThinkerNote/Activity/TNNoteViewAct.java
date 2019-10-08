@@ -10,10 +10,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Message;
+import android.support.v4.content.FileProvider;
 import android.text.ClipboardManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.GestureDetector;
@@ -32,12 +32,9 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import androidx.core.content.FileProvider;
 
-import com.iflytek.cloud.ErrorCode;
-import com.iflytek.cloud.InitListener;
-import com.iflytek.cloud.SpeechConstant;
-import com.iflytek.cloud.SpeechSynthesizer;
+import com.tencent.connect.common.Constants;
+import com.tencent.connect.share.QQShare;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
@@ -49,7 +46,7 @@ import com.thinkernote.ThinkerNote.Data.TNNoteAtt;
 import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.Database.TNSQLString;
-import com.thinkernote.ThinkerNote.General.TNConst;
+import com.thinkernote.ThinkerNote.base.TNConst;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsAtt;
@@ -88,7 +85,6 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
         OnNoteViewListener {
 
     public static final String TAG = "TNNoteViewAct";
-    public static final long ATT_MAX_DOWNLOAD_SIZE = 50 * 1024;
     public static final int DIALOG_DELETE = 101;//
     public static final int WEBBVIEW_START = 102;//
     public static final int WEBBVIEW_OPEN_ATT = 103;//
@@ -96,6 +92,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
     public static final int WEBBVIEW_SHOW = 105;//
     public static final int GETNOTEBYNOTEID_SUCCESS = 106;//
 
+    private int shareType = QQShare.SHARE_TO_QQ_TYPE_DEFAULT;
     // Class members
     // -------------------------------------------------------------------------------
     private Dialog mProgressDialog = null;
@@ -104,8 +101,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
     private long mCurAttId;
     private long mNoteLocalId;
     private TNNote mNote;
-    private Tencent mTencent;
-    private IUiListener mListener;
+    private Tencent qqTencent;
 
     //    private SynthesizerPlayer mSynthesizerPlayer;
     private String mPlainText = null;
@@ -121,33 +117,19 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
     private CommonDialog dialog;
     //p
     private NoteViewPresenter presenter;
-    private NoteViewDownloadPresenter download;
+    private NoteViewDownloadPresenter downloadPresenter;
 
-    //讯飞语音合成
-    // 语音合成对象
-    private SpeechSynthesizer mTts;
-    // 默认发音人
-    private String voicer = "xiaoyan";
 
-    private String[] mCloudVoicersEntries;
-    private String[] mCloudVoicersValue;
-
-    // 缓冲进度
-    private int mPercentForBuffering = 0;
-    // 播放进度
-    private int mPercentForPlaying = 0;
-    // 引擎类型
-    private String mEngineType = SpeechConstant.TYPE_CLOUD;
-
+    /**
+     * @param msg
+     */
     @Override
     public void handleMessage(Message msg) {
         switch (msg.what) {
             case WEBBVIEW_OPEN_ATT://打开 文件的操作弹窗
-
                 mCurAttId = (long) msg.obj;
-                MLog.d("AAA", "TNNoteViewAct", "打开att操作弹窗--mCurAttId-" + mCurAttId);
-                //弹窗
-                openContextMenu(findViewById(R.id.noteview_openatt_menu));
+                if (!isFinishing())
+                    openContextMenu(findViewById(R.id.noteview_openatt_menu)); //弹窗
                 break;
             case WEBBVIEW_START:
                 //webView显示
@@ -176,15 +158,13 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
                 mWebView.loadUrl(String.format("javascript:wave(\"%d\", \"%s\")", b.getLong("attLocalId"), b.getString("s")));
                 break;
             case DIALOG_DELETE:
-
                 mProgressDialog.hide();
                 finish();
-
                 break;
             case GETNOTEBYNOTEID_SUCCESS:
                 //
                 mNote = TNDbUtils.getNoteByNoteLocalId(mNoteLocalId);
-                download.setNewNote(mNote);
+                downloadPresenter.setNewNote(mNote);
                 startAutoDownload();
 
                 Message msg1 = new Message();
@@ -203,30 +183,11 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
         setContentView(R.layout.noteview);
         myIntent();
         setViews();
+        initFunc();
 
-        DisplayMetrics metric = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metric);
-        mScale = metric.scaledDensity;
 
         presenter = new NoteViewPresenter(this, this);
 
-        mTencent = Tencent.createInstance(TNConst.QQ_APP_ID, this.getApplicationContext());
-        mListener = new IUiListener() {
-            @Override
-            public void onError(UiError arg0) {
-                TNUtilsUi.showToast("分享失败：" + arg0.errorMessage);
-            }
-
-            @Override
-            public void onComplete(JSONObject jobj) {
-                TNUtilsUi.showToast("分享成功");
-            }
-
-            @Override
-            public void onCancel() {
-//				TNUtilsUi.showToast("分享取消");
-            }
-        };
 
         // initialize
         findViewById(R.id.noteview_home).setOnClickListener(this);
@@ -239,9 +200,9 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
         registerForContextMenu(findViewById(R.id.noteview_read_menu));
         registerForContextMenu(findViewById(R.id.noteview_share_menu));
 
-        download = new NoteViewDownloadPresenter(this);
-        download.setOnDownloadEndListener(this);
-        download.setOnDownloadStartListener(this);
+        downloadPresenter = new NoteViewDownloadPresenter(this);
+        downloadPresenter.setOnDownloadEndListener(this);
+        downloadPresenter.setOnDownloadStartListener(this);
         mGestureDetector = new GestureDetector(this, new TNGestureListener());
 
         mWebView = (WebView) findViewById(R.id.noteview_web);
@@ -281,48 +242,27 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
         });
 
         mProgressDialog = TNUtilsUi.progressDialog(this, R.string.in_progress);
-        //
-        initTts();
+    }
+
+    private void initFunc() {
+        //屏幕尺寸设置¬
+        DisplayMetrics metric = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metric);
+        mScale = metric.scaledDensity;
+        //qq分享设置
+        qqTencent = Tencent.createInstance(TNConst.QQ_APP_ID, this.getApplicationContext());
+
     }
 
     /**
      * intent值处理 包括小部件跳转
      */
     private void myIntent() {
-
         Intent intent = getIntent();
         //从item获取笔记id/或者从小部件跳转获取笔记id，保持SCHEME_ITEMKEY= "NoteLocalId"
         mNoteLocalId = intent.getExtras().getLong("NoteLocalId"); //获取跳转 mNoteLocalId
 
     }
-
-    //讯飞语音初始化
-    private void initTts() {
-        // 初始化合成对象
-        mTts = SpeechSynthesizer.createSynthesizer(TNNoteViewAct.this, mTtsInitListener);
-
-        // 云端发音人名称列表
-        mCloudVoicersEntries = getResources().getStringArray(R.array.voicer_cloud_entries);
-        mCloudVoicersValue = getResources().getStringArray(R.array.voicer_cloud_values);
-    }
-
-    /**
-     * 初始化监听。
-     */
-    private InitListener mTtsInitListener = new InitListener() {
-        @Override
-        public void onInit(int code) {
-            Log.d(TAG, "InitListener init() code = " + code);
-            if (code != ErrorCode.SUCCESS) {
-                TNUtilsUi.showToast("语音合成功能不可用");
-            } else {
-                // 初始化成功，之后可以调用startSpeaking方法
-                // 注：有的开发者在onCreate方法中创建完合成对象之后马上就调用startSpeaking进行合成，
-                // 正确的做法是将onCreate中的startSpeaking调用移至这里
-            }
-        }
-    };
-
 
     @Override
     protected void setViews() {
@@ -360,13 +300,16 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
             presenter = null;
         }
 
-        if (download != null) {
-            download.cancelDownload();
-            download = null;
+        if (downloadPresenter != null) {
+            downloadPresenter.cancelDownload();
+            downloadPresenter = null;
         }
         if (dialog != null) {
             dialog.dismiss();
             dialog = null;
+        }
+        if (qqTencent != null) {
+            qqTencent.releaseResource();
         }
 
     }
@@ -374,7 +317,9 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mTencent.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Constants.REQUEST_QQ_SHARE) {
+            Tencent.onActivityResultData(requestCode, resultCode, data, qqShareListener);
+        }
         if (resultCode != Activity.RESULT_OK)
             return;
 
@@ -391,6 +336,24 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
             }
         }
     }
+
+    IUiListener qqShareListener = new IUiListener() {
+
+        @Override
+        public void onCancel() {
+//				TNUtilsUi.showToast("分享取消");
+        }
+
+        @Override
+        public void onComplete(Object response) {
+            TNUtilsUi.showToast("分享成功");
+        }
+
+        @Override
+        public void onError(UiError e) {
+            TNUtilsUi.showToast("分享失败：" + e.errorMessage);
+        }
+    };
 
 
     @Override
@@ -423,9 +386,9 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
         }
         //
         if (createStatus == 0) {
-            download.setNewNote(mNote);
+            downloadPresenter.setNewNote(mNote);
         } else {
-            download.updateNote(mNote);
+            downloadPresenter.updateNote(mNote);
         }
         //判断是否是回收站的笔记，如果是 顶部显示还原的按钮
         if (mNote.trash == 1) {
@@ -632,7 +595,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
                     TNUtilsUi.showToast(R.string.alert_NoteList_NotCompleted_Share);
                     break;
                 }
-                TNUtilsUi.sendToQQ(TNNoteViewAct.this, mNote, mTencent, mListener);
+                TNUtilsUi.sendToQQ(TNNoteViewAct.this, mNote, qqTencent, qqShareListener);
                 break;
             }
 
@@ -1007,7 +970,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
 
         if (mNote == null)
             return;
-        download.start();
+        downloadPresenter.start();
     }
 
     private void setReadBarVisible(boolean visible) {
@@ -1258,7 +1221,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
         @JavascriptInterface
         public void downloadAtt(long id) {
             MLog.d("download", "JSInterface-->downloadAtt:" + id);
-            download.start(id);
+            downloadPresenter.start(id);
         }
 
         @JavascriptInterface

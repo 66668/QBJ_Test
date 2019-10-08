@@ -9,7 +9,7 @@ import com.thinkernote.ThinkerNote.Data.TNCat;
 import com.thinkernote.ThinkerNote.Database.TNDb;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.Database.TNSQLString;
-import com.thinkernote.ThinkerNote.General.TNConst;
+import com.thinkernote.ThinkerNote.base.TNConst;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
@@ -200,7 +200,6 @@ public class FolderModule {
                 .doOnNext(new Consumer<CommonBean2<ProfileBean>>() {
                     @Override
                     public void accept(CommonBean2<ProfileBean> bean) {
-                        MLog.e("异常--" + bean.toString());
                         if (bean.getCode() == 0) {
                             updateProfileSQL(bean.getProfile());
                         }
@@ -217,7 +216,6 @@ public class FolderModule {
 
                     @Override
                     public void onError(Throwable e) {
-                        MLog.e("getProfiles--onError" + e.toString());
                         listener.onProfileFailed("异常", new Exception("接口异常！"));
                     }
 
@@ -228,7 +226,6 @@ public class FolderModule {
 
                     @Override
                     public void onNext(CommonBean2<ProfileBean> bean) {
-                        MLog.d(TAG, "getProfiles-onNext" + bean.getCode() + "--" + bean.getMsg());
                         //处理返回结果
                         if (bean.getCode() == 0) {
                             listener.onProfileSuccess(bean.getProfile());

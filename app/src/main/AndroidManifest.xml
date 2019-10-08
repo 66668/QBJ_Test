@@ -109,10 +109,51 @@
 
 
         <!--  ==============================andriod 9版本兼容设置 ==============================-->
-        <uses-library
-            android:name="org.apache.http.legacy"
-            android:required="false" />
+                <uses-library
+                    android:name="org.apache.http.legacy"
+                    android:required="false" />
 
+        <!--  ==============================微信 - 配置================================== -->
+        <!--
+       微信 显示界面 android:theme="@android:style/Theme.Translucent.NoTitleBar"
+               不显示界面 android:theme="@android:style/Theme.NoDisplay
+               -->
+        <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <!--  ==============================百度地图定位 - 配置================================== -->
+        <service android:name=".Service.LocationService" />
+
+        <receiver android:name=".Register.AppRegister">
+            <intent-filter>
+                <action android:name="com.tencent.mm.plugin.openapi.Intent.ACTION_REFRESH_WXAPP" />
+            </intent-filter>
+        </receiver>
+        <!--  ==============================qq登陆+分享 - 配置================================== -->
+
+        <activity
+            android:name="com.tencent.tauth.AuthActivity"
+            android:launchMode="singleTask"
+            android:noHistory="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!--注意，这里的222222要换成app自己的appid-->
+                <data android:scheme="tencent101399197" />
+                <!-- 100380359 100381104 222222 -->
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.tencent.connect.common.AssistActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="behind"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <!--  ==============================百度统计分析 start================================== -->
         <!-- 百度 渠道商编号 -->
         <meta-data
@@ -146,15 +187,31 @@
 
         <!--  ===============================百度定位 end================================== -->
         <!-- ============================android7.0+ 使用应用间共享文件 设置 开始============================ -->
+
+        <!--androidx版本 -->
+        <!--        <provider-->
+        <!--            android:name="androidx.core.content.FileProvider"-->
+        <!--            android:authorities="com.thinkernote.ThinkerNote.FileProvider"-->
+        <!--            android:exported="false"-->
+        <!--            android:grantUriPermissions="true">-->
+        <!--            <meta-data-->
+        <!--                android:name="android.support.FILE_PROVIDER_PATHS"-->
+        <!--                android:resource="@xml/filepaths" />-->
+        <!--        </provider> -->
+
+        <!--android.support版本 -->
         <provider
-            android:name="androidx.core.content.FileProvider"
+            android:name="android.support.v4.content.FileProvider"
             android:authorities="com.thinkernote.ThinkerNote.FileProvider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths" />
-        </provider> <!-- ============================android7.0+ 使用应用间共享文件 设置 结束============================ -->
+        </provider>
+
+
+        <!-- ============================android7.0+ 使用应用间共享文件 设置 结束============================ -->
         <activity
             android:name=".Activity.TNSplashAct"
             android:configChanges="keyboardHidden|orientation"
@@ -320,37 +377,7 @@
             android:configChanges="orientation|keyboardHidden|navigation"
             android:exported="false"
             android:screenOrientation="behind" />
-        <!--
-微信 显示界面 android:theme="@android:style/Theme.Translucent.NoTitleBar"
-        不显示界面 android:theme="@android:style/Theme.NoDisplay
-        -->
-        <activity
-            android:name=".wxapi.WXEntryActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:exported="true"
-            android:launchMode="singleTop"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-        <activity
-            android:name="com.tencent.tauth.AuthActivity"
-            android:launchMode="singleTask"
-            android:noHistory="true"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="101399197" />
-            </intent-filter>
-        </activity> <!-- serrvice 百度地图注册服务 -->
-        <service android:name=".Service.LocationService" />
-
-        <receiver android:name=".Register.AppRegister">
-            <intent-filter>
-                <action android:name="com.tencent.mm.plugin.openapi.Intent.ACTION_REFRESH_WXAPP" />
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>

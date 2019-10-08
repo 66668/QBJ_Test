@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    useLibrary 'org.apache.http.legacy'//API 23 弃用 HttpClient替换方案
-    compileSdkVersion 29//用哪个 Android SDK 版本编译你的应用
+//    useLibrary 'org.apache.http.legacy'//API 23 弃用 HttpClient替换方案
+    compileSdkVersion 28//用哪个 Android SDK 版本编译你的应用
 
     defaultConfig {
         applicationId "com.thinkernote.ThinkerNote"
         minSdkVersion 23
-        targetSdkVersion 29
+        targetSdkVersion 28
         versionCode 57
         versionName "5.8.6"
 
@@ -29,7 +29,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false //TODO 混淆
+            minifyEnabled true
             // Zipalign优化
             zipAlignEnabled true
             // 移除无用的resource文件
@@ -40,7 +40,7 @@ android {
         }
 
         debug {
-            minifyEnabled false//TODO 混淆
+            minifyEnabled true
             // Zipalign优化
             zipAlignEnabled true
             // 移除无用的resource文件
@@ -68,12 +68,12 @@ android {
 
 dependencies {
 
+    //说明：qqsdk不支持androidx,切换回老版本
     //系统包依赖
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-//替换 com.android.support:appcompat-v7:28.0.2
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-//替换 com.android.support:support-v4:28.0.2
-
+//    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+//    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.android.support:support-v4:28.0.0'
 
     //libs包依赖
     implementation files('libs/alipaySdk-20180601.jar')
@@ -85,21 +85,20 @@ dependencies {
 
     //新版百度定位 2018-0712 sjy
     implementation files('libs/BaiduLBS_Android.jar')
-    implementation files('libs/httpmime-4.1.jar')
     //讯飞离线语音转文字
     implementation files('libs/Msc.jar')
-    implementation files('libs/mta-sdk-1.6.2.jar')
-    implementation files('libs/open_sdk.jar')
+
+
     implementation files('libs/pinyin4j-2.5.0.jar')
-    implementation files('libs/commons-lang3-3.1.jar')
     //讯飞语音合成
     implementation files('libs/Sunflower.jar')
 
     //微信依赖 https://bintray.com/wechat-sdk-team/maven
     implementation 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:5.4.0'
 
-    //
-
+    //qq分享相关（jar升级时间2019-10-08）
+    implementation files('libs/open_sdk_r6140_lite.jar')
+    implementation files('libs/mta-sdk-1.6.2.jar')
     //    implementation 'jp.wasabeef:richeditor-android:1.2.2'
 
     //新浪登陆 依赖
@@ -135,6 +134,8 @@ dependencies {
 
     //    debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.1'
 
+    //---------------------------------9.0兼容配置 FileProvider----------------------------------------
+    implementation 'com.android.support:multidex:1.0.2'
 
 }
 

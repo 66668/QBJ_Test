@@ -18,6 +18,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.support.annotation.RequiresApi;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.InflateException;
@@ -36,22 +38,21 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
-import androidx.core.content.FileProvider;
 
 
+import com.tencent.connect.share.QQShare;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.opensdk.modelmsg.WXTextObject;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
-import com.tencent.tauth.Constants;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.thinkernote.ThinkerNote.BuildConfig;
 import com.thinkernote.ThinkerNote.Data.TNNote;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.base.TNConst;
 import com.thinkernote.ThinkerNote.dialog.CommonDialog;
 import com.thinkernote.ThinkerNote.base.TNApplication;
 
@@ -336,19 +337,19 @@ public class TNUtilsUi {
         if (text.length() > 50) {
             text = text.substring(0, 50);
         }
+
         Bundle bundle = new Bundle();
         //这条分享消息被好友点击后的跳转URL。
-        bundle.putString(Constants.PARAM_TARGET_URL, "https://www.qingbiji.cn/showNote/" + note.noteId);
+        bundle.putString(QQShare.SHARE_TO_QQ_TARGET_URL, "https://www.qingbiji.cn/showNote/" + note.noteId);
         //分享的标题。注：PARAM_TITLE、PARAM_IMAGE_URL、PARAM_SUMMARY不能全为空，最少必须有一个是有值的。
-        bundle.putString(Constants.PARAM_TITLE, "");
+        bundle.putString(QQShare.SHARE_TO_QQ_TITLE, note.title);
         //分享的图片URL
-        bundle.putString(Constants.PARAM_IMAGE_URL, "");
+        bundle.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, "");
         //分享的消息摘要，最长50个字
-        bundle.putString(Constants.PARAM_SUMMARY, text);
-        //手Q客户端顶部，替换“返回”按钮文字，如果为空，用返回代替
-        bundle.putString(Constants.PARAM_APPNAME, "");
+        bundle.putString(QQShare.SHARE_TO_QQ_SUMMARY, text);
+
         //标识该消息的来源应用，值为应用名称+AppId。
-        bundle.putString(Constants.PARAM_APP_SOURCE, "轻笔记手机端" + TNConst.QQ_APP_ID);
+        bundle.putString(QQShare.SHARE_TO_QQ_APP_NAME, "轻笔记手机端" + TNConst.QQ_APP_ID);
 
         tencent.shareToQQ(act, bundle, listener);
     }

@@ -145,27 +145,32 @@
 # androidx的混淆配置
 #
 #############################################
--keep class com.google.android.material.** {*;}
--keep class androidx.** {*;}
--keep public class * extends androidx.**
--keep interface androidx.** {*;}
--dontwarn com.google.android.material.**
--dontnote com.google.android.material.**
--dontwarn androidx.**
--keep,allowobfuscation @interface androidx.annotation.Keep
-
--keep @androidx.annotation.Keep class *
--keepclassmembers class * {
-    @androidx.annotation.Keep *;
-}
+#-keep class com.google.android.material.** {*;}
+#-keep class androidx.** {*;}
+#-keep public class * extends androidx.**
+#-keep interface androidx.** {*;}
+#-dontwarn com.google.android.material.**
+#-dontnote com.google.android.material.**
+#-dontwarn androidx.**
+#-keep,allowobfuscation @interface androidx.annotation.Keep
+#
+#-keep @androidx.annotation.Keep class *
+#-keepclassmembers class * {
+#    @androidx.annotation.Keep *;
+#}
 
 #############################################
 #
 # Android开发中第三方类库的混淆处理(轻笔记特有处理)
 #
 #############################################
+
+# apache——http的9.0兼容处理
+-keep class org.apache.http.legacy.**
+
 # 包处理
 #详情页不混淆
+
 -keep class com.thinkernote.ThinkerNote.Activity.TNNoteViewAct
 
 # OkHttp3

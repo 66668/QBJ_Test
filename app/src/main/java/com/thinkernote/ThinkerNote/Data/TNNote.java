@@ -4,7 +4,7 @@ import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 
 import com.baidu.location.BDLocation;
-import com.thinkernote.ThinkerNote.General.TNConst;
+import com.thinkernote.ThinkerNote.base.TNConst;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsHtml;

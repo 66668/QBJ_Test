@@ -5,8 +5,6 @@ import android.text.TextUtils;
 import com.thinkernote.ThinkerNote.Data.TNNote;
 import com.thinkernote.ThinkerNote.Utils.MLog;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

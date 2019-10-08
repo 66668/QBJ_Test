@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.text.TextUtils;
 
+import com.thinkernote.ThinkerNote.base.TNConst;
+
 import java.util.Queue;
 
 /**

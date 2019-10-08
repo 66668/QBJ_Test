@@ -1,16 +1,15 @@
 package com.thinkernote.ThinkerNote.Utils;
 
-import java.io.File;
-import java.util.Vector;
-
-import com.thinkernote.ThinkerNote.R;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.widget.Toast;
+
+import com.thinkernote.ThinkerNote.R;
+
+import java.util.Vector;
 
 public class UiUtils {
 
@@ -80,18 +79,6 @@ public class UiUtils {
 					requestCode);
 		}
 		return;
-	}
-
-	/**
-	 * 杩囨护鏍囩偣绗﹀彿鍜岀壒娈婂瓧绗?
-	 * 
-	 * @param s
-	 * @return
-	 */
-	public static String filterSpecialStr(String s) {
-		AppUtils.checkRegex("^\\w*$", "");
-		String str = s.replaceAll("^\\w*$", "");
-		return str;
 	}
 
 	/**

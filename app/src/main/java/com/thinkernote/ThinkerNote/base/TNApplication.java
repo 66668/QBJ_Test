@@ -1,6 +1,8 @@
 package com.thinkernote.ThinkerNote.base;
 
 import android.app.Application;
+import android.content.Context;
+import android.support.multidex.MultiDex;
 
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
@@ -22,7 +24,15 @@ public class TNApplication extends Application {
     private static TNApplication application;
 
     public static TNApplication getInstance() {
+
         return application;
+    }
+
+    //兼容配置
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(base);
     }
 
     @Override

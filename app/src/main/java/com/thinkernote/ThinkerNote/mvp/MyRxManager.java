@@ -11,6 +11,7 @@ public class MyRxManager {
 
     private boolean isSyncing;//是否在主页同步中
     private boolean isFolderSyncing;//是否在文件夹同步中
+    private boolean isFileDownloading;//笔记详情 附件是否在下载中
 
     public static MyRxManager getInstance() {
         return sInstance;
@@ -47,5 +48,19 @@ public class MyRxManager {
 
     public void setFolderSyncing(boolean folderSyncing) {
         isFolderSyncing = folderSyncing;
+    }
+
+
+    /**
+     * 笔记详情中 附件是否在下载中
+     *
+     * @return
+     */
+    public boolean isFileDownloading() {
+        return isFileDownloading;
+    }
+
+    public void setFileDownloading(boolean fileDownloading) {
+        isFileDownloading = fileDownloading;
     }
 }

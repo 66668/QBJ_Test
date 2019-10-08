@@ -17,6 +17,7 @@ import com.sina.weibo.sdk.auth.AuthInfo;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WbConnectErrorMessage;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
+import com.tencent.connect.common.Constants;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
@@ -26,7 +27,7 @@ import com.tencent.tauth.UiError;
 import com.thinkernote.ThinkerNote.Activity.settings.TNFindPasswordAct;
 import com.thinkernote.ThinkerNote.DBHelper.UserDbHelper;
 import com.thinkernote.ThinkerNote.Database.TNDbUtils;
-import com.thinkernote.ThinkerNote.General.TNConst;
+import com.thinkernote.ThinkerNote.base.TNConst;
 import com.thinkernote.ThinkerNote.General.TNSettings;
 import com.thinkernote.ThinkerNote.General.TNUtils;
 import com.thinkernote.ThinkerNote.General.TNUtilsUi;
@@ -255,22 +256,28 @@ public class TNLoginAct extends TNActBase implements OnClickListener, OnLogListe
         mTencent = Tencent.createInstance(TNConst.QQ_APP_ID, this.getApplicationContext());
         IUiListener listener = new IUiListener() {
             @Override
+            public void onComplete(Object o) {
+                JSONObject jobj = (JSONObject) o;
+                if (null == jobj) {
+                    TNUtilsUi.showToast("登录失败");
+                    return;
+                }
+                if (null != jobj && jobj.length() == 0) {
+                    TNUtilsUi.showToast("登录失败");
+                    return;
+                }
+                mLoginId = jobj.optString(Constants.PARAM_OPEN_ID);
+                String accessToken = jobj.optString(Constants.PARAM_ACCESS_TOKEN);
+                String refreshToken = jobj.optString("pay_token");//"pay_token"
+                MLog.d("qq登陆--onComplete" + mLoginId + accessToken + refreshToken);
+                getQQUnionId(accessToken, refreshToken);
+            }
+
+            @Override
             public void onError(UiError arg0) {
                 mLoginingDialog.hide();
                 isClickQQ = false;
                 Toast.makeText(getApplicationContext(), "Auth error : " + arg0.errorDetail, Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onComplete(JSONObject jobj) {
-                // openid 用于唯一标识用户身份（每一个openid与QQ号码对应）。
-                // access_token 用户进行应用邀请、分享、支付等基本业务请求的凭据。
-                // expires_in access_token的有效时间，在有效期内可以发起业务请求，过期失效。
-//				isClickQQ = false;
-                mLoginId = jobj.optString("openid");
-                String accessToken = jobj.optString("access_token");
-                String refreshToken = jobj.optString("pay_token");
-                getQQUnionId(accessToken, refreshToken);
             }
 
             @Override

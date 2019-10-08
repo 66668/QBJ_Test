@@ -1,4 +1,4 @@
-package com.thinkernote.ThinkerNote.General;
+package com.thinkernote.ThinkerNote.base;
 
 /**
  * 常量
