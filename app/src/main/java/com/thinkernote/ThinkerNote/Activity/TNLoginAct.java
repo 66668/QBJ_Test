@@ -250,49 +250,53 @@ public class TNLoginAct extends TNActBase implements OnClickListener, OnLogListe
         }
 
     }
-//-------------------------------------QQ登录------------------------------------------
+
+    //-------------------------------------QQ登录------------------------------------------
+    IUiListener qqLoginListener = new IUiListener() {
+        @Override
+        public void onComplete(Object o) {
+            mLoginingDialog.hide();
+            JSONObject jobj = (JSONObject) o;
+            if (null == jobj) {
+                TNUtilsUi.showToast("登录失败");
+                return;
+            }
+            if (null != jobj && jobj.length() == 0) {
+                TNUtilsUi.showToast("登录失败");
+                return;
+            }
+            mLoginId = jobj.optString(Constants.PARAM_OPEN_ID);
+            String accessToken = jobj.optString(Constants.PARAM_ACCESS_TOKEN);
+            String refreshToken = jobj.optString("pay_token");//"pay_token"
+            MLog.d("qq登陆--onComplete" + mLoginId + accessToken + refreshToken);
+            getQQUnionId(accessToken, refreshToken);
+        }
+
+        @Override
+        public void onError(UiError arg0) {
+            MLog.d("qq登陆--onError" + arg0.errorDetail);
+            mLoginingDialog.hide();
+            isClickQQ = false;
+            Toast.makeText(getApplicationContext(), "Auth error : " + arg0.errorDetail, Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onCancel() {
+            isClickQQ = false;
+            mLoginingDialog.hide();
+            Toast.makeText(getApplicationContext(), "QQ login cancel",
+                    Toast.LENGTH_LONG).show();
+        }
+    };
 
     private void loginQQ() {
         mTencent = Tencent.createInstance(TNConst.QQ_APP_ID, this.getApplicationContext());
-        IUiListener listener = new IUiListener() {
-            @Override
-            public void onComplete(Object o) {
-                JSONObject jobj = (JSONObject) o;
-                if (null == jobj) {
-                    TNUtilsUi.showToast("登录失败");
-                    return;
-                }
-                if (null != jobj && jobj.length() == 0) {
-                    TNUtilsUi.showToast("登录失败");
-                    return;
-                }
-                mLoginId = jobj.optString(Constants.PARAM_OPEN_ID);
-                String accessToken = jobj.optString(Constants.PARAM_ACCESS_TOKEN);
-                String refreshToken = jobj.optString("pay_token");//"pay_token"
-                MLog.d("qq登陆--onComplete" + mLoginId + accessToken + refreshToken);
-                getQQUnionId(accessToken, refreshToken);
-            }
-
-            @Override
-            public void onError(UiError arg0) {
-                mLoginingDialog.hide();
-                isClickQQ = false;
-                Toast.makeText(getApplicationContext(), "Auth error : " + arg0.errorDetail, Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onCancel() {
-                isClickQQ = false;
-                mLoginingDialog.hide();
-                Toast.makeText(getApplicationContext(), "QQ login cancel",
-                        Toast.LENGTH_LONG).show();
-            }
-        };
         mSsoHandler = null;
-        mTencent.login(this, TNConst.QQ_SCOPE, listener);
+        mTencent.login(this, TNConst.QQ_SCOPE, qqLoginListener);
     }
 
     private void getQQUnionId(final String accessToken, final String refreshToken) {
+        mLoginingDialog.show();
         String url = "https://graph.qq.com/oauth2.0/me?access_token=" + accessToken + "&unionid=1";
         pGetQQUnionId(url, accessToken, refreshToken);
     }
@@ -370,11 +374,11 @@ public class TNLoginAct extends TNActBase implements OnClickListener, OnLogListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        //qq
-        if (mTencent != null) {
-            mTencent.onActivityResult(requestCode, resultCode, data);
+        //qq 登陆
+        if (requestCode == Constants.REQUEST_LOGIN ||
+                requestCode == Constants.REQUEST_APPBAR) {
+            Tencent.onActivityResultData(requestCode, resultCode, data, qqLoginListener);
         }
-
         // sina
         // SSO 授权回调 重要：发起 SSO 登陆的Activity必须重写onActivityResult
         if (mSsoHandler != null) {
@@ -452,6 +456,7 @@ public class TNLoginAct extends TNActBase implements OnClickListener, OnLogListe
     //=====================================qq登陆===========================================
     @Override
     public void onQQUnionIdSuccess(Object obj, String accessToken, String refreshToken) {
+        mLoginingDialog.hide();
         QQBean bean = (QQBean) obj;
         pLoginThird(3, bean.getUnioid(), System.currentTimeMillis(), accessToken, refreshToken, "QQ" + System.currentTimeMillis());
 
@@ -459,6 +464,7 @@ public class TNLoginAct extends TNActBase implements OnClickListener, OnLogListe
 
     @Override
     public void onQQUnionIdFailed(String msg, Exception e) {
+        mLoginingDialog.hide();
         MLog.e("获取qq unionId失败");
     }
 
