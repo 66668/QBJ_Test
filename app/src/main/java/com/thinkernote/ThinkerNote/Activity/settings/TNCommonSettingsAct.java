@@ -73,7 +73,6 @@ public class TNCommonSettingsAct extends TNActBase implements OnClickListener, O
         initMyView();
         getMyIntent();
         //设置界面显示
-        setShow();
         presener = new SettingsPresenter(this, this);
     }
 
@@ -116,7 +115,7 @@ public class TNCommonSettingsAct extends TNActBase implements OnClickListener, O
         ly_clearCache = findViewById(R.id.ly_clearCache);
         ly_invite = findViewById(R.id.ly_invite);
 
-        tv_space = findViewById(R.id.tv_picPs);
+        tv_space = findViewById(R.id.tv_space);
         tv_inviteCode = findViewById(R.id.tv_picZip);
 
         ly_space.setOnClickListener(this);
@@ -308,6 +307,7 @@ public class TNCommonSettingsAct extends TNActBase implements OnClickListener, O
         if (mType.equals("USER_INFO") && TNUtils.isNetWork()) {
             getprofile();
         }
+        setShow();
     }
 
     @Override
