@@ -30,13 +30,13 @@ public class TNActBase extends Activity {
     protected int createStatus; // 0 firstCreate, 1 resume, 2 reCreate
     private Vector<Dialog> dialogs;
     public MenuDialog.Builder mMenuBuilder;
-    public final Handler handler = new WeakRefHandler(this);
+    public Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         TNActivityManager.getInstance().addActivity(this);
-
+        handler = new WeakRefHandler(this);
         dialogs = new Vector<Dialog>();
 
         createStatus = (savedInstanceState == null) ? 0 : 2;
@@ -285,27 +285,26 @@ public class TNActBase extends Activity {
     //===================================新版 跳转 --结束==========================================
 
 
-    //===================================handler软引用 --开始==========================================
+    //===================================handler弱引用 --开始==========================================
 
 
-    public class WeakRefHandler extends Handler {
+    public static class WeakRefHandler extends Handler {
 
-        private final WeakReference<TNActBase> mFragmentReference;
+        private final WeakReference<TNActBase> mBase;
 
         public WeakRefHandler(TNActBase activity) {
-            mFragmentReference = new WeakReference<TNActBase>(activity);
+            mBase = new WeakReference<TNActBase>(activity);
         }
 
         @Override
         public void handleMessage(Message msg) {
-            final TNActBase activity = mFragmentReference.get();
+            final TNActBase activity = mBase.get();
             if (activity != null) {
                 try {
                     activity.handleMessage(msg);
                 } catch (Exception e) {
                     MLog.e("SJY", e.toString());
                 }
-
             }
         }
     }
@@ -319,6 +318,6 @@ public class TNActBase extends Activity {
                 break;
         }
     }
-    //===================================handler软引用 --结束==========================================
+    //===================================handler弱引用 --结束==========================================
 
 }
