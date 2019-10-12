@@ -7,19 +7,19 @@
     
     <item
         android:id="@+id/noteview_menu_shareto_SMS"
-        android:title="@string/noteview_menu_shareto_sms"></item>
+        android:title="@string/noteview_menu_shareto_sms"/>
 
     <item
         android:id="@+id/noteview_menu_shareto_WX"
-        android:title="@string/noteview_menu_shareto_wx"></item>
+        android:title="@string/noteview_menu_shareto_wx"/>
 
     <item
         android:id="@+id/noteview_menu_shareto_WXCycle"
-        android:title="@string/noteview_menu_shareto_wxcycle"></item>
+        android:title="@string/noteview_menu_shareto_wxcycle"/>
 
     <item
         android:id="@+id/noteview_menu_shareto_QQ"
-        android:title="@string/noteview_menu_shareto_qq"></item>
+        android:title="@string/noteview_menu_shareto_qq"/>
 
     <item
         android:title="@string/openatt_menu_cancel"

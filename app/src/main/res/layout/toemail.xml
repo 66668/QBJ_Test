@@ -3,46 +3,47 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/page_bg"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <!-- tool bar -->
 
     <FrameLayout
         android:id="@+id/toemail_toolbar"
         android:layout_width="fill_parent"
-        android:layout_height="46dip" >
+        android:layout_height="46dip">
 
-        <TextView 
+        <TextView
             android:id="@+id/toemail_back"
             style="@style/toolbar_back"
-            android:text="返回"/>
+            android:text="返回" />
 
         <ImageView
             android:id="@+id/toemail_send_divide"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_gravity="right"
-            android:layout_marginRight="48dip" />
+            android:layout_marginRight="48dip"
+            android:contentDescription="@null" />
 
         <ImageButton
             android:id="@+id/toemail_send"
             android:layout_width="48dip"
             android:layout_height="fill_parent"
             android:layout_gravity="right"
-            android:layout_marginTop="2dip" >
-        </ImageButton>
+            android:layout_marginTop="2dip"
+            android:contentDescription="@null"/>
     </FrameLayout>
 
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:paddingLeft="4dip"
-        android:paddingRight="4dip" >
+        android:paddingRight="4dip">
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <EditText
                 android:id="@+id/toemail_to"
@@ -51,8 +52,7 @@
                 android:hint="@string/toemail_to_hint"
                 android:inputType="text"
                 android:maxLength="200"
-                android:singleLine="true" >
-            </EditText>
+                android:singleLine="true"/>
 
             <EditText
                 android:id="@+id/toemail_subject"
@@ -61,8 +61,7 @@
                 android:hint="@string/toemail_subject_hint"
                 android:inputType="text"
                 android:maxLength="100"
-                android:singleLine="true" >
-            </EditText>
+                android:singleLine="true"/>
 
             <EditText
                 android:id="@+id/toemail_addition"
@@ -72,16 +71,14 @@
                 android:hint="@string/toemail_addition_hint"
                 android:maxLength="10000"
                 android:minLines="4"
-                android:text="" >
-            </EditText>
+                android:text=""/>
 
             <TextView
                 android:id="@+id/toemail_note_hint"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                android:text="@string/toemail_note_hint" >
-            </TextView>
+                android:text="@string/toemail_note_hint"/>
         </LinearLayout>
     </ScrollView>
 

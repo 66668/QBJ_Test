@@ -16,6 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
+            android:contentDescription="@null"
             android:src="@drawable/dialog_icon" />
 
         <TextView
@@ -36,6 +37,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
+            android:contentDescription="@null"
             android:src="@mipmap/aw_add" />
 
         <ImageButton
@@ -46,15 +48,16 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="45dp"
             android:background="@drawable/btn_trans_selector_light_colored"
+            android:contentDescription="@null"
             android:src="@mipmap/aw_fresh"
             android:visibility="visible" />
     </RelativeLayout>
 
     <FrameLayout
-        android:background="@drawable/appwidget_list_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/topbar">
+        android:layout_below="@+id/topbar"
+        android:background="@drawable/appwidget_list_bg">
         <!--   子布局-->
         <TextView
             android:id="@+id/tv_login"

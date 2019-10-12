@@ -4,7 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/page_bg"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <!-- tool bar -->
 
@@ -12,7 +12,7 @@
         android:id="@+id/maincats_toolbar_layout"
         android:layout_width="fill_parent"
         android:layout_height="46dip"
-        android:background="@drawable/toolbg" >
+        android:background="@drawable/toolbg">
 
         <!-- invisible button -->
 
@@ -20,80 +20,76 @@
             android:id="@+id/notelist_menu"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:visibility="invisible" >
-        </Button>
+            android:visibility="invisible" />
 
         <Button
             android:id="@+id/notelist_recyclermenu"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:visibility="invisible" >
-        </Button>
+            android:visibility="invisible" />
 
         <Button
             android:id="@+id/notelist_itemmenu"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:visibility="invisible" >
-        </Button>
+            android:visibility="invisible" />
 
-        <TextView 
+        <TextView
             android:id="@+id/notelist_home"
             style="@style/toolbar_back"
-            android:text="我的笔记"/>
+            android:text="我的笔记" />
 
         <ImageButton
             android:id="@+id/notelist_newnote"
             android:layout_width="48dip"
             android:layout_height="fill_parent"
             android:layout_gravity="right|center_vertical"
-            android:layout_marginRight="96dip" >
-        </ImageButton>
+            android:layout_marginRight="96dip"
+            android:contentDescription="@null" />
 
         <ImageButton
             android:id="@+id/notelist_search"
             android:layout_width="48dip"
             android:layout_height="fill_parent"
             android:layout_gravity="right|center_vertical"
-            android:layout_marginRight="48dip" >
-        </ImageButton>
-        
+            android:layout_marginRight="48dip"
+            android:contentDescription="@null" />
+
         <ImageButton
             android:id="@+id/notelist_sort"
             android:layout_width="48dip"
             android:layout_height="fill_parent"
-            android:layout_gravity="right|center_vertical" >
-        </ImageButton>
+            android:layout_gravity="right|center_vertical"
+            android:contentDescription="@null" />
     </FrameLayout>
 
     <include
+        layout="@layout/pagerchild_notelist"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        layout="@layout/pagerchild_notelist" />
-    
-    <LinearLayout 
+        android:layout_weight="1" />
+
+    <LinearLayout
         android:id="@+id/ll_clearrecycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:visibility="gone">
-        
-        <View 
+
+        <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:background="@color/divider"/>
-        
+            android:background="@color/divider" />
+
         <TextView
             android:id="@+id/maincats_menu_clearrecycler"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:gravity="center"
-	        android:text="清空" 
-	        android:textColor="@color/red"
-	        android:textSize="18sp"
-	        android:padding="10dp"
-	        />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="清空"
+            android:textColor="@color/red"
+            android:textSize="18sp" />
     </LinearLayout>
-    
+
 </LinearLayout>

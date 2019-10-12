@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="#ffe5e5e5" >
+    android:background="#ffe5e5e5">
 
     <!-- 内容 -->
 
@@ -10,7 +10,7 @@
         android:id="@+id/pulltorefreshhead_contentLayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="30dp" >
+        android:paddingLeft="30dp">
 
         <!-- 箭头图像、进度条 -->
 
@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true" >
+            android:layout_centerVertical="true">
 
             <!-- 箭头 -->
 
@@ -27,6 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:contentDescription="@null"
                 android:src="@drawable/arrow_down" />
 
             <!-- 进度条 -->
@@ -47,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:gravity="center_horizontal"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <!-- 提示 -->
 
@@ -55,8 +56,8 @@
                 android:id="@+id/pulltorefreshhead_tipsTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#ff656565"
                 android:text="下拉刷新"
+                android:textColor="#ff656565"
                 android:textSize="15dp" />
 
             <!-- 最近更新 -->
@@ -65,8 +66,8 @@
                 android:id="@+id/pulltorefreshhead_lastUpdatedTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#ff656565"
                 android:text="上次更新"
+                android:textColor="#ff656565"
                 android:textSize="12dp" />
         </LinearLayout>
     </RelativeLayout>

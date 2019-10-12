@@ -21,14 +21,16 @@
             style="@style/toolbar_back"
             android:text="属性"/>
         
-        <ImageView 
+        <ImageView
+			android:contentDescription="@null"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:src="@drawable/divide"
             android:layout_marginRight="48dip"
             android:layout_gravity="right"/>
         
-        <ImageButton 
+        <ImageButton
+			android:contentDescription="@null"
             android:id="@+id/attlist_add_att"
             android:layout_width="48dip"
             android:layout_height="fill_parent"

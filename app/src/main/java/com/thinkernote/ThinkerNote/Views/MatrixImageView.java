@@ -1,5 +1,6 @@
 package com.thinkernote.ThinkerNote.Views;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -18,6 +19,7 @@ import android.widget.ImageView;
  * @Description: 甯︽斁澶с?佺缉灏忋?佺Щ鍔ㄦ晥鏋滅殑ImageView
  * @date 2015-1-7 涓婂崍11:15:07
  */
+@SuppressLint("AppCompatCustomView")
 public class MatrixImageView extends ImageView {
     private final static String TAG = "MatrixImageView";
     private GestureDetector mGestureDetector;

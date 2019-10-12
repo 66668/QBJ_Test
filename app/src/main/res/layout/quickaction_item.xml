@@ -23,7 +23,8 @@
 	android:background="@drawable/quickaction_slider_btn">
 
 	<ImageView
-		android:id="@+id/iv_icon" 
+		android:id="@+id/iv_icon"
+		android:contentDescription="@null"
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content"/>
 

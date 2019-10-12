@@ -20,6 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:contentDescription="@null"
             android:src="@drawable/icon" />
 
         <LinearLayout
@@ -36,6 +37,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="12dp"
+                android:contentDescription="@null"
                 android:src="@drawable/icon_login_mark" />
 
             <LinearLayout
@@ -80,6 +82,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="12dp"
+                android:contentDescription="@null"
                 android:src="@drawable/icon_psw_mark" />
 
             <LinearLayout
@@ -94,15 +97,15 @@
                     android:layout_height="wrap_content"
                     android:background="@null"
                     android:hint="@string/login_password"
+                    android:inputType="textPassword"
                     android:maxLength="50"
                     android:paddingLeft="8dp"
                     android:paddingRight="8dp"
                     android:paddingBottom="2dp"
-                    android:password="true"
                     android:singleLine="true"
                     android:text=""
                     android:textColor="#333333"
-                    android:textSize="18sp"></EditText>
+                    android:textSize="18sp" />
 
                 <View
                     android:layout_width="match_parent"
@@ -202,20 +205,23 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="20dp"
-                android:background="@drawable/loginbtn_logo_weixin" />
+                android:background="@drawable/loginbtn_logo_weixin"
+                android:contentDescription="@null" />
 
             <ImageView
                 android:id="@+id/login_qq"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="20dp"
-                android:background="@drawable/loginbtn_logo_qq" />
+                android:background="@drawable/loginbtn_logo_qq"
+                android:contentDescription="@null" />
 
             <ImageView
                 android:id="@+id/login_sina"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/loginbtn_logo_sina"
+                android:contentDescription="@null"
                 android:visibility="visible" />
         </LinearLayout>
 

@@ -3,12 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/page_bg"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <FrameLayout
         android:id="@+id/regist_toolbg_framelayout"
         android:layout_width="fill_parent"
-        android:layout_height="46dip" >
+        android:layout_height="46dip">
 
         <TextView
             android:id="@+id/regist_back"
@@ -20,12 +20,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fadingEdge="none"
-        android:scrollbars="none" >
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <EditText
                 android:id="@+id/regist_phone"
@@ -40,13 +40,12 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:background="#dddddd" >
-            </View>
+                android:background="#dddddd"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <EditText
                     android:id="@+id/image_code_edit"
@@ -54,8 +53,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@null"
-                    android:inputType="text"
                     android:hint="请输入图形验证码"
+                    android:inputType="text"
                     android:padding="12dp"
                     android:textSize="16sp" />
 
@@ -63,21 +62,21 @@
                     android:id="@+id/image_code"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@null"
                     android:paddingLeft="5dp"
-                    android:paddingRight="20dp"
-                    android:paddingTop="8dp" />
+                    android:paddingTop="8dp"
+                    android:paddingRight="20dp" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:background="#dddddd" >
-            </View>
+                android:background="#dddddd"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <EditText
                     android:id="@+id/regist_verticode"
@@ -95,10 +94,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@null"
-                    android:paddingBottom="5dp"
                     android:paddingLeft="5dp"
-                    android:paddingRight="10dp"
                     android:paddingTop="5dp"
+                    android:paddingRight="10dp"
+                    android:paddingBottom="5dp"
                     android:text="获取验证码"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -106,8 +105,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:background="#dddddd" >
-            </View>
+                android:background="#dddddd"/>
 
             <EditText
                 android:id="@+id/regist_psw"
@@ -122,8 +120,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:background="#dddddd" >
-            </View>
+                android:background="#dddddd"/>
 
             <EditText
                 android:id="@+id/regist_psw_again"
@@ -138,8 +135,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:background="#dddddd" >
-            </View>
+                android:background="#dddddd"/>
 
             <TextView
                 android:id="@+id/forget_info"
@@ -167,11 +163,11 @@
                 android:id="@+id/regist_bind_account"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="绑定已有账号"
                 android:gravity="center"
+                android:text="绑定已有账号"
                 android:textColor="@color/red"
                 android:textSize="14sp"
-                android:visibility="gone"/>
+                android:visibility="gone" />
         </LinearLayout>
     </ScrollView>
 

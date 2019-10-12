@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item type="id" name="noteview_binding_sina"></item>
-    <item type="id" name="weibosend_rebinding_sina"></item>
-    
-    <item type="id" name="noteview_actionitem_share"></item>
-    <item type="id" name="noteview_actionitem_tag"></item>
-    <item type="id" name="noteview_actionitem_selecttext"></item>
-    <item type="id" name="noteview_actionitem_move"></item>
-    <item type="id" name="noteview_actionitem_attribute"></item>
-    <item type="id" name="noteview_actionitem_delete"></item>
-    
-    <item type="id" name="noteedit_folders"></item>
-    <item type="id" name="noteedit_picture"></item>
-    <item type="id" name="noteedit_tag"></item>
-    <item type="id" name="noteedit_insertcurrenttime"></item>
-    <item type="id" name="noteedit_addatt"></item>
-    
-    <item type="id" name="noteedit_att_look"></item>
-    <item type="id" name="noteedit_att_delete"></item>
-    
-    <item type="id" name="page_notes"></item>
-    <item type="id" name="page_cats"></item>
-    <item type="id" name="page_tags"></item>
-    <item type="id" name="page_sharenotes"></item>
-    
+    <item name="noteview_binding_sina" type="id" />
+    <item name="weibosend_rebinding_sina" type="id" />
+
+    <item name="noteview_actionitem_share" type="id" />
+    <item name="noteview_actionitem_tag" type="id" />
+    <item name="noteview_actionitem_selecttext" type="id" />
+    <item name="noteview_actionitem_move" type="id" />
+    <item name="noteview_actionitem_attribute" type="id" />
+    <item name="noteview_actionitem_delete" type="id" />
+
+    <item name="noteedit_folders" type="id" />
+    <item name="noteedit_picture" type="id" />
+    <item name="noteedit_tag" type="id" />
+    <item name="noteedit_insertcurrenttime" type="id" />
+    <item name="noteedit_addatt" type="id" />
+
+    <item name="noteedit_att_look" type="id" />
+    <item name="noteedit_att_delete" type="id" />
+
+    <item name="page_notes" type="id" />
+    <item name="page_cats" type="id" />
+    <item name="page_tags" type="id" />
+    <item name="page_sharenotes" type="id" />
+
 </resources>

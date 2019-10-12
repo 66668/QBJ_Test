@@ -1,77 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:id="@+id/taglist_page_bg"
-  android:layout_width="fill_parent"
-  android:layout_height="fill_parent"
-  android:background="@drawable/page_bg"
-  android:orientation="vertical">
-  
- 	<!-- tool bar -->
-	<FrameLayout android:id="@+id/taglist_toolbar_layout" 
-	    android:background="@drawable/toolbg"
-		android:layout_height="46dip" 
-		android:layout_width="fill_parent">
-		<!-- invisible button -->
-		<Button android:layout_width="wrap_content" 
-			android:layout_height="fill_parent" 
-			android:id="@+id/taglist_menu" 
-			android:visibility="invisible">
-		</Button>
-		
-		<TextView 
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/taglist_page_bg"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/page_bg"
+    android:orientation="vertical">
+
+    <!-- tool bar -->
+    <FrameLayout
+        android:id="@+id/taglist_toolbar_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="46dip"
+        android:background="@drawable/toolbg">
+        <!-- invisible button -->
+        <Button
+            android:id="@+id/taglist_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:visibility="invisible"/>
+
+        <TextView
             android:id="@+id/taglist_back"
             style="@style/toolbar_back"
-            android:text="@string/taglist_select"/>
-		
-		<ImageButton 
-		    android:layout_width="48dip" 
-			android:layout_height="fill_parent" 
-			android:id="@+id/taglist_new" 
-			android:layout_gravity="right" 
-			android:src="@drawable/newtag"
-			android:background="@drawable/btn_trans_selector"
-			android:layout_marginRight="49dip">
-		</ImageButton>
-		
-		<ImageButton 
-		    android:layout_width="48dip" 
-			android:layout_height="fill_parent" 
-			android:src="@drawable/save"
-			android:background="@drawable/btn_trans_selector"
-			android:id="@+id/taglist_save" 
-			android:layout_gravity="right" >
-		</ImageButton>
-		
-	</FrameLayout>
-	
-	<TextView 
-	    android:text="asfdas" 
-		android:id="@+id/taglist_tagstr" 
-		android:layout_width="fill_parent" 
-		android:visibility="gone"
-		android:layout_height="wrap_content" 
-		android:layout_marginLeft="10dip" 
-		android:layout_marginRight="10dip" 
-		android:layout_marginTop="10dip" 
-		android:layout_marginBottom="10dip">
-	</TextView>
-	
-	<FrameLayout 
-	    android:layout_width="fill_parent"
-		android:layout_height="fill_parent">
-		 
-		<ListView 
-		    android:id="@+id/taglist_list" 
-			android:layout_width="fill_parent" 
-			android:layout_height="fill_parent" 
-			android:listSelector="@null" 
-        	android:fadingEdge="none"
-			android:cacheColorHint="#00000000" 
-			android:divider="#AFAFAF" 
-			android:dividerHeight="1px"  
-			android:fastScrollEnabled="true" >
-		</ListView>
-	</FrameLayout>
+            android:text="@string/taglist_select" />
+
+        <ImageButton
+            android:id="@+id/taglist_new"
+            android:layout_width="48dip"
+            android:layout_height="fill_parent"
+            android:layout_gravity="right"
+            android:layout_marginRight="49dip"
+            android:background="@drawable/btn_trans_selector"
+            android:contentDescription="@null"
+            android:src="@drawable/newtag"/>
+
+        <ImageButton
+            android:id="@+id/taglist_save"
+            android:layout_width="48dip"
+            android:layout_height="fill_parent"
+            android:layout_gravity="right"
+            android:background="@drawable/btn_trans_selector"
+            android:contentDescription="@null"
+            android:src="@drawable/save"/>
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/taglist_tagstr"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        android:layout_marginTop="10dip"
+        android:layout_marginRight="10dip"
+        android:layout_marginBottom="10dip"
+        android:text="asfdas"
+        android:visibility="gone"/>
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <ListView
+            android:id="@+id/taglist_list"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:cacheColorHint="#00000000"
+            android:divider="#AFAFAF"
+            android:dividerHeight="1px"
+            android:fadingEdge="none"
+            android:fastScrollEnabled="true"
+            android:listSelector="@null"/>
+    </FrameLayout>
 
 </LinearLayout>

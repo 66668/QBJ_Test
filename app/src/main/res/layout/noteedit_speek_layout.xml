@@ -7,6 +7,7 @@
     <ImageView
         android:id="@+id/speek_img"
         android:layout_width="60dp"
+        android:contentDescription="@null"
         android:layout_height="60dp"
         android:layout_alignParentLeft="true"
         android:layout_centerInParent="true"

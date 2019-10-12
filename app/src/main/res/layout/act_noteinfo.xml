@@ -21,7 +21,7 @@
                 android:id="@+id/share_url_menu"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
-                android:visibility="invisible"></Button>
+                android:visibility="invisible"/>
 
             <TextView
                 android:id="@+id/noteinfo_back"

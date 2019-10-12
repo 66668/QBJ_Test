@@ -7,6 +7,7 @@
     android:padding="4dip" >
 
     <ImageView
+        android:contentDescription="@null"
         android:id="@+id/check_image"
         android:layout_width="70dp"
         android:layout_height="70dp"
@@ -15,10 +16,12 @@
         android:scaleType="centerCrop" />
     
     <ImageView
+        android:contentDescription="@null"
         android:id="@+id/delete_image"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_gravity="top|right"
         android:scaleType="centerCrop"
         android:visibility="gone"
-        android:src="@drawable/ico_delete" /></FrameLayout>
+        android:src="@drawable/ico_delete" />
+</FrameLayout>

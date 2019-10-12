@@ -119,7 +119,7 @@ public class HttpUtils {
         return (T) fileHttps;
     }
 
- /**
+    /**
      * 02 Retrofit构建:Retrofit+okhttp
      * 查看文件上传下载进度/结合progress使用
      */
@@ -292,7 +292,7 @@ public class HttpUtils {
                     }
 
                     return chain.proceed(okhttpRequst
-                         // .post(RequestBody.create(MediaType.parse("application/x-www-form-urlencoded;charset=UTF-8"), URLDecoder.decode(okhttpRequest.body().toString(), "UTF-8")))
+                            // .post(RequestBody.create(MediaType.parse("application/x-www-form-urlencoded;charset=UTF-8"), URLDecoder.decode(okhttpRequest.body().toString(), "UTF-8")))
                             .build());
                 }
             });
@@ -571,15 +571,18 @@ public class HttpUtils {
 
     /**
      * 设置log打印拦截器
+     *
+     * 可以通过 setLevel 改变日志级别,共包含四个级别：NONE、BASIC、HEADER、BODY
+     * NONE 不记录
+     * BASIC 请求/响应行
+     * HEADERS 请求/响应行 + 头
+     * BODY 请求/响应行 + 头 + 体
      */
     private HttpLoggingInterceptor getInterceptor() {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        //可以通过 setLevel 改变日志级别,共包含四个级别：NONE、BASIC、HEADER、BODY
+        //
         /**
-         * NONE 不记录
-         * BASIC 请求/响应行
-         * HEADERS 请求/响应行 + 头
-         * BODY 请求/响应行 + 头 + 体
+
          */
         if (debug) {
             // 打印okhttp

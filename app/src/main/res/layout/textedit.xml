@@ -4,60 +4,59 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/page_bg"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
-        <!-- tool bar -->
+    <!-- tool bar -->
 
-        <FrameLayout
-            android:id="@+id/maincats_toolbar_layout"
-            android:layout_width="fill_parent"
-            android:layout_height="46dip" >
-
-            <TextView 
-                android:id="@+id/textedit_back"
-                style="@style/toolbar_back"
-                android:text="返回"/>
-            
-            <ImageButton
-                android:id="@+id/textedit_save"
-                android:layout_width="48dip"
-                android:layout_height="fill_parent"
-                android:layout_gravity="right">
-            </ImageButton>
-        </FrameLayout>
+    <FrameLayout
+        android:id="@+id/maincats_toolbar_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="46dip">
 
         <TextView
-            android:id="@+id/textedit_hint"
+            android:id="@+id/textedit_back"
+            style="@style/toolbar_back"
+            android:text="返回" />
+
+        <ImageButton
+            android:id="@+id/textedit_save"
+            android:layout_width="48dip"
+            android:layout_height="fill_parent"
+            android:layout_gravity="right"
+            android:contentDescription="@null"/>
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/textedit_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dip"
+        android:singleLine="true"
+        android:text="TextView"
+        android:textColor="#ff616161"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/textedit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#ff616161"
-            android:layout_margin="20dip"
+            android:background="@null"
+            android:maxLength="50"
+            android:padding="5dp"
             android:singleLine="true"
-            android:text="TextView" >
-        </TextView>
+            android:text="" />
 
-        <LinearLayout
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:orientation="vertical" >
+            android:layout_height="0.5dp"
+            android:background="#666666"/>
 
-            <EditText
-                android:id="@+id/textedit_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:maxLength="50"
-                android:singleLine="true"
-                android:background="@null"
-                android:text="" />
-            
-            <View 
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:background="#666666"></View>
-
-        </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>
