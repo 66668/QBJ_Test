@@ -30,7 +30,7 @@ import okhttp3.ResponseBody;
 /**
  * 下载文件 m层 具体实现
  */
-public class NoteViewDownloadModule {
+public class NoteViewDownloadModel {
 
     private Context context;
     private static final String TAG = "SJY";
@@ -40,7 +40,7 @@ public class NoteViewDownloadModule {
         void disposeCallback(Disposable d);
     }
 
-    public NoteViewDownloadModule(Context context, OnNoteViewDownloadListener listener) {
+    public NoteViewDownloadModel(Context context, OnNoteViewDownloadListener listener) {
         this.listener = listener;
         this.context = context;
     }

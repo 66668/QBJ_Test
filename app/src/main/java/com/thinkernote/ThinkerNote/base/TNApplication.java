@@ -24,7 +24,6 @@ public class TNApplication extends Application {
     private static TNApplication application;
 
     public static TNApplication getInstance() {
-
         return application;
     }
 
@@ -45,14 +44,6 @@ public class TNApplication extends Application {
         initialize();
         //新网络框架 初始化
         HttpUtils.getInstance().init(this, MLog.DEBUG);
-
-
-        //leakcanary初始化（打包时清除）
-//        if (LeakCanary.isInAnalyzerProcess(this)) {
-//            return;
-//        }
-//        LeakCanary.install(this);
-
     }
 
     // private methods

@@ -2,7 +2,7 @@ package com.thinkernote.ThinkerNote.mvp.p;
 
 import android.content.Context;
 
-import com.thinkernote.ThinkerNote.mvp.m.SettingsModule;
+import com.thinkernote.ThinkerNote.mvp.m.SettingsModel;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnSettingsListener;
 
 /**
@@ -12,27 +12,27 @@ public class SettingsPresenter implements  OnSettingsListener {
     private Context context;
     private OnSettingsListener onView;
     //p层调用M层方法
-    private SettingsModule module;
+    private SettingsModel model;
 
     public SettingsPresenter(Context context, OnSettingsListener logListener) {
         this.context = context;
         this.onView = logListener;
 
-        module = new SettingsModule(context);
+        model = new SettingsModel(context);
     }
 
     //============================p层重写，用于调用m层方法============================
     public void pGetProfile() {
-        module.mgetProfile(this);
+        model.mgetProfile(this);
 
     }
 
     public void verifyEmail() {
-        module.mVerifyEmail(this);
+        model.mVerifyEmail(this);
     }
 
     public void setDefaultFolder(long pid) {
-        module.mSetDefaultFolder(this,pid);
+        model.mSetDefaultFolder(this,pid);
     }
 
     //==========================结果回调==============================

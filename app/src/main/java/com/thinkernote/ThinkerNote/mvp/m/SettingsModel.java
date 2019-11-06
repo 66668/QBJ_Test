@@ -17,12 +17,12 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * m层 具体实现
  */
-public class SettingsModule {
+public class SettingsModel {
 
     private Context context;
     private static final String TAG = "SJY";
 
-    public SettingsModule(Context context) {
+    public SettingsModel(Context context) {
         this.context = context;
     }
 

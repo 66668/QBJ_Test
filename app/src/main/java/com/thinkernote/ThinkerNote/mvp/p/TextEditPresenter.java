@@ -2,47 +2,47 @@ package com.thinkernote.ThinkerNote.mvp.p;
 
 import android.content.Context;
 
-import com.thinkernote.ThinkerNote.mvp.listener.m.IFolderModuleListener;
-import com.thinkernote.ThinkerNote.mvp.listener.m.ITagModuleListener;
-import com.thinkernote.ThinkerNote.mvp.m.FolderModule;
-import com.thinkernote.ThinkerNote.mvp.m.TagModule;
+import com.thinkernote.ThinkerNote.mvp.listener.m.IFolderModelListener;
+import com.thinkernote.ThinkerNote.mvp.listener.m.ITagModelListener;
+import com.thinkernote.ThinkerNote.mvp.m.FolderModel;
+import com.thinkernote.ThinkerNote.mvp.m.TagModel;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnTextEditListener;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
 
 /**
  * p层 具体实现
  */
-public class TextEditPresenter implements ITagModuleListener, IFolderModuleListener {
+public class TextEditPresenter implements ITagModelListener, IFolderModelListener {
     private Context context;
     private OnTextEditListener onView;
     //p层调用M层方法
-    private TagModule tagModule;
-    private FolderModule folderModule;
+    private TagModel tagModel;
+    private FolderModel folderModel;
 
     public TextEditPresenter(Context context, OnTextEditListener logListener) {
         this.context = context;
         this.onView = logListener;
-        tagModule = new TagModule(context);
-        folderModule = new FolderModule(context);
+        tagModel = new TagModel(context);
+        folderModel = new FolderModel(context);
     }
 
 
     //============================p层重写，用于调用m层方法============================
     public void pFolderAdd(long parentID, String text) {
-        folderModule.addFoler(parentID, text, this);
+        folderModel.addFoler(parentID, text, this);
     }
 
     public void pFolderRename(long parentID, String text) {
-        folderModule.renameFolder(parentID, text, this);
+        folderModel.renameFolder(parentID, text, this);
     }
 
 
     public void pTagAdd(String text) {
-        tagModule.addTag(text, this);
+        tagModel.addTag(text, this);
     }
 
     public void pTagRename(long parentID, String text) {
-        tagModule.renameTag(parentID, text, this);
+        tagModel.renameTag(parentID, text, this);
     }
 
     //==========================结果回调==============================

@@ -22,10 +22,10 @@ import static android.content.ContentValues.TAG;
 /**
  * 绑定手机号
  */
-public class BindPhoneModule  {
+public class BindPhoneModel {
 
     private Context context;
-    public BindPhoneModule(Context context) {
+    public BindPhoneModel(Context context) {
         this.context = context;
     }
 

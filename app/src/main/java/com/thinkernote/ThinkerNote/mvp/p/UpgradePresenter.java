@@ -2,40 +2,42 @@ package com.thinkernote.ThinkerNote.mvp.p;
 
 import android.content.Context;
 
-import com.thinkernote.ThinkerNote.mvp.m.UpgradeModule;
-import com.thinkernote.ThinkerNote.mvp.listener.m.IUpgradeModuleListener;
+import com.thinkernote.ThinkerNote.mvp.m.UpgradeModel;
+import com.thinkernote.ThinkerNote.mvp.listener.m.IUpgradeModelListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnUpgradeListener;
 import com.thinkernote.ThinkerNote.mvp.http.fileprogress.FileProgressListener;
 
 import java.io.File;
 
+import javax.inject.Inject;
+
 /**
  * 注册 p层 具体实现
  * 调用顺讯按编号执行
  */
-public class UpgradePresenter implements IUpgradeModuleListener {
+public class UpgradePresenter implements IUpgradeModelListener {
     private static final String TAG = "MainPresenter";
     private Context context;
     private OnUpgradeListener onView;
     //p层调用M层方法
-    private UpgradeModule upgradeModule;
+    private UpgradeModel upgradeModel;
 
     public UpgradePresenter(Context context, OnUpgradeListener logListener) {
         this.context = context;
         this.onView = logListener;
-        upgradeModule = new UpgradeModule(context);
+        upgradeModel = new UpgradeModel(context);
 
     }
 
     //===========================p层，非同步块的数据=================================
     //更新检查
     public void pUpgrade() {
-        upgradeModule.mUpgrade(this);
+        upgradeModel.mUpgrade(this);
     }
 
     //下载
     public void pDownload(String url, FileProgressListener progressListener) {
-        upgradeModule.mDownload(this, url, progressListener);
+        upgradeModel.mDownload(this, url, progressListener);
     }
 
     //============================================================================

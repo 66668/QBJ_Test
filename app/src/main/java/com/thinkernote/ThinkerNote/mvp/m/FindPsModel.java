@@ -21,12 +21,12 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * 登录 m层 具体实现
  */
-public class FindPsModule {
+public class FindPsModel {
 
     private Context context;
     private static final String TAG = "SJY";
 
-    public FindPsModule(Context context) {
+    public FindPsModel(Context context) {
         this.context = context;
     }
 

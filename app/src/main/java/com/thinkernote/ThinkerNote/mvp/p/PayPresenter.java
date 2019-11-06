@@ -2,7 +2,7 @@ package com.thinkernote.ThinkerNote.mvp.p;
 
 import android.content.Context;
 
-import com.thinkernote.ThinkerNote.mvp.m.PayModule;
+import com.thinkernote.ThinkerNote.mvp.m.PayModel;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnPayListener;
 
 /**
@@ -12,24 +12,24 @@ public class PayPresenter implements OnPayListener {
     private Context context;
     private OnPayListener onView;
     //p层调用M层方法
-    private PayModule module;
+    private PayModel model;
 
     public PayPresenter(Context context, OnPayListener logListener) {
         this.context = context;
         this.onView = logListener;
 
-        module = new PayModule(context);
+        model = new PayModel(context);
     }
 
     //============================p层重写，用于调用m层方法============================
 
 
     public void pAlipay(String mAmount, String mType) {
-        module.mAlipay(this, mAmount, mType);
+        model.mAlipay(this, mAmount, mType);
     }
 
     public void pWxpay(String mAmount, String mType) {
-        module.mWxpay(this, mAmount, mType);
+        model.mWxpay(this, mAmount, mType);
     }
 
 

@@ -4,7 +4,7 @@ package com.thinkernote.ThinkerNote.mvp.listener.m;
  * m层interface
  * tag回调给p层相关
  */
-public interface ITagModuleListener {
+public interface ITagModelListener {
 
     /**
      * 第一次同步 文件夹

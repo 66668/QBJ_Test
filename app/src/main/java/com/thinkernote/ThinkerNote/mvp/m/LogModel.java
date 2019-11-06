@@ -32,12 +32,12 @@ import okhttp3.ResponseBody;
 /**
  * 登录 m层 具体实现
  */
-public class LogModule {
+public class LogModel {
 
     private Context context;
     private static final String TAG = "SJY";
 
-    public LogModule(Context context) {
+    public LogModel(Context context) {
         this.context = context;
     }
 

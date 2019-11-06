@@ -13,7 +13,7 @@ import com.thinkernote.ThinkerNote.bean.CommonBean;
 import com.thinkernote.ThinkerNote.bean.main.TagItemBean;
 import com.thinkernote.ThinkerNote.bean.main.TagListBean;
 import com.thinkernote.ThinkerNote.mvp.http.url_main.MyHttpService;
-import com.thinkernote.ThinkerNote.mvp.listener.m.ITagModuleListener;
+import com.thinkernote.ThinkerNote.mvp.listener.m.ITagModelListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnTagListListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.SyncDisposableListener;
 
@@ -35,13 +35,13 @@ import io.reactivex.schedulers.Schedulers;
  * 具体实现:
  * m层 标签相关
  */
-public class TagModule {
+public class TagModel {
 
     private Context context;
     private static final String TAG = "Tags";
     final TNSettings settings;
 
-    public TagModule(Context context) {
+    public TagModel(Context context) {
         this.context = context;
         settings = TNSettings.getInstance();
     }
@@ -55,7 +55,7 @@ public class TagModule {
      * @param arrayTag
      * @param listener
      */
-    public void createTagByFirstLaunch(String[] arrayTag, final ITagModuleListener listener, final SyncDisposableListener disposableListener) {
+    public void createTagByFirstLaunch(String[] arrayTag, final ITagModelListener listener, final SyncDisposableListener disposableListener) {
         final String[] mFolderName = {""};
         //创建默认的tag
         Observable.fromArray(arrayTag)
@@ -107,7 +107,7 @@ public class TagModule {
      *
      * @param listener
      */
-    public void getAllTags(final ITagModuleListener listener, final SyncDisposableListener disposableListener) {
+    public void getAllTags(final ITagModelListener listener, final SyncDisposableListener disposableListener) {
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .syncTagList(settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
@@ -157,7 +157,7 @@ public class TagModule {
      *
      * @param listener
      */
-    public void getAllTagsBySingle(final ITagModuleListener listener) {
+    public void getAllTagsBySingle(final ITagModelListener listener) {
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .syncTagList(settings.token)//接口方法
                 .subscribeOn(Schedulers.io())//固定样式
@@ -245,7 +245,7 @@ public class TagModule {
                 });
     }
 
-    public void deleteTag(final long pid, final ITagModuleListener listener) {
+    public void deleteTag(final long pid, final ITagModelListener listener) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .deleteTag(pid, settings.token)//接口方法
@@ -284,7 +284,7 @@ public class TagModule {
     }
 
 
-    public void renameTag(final long pid, final String text, final ITagModuleListener listener) {
+    public void renameTag(final long pid, final String text, final ITagModelListener listener) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .tagRename(text, pid, settings.token)//接口方法
@@ -325,7 +325,7 @@ public class TagModule {
     }
 
 
-    public void addTag(String text, final ITagModuleListener listener) {
+    public void addTag(String text, final ITagModelListener listener) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .addNewTag(text, settings.token)//接口方法

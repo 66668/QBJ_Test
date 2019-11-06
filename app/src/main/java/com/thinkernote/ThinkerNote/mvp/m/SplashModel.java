@@ -19,12 +19,12 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * m层 具体实现
  */
-public class SplashModule {
+public class SplashModel {
 
     private Context context;
     private static final String TAG = "SJY";
 
-    public SplashModule(Context context) {
+    public SplashModel(Context context) {
         this.context = context;
     }
 

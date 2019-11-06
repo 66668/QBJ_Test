@@ -3,7 +3,7 @@ package com.thinkernote.ThinkerNote.mvp.p;
 import android.content.Context;
 
 import com.thinkernote.ThinkerNote.utils.TNUtils;
-import com.thinkernote.ThinkerNote.mvp.m.RegistModule;
+import com.thinkernote.ThinkerNote.mvp.m.RegistModel;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnRegistListener;
 
 /**
@@ -13,44 +13,44 @@ public class RegistPresenter implements OnRegistListener {
     private Context context;
     private OnRegistListener onView;
     //p层调用M层方法
-    private RegistModule module;
+    private RegistModel model;
 
     public RegistPresenter(Context context, OnRegistListener logListener) {
         this.context = context;
         this.onView = logListener;
-        module = new RegistModule(context);
+        model = new RegistModel(context);
     }
 
     //============================p层重写，用于调用m层方法============================
     public void getVerifyPic() {
-        module.getVerifyPic(this);
+        model.getVerifyPic(this);
     }
 
     public void phoneVerifyCode(String mPhone, String name, String mAnswer, String mNonce, String mHashKey) {
-        module.phoneVerifyCode(this, mPhone, name, mAnswer, mNonce, mHashKey);
+        model.phoneVerifyCode(this, mPhone, name, mAnswer, mNonce, mHashKey);
     }
 
     public void submitRegister(String phone, String ps, String vcode) {
-        module.submitRegist(this, phone, ps, vcode);
+        model.submitRegist(this, phone, ps, vcode);
     }
 
     public void submitForgotPassword(String phone, String ps, String vcode) {
-        module.submitForgetPs(this, phone, ps, vcode);
+        model.submitForgetPs(this, phone, ps, vcode);
     }
 
 
     public void bindPhone(int mUserType, String bid, String name, String accessToken, String refreshToken, long currentTime, String phone, String vcode) {
         String sign = "access_token=" + accessToken + "&bid=" + bid + "&btype=" + mUserType + "&name=" + name + "&phone=" + phone + "&refresh_token=" + refreshToken + "&stamp=" + currentTime + "&vcode=" + vcode + "qingbiji";
 
-        module.bindPhone(this, mUserType, bid, name, accessToken, refreshToken, currentTime, phone, vcode, TNUtils.toMd5(sign).toLowerCase());
+        model.bindPhone(this, mUserType, bid, name, accessToken, refreshToken, currentTime, phone, vcode, TNUtils.toMd5(sign).toLowerCase());
     }
 
     public void autoLogin(String phoneOrEmail, String ps) {
-        module.autoLogin(this, phoneOrEmail, ps);
+        model.autoLogin(this, phoneOrEmail, ps);
     }
 
     public void pProfile() {
-        module.mProfile(this);
+        model.mProfile(this);
     }
 
     //==========================结果回调==============================

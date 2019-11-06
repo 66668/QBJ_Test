@@ -2,7 +2,7 @@ package com.thinkernote.ThinkerNote.mvp.p;
 
 import android.content.Context;
 
-import com.thinkernote.ThinkerNote.mvp.m.ChangeUserInfoModule;
+import com.thinkernote.ThinkerNote.mvp.m.ChangeUserInfoModel;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnChangeUserInfoListener;
 
 /**
@@ -12,12 +12,12 @@ public class ChangeUserInfoPresenter implements OnChangeUserInfoListener {
     private Context context;
     private OnChangeUserInfoListener onView;
     //p层调用M层方法
-    private ChangeUserInfoModule module;
+    private ChangeUserInfoModel model;
 
     public ChangeUserInfoPresenter(Context context, OnChangeUserInfoListener logListener) {
         this.context = context;
         this.onView = logListener;
-        module = new ChangeUserInfoModule(context);
+        model = new ChangeUserInfoModel(context);
     }
 
 
@@ -25,16 +25,16 @@ public class ChangeUserInfoPresenter implements OnChangeUserInfoListener {
 
 
     public void pChangePs(String oldPs, String newPs) {
-        module.mChangePs(this, oldPs, newPs);
+        model.mChangePs(this, oldPs, newPs);
     }
 
     public void pChangeNameOrEmail(String nameOrEmail, String type, String userPs) {
-        module.mChangeNameOrEmail(this, nameOrEmail, type, userPs);
+        model.mChangeNameOrEmail(this, nameOrEmail, type, userPs);
     }
 
     //更新
     public void pProfile() {
-        module.mProfile(this);
+        model.mProfile(this);
     }
 
     //==========================结果回调==============================

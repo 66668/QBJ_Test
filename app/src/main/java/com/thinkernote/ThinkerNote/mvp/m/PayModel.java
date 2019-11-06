@@ -19,12 +19,12 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * m层 具体实现
  */
-public class PayModule {
+public class PayModel {
 
     private Context context;
     private static final String TAG = "SJY";
 
-    public PayModule(Context context) {
+    public PayModel(Context context) {
         this.context = context;
     }
 

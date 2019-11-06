@@ -9,14 +9,14 @@ import com.thinkernote.ThinkerNote.db.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.base.TNConst;
 import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
 import com.thinkernote.ThinkerNote.utils.MLog;
-import com.thinkernote.ThinkerNote.mvp.listener.m.IFolderModuleListener;
-import com.thinkernote.ThinkerNote.mvp.listener.m.INoteModuleListener;
-import com.thinkernote.ThinkerNote.mvp.listener.m.ITagModuleListener;
+import com.thinkernote.ThinkerNote.mvp.listener.m.IFolderModelListener;
+import com.thinkernote.ThinkerNote.mvp.listener.m.INoteModelListener;
+import com.thinkernote.ThinkerNote.mvp.listener.m.ITagModelListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnSyncListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.SyncDisposableListener;
-import com.thinkernote.ThinkerNote.mvp.m.FolderModule;
-import com.thinkernote.ThinkerNote.mvp.m.NoteModule;
-import com.thinkernote.ThinkerNote.mvp.m.TagModule;
+import com.thinkernote.ThinkerNote.mvp.m.FolderModel;
+import com.thinkernote.ThinkerNote.mvp.m.NoteModel;
+import com.thinkernote.ThinkerNote.mvp.m.TagModel;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
 import com.thinkernote.ThinkerNote.bean.main.AllNotesIdsBean;
 import com.thinkernote.ThinkerNote.bean.main.NoteListBean;
@@ -31,7 +31,7 @@ import io.reactivex.disposables.Disposable;
 /**
  * 同步块(包括取消操作)
  */
-public class SyncPresenter implements IFolderModuleListener, ITagModuleListener, INoteModuleListener {
+public class SyncPresenter implements IFolderModelListener, ITagModelListener, INoteModelListener {
     private static final String TAG = "SyncPresenter";
     private Context context;
     private OnSyncListener onView;
@@ -50,9 +50,9 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
     private String type;//判断是那个模块的同步，用于大块同步的某一步骤省略
 
     //p层调用M层方法
-    private FolderModule folderModule;
-    private TagModule tagsModule;
-    private NoteModule noteModule;
+    private FolderModel folderModel;
+    private TagModel tagsModule;
+    private NoteModel noteModel;
 
 
     //具体操作所需参数
@@ -65,9 +65,9 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
         this.context = context;
         this.onView = logListener;
         settings = TNSettings.getInstance();
-        folderModule = new FolderModule(context);
-        tagsModule = new TagModule(context);
-        noteModule = new NoteModule(context);
+        folderModel = new FolderModel(context);
+        tagsModule = new TagModel(context);
+        noteModel = new NoteModel(context);
     }
 
     /**
@@ -146,7 +146,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
             return;
         }
         MLog.d(TAG, "同步--默认文件夹");
-        folderModule.createFolderByFirstLaunch(arrayFolderName, -1L, this, new SyncDisposableListener() {
+        folderModel.createFolderByFirstLaunch(arrayFolderName, -1L, this, new SyncDisposableListener() {
 
             @Override
             public void add(Disposable d) {
@@ -185,7 +185,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
         Vector<TNNote> oldNotes = TNDbUtils.getOldDbNotesByUserId(TNSettings.getInstance().userId);
         if (!settings.syncOldDb && oldNotes != null && oldNotes.size() > 0) {
             //
-            noteModule.updateOldNote(oldNotes, false, this, new SyncDisposableListener() {
+            noteModel.updateOldNote(oldNotes, false, this, new SyncDisposableListener() {
 
                 @Override
                 public void add(Disposable d) {
@@ -212,7 +212,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
             getTags();
         } else {
             MLog.d(TAG, "同步--预先获取用户所有数据");
-            folderModule.getProfiles(this, new SyncDisposableListener() {
+            folderModel.getProfiles(this, new SyncDisposableListener() {
 
                 @Override
                 public void add(Disposable d) {
@@ -233,7 +233,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
             return;
         }
         MLog.d(TAG, "同步--所有文件夹");
-        folderModule.getAllFolder(this, new SyncDisposableListener() {
+        folderModel.getAllFolder(this, new SyncDisposableListener() {
 
             @Override
             public void add(Disposable d) {
@@ -259,7 +259,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
                 String[] works = new String[]{TNConst.FOLDER_WORK_NOTE, TNConst.FOLDER_WORK_UNFINISHED, TNConst.FOLDER_WORK_FINISHED};
                 String[] life = new String[]{TNConst.FOLDER_LIFE_DIARY, TNConst.FOLDER_LIFE_KNOWLEDGE, TNConst.FOLDER_LIFE_PHOTO};
                 String[] funs = new String[]{TNConst.FOLDER_FUN_TRAVEL, TNConst.FOLDER_FUN_MOVIE, TNConst.FOLDER_FUN_GAME};
-                folderModule.createFolderByIdByFirstLaunch(cats, works, life, funs, this, new SyncDisposableListener() {
+                folderModel.createFolderByIdByFirstLaunch(cats, works, life, funs, this, new SyncDisposableListener() {
 
                     @Override
                     public void add(Disposable d) {
@@ -314,7 +314,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
         MLog.d(TAG, "同步--上传本地新增笔记");
         Vector<TNNote> localNewNotes = TNDbUtils.getNoteListBySyncState(TNSettings.getInstance().userId, 3);
         if (localNewNotes != null && localNewNotes.size() > 0) {
-            noteModule.updateLocalNewNotes(localNewNotes, this, true, new SyncDisposableListener() {
+            noteModel.updateLocalNewNotes(localNewNotes, this, true, new SyncDisposableListener() {
 
                 @Override
                 public void add(Disposable d) {
@@ -340,7 +340,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
         MLog.d(TAG, "同步--还原回收站笔记");
         Vector<TNNote> recoveryNotes = TNDbUtils.getNoteListBySyncState(TNSettings.getInstance().userId, 7);
         if (recoveryNotes != null && recoveryNotes.size() > 0) {
-            noteModule.updateRecoveryNotes(recoveryNotes, this, true, new SyncDisposableListener() {
+            noteModel.updateRecoveryNotes(recoveryNotes, this, true, new SyncDisposableListener() {
 
                 @Override
                 public void add(Disposable d) {
@@ -366,7 +366,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
         MLog.d(TAG, "同步--删除到回收站");
         Vector<TNNote> mDeleteNotes = TNDbUtils.getNoteListBySyncState(TNSettings.getInstance().userId, 6);
         if (mDeleteNotes != null && mDeleteNotes.size() > 0) {
-            noteModule.deleteNotes(mDeleteNotes, this, true, new SyncDisposableListener() {
+            noteModel.deleteNotes(mDeleteNotes, this, true, new SyncDisposableListener() {
 
                 @Override
                 public void add(Disposable d) {
@@ -392,7 +392,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
         MLog.d(TAG, "同步--彻底删除");
         Vector<TNNote> mClaerNotes = TNDbUtils.getNoteListBySyncState(TNSettings.getInstance().userId, 5);
         if (mClaerNotes != null && mClaerNotes.size() > 0) {
-            noteModule.clearNotes(mClaerNotes, this, true, new SyncDisposableListener() {
+            noteModel.clearNotes(mClaerNotes, this, true, new SyncDisposableListener() {
 
                 @Override
                 public void add(Disposable d) {
@@ -415,7 +415,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
             return;
         }
         MLog.d(TAG, "同步--获取所有笔记id");
-        noteModule.getAllNotesId(this, new SyncDisposableListener() {
+        noteModel.getAllNotesId(this, new SyncDisposableListener() {
 
             @Override
             public void add(Disposable d) {
@@ -439,7 +439,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
         MLog.d(TAG, "同步--编辑笔记");
         Vector<TNNote> editNotes = TNDbUtils.getNoteListBySyncState(TNSettings.getInstance().userId, 4);
         if (editNotes != null && editNotes.size() > 0 && all_note_ids != null && all_note_ids.size() > 0) {
-            noteModule.updateEditNotes(all_note_ids, editNotes, this, true, new SyncDisposableListener() {
+            noteModel.updateEditNotes(all_note_ids, editNotes, this, true, new SyncDisposableListener() {
 
                 @Override
                 public void add(Disposable d) {
@@ -464,7 +464,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
         MLog.d(TAG, "同步--云端新笔记同步到本地");
         final Vector<TNNote> localAllNotes = TNDbUtils.getAllNoteList(TNSettings.getInstance().userId);
         if (all_note_ids != null && all_note_ids.size() > 0) {
-            noteModule.getCloudNote(all_note_ids, localAllNotes, this, new SyncDisposableListener() {
+            noteModel.getCloudNote(all_note_ids, localAllNotes, this, new SyncDisposableListener() {
 
                 @Override
                 public void add(Disposable d) {
@@ -493,7 +493,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
             onView.onSyncEditSuccess();
         } else {
             MLog.d(TAG, "同步--获取所有回收站笔记id");
-            noteModule.getTrashNotesId(this, new SyncDisposableListener() {
+            noteModel.getTrashNotesId(this, new SyncDisposableListener() {
 
                 @Override
                 public void add(Disposable d) {
@@ -516,7 +516,7 @@ public class SyncPresenter implements IFolderModuleListener, ITagModuleListener,
         MLog.d(TAG, "同步--回收站笔记根据id的处理");
         Vector<TNNote> trashNotes = TNDbUtils.getNoteListByTrash(settings.userId, TNConst.CREATETIME);
         if (trashNotes != null && trashNotes.size() > 0 && trash_note_ids != null && trash_note_ids.size() > 0) {
-            noteModule.upateTrashNotes(trash_note_ids, trashNotes, this, new SyncDisposableListener() {
+            noteModel.upateTrashNotes(trash_note_ids, trashNotes, this, new SyncDisposableListener() {
 
                 @Override
                 public void add(Disposable d) {

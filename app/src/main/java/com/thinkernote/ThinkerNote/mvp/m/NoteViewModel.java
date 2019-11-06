@@ -18,12 +18,12 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * 笔记详情 m层 具体实现
  */
-public class NoteViewModule {
+public class NoteViewModel {
 
     private Context context;
     private static final String TAG = "SJY";
 
-    public NoteViewModule(Context context) {
+    public NoteViewModel(Context context) {
         this.context = context;
     }
 

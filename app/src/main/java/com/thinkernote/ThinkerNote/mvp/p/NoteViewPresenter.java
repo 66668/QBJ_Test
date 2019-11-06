@@ -2,7 +2,7 @@ package com.thinkernote.ThinkerNote.mvp.p;
 
 import android.content.Context;
 
-import com.thinkernote.ThinkerNote.mvp.m.NoteViewModule;
+import com.thinkernote.ThinkerNote.mvp.m.NoteViewModel;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnNoteViewListener;
 
 /**
@@ -12,20 +12,20 @@ public class NoteViewPresenter implements OnNoteViewListener {
     private Context context;
     private OnNoteViewListener onView;
     //p层调用M层方法
-    private NoteViewModule module;
+    private NoteViewModel model;
 
     public NoteViewPresenter(Context context, OnNoteViewListener logListener) {
         this.context = context;
         this.onView = logListener;
 
-        module = new NoteViewModule(context);
+        model = new NoteViewModel(context);
     }
 
 
     //============================p层重写，用于调用m层方法============================
 
     public void pGetNote(long noteID) {
-        module.mGetNote(this, noteID);
+        model.mGetNote(this, noteID);
     }
     //==========================结果回调==============================
 

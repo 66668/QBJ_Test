@@ -19,12 +19,12 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * 登录 m层 具体实现
  */
-public class ChangeUserInfoModule {
+public class ChangeUserInfoModel {
 
     private Context context;
     private static final String TAG = "SJY";
 
-    public ChangeUserInfoModule(Context context) {
+    public ChangeUserInfoModel(Context context) {
         this.context = context;
     }
 

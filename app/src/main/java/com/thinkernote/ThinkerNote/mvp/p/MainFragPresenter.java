@@ -2,13 +2,13 @@ package com.thinkernote.ThinkerNote.mvp.p;
 
 import android.content.Context;
 
-import com.thinkernote.ThinkerNote.mvp.listener.m.IFolderModuleListener;
-import com.thinkernote.ThinkerNote.mvp.listener.m.INoteModuleListener;
-import com.thinkernote.ThinkerNote.mvp.listener.m.ITagModuleListener;
-import com.thinkernote.ThinkerNote.mvp.m.FolderModule;
-import com.thinkernote.ThinkerNote.mvp.m.NoteModule;
+import com.thinkernote.ThinkerNote.mvp.listener.m.IFolderModelListener;
+import com.thinkernote.ThinkerNote.mvp.listener.m.INoteModelListener;
+import com.thinkernote.ThinkerNote.mvp.listener.m.ITagModelListener;
+import com.thinkernote.ThinkerNote.mvp.m.FolderModel;
+import com.thinkernote.ThinkerNote.mvp.m.NoteModel;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnPagerListener;
-import com.thinkernote.ThinkerNote.mvp.m.TagModule;
+import com.thinkernote.ThinkerNote.mvp.m.TagModel;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
 import com.thinkernote.ThinkerNote.bean.main.AllNotesIdsBean;
 import com.thinkernote.ThinkerNote.bean.main.NoteListBean;
@@ -16,40 +16,40 @@ import com.thinkernote.ThinkerNote.bean.main.NoteListBean;
 /**
  * 我的笔记 p层 具体实现
  */
-public class MainFragPresenter implements IFolderModuleListener, ITagModuleListener, INoteModuleListener {
+public class MainFragPresenter implements IFolderModelListener, ITagModelListener, INoteModelListener {
     private Context context;
     private OnPagerListener onView;
     //p层调用M层方法
-    private NoteModule noteModule;
-    private TagModule tagModule;
-    private FolderModule folderModule;
+    private NoteModel noteModel;
+    private TagModel tagModel;
+    private FolderModel folderModel;
 
     public MainFragPresenter(Context context, OnPagerListener logListener) {
         this.context = context;
         this.onView = logListener;
 
-        noteModule = new NoteModule(context);
-        tagModule = new TagModule(context);
-        folderModule = new FolderModule(context);
+        noteModel = new NoteModel(context);
+        tagModel = new TagModel(context);
+        folderModel = new FolderModel(context);
     }
 
     //============================p层重写，用于调用m层方法============================
 
     public void setDefaultFolder(long folderId) {
-        folderModule.setDefaultFolder(folderId, this);
+        folderModel.setDefaultFolder(folderId, this);
     }
 
     public void deleteTag(long tagID) {
-        tagModule.deleteTag(tagID, this);
+        tagModel.deleteTag(tagID, this);
     }
 
     public void deleteFolder(long catID) {
-        folderModule.deleteFolder(catID, this);
+        folderModel.deleteFolder(catID, this);
     }
 
     // 同步一条笔记详情
     public void getDetailByNoteId(long noteId) {
-        noteModule.getDetailByNoteId(noteId, this);
+        noteModel.getDetailByNoteId(noteId, this);
     }
 
 

@@ -2,7 +2,7 @@ package com.thinkernote.ThinkerNote.mvp.p;
 
 import android.content.Context;
 
-import com.thinkernote.ThinkerNote.mvp.m.ReportModule;
+import com.thinkernote.ThinkerNote.mvp.m.ReportModel;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnReportListener;
 
 import java.io.File;
@@ -14,24 +14,24 @@ public class ReportPresenter implements  OnReportListener {
     private Context context;
     private OnReportListener onView;
     //p层调用M层方法
-    private ReportModule module;
+    private ReportModel model;
 
     public ReportPresenter(Context context, OnReportListener logListener) {
         this.context = context;
         this.onView = logListener;
 
-        module = new ReportModule(context);
+        model = new ReportModel(context);
     }
 
 
     //============================p层重写，用于调用m层方法============================
 
     public void pFeedBackPic(File mFiles, String content, String email) {
-        module.mFeedBackPic(this, mFiles,content,email);
+        model.mFeedBackPic(this, mFiles,content,email);
     }
 
     public void pFeedBack(String content, long pid, String email) {
-        module.mFeedBack(this, content, pid, email);
+        model.mFeedBack(this, content, pid, email);
     }
 
     //==========================结果回调==============================

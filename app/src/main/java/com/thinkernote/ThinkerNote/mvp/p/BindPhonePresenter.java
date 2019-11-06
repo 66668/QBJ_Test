@@ -2,7 +2,7 @@ package com.thinkernote.ThinkerNote.mvp.p;
 
 import android.content.Context;
 
-import com.thinkernote.ThinkerNote.mvp.m.BindPhoneModule;
+import com.thinkernote.ThinkerNote.mvp.m.BindPhoneModel;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnBindPhoneListener;
 
 /**
@@ -12,29 +12,29 @@ public class BindPhonePresenter implements OnBindPhoneListener {
     private Context context;
     private OnBindPhoneListener onView;
     //p层调用M层方法
-    private BindPhoneModule module;
+    private BindPhoneModel model;
 
     public BindPhonePresenter(Context context, OnBindPhoneListener logListener) {
         this.context = context;
         this.onView = logListener;
-        module = new BindPhoneModule(context);
+        model = new BindPhoneModel(context);
     }
     //============================p层重写，用于调用m层方法============================
 
     public void pVcode(String phone, String name, String answer, String mNonce, String mHashKey) {
-        module.mVcode(this, phone, name, answer, mNonce, mHashKey);
+        model.mVcode(this, phone, name, answer, mNonce, mHashKey);
     }
 
     public void pVerifyPic() {
-        module.mVerifyPic(this);
+        model.mVerifyPic(this);
     }
 
     public void pRrofile() {
-        module.mGetUserInfo(this);
+        model.mGetUserInfo(this);
     }
 
     public void pSubmit(String phone, String vcode, String ps) {
-        module.mBindNewPhone(this, phone, vcode, ps);
+        model.mBindNewPhone(this, phone, vcode, ps);
     }
 
     //==========================结果回调==============================

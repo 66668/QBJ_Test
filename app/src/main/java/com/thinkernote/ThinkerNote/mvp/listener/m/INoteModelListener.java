@@ -7,7 +7,7 @@ import com.thinkernote.ThinkerNote.bean.main.NoteListBean;
  * m层interface
  * note回调给p层相关
  */
-public interface INoteModuleListener {
+public interface INoteModelListener {
 
 
     //更新老note

@@ -22,11 +22,11 @@ import static android.content.ContentValues.TAG;
 /**
  * 绑定手机号
  */
-public class BindAcccountModule {
+public class BindAcccountModel {
 
     private Context context;
 
-    public BindAcccountModule(Context context) {
+    public BindAcccountModel(Context context) {
         this.context = context;
     }
 

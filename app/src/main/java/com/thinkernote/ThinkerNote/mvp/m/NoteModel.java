@@ -29,7 +29,7 @@ import com.thinkernote.ThinkerNote.bean.main.OldNotePicBean;
 import com.thinkernote.ThinkerNote.mvp.http.RequestBodyUtil;
 import com.thinkernote.ThinkerNote.mvp.http.URLUtils;
 import com.thinkernote.ThinkerNote.mvp.http.url_main.MyHttpService;
-import com.thinkernote.ThinkerNote.mvp.listener.m.INoteModuleListener;
+import com.thinkernote.ThinkerNote.mvp.listener.m.INoteModelListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.SyncDisposableListener;
 
 import org.json.JSONObject;
@@ -66,14 +66,14 @@ import okhttp3.ResponseBody;
  * <p>
  * 说明：isSync的方法保证，只有SyncPresenter里的方法使用，非SyncPresenter的方法，设置为false
  */
-public class NoteModule {
+public class NoteModel {
 
     private Context context;
     private static final String TAG = "Note";
     TNSettings settings;
     ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    public NoteModule(Context context) {
+    public NoteModel(Context context) {
         this.context = context;
         settings = TNSettings.getInstance();
     }
@@ -200,7 +200,7 @@ public class NoteModule {
      * @param isNewDb  是否是老数据
      * @param listener
      */
-    public void updateOldNote(Vector<TNNote> notes, final boolean isNewDb, final INoteModuleListener listener, final SyncDisposableListener disposableListener) {
+    public void updateOldNote(Vector<TNNote> notes, final boolean isNewDb, final INoteModelListener listener, final SyncDisposableListener disposableListener) {
         Observable.fromIterable(notes)
                 .concatMap(new Function<TNNote, ObservableSource<TNNote>>() {
                     @Override
@@ -279,7 +279,7 @@ public class NoteModule {
      * @param notes    syncState=3 的数据
      * @param listener
      */
-    public void updateLocalNewNotes(Vector<TNNote> notes, final INoteModuleListener listener, final boolean isSync, final SyncDisposableListener disposableListener) {
+    public void updateLocalNewNotes(Vector<TNNote> notes, final INoteModelListener listener, final boolean isSync, final SyncDisposableListener disposableListener) {
 
         Observable.fromIterable(notes)
                 .concatMap(new Function<TNNote, Observable<TNNote>>() {//
@@ -369,7 +369,7 @@ public class NoteModule {
      * @param notes    syncState=7 的数据
      * @param listener
      */
-    public void updateRecoveryNotes(Vector<TNNote> notes, final INoteModuleListener listener, final boolean isSync, final SyncDisposableListener disposableListener) {
+    public void updateRecoveryNotes(Vector<TNNote> notes, final INoteModelListener listener, final boolean isSync, final SyncDisposableListener disposableListener) {
 
         Observable
                 .fromIterable(notes)
@@ -511,7 +511,7 @@ public class NoteModule {
      * @param notes
      * @param listener
      */
-    public void deleteNotes(Vector<TNNote> notes, final INoteModuleListener listener, final boolean isSync, final SyncDisposableListener disposableListener) {
+    public void deleteNotes(Vector<TNNote> notes, final INoteModelListener listener, final boolean isSync, final SyncDisposableListener disposableListener) {
 
         Observable.fromIterable(notes).concatMap(new Function<TNNote, Observable<Integer>>() {
             @Override
@@ -590,7 +590,7 @@ public class NoteModule {
      * @param notes
      * @param listener
      */
-    public void clearNotes(Vector<TNNote> notes, final INoteModuleListener listener, final boolean isSync, final SyncDisposableListener disposableListener) {
+    public void clearNotes(Vector<TNNote> notes, final INoteModelListener listener, final boolean isSync, final SyncDisposableListener disposableListener) {
         MLog.d("clearNotes--size=" + notes.size());
         Observable.fromIterable(notes)
                 .concatMap(new Function<TNNote, Observable<Integer>>() {//list转化item
@@ -682,7 +682,7 @@ public class NoteModule {
      *
      * @param listener
      */
-    public void getAllNotesId(final INoteModuleListener listener, final SyncDisposableListener disposableListener) {
+    public void getAllNotesId(final INoteModelListener listener, final SyncDisposableListener disposableListener) {
         MyHttpService.Builder.getHttpServer()//
                 .syncAllNotesId(settings.token)
                 .doOnNext(new Consumer<AllNotesIdsBean>() {
@@ -730,7 +730,7 @@ public class NoteModule {
      *
      * @param listener
      */
-    public void getFolderAllNotesId(final long folderId, final INoteModuleListener listener) {
+    public void getFolderAllNotesId(final long folderId, final INoteModelListener listener) {
         MyHttpService.Builder.getHttpServer()//
                 .GetFolderNoteIds(folderId, settings.token)
                 .doOnNext(new Consumer<AllNotesIdsBean>() {
@@ -783,7 +783,7 @@ public class NoteModule {
      * @param editNotes 本地未上传的已编辑笔记
      * @param listener
      */
-    public void updateEditNotes(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> editNotes, final INoteModuleListener listener, final boolean isSync, final SyncDisposableListener disposableListener) {
+    public void updateEditNotes(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> editNotes, final INoteModelListener listener, final boolean isSync, final SyncDisposableListener disposableListener) {
         MLog.d("编辑笔记同步--" + editNotes.size() + "--note_ids" + note_ids.size());
         Observable.fromIterable(note_ids)
                 .concatMap(new Function<AllNotesIdsBean.NoteIdItemBean, Observable<CommonBean>>() {
@@ -951,7 +951,7 @@ public class NoteModule {
      * @param note_ids 云端所有笔记数据
      * @param listener
      */
-    public void getCloudNote(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> localAllNotes, final INoteModuleListener listener, final SyncDisposableListener disposableListener) {
+    public void getCloudNote(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> localAllNotes, final INoteModelListener listener, final SyncDisposableListener disposableListener) {
         Observable.fromIterable(note_ids)
                 .concatMap(new Function<AllNotesIdsBean.NoteIdItemBean, Observable<Integer>>() {
                     @Override
@@ -1078,7 +1078,7 @@ public class NoteModule {
      *
      * @param listener
      */
-    public void getTrashNotesId(final INoteModuleListener listener, final SyncDisposableListener disposableListener) {
+    public void getTrashNotesId(final INoteModelListener listener, final SyncDisposableListener disposableListener) {
         MyHttpService.Builder.getHttpServer()//
                 .getTrashNoteIds(settings.token)
                 .subscribeOn(Schedulers.io())
@@ -1130,7 +1130,7 @@ public class NoteModule {
      * @param allNotes
      * @param listener
      */
-    public void upateTrashNotes(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> allNotes, final INoteModuleListener listener, final SyncDisposableListener disposableListener) {
+    public void upateTrashNotes(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final Vector<TNNote> allNotes, final INoteModelListener listener, final SyncDisposableListener disposableListener) {
         MLog.d("upateTrashNotes--回收站笔记--" + note_ids.size());
         Observable.fromIterable(note_ids)
                 .concatMap(new Function<AllNotesIdsBean.NoteIdItemBean, Observable<Integer>>() {
@@ -1207,7 +1207,7 @@ public class NoteModule {
      * 获取文件夹id下的所有笔记（同getNoteListByTagId）
      * <p>
      */
-    public void getNoteListByFolderId(final long tagId, final int mPageNum, final int pageSize, final String sort, final INoteModuleListener listener) {
+    public void getNoteListByFolderId(final long tagId, final int mPageNum, final int pageSize, final String sort, final INoteModelListener listener) {
         MyHttpService.Builder.getHttpServer()//
                 .getNoteListByFolderId(tagId, mPageNum, pageSize, sort, settings.token)//接口方法
                 .subscribeOn(Schedulers.io())
@@ -1266,7 +1266,7 @@ public class NoteModule {
      * 获取标签id下的所有笔记(同getNoteListByFolderId)
      * <p>
      */
-    public void getNoteListByTagId(final long tagId, final int mPageNum, final int pageSize, final String sort, final INoteModuleListener listener) {
+    public void getNoteListByTagId(final long tagId, final int mPageNum, final int pageSize, final String sort, final INoteModelListener listener) {
         MyHttpService.Builder.getHttpServer()
                 .getNoteListByTagId(tagId, mPageNum, pageSize, sort, settings.token)
                 .doOnNext(new Consumer<NoteListBean>() {
@@ -1330,7 +1330,7 @@ public class NoteModule {
      * @param note_ids 云端所有笔记数据
      * @param listener
      */
-    public void getCloudNoteByFolderId(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final long folderId, final INoteModuleListener listener) {
+    public void getCloudNoteByFolderId(List<AllNotesIdsBean.NoteIdItemBean> note_ids, final long folderId, final INoteModelListener listener) {
 
         Observable.fromIterable(note_ids)
                 .concatMap(new Function<AllNotesIdsBean.NoteIdItemBean, Observable<Integer>>() {
@@ -1493,7 +1493,7 @@ public class NoteModule {
      * @param allNotes
      * @param listener
      */
-    public void getDetailNoteByFolderId(Vector<TNNote> allNotes, final INoteModuleListener listener, boolean isSync, final SyncDisposableListener disposeListener) {
+    public void getDetailNoteByFolderId(Vector<TNNote> allNotes, final INoteModelListener listener, boolean isSync, final SyncDisposableListener disposeListener) {
 
         Observable.fromIterable(allNotes)
                 .concatMap(new Function<TNNote, ObservableSource<Boolean>>() {
@@ -1644,7 +1644,7 @@ public class NoteModule {
      * 两个接口串行，for循环接口调用
      * <p>
      */
-    public void getDetailByNoteId(final long noteId, final INoteModuleListener listener) {
+    public void getDetailByNoteId(final long noteId, final INoteModelListener listener) {
 
         MyHttpService.Builder.getHttpServer()//
                 .getNoteByNoteId(noteId, settings.token)

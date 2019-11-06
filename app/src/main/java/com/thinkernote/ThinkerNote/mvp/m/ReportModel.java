@@ -23,12 +23,12 @@ import okhttp3.RequestBody;
 /**
  * 设置--意见反馈 m层 具体实现
  */
-public class ReportModule {
+public class ReportModel {
 
     private Context context;
     private static final String TAG = "SJY";
 
-    public ReportModule(Context context) {
+    public ReportModel(Context context) {
         this.context = context;
     }
 

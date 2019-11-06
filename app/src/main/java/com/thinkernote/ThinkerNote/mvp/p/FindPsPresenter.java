@@ -2,7 +2,7 @@ package com.thinkernote.ThinkerNote.mvp.p;
 
 import android.content.Context;
 
-import com.thinkernote.ThinkerNote.mvp.m.FindPsModule;
+import com.thinkernote.ThinkerNote.mvp.m.FindPsModel;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnFindPsListener;
 
 /**
@@ -12,12 +12,12 @@ public class FindPsPresenter implements  OnFindPsListener {
     private Context context;
     private OnFindPsListener onView;
     //p层调用M层方法
-    private FindPsModule module;
+    private FindPsModel model;
 
     public FindPsPresenter(Context context, OnFindPsListener logListener) {
         this.context = context;
         this.onView = logListener;
-        module = new FindPsModule(context);
+        model = new FindPsModel(context);
     }
 
 
@@ -25,32 +25,32 @@ public class FindPsPresenter implements  OnFindPsListener {
 
     //图片验证
     public void getVerifyPic() {
-        module.getVerifyPic(this);
+        model.getVerifyPic(this);
     }
 
     //短信验证码
     public void phoneVerifyCode(String mPhone, String name, String mAnswer, String mNonce, String mHashKey) {
-        module.phoneVerifyCode(this, mPhone, name, mAnswer, mNonce, mHashKey);
+        model.phoneVerifyCode(this, mPhone, name, mAnswer, mNonce, mHashKey);
     }
 
     //邮箱验证
     public void mailVerifyCode(String mEmail, String name) {
-        module.mailVerifyCode(this, mEmail, name);
+        model.mailVerifyCode(this, mEmail, name);
     }
 
     //修改密码提交
     public void submit(String phone, String ps, String vcode) {
-        module.submit(this, phone, ps, vcode);
+        model.submit(this, phone, ps, vcode);
     }
 
     //登录
     public void autoLogin(String phoneOrEmail, String ps) {
-        module.autoLogin(this, phoneOrEmail, ps);
+        model.autoLogin(this, phoneOrEmail, ps);
     }
 
     //更新
     public void pProfile() {
-        module.mProfile(this);
+        model.mProfile(this);
     }
 
     //==========================结果回调==============================

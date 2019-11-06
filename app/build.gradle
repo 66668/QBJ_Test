@@ -79,9 +79,8 @@ dependencies {
     implementation files('libs/alipaySdk-20180601.jar')
     implementation files('libs/android_api.jar')
 
-    //旧版百度定位
 
-    //    implementation files('libs/baidu_locSDK_2.3.jar')
+
 
     //新版百度定位 2018-0712 sjy
     implementation files('libs/BaiduLBS_Android.jar')
@@ -122,8 +121,13 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxjava:2.2.12"
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
 
+    //=============dagger2 相关==============
+    api 'com.google.dagger:dagger-android:2.25.2'
+    api 'com.google.dagger:dagger-android-support:2.25.2' // if you use the support libraries
+    annotationProcessor 'com.google.dagger:dagger-android-processor:2.25.2'
 
-    //-------------------------leakcanary内存泄漏检测 打包时注意清除--------------------------------
+
+    //-------------------------leakcanary--------------------------------
 
     //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
 

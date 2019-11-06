@@ -12,7 +12,7 @@ import com.thinkernote.ThinkerNote.db.Database.TNSQLString;
 import com.thinkernote.ThinkerNote.utils.TNUtils;
 import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsAtt;
 import com.thinkernote.ThinkerNote.utils.MLog;
-import com.thinkernote.ThinkerNote.mvp.m.NoteViewDownloadModule;
+import com.thinkernote.ThinkerNote.mvp.m.NoteViewDownloadModel;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnNoteViewDownloadListener;
 
 import java.io.File;
@@ -40,7 +40,7 @@ public class NoteViewDownloadPresenter implements OnNoteViewDownloadListener {
 
     private TNNote mNote;
     private Activity act;
-    private NoteViewDownloadModule module;
+    private NoteViewDownloadModel model;
 
 
     public NoteViewDownloadPresenter(Activity act) {
@@ -48,7 +48,7 @@ public class NoteViewDownloadPresenter implements OnNoteViewDownloadListener {
         readyDownloadAtts = new Vector<TNNoteAtt>();
         downloadingAtts = new Vector<TNNoteAtt>();
 
-        module = new NoteViewDownloadModule(act, this);
+        model = new NoteViewDownloadModel(act, this);
         compositeDisposable = new CompositeDisposable();
     }
 
@@ -150,7 +150,7 @@ public class NoteViewDownloadPresenter implements OnNoteViewDownloadListener {
 
     //调用接口
     private void singledownload(TNNoteAtt tnNoteAtt, TNNote tnNote) {
-        module.singleDownload(tnNoteAtt, tnNote, new NoteViewDownloadModule.DisposeListener() {
+        model.singleDownload(tnNoteAtt, tnNote, new NoteViewDownloadModel.DisposeListener() {
             @Override
             public void disposeCallback(Disposable d) {
                 compositeDisposable.add(d);
@@ -160,7 +160,7 @@ public class NoteViewDownloadPresenter implements OnNoteViewDownloadListener {
 
     //调用接口
     private void listDownload(TNNoteAtt tnNoteAtt, TNNote tnNote, int position) {
-        module.listDownload(tnNoteAtt, tnNote, position, new NoteViewDownloadModule.DisposeListener() {
+        model.listDownload(tnNoteAtt, tnNote, position, new NoteViewDownloadModel.DisposeListener() {
             @Override
             public void disposeCallback(Disposable d) {
                 compositeDisposable.add(d);

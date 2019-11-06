@@ -5,7 +5,7 @@ import android.content.Context;
 import com.thinkernote.ThinkerNote.utils.TNUtils;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnLogListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnWchatListener;
-import com.thinkernote.ThinkerNote.mvp.m.LogModule;
+import com.thinkernote.ThinkerNote.mvp.m.LogModel;
 
 /**
  * 登录 p层 具体实现
@@ -15,28 +15,28 @@ public class LogPresenter implements OnLogListener, OnWchatListener {
     private OnLogListener onLogView;
     private OnWchatListener onWchatView;
     //p层调用M层方法
-    private LogModule logModule;
+    private LogModel logModel;
 
     public LogPresenter(Context context, OnLogListener logListener) {
         this.context = context;
         this.onLogView = logListener;
-        logModule = new LogModule(context);
+        logModel = new LogModel(context);
     }
 
     public LogPresenter(Context context, OnWchatListener logListener) {
         this.context = context;
         this.onWchatView = logListener;
-        logModule = new LogModule(context);
+        logModel = new LogModel(context);
     }
 
     //============================p层重写，用于调用m层方法============================
     public void loginNormal(String name, String ps) {
-        logModule.loginNomal(this, name, ps);
+        logModel.loginNomal(this, name, ps);
     }
 
     public void loginThird(int aArray, String unionId, long currentTime, String accessToken, String refreshToken, String name) {
         String sign = "bid=" + unionId + "&btype=" + aArray + "&stamp=" + currentTime + "qingbiji";
-        logModule.loginThird(this
+        logModel.loginThird(this
                 , aArray
                 , unionId
                 , currentTime
@@ -48,11 +48,11 @@ public class LogPresenter implements OnLogListener, OnWchatListener {
 
     //更新
     public void pUpdataProfile() {
-        logModule.mProfile(this);
+        logModel.mProfile(this);
     }
 
     public void getQQUnionId(String url, String accessToken, String refreshToken) {
-        logModule.mGetQQUnionId(this, url, accessToken, refreshToken);
+        logModel.mGetQQUnionId(this, url, accessToken, refreshToken);
     }
 
     /**
@@ -61,7 +61,7 @@ public class LogPresenter implements OnLogListener, OnWchatListener {
      * @param url
      */
     public void getWchatToken(String url) {
-        logModule.getWchatToken(url, this);
+        logModel.getWchatToken(url, this);
     }
 
     //==========================结果回调==============================

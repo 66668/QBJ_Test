@@ -21,12 +21,12 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * 注册 m层 具体实现
  */
-public class RegistModule {
+public class RegistModel {
 
     private Context context;
     private static final String TAG = "SJY";
 
-    public RegistModule(Context context) {
+    public RegistModel(Context context) {
         this.context = context;
     }
 

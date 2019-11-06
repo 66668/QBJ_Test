@@ -5,7 +5,7 @@ import java.io.File;
 /**
  * 主界面 其他回调
  */
-public interface IUpgradeModuleListener {
+public interface IUpgradeModelListener {
 
     void onUpgradeSuccess(Object obj);
 

@@ -20,7 +20,7 @@ import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
 import com.thinkernote.ThinkerNote.bean.main.AllFolderBean;
 import com.thinkernote.ThinkerNote.bean.main.AllFolderItemBean;
 import com.thinkernote.ThinkerNote.mvp.http.url_main.MyHttpService;
-import com.thinkernote.ThinkerNote.mvp.listener.m.IFolderModuleListener;
+import com.thinkernote.ThinkerNote.mvp.listener.m.IFolderModelListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnCatInfoListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnCatListListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.SyncDisposableListener;
@@ -46,14 +46,14 @@ import io.reactivex.schedulers.Schedulers;
  * 具体实现:
  * m层 文件夹相关
  */
-public class FolderModule {
+public class FolderModel {
 
     private Context context;
     private static final String TAG = "Folder";
     private TNSettings settings;
     ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    public FolderModule(Context context) {
+    public FolderModel(Context context) {
         this.context = context;
         settings = TNSettings.getInstance();
     }
@@ -66,7 +66,7 @@ public class FolderModule {
      * @param arrayFolders
      * @param listener
      */
-    public void createFolderByFirstLaunch(String[] arrayFolders, long id, final IFolderModuleListener listener, final SyncDisposableListener disposableListener) {
+    public void createFolderByFirstLaunch(String[] arrayFolders, long id, final IFolderModelListener listener, final SyncDisposableListener disposableListener) {
 
         final String[] mFolderName = {""};
         //创建默认的一级文件夹
@@ -114,7 +114,7 @@ public class FolderModule {
     /**
      * 创建 文件夹下的子文件夹
      */
-    public void createFolderByIdByFirstLaunch(Vector<TNCat> cats, final String[] works, final String[] life, final String[] funs, final IFolderModuleListener listener, final SyncDisposableListener disposableListener) {
+    public void createFolderByIdByFirstLaunch(Vector<TNCat> cats, final String[] works, final String[] life, final String[] funs, final IFolderModelListener listener, final SyncDisposableListener disposableListener) {
         MLog.d(TAG, "addNewFolder--创建子文件夹");
         Observable.fromIterable(cats)
                 .concatMap(new Function<TNCat, Observable<CommonBean>>() {
@@ -191,7 +191,7 @@ public class FolderModule {
      *
      * @param listener
      */
-    public void getProfiles(final IFolderModuleListener listener, final SyncDisposableListener disposableListener) {
+    public void getProfiles(final IFolderModelListener listener, final SyncDisposableListener disposableListener) {
 
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .LogNormalProfile(settings.token)//接口方法
@@ -244,7 +244,7 @@ public class FolderModule {
      *
      * @param listener
      */
-    public void getAllFolder(final IFolderModuleListener listener, final SyncDisposableListener disposableListener) {
+    public void getAllFolder(final IFolderModelListener listener, final SyncDisposableListener disposableListener) {
 
         MyHttpService.Builder.getHttpServer()
                 .getFolder(settings.token) //（1）获取第一个接口数据
@@ -457,7 +457,7 @@ public class FolderModule {
      *
      * @param listener
      */
-    public void deleteFolder(final long fodlerId, final IFolderModuleListener listener) {
+    public void deleteFolder(final long fodlerId, final IFolderModelListener listener) {
 
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .deleteFolder(fodlerId, settings.token)
@@ -504,7 +504,7 @@ public class FolderModule {
      *
      * @param listener
      */
-    public void setDefaultFolder(final long fodlerId, final IFolderModuleListener listener) {
+    public void setDefaultFolder(final long fodlerId, final IFolderModelListener listener) {
 
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .setDefaultFolder(fodlerId, settings.token)//接口方法
@@ -537,7 +537,7 @@ public class FolderModule {
     }
 
 
-    public void renameFolder(final long pid, final String text, final IFolderModuleListener listener) {
+    public void renameFolder(final long pid, final String text, final IFolderModelListener listener) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .renameFolder(text, pid, settings.token)//接口方法
@@ -583,7 +583,7 @@ public class FolderModule {
                 });
     }
 
-    public void addFoler(long pid, String text, final IFolderModuleListener listener) {
+    public void addFoler(long pid, String text, final IFolderModelListener listener) {
         TNSettings settings = TNSettings.getInstance();
         if (pid == -1) {
             MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络

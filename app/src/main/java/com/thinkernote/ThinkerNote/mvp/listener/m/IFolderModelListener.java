@@ -6,7 +6,7 @@ import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
  * m层interface
  * 文件夹回调给p层相关
  */
-public interface IFolderModuleListener {
+public interface IFolderModelListener {
 
     /**
      * 第一次同步 文件夹

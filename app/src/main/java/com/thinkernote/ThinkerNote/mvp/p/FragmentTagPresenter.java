@@ -2,30 +2,30 @@ package com.thinkernote.ThinkerNote.mvp.p;
 
 import android.content.Context;
 
-import com.thinkernote.ThinkerNote.mvp.listener.m.ITagModuleListener;
+import com.thinkernote.ThinkerNote.mvp.listener.m.ITagModelListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnFragmentTagListener;
-import com.thinkernote.ThinkerNote.mvp.m.TagModule;
+import com.thinkernote.ThinkerNote.mvp.m.TagModel;
 
 /**
  * tagfrag的同步，和notfrag的不同，
  */
-public class FragmentTagPresenter implements ITagModuleListener {
+public class FragmentTagPresenter implements ITagModelListener {
     private static final String TAG = "MainPresenter";
     private Context context;
     private OnFragmentTagListener onView;
     //p层调用M层方法
-    private TagModule tagsModule;
+    private TagModel model;
 
 
     public FragmentTagPresenter(Context context, OnFragmentTagListener logListener) {
         this.context = context;
         this.onView = logListener;
-        tagsModule = new TagModule(context);
+        model = new TagModel(context);
     }
     //============================p层（非同步块）============================
 
     public void getTagList() {
-        tagsModule.getAllTagsBySingle(this);
+        model.getAllTagsBySingle(this);
     }
 
     //==========================如下回调不使用==============================

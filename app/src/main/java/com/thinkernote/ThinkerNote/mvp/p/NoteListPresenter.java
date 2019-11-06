@@ -2,27 +2,27 @@ package com.thinkernote.ThinkerNote.mvp.p;
 
 import android.content.Context;
 
-import com.thinkernote.ThinkerNote.mvp.listener.m.INoteModuleListener;
+import com.thinkernote.ThinkerNote.mvp.listener.m.INoteModelListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnNoteListListener;
-import com.thinkernote.ThinkerNote.mvp.m.NoteModule;
+import com.thinkernote.ThinkerNote.mvp.m.NoteModel;
 import com.thinkernote.ThinkerNote.bean.main.AllNotesIdsBean;
 import com.thinkernote.ThinkerNote.bean.main.NoteListBean;
 
 /**
  * 注册 p层 具体实现
  */
-public class NoteListPresenter implements INoteModuleListener {
+public class NoteListPresenter implements INoteModelListener {
     private static final String TAG = "MainPresenter";
     private Context context;
     private OnNoteListListener onView;
     //p层调用M层方法
 
-    private NoteModule noteModule;
+    private NoteModel noteModel;
 
     public NoteListPresenter(Context context, OnNoteListListener onNoteListListener) {
         this.context = context;
         this.onView = onNoteListListener;
-        noteModule = new NoteModule(context);
+        noteModel = new NoteModel(context);
     }
 
 
@@ -32,21 +32,21 @@ public class NoteListPresenter implements INoteModuleListener {
      * 单独调用，获取文件夹下的笔记列表
      */
     public void getNoteListByFolderid(long tagId, int mPageNum, int size, String sort) {
-        noteModule.getNoteListByFolderId(tagId, mPageNum, size, sort, this);
+        noteModel.getNoteListByFolderId(tagId, mPageNum, size, sort, this);
     }
 
     /**
      * 单独调用，获取tag下的笔记列表
      */
     public void getNoteListByTagId(long tagId, int mPageNum, int size, String sort) {
-        noteModule.getNoteListByTagId(tagId, mPageNum, size, sort, this);
+        noteModel.getNoteListByTagId(tagId, mPageNum, size, sort, this);
     }
 
     /**
      * 单独调用，获取tag下的笔记列表
      */
     public void getDetailByNoteId(long noteId) {
-        noteModule.getDetailByNoteId(noteId, this);
+        noteModel.getDetailByNoteId(noteId, this);
     }
 
 

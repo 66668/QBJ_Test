@@ -5,7 +5,7 @@ import android.os.Environment;
 
 import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
 import com.thinkernote.ThinkerNote.utils.MLog;
-import com.thinkernote.ThinkerNote.mvp.listener.m.IUpgradeModuleListener;
+import com.thinkernote.ThinkerNote.mvp.listener.m.IUpgradeModelListener;
 import com.thinkernote.ThinkerNote.bean.CommonBean1;
 import com.thinkernote.ThinkerNote.bean.main.MainUpgradeBean;
 import com.thinkernote.ThinkerNote.mvp.http.url_main.MyHttpService;
@@ -28,16 +28,16 @@ import okhttp3.ResponseBody;
 /**
  * 注册 m层 具体实现 ：更新
  */
-public class UpgradeModule {
+public class UpgradeModel {
 
     private Context context;
     private static final String TAG = "SJY";
 
-    public UpgradeModule(Context context) {
+    public UpgradeModel(Context context) {
         this.context = context;
     }
 
-    public void mUpgrade(final IUpgradeModuleListener listener) {
+    public void mUpgrade(final IUpgradeModelListener listener) {
         TNSettings settings = TNSettings.getInstance();
         MyHttpService.Builder.getHttpServer()//固定样式，可自定义其他网络
                 .upgrade(settings.token)//接口方法
@@ -79,7 +79,7 @@ public class UpgradeModule {
 
 
     //下载文件 实时进度
-    public void mDownload(final IUpgradeModuleListener listener, String url, final FileProgressListener progressListener) {
+    public void mDownload(final IUpgradeModelListener listener, String url, final FileProgressListener progressListener) {
         //自定义路径
         final File filePath = new File(Environment.getExternalStoragePublicDirectory
                 (Environment.DIRECTORY_DOWNLOADS), "qingbiji.apk");
