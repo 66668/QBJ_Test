@@ -8,7 +8,7 @@ import android.view.View.OnKeyListener;
 import android.widget.EditText;
 
 import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote.General.TNSettings;
+import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 
 /**

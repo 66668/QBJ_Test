@@ -1,7 +1,7 @@
 package com.thinkernote.ThinkerNote.mvp.listener.v;
 
-import com.thinkernote.ThinkerNote.Data.TNNote;
-import com.thinkernote.ThinkerNote.Data.TNNoteAtt;
+import com.thinkernote.ThinkerNote.bean.localdata.TNNote;
+import com.thinkernote.ThinkerNote.bean.localdata.TNNoteAtt;
 
 /**
  * 笔记详情 v层

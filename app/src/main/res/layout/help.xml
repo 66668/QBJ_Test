@@ -4,11 +4,11 @@
   android:layout_width="fill_parent"
   android:layout_height="fill_parent">
   
-  		<com.thinkernote.ThinkerNote.other.HorizontalPager
+  		<com.thinkernote.ThinkerNote.views.HorizontalPager
 			android:id="@+id/help_pager"
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent">
-		</com.thinkernote.ThinkerNote.other.HorizontalPager>
+		</com.thinkernote.ThinkerNote.views.HorizontalPager>
 		<Button 
         android:id="@+id/help_back"
         android:layout_width="wrap_content"

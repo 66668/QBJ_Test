@@ -8,10 +8,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
-import com.thinkernote.ThinkerNote.other.HorizontalPager;
-import com.thinkernote.ThinkerNote.other.HorizontalPager.OnScreenSwitchListener;
-import com.thinkernote.ThinkerNote.other.PageController;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsSkin;
+import com.thinkernote.ThinkerNote.views.HorizontalPager;
+import com.thinkernote.ThinkerNote.views.HorizontalPager.OnScreenSwitchListener;
+import com.thinkernote.ThinkerNote.views.PageController;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 
 /**

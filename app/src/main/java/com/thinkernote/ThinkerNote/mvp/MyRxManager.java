@@ -1,7 +1,5 @@
 package com.thinkernote.ThinkerNote.mvp;
 
-import com.thinkernote.ThinkerNote.Utils.MLog;
-
 /**
  * 请求管理，主动关闭网络请求
  */

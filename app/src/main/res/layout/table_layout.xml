@@ -100,11 +100,11 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent" >
 
-            <com.thinkernote.ThinkerNote.other.HorizontalPager
+            <com.thinkernote.ThinkerNote.views.HorizontalPager
                 android:id="@+id/tablelayout_horizontalPager"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent" >
-            </com.thinkernote.ThinkerNote.other.HorizontalPager>
+            </com.thinkernote.ThinkerNote.views.HorizontalPager>
         </FrameLayout>
     </LinearLayout>
 

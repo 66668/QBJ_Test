@@ -23,18 +23,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.thinkernote.ThinkerNote.General.TNSettings;
-import com.thinkernote.ThinkerNote.General.TNUtils;
-import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
-import com.thinkernote.ThinkerNote.General.TNUtilsUi;
+import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
+import com.thinkernote.ThinkerNote.utils.TNUtils;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsSkin;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote.Utils.TNActivityManager;
-import com.thinkernote.ThinkerNote.appwidget43.TNAppWidegtConst;
+import com.thinkernote.ThinkerNote.utils.MLog;
+import com.thinkernote.ThinkerNote.utils.TNActivityManager;
+import com.thinkernote.ThinkerNote.views.appwidget43.TNAppWidegtConst;
 import com.thinkernote.ThinkerNote.base.TNApplication;
-import com.thinkernote.ThinkerNote.dialog.CommonDialog;
-import com.thinkernote.ThinkerNote.dialog.CustomDialog;
-import com.thinkernote.ThinkerNote.dialog.UpdateDialog;
+import com.thinkernote.ThinkerNote.views.dialog.CommonDialog;
+import com.thinkernote.ThinkerNote.views.dialog.CustomDialog;
+import com.thinkernote.ThinkerNote.views.dialog.UpdateDialog;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnUpgradeListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnSyncListener;
 import com.thinkernote.ThinkerNote.mvp.p.UpgradePresenter;

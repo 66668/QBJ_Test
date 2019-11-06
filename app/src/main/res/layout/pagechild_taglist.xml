@@ -29,7 +29,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
 
-        <com.thinkernote.ThinkerNote.other.PullToRefreshExpandableListView
+        <com.thinkernote.ThinkerNote.views.PullToRefreshExpandableListView
             android:id="@+id/taglist_listview"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
@@ -42,7 +42,7 @@
             android:focusable="true"
             android:groupIndicator="@null"
             android:listSelector="@null" >
-        </com.thinkernote.ThinkerNote.other.PullToRefreshExpandableListView>
+        </com.thinkernote.ThinkerNote.views.PullToRefreshExpandableListView>
 
         <LinearLayout
             android:id="@+id/taglist_top_groupinfo"

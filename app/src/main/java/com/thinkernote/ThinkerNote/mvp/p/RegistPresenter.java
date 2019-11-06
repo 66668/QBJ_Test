@@ -2,7 +2,7 @@ package com.thinkernote.ThinkerNote.mvp.p;
 
 import android.content.Context;
 
-import com.thinkernote.ThinkerNote.General.TNUtils;
+import com.thinkernote.ThinkerNote.utils.TNUtils;
 import com.thinkernote.ThinkerNote.mvp.m.RegistModule;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnRegistListener;
 

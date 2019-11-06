@@ -1,6 +1,6 @@
 package com.thinkernote.ThinkerNote.mvp.http.fileprogress;
 
-import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.utils.MLog;
 
 import java.io.IOException;
 

@@ -11,12 +11,12 @@ import android.view.View;
 
 import com.baidu.mobstat.StatService;
 import com.thinkernote.ThinkerNote.Activity.settings.TNLockAct;
-import com.thinkernote.ThinkerNote.General.TNSettings;
-import com.thinkernote.ThinkerNote.General.TNUtilsUi;
+import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote.Utils.TNActivityManager;
-import com.thinkernote.ThinkerNote.dialog.MenuDialog;
+import com.thinkernote.ThinkerNote.utils.MLog;
+import com.thinkernote.ThinkerNote.utils.TNActivityManager;
+import com.thinkernote.ThinkerNote.views.dialog.MenuDialog;
 
 import java.lang.ref.WeakReference;
 import java.util.Vector;

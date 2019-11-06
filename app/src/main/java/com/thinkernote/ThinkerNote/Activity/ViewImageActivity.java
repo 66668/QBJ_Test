@@ -1,7 +1,7 @@
 package com.thinkernote.ThinkerNote.Activity;
 
 import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote.Utils.BitmapUtils;
+import com.thinkernote.ThinkerNote.utils.BitmapUtils;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 
 import android.graphics.Bitmap;

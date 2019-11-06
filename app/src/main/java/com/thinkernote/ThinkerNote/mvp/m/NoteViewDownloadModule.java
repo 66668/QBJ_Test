@@ -3,13 +3,13 @@ package com.thinkernote.ThinkerNote.mvp.m;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.thinkernote.ThinkerNote.Data.TNNote;
-import com.thinkernote.ThinkerNote.Data.TNNoteAtt;
-import com.thinkernote.ThinkerNote.General.TNSettings;
-import com.thinkernote.ThinkerNote.General.TNUtils;
-import com.thinkernote.ThinkerNote.General.TNUtilsAtt;
+import com.thinkernote.ThinkerNote.bean.localdata.TNNote;
+import com.thinkernote.ThinkerNote.bean.localdata.TNNoteAtt;
+import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
+import com.thinkernote.ThinkerNote.utils.TNUtils;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsAtt;
 import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.utils.MLog;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnNoteViewDownloadListener;
 import com.thinkernote.ThinkerNote.mvp.http.url_main.MyHttpService;
 import com.thinkernote.ThinkerNote.mvp.http.URLUtils;
@@ -135,8 +135,6 @@ public class NoteViewDownloadModule {
             return;
         }
         //http 方式从服务器下载附件
-//        aAction.runChildAction(TNActionType.TNHttpDownloadAtt, ("attachment/" + att.attId), att.attId, path);
-
         //url绝对路径 要求：https://s.qingbiji.cn/attachment/28498638?session_token=KA6nN3d3eqMRuWJr8gmX6Svw7d27HPr69qmbpBhf
         //                https://s.qingbiji.cn/attachment/28498638?session_token=av8u9gGn6h4YEDbNd3RQKsyrd2X6SjKTu29DW6EU
         String url = URLUtils.API_BASE_URL + "attachment/" + att.attId + "?session_token=" + TNSettings.getInstance().token;

@@ -2,13 +2,13 @@ package com.thinkernote.ThinkerNote.mvp.p;
 
 import android.content.Context;
 
-import com.thinkernote.ThinkerNote.Data.TNCat;
-import com.thinkernote.ThinkerNote.Data.TNNote;
-import com.thinkernote.ThinkerNote.Data.TNTag;
-import com.thinkernote.ThinkerNote.Database.TNDbUtils;
+import com.thinkernote.ThinkerNote.bean.localdata.TNCat;
+import com.thinkernote.ThinkerNote.bean.localdata.TNNote;
+import com.thinkernote.ThinkerNote.bean.localdata.TNTag;
+import com.thinkernote.ThinkerNote.db.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.base.TNConst;
-import com.thinkernote.ThinkerNote.General.TNSettings;
-import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
+import com.thinkernote.ThinkerNote.utils.MLog;
 import com.thinkernote.ThinkerNote.mvp.listener.m.IFolderModuleListener;
 import com.thinkernote.ThinkerNote.mvp.listener.m.INoteModuleListener;
 import com.thinkernote.ThinkerNote.mvp.listener.m.ITagModuleListener;

@@ -12,34 +12,34 @@ import android.widget.Toast;
 import com.thinkernote.ThinkerNote.Activity.fragment.FolderFragment;
 import com.thinkernote.ThinkerNote.Activity.fragment.NoteFragment;
 import com.thinkernote.ThinkerNote.Activity.fragment.TagFragment;
-import com.thinkernote.ThinkerNote.Data.TNCat;
-import com.thinkernote.ThinkerNote.Data.TNNote;
-import com.thinkernote.ThinkerNote.Data.TNTag;
-import com.thinkernote.ThinkerNote.Database.TNDb;
-import com.thinkernote.ThinkerNote.Database.TNDbUtils;
-import com.thinkernote.ThinkerNote.Database.TNSQLString;
+import com.thinkernote.ThinkerNote.bean.localdata.TNCat;
+import com.thinkernote.ThinkerNote.bean.localdata.TNNote;
+import com.thinkernote.ThinkerNote.bean.localdata.TNTag;
+import com.thinkernote.ThinkerNote.db.Database.TNDb;
+import com.thinkernote.ThinkerNote.db.Database.TNDbUtils;
+import com.thinkernote.ThinkerNote.db.Database.TNSQLString;
 import com.thinkernote.ThinkerNote.base.TNConst;
-import com.thinkernote.ThinkerNote.General.TNSettings;
-import com.thinkernote.ThinkerNote.General.TNUtils;
-import com.thinkernote.ThinkerNote.General.TNUtilsUi;
+import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
+import com.thinkernote.ThinkerNote.utils.TNUtils;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.utils.MLog;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.base.TNChildViewBase;
-import com.thinkernote.ThinkerNote.dialog.CommonDialog;
+import com.thinkernote.ThinkerNote.views.dialog.CommonDialog;
 import com.thinkernote.ThinkerNote.mvp.MyRxManager;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnPagerListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnSyncListener;
 import com.thinkernote.ThinkerNote.mvp.p.MainFragPresenter;
 import com.thinkernote.ThinkerNote.mvp.p.SyncFolderPresenter;
-import com.thinkernote.ThinkerNote.other.HorizontalPager;
-import com.thinkernote.ThinkerNote.other.HorizontalPager.OnScreenSwitchListener;
+import com.thinkernote.ThinkerNote.views.HorizontalPager;
+import com.thinkernote.ThinkerNote.views.HorizontalPager.OnScreenSwitchListener;
 
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static com.thinkernote.ThinkerNote.Utils.MLog.i;
+import static com.thinkernote.ThinkerNote.utils.MLog.i;
 
 /**
  * 主页--我的笔记

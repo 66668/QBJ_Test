@@ -4,20 +4,20 @@ import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 
-import com.thinkernote.ThinkerNote.DBHelper.NoteAttrDbHelper;
-import com.thinkernote.ThinkerNote.DBHelper.NoteDbHelper;
-import com.thinkernote.ThinkerNote.Data.TNNote;
-import com.thinkernote.ThinkerNote.Data.TNNoteAtt;
-import com.thinkernote.ThinkerNote.Database.TNDb;
-import com.thinkernote.ThinkerNote.Database.TNDbUtils;
-import com.thinkernote.ThinkerNote.Database.TNSQLString;
+import com.thinkernote.ThinkerNote.db.NoteAttrDbHelper;
+import com.thinkernote.ThinkerNote.db.NoteDbHelper;
+import com.thinkernote.ThinkerNote.bean.localdata.TNNote;
+import com.thinkernote.ThinkerNote.bean.localdata.TNNoteAtt;
+import com.thinkernote.ThinkerNote.db.Database.TNDb;
+import com.thinkernote.ThinkerNote.db.Database.TNDbUtils;
+import com.thinkernote.ThinkerNote.db.Database.TNSQLString;
 import com.thinkernote.ThinkerNote.base.TNConst;
-import com.thinkernote.ThinkerNote.General.TNSettings;
-import com.thinkernote.ThinkerNote.General.TNUtils;
-import com.thinkernote.ThinkerNote.General.TNUtilsAtt;
-import com.thinkernote.ThinkerNote.General.TNUtilsHtml;
-import com.thinkernote.ThinkerNote.General.TNUtilsUi;
-import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
+import com.thinkernote.ThinkerNote.utils.TNUtils;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsAtt;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsHtml;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsUi;
+import com.thinkernote.ThinkerNote.utils.MLog;
 import com.thinkernote.ThinkerNote.base.TNApplication;
 import com.thinkernote.ThinkerNote.bean.CommonBean;
 import com.thinkernote.ThinkerNote.bean.CommonBean3;
@@ -2232,7 +2232,7 @@ public class NoteModule {
             }
 
             //如果本地的更新时间晚就以本地的为准
-            if (note.lastUpdate > (com.thinkernote.ThinkerNote.Utils.TimeUtils.getMillsOfDate(bean.getUpdate_at()) / 1000)) {
+            if (note.lastUpdate > (com.thinkernote.ThinkerNote.utils.TimeUtils.getMillsOfDate(bean.getUpdate_at()) / 1000)) {
                 return;
             }
 
@@ -2253,8 +2253,8 @@ public class NoteModule {
             tempObj.put("trash", bean.getTrash());
             tempObj.put("source", "android");
             tempObj.put("catId", catId);
-            tempObj.put("createTime", com.thinkernote.ThinkerNote.Utils.TimeUtils.getMillsOfDate(bean.getCreate_at()) / 1000);
-            tempObj.put("lastUpdate", com.thinkernote.ThinkerNote.Utils.TimeUtils.getMillsOfDate(bean.getUpdate_at()) / 1000);
+            tempObj.put("createTime", com.thinkernote.ThinkerNote.utils.TimeUtils.getMillsOfDate(bean.getCreate_at()) / 1000);
+            tempObj.put("lastUpdate", com.thinkernote.ThinkerNote.utils.TimeUtils.getMillsOfDate(bean.getUpdate_at()) / 1000);
             tempObj.put("syncState", syncState);
             tempObj.put("noteId", noteId);
             tempObj.put("shortContent", TNUtils.getBriefContent(bean.getContent()));
@@ -2419,7 +2419,7 @@ public class NoteModule {
                     "source", "android",
                     "catId", catId,
                     "content", obj.getSummary(),
-                    "createTime", com.thinkernote.ThinkerNote.Utils.TimeUtils.getMillsOfDate(obj.getCreate_at()) / 1000,
+                    "createTime", com.thinkernote.ThinkerNote.utils.TimeUtils.getMillsOfDate(obj.getCreate_at()) / 1000,
                     "lastUpdate", lastUpdate,
                     "syncState", syncState,
                     "noteId", noteId,

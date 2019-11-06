@@ -9,13 +9,13 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.thinkernote.ThinkerNote.Activity.TNLoginAct;
-import com.thinkernote.ThinkerNote.General.TNSettings;
-import com.thinkernote.ThinkerNote.General.TNUtils;
-import com.thinkernote.ThinkerNote.General.TNUtilsUi;
-import com.thinkernote.ThinkerNote.other.LockPatternView;
-import com.thinkernote.ThinkerNote.other.LockPatternView.OnLockPatternListener;
+import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
+import com.thinkernote.ThinkerNote.utils.TNUtils;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsUi;
+import com.thinkernote.ThinkerNote.views.LockPatternView;
+import com.thinkernote.ThinkerNote.views.LockPatternView.OnLockPatternListener;
 import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.utils.MLog;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 
 import java.util.LinkedList;

@@ -8,7 +8,7 @@ import io.reactivex.subjects.Subject;
 
 
 /**
- * 使用Rxbus跳转
+ * Rxbus封装
  */
 public class RxBus {
 

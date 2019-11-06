@@ -43,7 +43,7 @@
         android:theme="@android:style/Theme.NoTitleBar">
         <!--===========================app小部件===================================== -->
         <!-- app小部件4*3布局-->
-        <receiver android:name=".appwidget43.TNAppWidget43">
+        <receiver android:name=".views.appwidget43.TNAppWidget43">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <!-- widget启动 app -->
@@ -66,7 +66,7 @@
 
         <!--app小部件的服务 需要加BIND_REMOTEVIEWS权限-->
         <service
-            android:name=".appwidget43.TNWidgetService"
+            android:name=".views.appwidget43.TNWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS">
             <intent-filter>
                 <!--widget启动 刷新 -->
@@ -78,7 +78,7 @@
 
         <!-- app小部件 守护进程 -->
         <receiver
-            android:name=".appwidget43.TNDaemonReceiver"
+            android:name=".views.appwidget43.TNDaemonReceiver"
             android:exported="true"
             android:permission="com.opencdk.appwidget.permission.APP_WIDGET">
             <intent-filter android:priority="0x6fffffff">
@@ -108,9 +108,9 @@
 
 
         <!--  ==============================andriod 9版本兼容设置 ==============================-->
-                <uses-library
-                    android:name="org.apache.http.legacy"
-                    android:required="false" />
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
 
         <!--  ==============================微信 - 配置================================== -->
         <!--
@@ -124,14 +124,15 @@
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
-        <!--  ==============================百度地图定位 - 配置================================== -->
-        <service android:name=".Service.LocationService" />
-
-        <receiver android:name=".Register.AppRegister">
+        <receiver android:name=".service.WXAppRegister">
             <intent-filter>
                 <action android:name="com.tencent.mm.plugin.openapi.Intent.ACTION_REFRESH_WXAPP" />
             </intent-filter>
         </receiver>
+
+        <!--  ==============================百度地图定位 - 配置================================== -->
+        <service android:name=".service.LocationService" />
+
         <!--  ==============================qq登陆+分享 - 配置================================== -->
 
         <activity
@@ -182,7 +183,7 @@
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
-            android:process=":remote"/>
+            android:process=":remote" />
 
         <!--  ===============================百度定位 end================================== -->
         <!-- ============================android7.0+ 使用应用间共享文件 设置 开始============================ -->

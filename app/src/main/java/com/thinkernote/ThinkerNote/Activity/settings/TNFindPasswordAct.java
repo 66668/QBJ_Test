@@ -19,11 +19,11 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
 import com.thinkernote.ThinkerNote.Activity.TNMainAct;
-import com.thinkernote.ThinkerNote.DBHelper.UserDbHelper;
-import com.thinkernote.ThinkerNote.Database.TNDbUtils;
-import com.thinkernote.ThinkerNote.General.TNSettings;
-import com.thinkernote.ThinkerNote.General.TNUtils;
-import com.thinkernote.ThinkerNote.General.TNUtilsUi;
+import com.thinkernote.ThinkerNote.db.UserDbHelper;
+import com.thinkernote.ThinkerNote.db.Database.TNDbUtils;
+import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
+import com.thinkernote.ThinkerNote.utils.TNUtils;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.mvp.p.FindPsPresenter;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnFindPsListener;

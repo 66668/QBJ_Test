@@ -2,7 +2,7 @@ package com.thinkernote.ThinkerNote.mvp.p;
 
 import android.content.Context;
 
-import com.thinkernote.ThinkerNote.General.TNUtils;
+import com.thinkernote.ThinkerNote.utils.TNUtils;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnLogListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnWchatListener;
 import com.thinkernote.ThinkerNote.mvp.m.LogModule;

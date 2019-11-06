@@ -362,31 +362,31 @@
             android:paddingTop="12dip"
             android:paddingBottom="12dip">
 
-            <com.thinkernote.ThinkerNote.Views.WheelView
+            <com.thinkernote.ThinkerNote.views.WheelView
                 android:id="@+id/ak_fram_editalarm_year"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
 
-            <com.thinkernote.ThinkerNote.Views.WheelView
+            <com.thinkernote.ThinkerNote.views.WheelView
                 android:id="@+id/ak_fram_editalarm_month"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
 
-            <com.thinkernote.ThinkerNote.Views.WheelView
+            <com.thinkernote.ThinkerNote.views.WheelView
                 android:id="@+id/ak_fram_editalarm_day"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
 
-            <com.thinkernote.ThinkerNote.Views.WheelView
+            <com.thinkernote.ThinkerNote.views.WheelView
                 android:id="@+id/ak_fram_editalarm_hour"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
 
-            <com.thinkernote.ThinkerNote.Views.WheelView
+            <com.thinkernote.ThinkerNote.views.WheelView
                 android:id="@+id/ak_fram_editalarm_minute"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

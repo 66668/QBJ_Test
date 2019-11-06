@@ -6,13 +6,13 @@ import android.support.multidex.MultiDex;
 
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechUtility;
-import com.thinkernote.ThinkerNote.Database.TNDb;
-import com.thinkernote.ThinkerNote.Database.TNDb2;
-import com.thinkernote.ThinkerNote.General.TNSettings;
-import com.thinkernote.ThinkerNote.General.TNUtilsUi;
+import com.thinkernote.ThinkerNote.db.Database.TNDb;
+import com.thinkernote.ThinkerNote.db.Database.TNDb2;
+import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote.Service.LocationService;
-import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.service.LocationService;
+import com.thinkernote.ThinkerNote.utils.MLog;
 import com.thinkernote.ThinkerNote.mvp.http.url_main.HttpUtils;
 
 /**

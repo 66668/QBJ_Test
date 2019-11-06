@@ -4,15 +4,14 @@ import android.app.Activity;
 import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 
-import com.thinkernote.ThinkerNote.Data.TNNote;
-import com.thinkernote.ThinkerNote.Data.TNNoteAtt;
-import com.thinkernote.ThinkerNote.Database.TNDb;
-import com.thinkernote.ThinkerNote.Database.TNDbUtils;
-import com.thinkernote.ThinkerNote.Database.TNSQLString;
-import com.thinkernote.ThinkerNote.General.TNUtils;
-import com.thinkernote.ThinkerNote.General.TNUtilsAtt;
-import com.thinkernote.ThinkerNote.Utils.MLog;
-import com.thinkernote.ThinkerNote.mvp.MyRxManager;
+import com.thinkernote.ThinkerNote.bean.localdata.TNNote;
+import com.thinkernote.ThinkerNote.bean.localdata.TNNoteAtt;
+import com.thinkernote.ThinkerNote.db.Database.TNDb;
+import com.thinkernote.ThinkerNote.db.Database.TNDbUtils;
+import com.thinkernote.ThinkerNote.db.Database.TNSQLString;
+import com.thinkernote.ThinkerNote.utils.TNUtils;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsAtt;
+import com.thinkernote.ThinkerNote.utils.MLog;
 import com.thinkernote.ThinkerNote.mvp.m.NoteViewDownloadModule;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnNoteViewDownloadListener;
 

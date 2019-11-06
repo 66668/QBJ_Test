@@ -23,7 +23,7 @@
             android:textColor="#ff262626" />
     </FrameLayout>
 
-    <com.thinkernote.ThinkerNote.other.PullToRefreshExpandableListView
+    <com.thinkernote.ThinkerNote.views.PullToRefreshExpandableListView
         android:id="@+id/folder_listview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

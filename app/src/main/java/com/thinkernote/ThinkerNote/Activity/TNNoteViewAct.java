@@ -39,31 +39,31 @@ import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
 import com.thinkernote.ThinkerNote.BuildConfig;
-import com.thinkernote.ThinkerNote.DBHelper.NoteAttrDbHelper;
-import com.thinkernote.ThinkerNote.DBHelper.NoteDbHelper;
-import com.thinkernote.ThinkerNote.Data.TNNote;
-import com.thinkernote.ThinkerNote.Data.TNNoteAtt;
-import com.thinkernote.ThinkerNote.Database.TNDb;
-import com.thinkernote.ThinkerNote.Database.TNDbUtils;
-import com.thinkernote.ThinkerNote.Database.TNSQLString;
+import com.thinkernote.ThinkerNote.db.NoteAttrDbHelper;
+import com.thinkernote.ThinkerNote.db.NoteDbHelper;
+import com.thinkernote.ThinkerNote.bean.localdata.TNNote;
+import com.thinkernote.ThinkerNote.bean.localdata.TNNoteAtt;
+import com.thinkernote.ThinkerNote.db.Database.TNDb;
+import com.thinkernote.ThinkerNote.db.Database.TNDbUtils;
+import com.thinkernote.ThinkerNote.db.Database.TNSQLString;
 import com.thinkernote.ThinkerNote.base.TNConst;
-import com.thinkernote.ThinkerNote.General.TNSettings;
-import com.thinkernote.ThinkerNote.General.TNUtils;
-import com.thinkernote.ThinkerNote.General.TNUtilsAtt;
-import com.thinkernote.ThinkerNote.General.TNUtilsDialog;
-import com.thinkernote.ThinkerNote.General.TNUtilsHtml;
-import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
-import com.thinkernote.ThinkerNote.General.TNUtilsUi;
+import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
+import com.thinkernote.ThinkerNote.utils.TNUtils;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsAtt;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsDialog;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsHtml;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsSkin;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote.Utils.MLog;
+import com.thinkernote.ThinkerNote.utils.MLog;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.main.GetNoteByNoteIdBean;
-import com.thinkernote.ThinkerNote.dialog.CommonDialog;
+import com.thinkernote.ThinkerNote.views.dialog.CommonDialog;
 import com.thinkernote.ThinkerNote.mvp.MyRxManager;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnNoteViewListener;
 import com.thinkernote.ThinkerNote.mvp.p.NoteViewDownloadPresenter;
 import com.thinkernote.ThinkerNote.mvp.p.NoteViewPresenter;
-import com.thinkernote.ThinkerNote.other.PoPuMenuView;
+import com.thinkernote.ThinkerNote.views.PoPuMenuView;
 
 import org.json.JSONObject;
 
@@ -1344,7 +1344,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
                 }
 
                 //如果本地的更新时间晚就以本地的为准
-                if (note.lastUpdate > (com.thinkernote.ThinkerNote.Utils.TimeUtils.getMillsOfDate(bean.getUpdate_at()) / 1000)) {
+                if (note.lastUpdate > (com.thinkernote.ThinkerNote.utils.TimeUtils.getMillsOfDate(bean.getUpdate_at()) / 1000)) {
                     return;
                 }
 
@@ -1366,8 +1366,8 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
                     "source", "android",
                     "catId", catId,
                     "content", TNUtilsHtml.codeHtmlContent(bean.getContent(), true),
-                    "createTime", com.thinkernote.ThinkerNote.Utils.TimeUtils.getMillsOfDate(bean.getCreate_at()) / 1000,
-                    "lastUpdate", com.thinkernote.ThinkerNote.Utils.TimeUtils.getMillsOfDate(bean.getUpdate_at()) / 1000,
+                    "createTime", com.thinkernote.ThinkerNote.utils.TimeUtils.getMillsOfDate(bean.getCreate_at()) / 1000,
+                    "lastUpdate", com.thinkernote.ThinkerNote.utils.TimeUtils.getMillsOfDate(bean.getUpdate_at()) / 1000,
                     "syncState", syncState,
                     "noteId", noteId,
                     "shortContent", TNUtils.getBriefContent(bean.getContent()),

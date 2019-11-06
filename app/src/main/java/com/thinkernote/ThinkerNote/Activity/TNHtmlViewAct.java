@@ -6,8 +6,8 @@ import android.view.View.OnClickListener;
 import android.webkit.WebView;
 
 import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote.General.TNUtils;
-import com.thinkernote.ThinkerNote.General.TNUtilsSkin;
+import com.thinkernote.ThinkerNote.utils.TNUtils;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 
 /**
