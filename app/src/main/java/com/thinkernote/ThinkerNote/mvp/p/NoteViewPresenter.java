@@ -1,24 +1,20 @@
 package com.thinkernote.ThinkerNote.mvp.p;
 
-import android.content.Context;
-
-import com.thinkernote.ThinkerNote.mvp.m.NoteViewModel;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnNoteViewListener;
+import com.thinkernote.ThinkerNote.mvp.m.NoteViewModel;
 
 /**
  * 笔记详情 p层 具体实现
  */
 public class NoteViewPresenter implements OnNoteViewListener {
-    private Context context;
     private OnNoteViewListener onView;
     //p层调用M层方法
     private NoteViewModel model;
 
-    public NoteViewPresenter(Context context, OnNoteViewListener logListener) {
-        this.context = context;
+    public NoteViewPresenter( OnNoteViewListener logListener) {
         this.onView = logListener;
 
-        model = new NoteViewModel(context);
+        model = new NoteViewModel();
     }
 
 

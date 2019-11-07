@@ -9,16 +9,14 @@ import com.thinkernote.ThinkerNote.mvp.listener.v.OnSplashListener;
  * p层 具体实现
  */
 public class SplashPresenter implements  OnSplashListener {
-    private Context context;
     private OnSplashListener onView;
     //p层调用M层方法
     private SplashModel model;
 
-    public SplashPresenter(Context context, OnSplashListener logListener) {
-        this.context = context;
+    public SplashPresenter( OnSplashListener logListener) {
         this.onView = logListener;
 
-        model = new SplashModel(context);
+        model = new SplashModel();
     }
 
 

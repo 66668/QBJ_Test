@@ -81,7 +81,7 @@ public class TNCatListAct extends TNActBase
         setContentView(R.layout.catlist);
         setViews();
         //p
-        presener = new CatListPresenter(this, this);
+        presener = new CatListPresenter( this);
 
         // initialize
         findViewById(R.id.catlist_back).setOnClickListener(this);

@@ -9,15 +9,13 @@ import com.thinkernote.ThinkerNote.mvp.listener.v.OnFindPsListener;
  * 登录 p层 具体实现
  */
 public class FindPsPresenter implements  OnFindPsListener {
-    private Context context;
     private OnFindPsListener onView;
     //p层调用M层方法
     private FindPsModel model;
 
-    public FindPsPresenter(Context context, OnFindPsListener logListener) {
-        this.context = context;
+    public FindPsPresenter( OnFindPsListener logListener) {
         this.onView = logListener;
-        model = new FindPsModel(context);
+        model = new FindPsModel();
     }
 
 

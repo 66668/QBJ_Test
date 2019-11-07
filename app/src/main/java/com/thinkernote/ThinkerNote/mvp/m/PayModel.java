@@ -21,11 +21,9 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class PayModel {
 
-    private Context context;
     private static final String TAG = "SJY";
 
-    public PayModel(Context context) {
-        this.context = context;
+    public PayModel() {
     }
 
 

@@ -22,8 +22,8 @@ public class TextEditPresenter implements ITagModelListener, IFolderModelListene
     public TextEditPresenter(Context context, OnTextEditListener logListener) {
         this.context = context;
         this.onView = logListener;
-        tagModel = new TagModel(context);
-        folderModel = new FolderModel(context);
+        tagModel = new TagModel();
+        folderModel = new FolderModel();
     }
 
 

@@ -9,15 +9,13 @@ import com.thinkernote.ThinkerNote.mvp.listener.v.OnBindPhoneListener;
  * 绑定新手机 p层 具体实现
  */
 public class BindPhonePresenter implements OnBindPhoneListener {
-    private Context context;
     private OnBindPhoneListener onView;
     //p层调用M层方法
     private BindPhoneModel model;
 
-    public BindPhonePresenter(Context context, OnBindPhoneListener logListener) {
-        this.context = context;
+    public BindPhonePresenter( OnBindPhoneListener logListener) {
         this.onView = logListener;
-        model = new BindPhoneModel(context);
+        model = new BindPhoneModel();
     }
     //============================p层重写，用于调用m层方法============================
 

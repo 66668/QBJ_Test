@@ -56,7 +56,7 @@ public class TNBindAccountAct extends TNActBase implements OnClickListener, OnBi
 
         initView();
 
-        presener = new BindAccountPresenter(this, this);
+        presener = new BindAccountPresenter( this);
     }
 
     private void initView() {

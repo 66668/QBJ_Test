@@ -45,7 +45,12 @@
 
 
 ## 框架
-架构设计为：Retrofit2+Okhttp3+Rxjava2+Dagger2
+
+架构设计为：Retrofit2+Okhttp3+Rxjava2+Dagger2(5.8.7加入)
+
+说明：
+
+1. dagger2目前只用于presenter的实例调用
 
 
 

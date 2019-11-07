@@ -34,11 +34,9 @@ import okhttp3.ResponseBody;
  */
 public class LogModel {
 
-    private Context context;
     private static final String TAG = "SJY";
 
-    public LogModel(Context context) {
-        this.context = context;
+    public LogModel() {
     }
 
 

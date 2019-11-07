@@ -33,7 +33,6 @@ import io.reactivex.disposables.Disposable;
  */
 public class SyncPresenter implements IFolderModelListener, ITagModelListener, INoteModelListener {
     private static final String TAG = "SyncPresenter";
-    private Context context;
     private OnSyncListener onView;
     private TNSettings settings;
 
@@ -61,13 +60,12 @@ public class SyncPresenter implements IFolderModelListener, ITagModelListener, I
     private List<AllNotesIdsBean.NoteIdItemBean> all_note_ids;//获取所有笔记的id（12）
     private List<AllNotesIdsBean.NoteIdItemBean> trash_note_ids;//获取所有回收站笔记id（15）
 
-    public SyncPresenter(Context context, OnSyncListener logListener) {
-        this.context = context;
+    public SyncPresenter( OnSyncListener logListener) {
         this.onView = logListener;
         settings = TNSettings.getInstance();
-        folderModel = new FolderModel(context);
-        tagsModule = new TagModel(context);
-        noteModel = new NoteModel(context);
+        folderModel = new FolderModel();
+        tagsModule = new TagModel();
+        noteModel = new NoteModel();
     }
 
     /**

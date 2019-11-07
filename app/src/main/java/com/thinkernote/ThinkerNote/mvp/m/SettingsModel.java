@@ -19,11 +19,9 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class SettingsModel {
 
-    private Context context;
     private static final String TAG = "SJY";
 
-    public SettingsModel(Context context) {
-        this.context = context;
+    public SettingsModel() {
     }
 
     public void mgetProfile(final OnSettingsListener listener) {

@@ -119,7 +119,7 @@ public class TNSplashAct extends TNActBase implements OnSplashListener {
         try {
             setViews();
             //
-            presener = new SplashPresenter(this, this);
+            presener = new SplashPresenter(this);
             settings = TNSettings.getInstance();
             //设置初始化值：重新登陆-不开启锁屏
             settings.needShowLock_using = false;

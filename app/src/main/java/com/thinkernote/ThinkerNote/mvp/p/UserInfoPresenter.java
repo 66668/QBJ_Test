@@ -10,16 +10,14 @@ import com.thinkernote.ThinkerNote.mvp.listener.v.OnUserinfoListener;
  */
 
 public class UserInfoPresenter implements OnUserinfoListener {
-    private Context context;
     private OnUserinfoListener onView;
     //p层调用M层方法
     private LogModel model;
 
-    public UserInfoPresenter(Context context, OnUserinfoListener userinfoListener) {
-        this.context = context;
+    public UserInfoPresenter( OnUserinfoListener userinfoListener) {
         this.onView = userinfoListener;
 
-        model = new LogModel(context);
+        model = new LogModel();
     }
 
 

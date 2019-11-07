@@ -10,15 +10,13 @@ import com.thinkernote.ThinkerNote.mvp.listener.v.OnBindAccountListener;
  * 登录 p层 具体实现
  */
 public class BindAccountPresenter implements OnBindAccountListener {
-    private Context context;
     private OnBindAccountListener onView;
     //p层调用M层方法
     private BindAcccountModel model;
 
-    public BindAccountPresenter(Context context, OnBindAccountListener logListener) {
-        this.context = context;
+    public BindAccountPresenter( OnBindAccountListener logListener) {
         this.onView = logListener;
-        model = new BindAcccountModel(context);
+        model = new BindAcccountModel();
     }
 
     //============================p层重写，用于调用m层方法============================

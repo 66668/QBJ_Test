@@ -23,11 +23,9 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class FindPsModel {
 
-    private Context context;
     private static final String TAG = "SJY";
 
-    public FindPsModel(Context context) {
-        this.context = context;
+    public FindPsModel() {
     }
 
     public void getVerifyPic(final OnFindPsListener listener) {

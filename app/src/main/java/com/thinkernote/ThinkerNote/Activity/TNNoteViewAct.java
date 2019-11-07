@@ -186,7 +186,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
         initFunc();
 
 
-        presenter = new NoteViewPresenter(this, this);
+        presenter = new NoteViewPresenter( this);
 
 
         // initialize

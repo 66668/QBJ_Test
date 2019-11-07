@@ -17,20 +17,18 @@ import com.thinkernote.ThinkerNote.bean.main.NoteListBean;
  * 我的笔记 p层 具体实现
  */
 public class MainFragPresenter implements IFolderModelListener, ITagModelListener, INoteModelListener {
-    private Context context;
     private OnPagerListener onView;
     //p层调用M层方法
     private NoteModel noteModel;
     private TagModel tagModel;
     private FolderModel folderModel;
 
-    public MainFragPresenter(Context context, OnPagerListener logListener) {
-        this.context = context;
+    public MainFragPresenter( OnPagerListener logListener) {
         this.onView = logListener;
 
-        noteModel = new NoteModel(context);
-        tagModel = new TagModel(context);
-        folderModel = new FolderModel(context);
+        noteModel = new NoteModel();
+        tagModel = new TagModel();
+        folderModel = new FolderModel();
     }
 
     //============================p层重写，用于调用m层方法============================

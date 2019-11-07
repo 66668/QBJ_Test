@@ -9,15 +9,13 @@ import com.thinkernote.ThinkerNote.mvp.listener.v.OnChangeUserInfoListener;
  * p层 具体实现
  */
 public class ChangeUserInfoPresenter implements OnChangeUserInfoListener {
-    private Context context;
     private OnChangeUserInfoListener onView;
     //p层调用M层方法
     private ChangeUserInfoModel model;
 
-    public ChangeUserInfoPresenter(Context context, OnChangeUserInfoListener logListener) {
-        this.context = context;
+    public ChangeUserInfoPresenter( OnChangeUserInfoListener logListener) {
         this.onView = logListener;
-        model = new ChangeUserInfoModel(context);
+        model = new ChangeUserInfoModel();
     }
 
 

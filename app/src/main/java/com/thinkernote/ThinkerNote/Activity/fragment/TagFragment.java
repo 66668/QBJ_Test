@@ -65,8 +65,8 @@ public class TagFragment extends TNChildViewBase implements
         pageId = R.id.page_tags;
 
         //p
-        presenter = new FragmentTagPresenter(mActivity, this);
-        syncPresenter = new SyncPresenter(mActivity, this);
+        presenter = new FragmentTagPresenter( this);
+        syncPresenter = new SyncPresenter( this);
         isFragSyncing = false;
         init();
     }

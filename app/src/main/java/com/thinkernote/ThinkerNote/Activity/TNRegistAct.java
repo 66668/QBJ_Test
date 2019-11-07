@@ -75,7 +75,7 @@ public class TNRegistAct extends TNActBase implements OnClickListener, OnRegistL
 
         initView();
 
-        presener = new RegistPresenter(this, this);
+        presener = new RegistPresenter( this);
 
         getVerifyPic();
 

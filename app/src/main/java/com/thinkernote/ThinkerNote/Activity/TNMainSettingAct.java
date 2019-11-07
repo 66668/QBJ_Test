@@ -67,8 +67,8 @@ public class TNMainSettingAct extends TNActBase implements OnClickListener, OnUs
         setViews();
         initView();
         //
-        presener = new UserInfoPresenter(this, this);
-        upgradePresenter = new UpgradePresenter(this, this);
+        presener = new UserInfoPresenter( this);
+        upgradePresenter = new UpgradePresenter( this);
     }
 
     @Override

@@ -24,10 +24,8 @@ import static android.content.ContentValues.TAG;
  */
 public class BindAcccountModel {
 
-    private Context context;
 
-    public BindAcccountModel(Context context) {
-        this.context = context;
+    public BindAcccountModel() {
     }
 
     public void mVerifyCode(final OnBindAccountListener listener, String phone, String t) {

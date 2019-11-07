@@ -13,16 +13,14 @@ import com.thinkernote.ThinkerNote.bean.main.NoteListBean;
  */
 public class NoteListPresenter implements INoteModelListener {
     private static final String TAG = "MainPresenter";
-    private Context context;
     private OnNoteListListener onView;
     //p层调用M层方法
 
     private NoteModel noteModel;
 
-    public NoteListPresenter(Context context, OnNoteListListener onNoteListListener) {
-        this.context = context;
+    public NoteListPresenter( OnNoteListListener onNoteListListener) {
         this.onView = onNoteListListener;
-        noteModel = new NoteModel(context);
+        noteModel = new NoteModel();
     }
 
 

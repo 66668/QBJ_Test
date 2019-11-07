@@ -30,11 +30,9 @@ import okhttp3.ResponseBody;
  */
 public class UpgradeModel {
 
-    private Context context;
     private static final String TAG = "SJY";
 
-    public UpgradeModel(Context context) {
-        this.context = context;
+    public UpgradeModel() {
     }
 
     public void mUpgrade(final IUpgradeModelListener listener) {

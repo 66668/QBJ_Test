@@ -67,7 +67,7 @@ public class NoteFragment extends TNChildViewBase implements OnItemLongClickList
         pageId = R.id.page_notes;
 
         //p
-        syncPresenter = new SyncPresenter(mActivity, this);
+        syncPresenter = new SyncPresenter( this);
         isFragSyncing = false;
         init();
     }

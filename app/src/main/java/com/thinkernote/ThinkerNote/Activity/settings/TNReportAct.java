@@ -76,7 +76,7 @@ public class TNReportAct extends TNActBase
         mProgressDialog = TNUtilsUi.progressDialog(this, R.string.in_progress);
         setViews();
         //
-        presener = new ReportPresenter(this, this);
+        presener = new ReportPresenter(this);
 
         mEmailView = (EditText) findViewById(R.id.report_email);
         if (!TextUtils.isEmpty(TNSettings.getInstance().email)) {

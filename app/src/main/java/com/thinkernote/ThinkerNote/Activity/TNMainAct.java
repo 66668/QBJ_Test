@@ -46,6 +46,8 @@ import com.thinkernote.ThinkerNote.mvp.http.fileprogress.FileProgressListener;
 
 import java.io.File;
 
+import javax.inject.Inject;
+
 /**
  * 主界面
  *
@@ -59,7 +61,8 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeLi
     private TextView mTimeView;
     private TNSettings mSettings = TNSettings.getInstance();
     //
-    private UpgradePresenter mainPresenter;//新版本
+    @Inject
+    private UpgradePresenter mainPresenter;
     private SyncPresenter syncPresenter;//新版本
     File installFile;//安装包file
 
@@ -73,8 +76,8 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeLi
         setViews();
         //关闭其他界面
         TNActivityManager.getInstance().finishOtherActivity(this);
-        mainPresenter = new UpgradePresenter(this, this);
-        syncPresenter = new SyncPresenter(this, this);
+        mainPresenter = new UpgradePresenter( this);
+        syncPresenter = new SyncPresenter(this);
         MyRxManager.getInstance().setSyncing(false);//修改：初始状态值
         TNApplication.getInstance().setEnryMain(true);//标记已进入主界面（用于小部件判断）
         handleIntent();

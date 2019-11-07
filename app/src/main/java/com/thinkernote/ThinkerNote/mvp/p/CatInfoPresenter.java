@@ -9,15 +9,13 @@ import com.thinkernote.ThinkerNote.mvp.m.FolderModel;
  * 登录 p层 具体实现
  */
 public class CatInfoPresenter implements  OnCatInfoListener {
-    private Context context;
     private OnCatInfoListener onView;
     //p层调用M层方法
     private FolderModel model;
 
-    public CatInfoPresenter(Context context, OnCatInfoListener logListener) {
-        this.context = context;
+    public CatInfoPresenter( OnCatInfoListener logListener) {
         this.onView = logListener;
-        model = new FolderModel(context);
+        model = new FolderModel();
     }
 
 

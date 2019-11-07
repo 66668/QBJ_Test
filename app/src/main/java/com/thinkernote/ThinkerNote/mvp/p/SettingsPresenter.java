@@ -9,16 +9,14 @@ import com.thinkernote.ThinkerNote.mvp.listener.v.OnSettingsListener;
  * p层 具体实现
  */
 public class SettingsPresenter implements  OnSettingsListener {
-    private Context context;
     private OnSettingsListener onView;
     //p层调用M层方法
     private SettingsModel model;
 
-    public SettingsPresenter(Context context, OnSettingsListener logListener) {
-        this.context = context;
+    public SettingsPresenter(OnSettingsListener logListener) {
         this.onView = logListener;
 
-        model = new SettingsModel(context);
+        model = new SettingsModel();
     }
 
     //============================p层重写，用于调用m层方法============================

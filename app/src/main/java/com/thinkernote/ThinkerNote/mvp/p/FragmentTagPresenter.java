@@ -11,16 +11,14 @@ import com.thinkernote.ThinkerNote.mvp.m.TagModel;
  */
 public class FragmentTagPresenter implements ITagModelListener {
     private static final String TAG = "MainPresenter";
-    private Context context;
     private OnFragmentTagListener onView;
     //p层调用M层方法
     private TagModel model;
 
 
-    public FragmentTagPresenter(Context context, OnFragmentTagListener logListener) {
-        this.context = context;
+    public FragmentTagPresenter( OnFragmentTagListener logListener) {
         this.onView = logListener;
-        model = new TagModel(context);
+        model = new TagModel();
     }
     //============================p层（非同步块）============================
 

@@ -56,7 +56,7 @@ public class TNCatInfoAct extends TNActBase
         setViews();
         mCatId = getIntent().getLongExtra("CatId", -1);
         showView();
-        presenter = new CatInfoPresenter(this, this);
+        presenter = new CatInfoPresenter(this);
     }
 
     /**

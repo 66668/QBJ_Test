@@ -102,8 +102,8 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
         mProgressDialog = TNUtilsUi.progressDialog(this, R.string.in_progress);
 
         //
-        presenter = new NoteListPresenter(this, this);
-        syncPresenter = new SyncPresenter(this, this);
+        presenter = new NoteListPresenter( this);
+        syncPresenter = new SyncPresenter( this);
         //获取跳转值
         getIntentData();
 

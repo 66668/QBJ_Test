@@ -20,11 +20,9 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class NoteViewModel {
 
-    private Context context;
     private static final String TAG = "SJY";
 
-    public NoteViewModel(Context context) {
-        this.context = context;
+    public NoteViewModel() {
     }
 
 

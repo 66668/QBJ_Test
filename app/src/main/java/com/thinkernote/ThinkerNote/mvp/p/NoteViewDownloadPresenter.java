@@ -22,6 +22,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
 /**
+ * TODO  act耦合问题
  * 笔记详情--下载文件的类
  * <p>
  * 说明：使用老版本代码，打开图片文件没有问题，但是无法打开其他文件

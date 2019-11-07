@@ -11,22 +11,19 @@ import com.thinkernote.ThinkerNote.mvp.m.LogModel;
  * 登录 p层 具体实现
  */
 public class LogPresenter implements OnLogListener, OnWchatListener {
-    private Context context;
     private OnLogListener onLogView;
     private OnWchatListener onWchatView;
     //p层调用M层方法
     private LogModel logModel;
 
-    public LogPresenter(Context context, OnLogListener logListener) {
-        this.context = context;
+    public LogPresenter( OnLogListener logListener) {
         this.onLogView = logListener;
-        logModel = new LogModel(context);
+        logModel = new LogModel();
     }
 
-    public LogPresenter(Context context, OnWchatListener logListener) {
-        this.context = context;
+    public LogPresenter(OnWchatListener logListener) {
         this.onWchatView = logListener;
-        logModel = new LogModel(context);
+        logModel = new LogModel();
     }
 
     //============================p层重写，用于调用m层方法============================

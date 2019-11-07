@@ -1,14 +1,12 @@
 package com.thinkernote.ThinkerNote.mvp.m;
 
-import android.content.Context;
-
-import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
-import com.thinkernote.ThinkerNote.utils.MLog;
-import com.thinkernote.ThinkerNote.mvp.listener.v.OnSplashListener;
 import com.thinkernote.ThinkerNote.bean.CommonBean2;
 import com.thinkernote.ThinkerNote.bean.login.LoginBean;
 import com.thinkernote.ThinkerNote.bean.login.ProfileBean;
 import com.thinkernote.ThinkerNote.mvp.http.url_main.MyHttpService;
+import com.thinkernote.ThinkerNote.mvp.listener.v.OnSplashListener;
+import com.thinkernote.ThinkerNote.utils.MLog;
+import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -21,11 +19,9 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class SplashModel {
 
-    private Context context;
     private static final String TAG = "SJY";
 
-    public SplashModel(Context context) {
-        this.context = context;
+    public SplashModel() {
     }
 
     public void mLogin(final OnSplashListener listener, String name, String ps) {

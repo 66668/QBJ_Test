@@ -48,7 +48,7 @@ public class TNChangeUserInfoAct extends TNActBase implements OnClickListener, O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_change_userinfo);
         //p
-        presener = new ChangeUserInfoPresenter(this, this);
+        presener = new ChangeUserInfoPresenter(this);
         initView();
     }
 

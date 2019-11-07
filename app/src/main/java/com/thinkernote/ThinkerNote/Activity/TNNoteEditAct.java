@@ -130,7 +130,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         setContentView(R.layout.note_edit);
 
         initAct();
-        syncPresenter = new SyncPresenter(this, this);
+        syncPresenter = new SyncPresenter(this);
         //开启百度定位
         if (savedInstanceState == null) {
 //            TNLBSService.getInstance().startLocation();

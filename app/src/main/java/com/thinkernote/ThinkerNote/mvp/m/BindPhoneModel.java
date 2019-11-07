@@ -24,9 +24,7 @@ import static android.content.ContentValues.TAG;
  */
 public class BindPhoneModel {
 
-    private Context context;
-    public BindPhoneModel(Context context) {
-        this.context = context;
+    public BindPhoneModel() {
     }
 
 

@@ -19,7 +19,7 @@ public class TagInfoPresenter implements ITagModelListener {
         this.context = context;
         this.onView = logListener;
 
-        model = new TagModel(context);
+        model = new TagModel();
     }
 
     //============================p层重写，用于调用m层方法============================

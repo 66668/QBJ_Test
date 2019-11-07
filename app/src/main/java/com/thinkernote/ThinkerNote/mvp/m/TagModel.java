@@ -37,12 +37,10 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class TagModel {
 
-    private Context context;
     private static final String TAG = "Tags";
     final TNSettings settings;
 
-    public TagModel(Context context) {
-        this.context = context;
+    public TagModel() {
         settings = TNSettings.getInstance();
     }
 

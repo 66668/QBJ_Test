@@ -73,7 +73,7 @@ public class TNCommonSettingsAct extends TNActBase implements OnClickListener, O
         initMyView();
         getMyIntent();
         //设置界面显示
-        presener = new SettingsPresenter(this, this);
+        presener = new SettingsPresenter(this);
     }
 
     private void initMyView() {

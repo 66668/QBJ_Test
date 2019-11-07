@@ -78,7 +78,7 @@ public class FolderFragment extends TNChildViewBase implements
         pageId = R.id.page_cats;
         mSettings = TNSettings.getInstance();
         //p
-        presenter = new SyncPresenter(mActivity, this);
+        presenter = new SyncPresenter( this);
         isFragSyncing = false;
         init();
     }

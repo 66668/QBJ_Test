@@ -61,7 +61,7 @@ public class TNBindPhoneAct extends TNActBase implements OnClickListener,OnBindP
 		setViews();	
 		
 		initView();
-		presener = new BindPhonePresenter(this, this);
+		presener = new BindPhonePresenter( this);
 
 		getVerifyPic();
 

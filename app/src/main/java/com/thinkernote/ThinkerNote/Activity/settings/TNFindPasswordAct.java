@@ -72,7 +72,7 @@ public class TNFindPasswordAct extends TNActBase implements OnClickListener, OnC
         initView();
 
         // p
-        presener = new FindPsPresenter(this, this);
+        presener = new FindPsPresenter( this);
 
         //图片
         getVerifyPic();

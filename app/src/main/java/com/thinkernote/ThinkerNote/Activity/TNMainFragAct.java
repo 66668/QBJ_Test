@@ -73,8 +73,8 @@ public class TNMainFragAct extends TNActBase implements OnScreenSwitchListener, 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.table_layout);
         //p
-        presenter = new MainFragPresenter(this, this);
-        folderPresenter = new SyncFolderPresenter(this, this);
+        presenter = new MainFragPresenter(this);
+        folderPresenter = new SyncFolderPresenter(this);
 
         initAct();
         //

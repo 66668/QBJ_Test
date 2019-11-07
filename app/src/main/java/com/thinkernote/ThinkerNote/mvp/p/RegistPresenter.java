@@ -10,15 +10,13 @@ import com.thinkernote.ThinkerNote.mvp.listener.v.OnRegistListener;
  * 注册 p层 具体实现
  */
 public class RegistPresenter implements OnRegistListener {
-    private Context context;
     private OnRegistListener onView;
     //p层调用M层方法
     private RegistModel model;
 
-    public RegistPresenter(Context context, OnRegistListener logListener) {
-        this.context = context;
+    public RegistPresenter(OnRegistListener logListener) {
         this.onView = logListener;
-        model = new RegistModel(context);
+        model = new RegistModel();
     }
 
     //============================p层重写，用于调用m层方法============================

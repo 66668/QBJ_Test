@@ -17,15 +17,14 @@ import javax.inject.Inject;
  */
 public class UpgradePresenter implements IUpgradeModelListener {
     private static final String TAG = "MainPresenter";
-    private Context context;
     private OnUpgradeListener onView;
-    //p层调用M层方法
+
+    @Inject
     private UpgradeModel upgradeModel;
 
-    public UpgradePresenter(Context context, OnUpgradeListener logListener) {
-        this.context = context;
+    public UpgradePresenter(OnUpgradeListener logListener) {
         this.onView = logListener;
-        upgradeModel = new UpgradeModel(context);
+        upgradeModel = new UpgradeModel();
 
     }
 

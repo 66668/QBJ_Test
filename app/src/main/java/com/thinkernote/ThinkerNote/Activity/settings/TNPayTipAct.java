@@ -111,7 +111,7 @@ public class TNPayTipAct extends TNActBase implements OnClickListener, android.w
         setContentView(R.layout.pay_tip);
         api = WXAPIFactory.createWXAPI(this, TNConst.WX_APP_ID);
 
-        presener = new PayPresenter(this, this);
+        presener = new PayPresenter( this);
         setViews();
         initView();
         initListener();

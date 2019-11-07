@@ -33,7 +33,7 @@ public class WXEntryActivity extends TNActBase implements IWXAPIEventHandler, On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new LogPresenter(this, this);
+        presenter = new LogPresenter( this);
         api = WXAPIFactory.createWXAPI(this, TNConst.WX_APP_ID, false);
         api.handleIntent(getIntent(), this);
 

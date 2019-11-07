@@ -23,11 +23,9 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class RegistModel {
 
-    private Context context;
     private static final String TAG = "SJY";
 
-    public RegistModel(Context context) {
-        this.context = context;
+    public RegistModel() {
     }
 
     public void getVerifyPic(final OnRegistListener listener) {

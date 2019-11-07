@@ -18,7 +18,7 @@ public class TagListPresenter implements OnTagListListener {
         this.context = context;
         this.onView = logListener;
 
-        model = new TagModel(context);
+        model = new TagModel();
     }
 
 

@@ -1,19 +1,17 @@
 package com.thinkernote.ThinkerNote.mvp.p;
 
-import android.content.Context;
-
-import com.thinkernote.ThinkerNote.bean.localdata.TNNote;
-import com.thinkernote.ThinkerNote.db.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.base.TNConst;
-import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
-import com.thinkernote.ThinkerNote.utils.MLog;
+import com.thinkernote.ThinkerNote.bean.localdata.TNNote;
+import com.thinkernote.ThinkerNote.bean.main.AllNotesIdsBean;
+import com.thinkernote.ThinkerNote.bean.main.NoteListBean;
+import com.thinkernote.ThinkerNote.db.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.mvp.MyRxManager;
 import com.thinkernote.ThinkerNote.mvp.listener.m.INoteModelListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnSyncListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.SyncDisposableListener;
 import com.thinkernote.ThinkerNote.mvp.m.NoteModel;
-import com.thinkernote.ThinkerNote.bean.main.AllNotesIdsBean;
-import com.thinkernote.ThinkerNote.bean.main.NoteListBean;
+import com.thinkernote.ThinkerNote.utils.MLog;
+import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
 
 import java.util.List;
 import java.util.Vector;
@@ -28,7 +26,6 @@ import io.reactivex.disposables.Disposable;
  */
 public class SyncFolderPresenter implements INoteModelListener {
     private static final String TAG = "SyncFolderPresenter";
-    private Context context;
     private OnSyncListener onView;
     private long folderId;
 
@@ -38,10 +35,9 @@ public class SyncFolderPresenter implements INoteModelListener {
     private List<AllNotesIdsBean.NoteIdItemBean> all_note_ids;//获取所有笔记的id（12）
     private List<AllNotesIdsBean.NoteIdItemBean> trash_note_ids;//获取所有回收站笔记id（15）
 
-    public SyncFolderPresenter(Context context, OnSyncListener listener) {
-        this.context = context;
+    public SyncFolderPresenter( OnSyncListener listener) {
         this.onView = listener;
-        noteModel = new NoteModel(context);
+        noteModel = new NoteModel();
     }
 
     //取消接口容器

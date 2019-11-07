@@ -21,11 +21,9 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class ChangeUserInfoModel {
 
-    private Context context;
     private static final String TAG = "SJY";
 
-    public ChangeUserInfoModel(Context context) {
-        this.context = context;
+    public ChangeUserInfoModel() {
     }
 
     public void mChangePs(final OnChangeUserInfoListener listener, String oldPs, final String newPs) {

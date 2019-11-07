@@ -68,13 +68,11 @@ import okhttp3.ResponseBody;
  */
 public class NoteModel {
 
-    private Context context;
     private static final String TAG = "Note";
     TNSettings settings;
     ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    public NoteModel(Context context) {
-        this.context = context;
+    public NoteModel() {
         settings = TNSettings.getInstance();
     }
 
@@ -2333,7 +2331,7 @@ public class NoteModel {
         if ("login required".equals(msg)) {
             MLog.e(TAG, msg);
             TNUtilsUi.showToast(msg);
-            TNUtils.goToLogin(context.getApplicationContext());
+            TNUtils.goToLogin(TNApplication.getInstance().getApplicationContext());
         } else if ("笔记不存在".equals(msg)) {
             try {
                 MLog.e(TAG, "笔记不存在：删除");

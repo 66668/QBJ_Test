@@ -3,6 +3,7 @@ package com.thinkernote.ThinkerNote.mvp.m;
 import android.content.Context;
 import android.util.Log;
 
+import com.thinkernote.ThinkerNote.base.TNApplication;
 import com.thinkernote.ThinkerNote.db.CatDbHelper;
 import com.thinkernote.ThinkerNote.db.UserDbHelper;
 import com.thinkernote.ThinkerNote.bean.localdata.TNCat;
@@ -48,13 +49,11 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class FolderModel {
 
-    private Context context;
     private static final String TAG = "Folder";
     private TNSettings settings;
     ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    public FolderModel(Context context) {
-        this.context = context;
+    public FolderModel() {
         settings = TNSettings.getInstance();
     }
 
@@ -951,7 +950,7 @@ public class FolderModel {
         if ("login required".equals(bean.getMsg())) {
             MLog.e(TAG, bean.getMsg());
             TNUtilsUi.showToast(bean.getMsg());
-            TNUtils.goToLogin(context.getApplicationContext());
+            TNUtils.goToLogin(TNApplication.getInstance().getApplicationContext());
         } else if ("笔记不存在".equals(bean.getMsg())) {
             try {
                 MLog.e(TAG, "笔记不存在：删除");

@@ -25,11 +25,9 @@ import okhttp3.RequestBody;
  */
 public class ReportModel {
 
-    private Context context;
     private static final String TAG = "SJY";
 
-    public ReportModel(Context context) {
-        this.context = context;
+    public ReportModel() {
     }
 
     /**

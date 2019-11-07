@@ -11,16 +11,14 @@ import java.io.File;
  * p层 具体实现
  */
 public class ReportPresenter implements  OnReportListener {
-    private Context context;
     private OnReportListener onView;
     //p层调用M层方法
     private ReportModel model;
 
-    public ReportPresenter(Context context, OnReportListener logListener) {
-        this.context = context;
+    public ReportPresenter( OnReportListener logListener) {
         this.onView = logListener;
 
-        model = new ReportModel(context);
+        model = new ReportModel();
     }
 
 
