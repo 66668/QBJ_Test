@@ -1,17 +1,15 @@
 package com.thinkernote.ThinkerNote.mvp.p;
 
-import android.content.Context;
-
-import com.thinkernote.ThinkerNote.mvp.m.UpgradeModel;
+import com.thinkernote.ThinkerNote.mvp.http.fileprogress.FileProgressListener;
 import com.thinkernote.ThinkerNote.mvp.listener.m.IUpgradeModelListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnUpgradeListener;
-import com.thinkernote.ThinkerNote.mvp.http.fileprogress.FileProgressListener;
+import com.thinkernote.ThinkerNote.mvp.m.UpgradeModel;
 
 import java.io.File;
 
-import javax.inject.Inject;
-
 /**
+ * 通用 p层
+ *
  * 注册 p层 具体实现
  * 调用顺讯按编号执行
  */
@@ -19,13 +17,22 @@ public class UpgradePresenter implements IUpgradeModelListener {
     private static final String TAG = "MainPresenter";
     private OnUpgradeListener onView;
 
-    @Inject
-    private UpgradeModel upgradeModel;
+     UpgradeModel upgradeModel;
 
     public UpgradePresenter(OnUpgradeListener logListener) {
         this.onView = logListener;
+        inject();
         upgradeModel = new UpgradeModel();
+    }
 
+    /**
+     *
+     */
+    private void inject(){
+//        DaggerUpgradeComponent.builder()
+//                .upgradeModule(new UpgradeModule())
+//                .build()
+//                .inject(this);
     }
 
     //===========================p层，非同步块的数据=================================

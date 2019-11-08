@@ -50,7 +50,19 @@
 
 说明：
 
-1. dagger2目前只用于presenter的实例调用
+1. dagger2目前只用于main接口的调用，由于项目小，没必要添加复杂框架
+
+### dagger使用疑惑：
+1. 项目的mvp模式很清晰，直接构建 component接口和module类接口
+2. 引入依赖需要注意：
+    
+    
+        implementation 'com.google.dagger:dagger-android:2.25.2'
+        implementation 'com.google.dagger:dagger-android-support:2.25.2' // if you use the support libraries
+        annotationProcessor 'com.google.dagger:dagger-android-processor:2.25.2'
+        annotationProcessor 'com.google.dagger:dagger-compiler:2.25.2'//生成类build下可见
+3. act 复用presenter类，如何构建：以功能构建component和module，而不是以act名称构建，功能可复用，拆分更细。       
+    
 
 
 

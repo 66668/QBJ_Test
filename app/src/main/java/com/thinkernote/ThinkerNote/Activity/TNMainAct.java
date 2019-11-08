@@ -22,27 +22,28 @@ import android.view.animation.RotateAnimation;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
-import com.thinkernote.ThinkerNote.utils.TNUtils;
-import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsSkin;
-import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsUi;
 import com.thinkernote.ThinkerNote.R;
+import com.thinkernote.ThinkerNote.base.TNActBase;
+import com.thinkernote.ThinkerNote.base.TNApplication;
+import com.thinkernote.ThinkerNote.bean.main.MainUpgradeBean;
+import com.thinkernote.ThinkerNote.dagger2.component.DaggerUpgradeComponent;
+import com.thinkernote.ThinkerNote.dagger2.module.UpgradeModule;
+import com.thinkernote.ThinkerNote.mvp.MyRxManager;
+import com.thinkernote.ThinkerNote.mvp.http.fileprogress.FileProgressListener;
+import com.thinkernote.ThinkerNote.mvp.listener.v.OnSyncListener;
+import com.thinkernote.ThinkerNote.mvp.listener.v.OnUpgradeListener;
+import com.thinkernote.ThinkerNote.mvp.p.SyncPresenter;
+import com.thinkernote.ThinkerNote.mvp.p.UpgradePresenter;
 import com.thinkernote.ThinkerNote.utils.MLog;
 import com.thinkernote.ThinkerNote.utils.TNActivityManager;
+import com.thinkernote.ThinkerNote.utils.TNUtils;
+import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsSkin;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsUi;
 import com.thinkernote.ThinkerNote.views.appwidget43.TNAppWidegtConst;
-import com.thinkernote.ThinkerNote.base.TNApplication;
 import com.thinkernote.ThinkerNote.views.dialog.CommonDialog;
 import com.thinkernote.ThinkerNote.views.dialog.CustomDialog;
 import com.thinkernote.ThinkerNote.views.dialog.UpdateDialog;
-import com.thinkernote.ThinkerNote.mvp.listener.v.OnUpgradeListener;
-import com.thinkernote.ThinkerNote.mvp.listener.v.OnSyncListener;
-import com.thinkernote.ThinkerNote.mvp.p.UpgradePresenter;
-import com.thinkernote.ThinkerNote.mvp.p.SyncPresenter;
-import com.thinkernote.ThinkerNote.base.TNActBase;
-import com.thinkernote.ThinkerNote.bean.main.MainUpgradeBean;
-import com.thinkernote.ThinkerNote.mvp.MyRxManager;
-import com.thinkernote.ThinkerNote.mvp.http.fileprogress.FileProgressListener;
 
 import java.io.File;
 
@@ -50,7 +51,6 @@ import javax.inject.Inject;
 
 /**
  * 主界面
- *
  */
 public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeListener, OnSyncListener {
 
@@ -61,9 +61,10 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeLi
     private TextView mTimeView;
     private TNSettings mSettings = TNSettings.getInstance();
     //
-    @Inject
-    private UpgradePresenter mainPresenter;
-    private SyncPresenter syncPresenter;//新版本
+    UpgradePresenter mainPresenter;
+
+    SyncPresenter syncPresenter;
+
     File installFile;//安装包file
 
     //更新弹窗
@@ -76,8 +77,8 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeLi
         setViews();
         //关闭其他界面
         TNActivityManager.getInstance().finishOtherActivity(this);
-        mainPresenter = new UpgradePresenter( this);
-        syncPresenter = new SyncPresenter(this);
+        inject();
+
         MyRxManager.getInstance().setSyncing(false);//修改：初始状态值
         TNApplication.getInstance().setEnryMain(true);//标记已进入主界面（用于小部件判断）
         handleIntent();
@@ -94,6 +95,19 @@ public class TNMainAct extends TNActBase implements OnClickListener, OnUpgradeLi
             mSettings.savePref(false);
         }
         //
+    }
+
+    /**
+     * 初始化UpgradePresenter,SyncPresenter，绑定监听等操作，有dagger完成
+     */
+    private void inject() {
+//        DaggerUpgradeComponent.builder()
+//                .upgradeModule(new UpgradeModule(this))
+//                .build()
+//                .inject(this);
+
+        mainPresenter = new UpgradePresenter( this);
+        syncPresenter = new SyncPresenter(this);
     }
 
     @Override
