@@ -26,8 +26,6 @@ import com.thinkernote.ThinkerNote.R;
 import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.base.TNApplication;
 import com.thinkernote.ThinkerNote.bean.main.MainUpgradeBean;
-import com.thinkernote.ThinkerNote.dagger2.component.DaggerUpgradeComponent;
-import com.thinkernote.ThinkerNote.dagger2.module.UpgradeModule;
 import com.thinkernote.ThinkerNote.mvp.MyRxManager;
 import com.thinkernote.ThinkerNote.mvp.http.fileprogress.FileProgressListener;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnSyncListener;
@@ -46,8 +44,6 @@ import com.thinkernote.ThinkerNote.views.dialog.CustomDialog;
 import com.thinkernote.ThinkerNote.views.dialog.UpdateDialog;
 
 import java.io.File;
-
-import javax.inject.Inject;
 
 /**
  * 主界面
