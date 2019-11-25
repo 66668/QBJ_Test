@@ -84,8 +84,9 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
     private static final String TAG = "NOTE";
     //正常登录的同步常量
     private static final int AUTO_SAVE = 1;//2min本地自动保存
-    private static final int SAVE_LOCAL = 102;
-    private static final int START_SYNC = 103;
+    private static final int SAVE_LOCAL = 102;//自动保存
+    private static final int START_SYNC = 103;//保存时同时上传（暂不用）
+    private static final int SAVE_EXIT = 104;//保存本地退出
     private static final int MAX_CONTENT_LEN = 4 * 100 * 1024;
 
     private TNNote mNote = null;//全局笔记，最终操作都是这一个笔记
@@ -705,14 +706,12 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
     @Override
     public void handleMessage(Message msg) {
         switch (msg.what) {
-            case AUTO_SAVE:
+            case AUTO_SAVE://2min自动保存
                 //自动保存
-                Log.d("SJY", "2min自动保存 ");
                 saveInput();
                 if (mNote.isModified() && checkNote()) {
                     mNote.prepareToSave();
-                    Log.d("SJY", "2min自动保存-数据库保存");
-                    pNoteSave(mNote, false);
+                    pNoteSave(mNote, false, false);
                 }
                 break;
             case 3:// 音量振幅
@@ -771,8 +770,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                 setCursorLocation();
                 TNUtilsUi.showShortToast(R.string.alert_NoteEdit_Record_Error);
                 break;
-            case SAVE_LOCAL://只保存，不同步
-                MLog.d(TAG, "保存但不同步");
+            case SAVE_EXIT://保存并退出
                 handleProgressDialog("hide");
                 if (msg.obj == null) {
                     TNUtilsUi.showToast("存储空间不足");
@@ -787,8 +785,23 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                         mTitleView.setText(mNote.title);
                     }
                 }
-                //自动保存状态，不退出编辑
+                finish();
+                break;
+            case SAVE_LOCAL://自动保存
+                handleProgressDialog("hide");
+                if (msg.obj == null) {
+                    TNUtilsUi.showToast("存储空间不足");
+                } else {
+//                    TNUtilsUi.showShortToast(R.string.alert_NoteSave_SaveOK);//
+                    mNote = (TNNote) msg.obj;
+                    //更新已保存的笔记
+                    getIntent().putExtra("NoteForEdit", mNote.noteLocalId);
+                    initNote();
 
+                    if (!mTitleView.hasFocus()) {
+                        mTitleView.setText(mNote.title);
+                    }
+                }
                 break;
             case START_SYNC://保存并同步到后台
                 handleProgressDialog("hide");
@@ -988,7 +1001,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
         if (checkNote()) {
             handleProgressDialog("show");
             mNote.prepareToSave();
-            pNoteSave(mNote, true);//保存到后台
+            pNoteSave(mNote, false, true);//false保存到后台/true同时上传后台
         }
     }
 
@@ -1304,8 +1317,10 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
      * 自动保存，不上传后台，完成按钮保存，上传后台
      *
      * @param note
+     * @param isNeedSync
+     * @param isNeedFinish isNeedSync为false情况下才可用
      */
-    private void pNoteSave(final TNNote note, final boolean isNeedSync) {
+    private void pNoteSave(final TNNote note, final boolean isNeedSync, final boolean isNeedFinish) {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.execute(new Runnable() {
             @Override
@@ -1391,8 +1406,13 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                     msg.what = START_SYNC;
                     handler.sendMessage(msg);
                 } else {//编辑下，自动保存到本地
-                    msg.what = SAVE_LOCAL;
-                    handler.sendMessage(msg);
+                    if (isNeedFinish) {
+                        msg.what = SAVE_EXIT;
+                        handler.sendMessage(msg);
+                    } else {
+                        msg.what = SAVE_LOCAL;
+                        handler.sendMessage(msg);
+                    }
                 }
             }
         });
