@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -38,8 +39,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-
 import com.tencent.connect.share.QQShare;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
@@ -49,13 +48,13 @@ import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.thinkernote.ThinkerNote.BuildConfig;
-import com.thinkernote.ThinkerNote.utils.TNUtils;
-import com.thinkernote.ThinkerNote.bean.localdata.TNNote;
 import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote.utils.MLog;
-import com.thinkernote.ThinkerNote.base.TNConst;
-import com.thinkernote.ThinkerNote.views.dialog.CommonDialog;
 import com.thinkernote.ThinkerNote.base.TNApplication;
+import com.thinkernote.ThinkerNote.base.TNConst;
+import com.thinkernote.ThinkerNote.bean.localdata.TNNote;
+import com.thinkernote.ThinkerNote.utils.MLog;
+import com.thinkernote.ThinkerNote.utils.TNUtils;
+import com.thinkernote.ThinkerNote.views.dialog.CommonDialog;
 
 import java.io.File;
 import java.util.Calendar;
@@ -67,6 +66,28 @@ import static android.content.Intent.CATEGORY_DEFAULT;
 
 public class TNUtilsUi {
     private static final String TAG = "TNUtilsUi";
+
+    public static void startIntent(final Activity act, final Intent intent,
+                                   int msgId) {
+        PackageManager packageManager = act.getPackageManager();
+        if (packageManager.queryIntentActivities(intent,
+                PackageManager.MATCH_DEFAULT_ONLY).size() > 0) {
+            act.startActivity(intent);
+        } else {
+            alert(act, msgId);
+        }
+    }
+
+    public static void startIntentForResult(final Activity act, final Intent intent,
+                                            int msgId, int requestCode) {
+        PackageManager packageManager = act.getPackageManager();
+        if (packageManager.queryIntentActivities(intent,
+                PackageManager.MATCH_DEFAULT_ONLY).size() > 0) {
+            act.startActivityForResult(intent, requestCode);
+        } else {
+            alert(act, msgId);
+        }
+    }
 
     public static View addListHelpInfoFootView(Activity activity, ListView lv,
                                                String title, String info) {
@@ -147,6 +168,12 @@ public class TNUtilsUi {
         return dialog;
     }
 
+    /**
+     * 通用弹窗
+     *
+     * @param context
+     * @param str
+     */
     public static void alert(Context context, int str) {
         if (((Activity) context).isFinishing())
             return;
@@ -165,6 +192,12 @@ public class TNUtilsUi {
         dialog.show();
     }
 
+    /**
+     * 通用弹窗
+     *
+     * @param context
+     * @param str
+     */
     public static void alert(Context context, String str) {
         if (((Activity) context).isFinishing())
             return;
@@ -210,7 +243,7 @@ public class TNUtilsUi {
     public static void openAppForStore(Activity act, String packageName) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse("market://details?id=" + packageName));
-        TNUtilsDialog.startIntent(act, intent,
+        startIntent(act, intent,
                 R.string.alert_About_CantOpenComment);
     }
 
@@ -234,7 +267,7 @@ public class TNUtilsUi {
 //		// 设置要默认发送的内容
 //		intent.putExtra(android.content.Intent.EXTRA_TEXT, emailBody);
 //
-//		TNUtilsDialog.startIntent(act, intent,
+//		startIntent(act, intent,
 //				R.string.alert_About_CantSendEmail);
     }
 
@@ -249,7 +282,7 @@ public class TNUtilsUi {
         // 设置要默认发送的内容
         intent.putExtra(android.content.Intent.EXTRA_TEXT, body);
 
-        TNUtilsDialog.startIntent(act, intent,
+        startIntent(act, intent,
                 R.string.alert_About_CantSendEmail);
     }
 
@@ -267,7 +300,7 @@ public class TNUtilsUi {
         text += act.getString(R.string.noteview_share_from);
         intent.putExtra(android.content.Intent.EXTRA_TEXT, text);
 
-        TNUtilsDialog.startIntent(act, intent,
+        startIntent(act, intent,
                 R.string.alert_About_CantSendEmail);
     }
 
@@ -278,7 +311,7 @@ public class TNUtilsUi {
         intent.putExtra(android.content.Intent.EXTRA_SUBJECT, title);
         intent.putExtra(android.content.Intent.EXTRA_TEXT, content);
 
-        TNUtilsDialog.startIntent(act, intent,
+        startIntent(act, intent,
                 R.string.alert_About_CantSendEmail);
     }
 
@@ -293,8 +326,8 @@ public class TNUtilsUi {
         Intent intent = new Intent(android.content.Intent.ACTION_SENDTO,
                 smsToUri);
         intent.putExtra("sms_body", content);
-        TNUtilsDialog
-                .startIntent(act, intent, R.string.alert_About_CantSendSMS);
+
+        startIntent(act, intent, R.string.alert_About_CantSendSMS);
     }
 
     /**
@@ -723,7 +756,8 @@ public class TNUtilsUi {
     private static boolean screenOff = true;
 
     /**
-     *  检测系统是否触发解锁
+     * 检测系统是否触发解锁
+     *
      * @param context
      */
     public static void checkLockScreen(Context context) {
@@ -755,7 +789,7 @@ public class TNUtilsUi {
                 MLog.i(TAG, "set needShowLock = true");
                 settings.needShowLock = true;
                 settings.savePref(false);
-            }else{
+            } else {
                 MLog.i(TAG, "set needShowLock = false");
                 settings.needShowLock = false;
                 settings.savePref(false);

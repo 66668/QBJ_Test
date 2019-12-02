@@ -32,38 +32,36 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-
 import com.tencent.connect.common.Constants;
 import com.tencent.connect.share.QQShare;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
 import com.thinkernote.ThinkerNote.BuildConfig;
-import com.thinkernote.ThinkerNote.db.NoteAttrDbHelper;
-import com.thinkernote.ThinkerNote.db.NoteDbHelper;
+import com.thinkernote.ThinkerNote.R;
+import com.thinkernote.ThinkerNote.base.TNActBase;
+import com.thinkernote.ThinkerNote.base.TNConst;
 import com.thinkernote.ThinkerNote.bean.localdata.TNNote;
 import com.thinkernote.ThinkerNote.bean.localdata.TNNoteAtt;
+import com.thinkernote.ThinkerNote.bean.main.GetNoteByNoteIdBean;
 import com.thinkernote.ThinkerNote.db.Database.TNDb;
 import com.thinkernote.ThinkerNote.db.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.db.Database.TNSQLString;
-import com.thinkernote.ThinkerNote.base.TNConst;
-import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
-import com.thinkernote.ThinkerNote.utils.TNUtils;
-import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsAtt;
-import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsDialog;
-import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsHtml;
-import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsSkin;
-import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsUi;
-import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote.utils.MLog;
-import com.thinkernote.ThinkerNote.base.TNActBase;
-import com.thinkernote.ThinkerNote.bean.main.GetNoteByNoteIdBean;
-import com.thinkernote.ThinkerNote.views.dialog.CommonDialog;
+import com.thinkernote.ThinkerNote.db.NoteAttrDbHelper;
+import com.thinkernote.ThinkerNote.db.NoteDbHelper;
 import com.thinkernote.ThinkerNote.mvp.MyRxManager;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnNoteViewListener;
 import com.thinkernote.ThinkerNote.mvp.p.NoteViewDownloadPresenter;
 import com.thinkernote.ThinkerNote.mvp.p.NoteViewPresenter;
+import com.thinkernote.ThinkerNote.utils.MLog;
+import com.thinkernote.ThinkerNote.utils.TNUtils;
+import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsAtt;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsHtml;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsSkin;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsUi;
 import com.thinkernote.ThinkerNote.views.PoPuMenuView;
+import com.thinkernote.ThinkerNote.views.dialog.CommonDialog;
 
 import org.json.JSONObject;
 
@@ -186,7 +184,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
         initFunc();
 
 
-        presenter = new NoteViewPresenter( this);
+        presenter = new NoteViewPresenter(this);
 
 
         // initialize
@@ -234,7 +232,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
                 }
                 // Otherwise allow the OS to handle it
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                TNUtilsDialog.startIntent(TNNoteViewAct.this, intent,
+                TNUtilsUi.startIntent(TNNoteViewAct.this, intent,
                         R.string.alert_NoteView_CantOpenMsg);
                 return true;
             }
@@ -483,9 +481,6 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
             case R.id.openatt_menu_view: {//查看
                 //更新 mNote
                 mCurAtt = mNote.getAttDataByLocalId(mCurAttId);
-
-                MLog.e("AAA", "文件点击事件--查看--mNote:" + mNote.toString());
-                MLog.e("AAA", "id=" + mCurAttId + "--mCurAtt:" + mCurAtt.toString());
                 //打开文件
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_VIEW);
@@ -508,10 +503,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
 
                 if (contentUri != null) {
                     intent.setDataAndType(contentUri, TNUtilsAtt.getMimeType(mCurAtt.type, mCurAtt.attName));
-                    MLog.d("AAA", "笔记详情", "响应--查看");
-                    TNUtilsDialog.startIntent(this, intent, R.string.alert_NoteView_CantOpenAttMsg);
-                } else {
-                    MLog.e("AAA", "笔记详情", "响应--查看--异常");
+                    TNUtilsUi.startIntent(this, intent, R.string.alert_NoteView_CantOpenAttMsg);
                 }
 
                 break;
@@ -546,7 +538,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
                         contentUri = Uri.fromFile(new File(temp));
                     }
                     intent.putExtra(Intent.EXTRA_STREAM, contentUri);
-                    TNUtilsDialog.startIntent(this, intent,
+                    TNUtilsUi.startIntent(this, intent,
                             R.string.alert_NoteView_CantSendAttMsg);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -622,7 +614,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
                 String msg = getString(R.string.shareinfo_publicnote_url, mNote.title, TNUtils.Hash17(mNote.noteId));
                 String email = String.format("mailto:?subject=%s&body=%s", mNote.title, msg);
                 Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse(email));
-                TNUtilsDialog.startIntent(this, intent,
+                TNUtilsUi.startIntent(this, intent,
                         R.string.alert_About_CantSendEmail);
                 break;
             }
@@ -632,7 +624,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
 
                 Intent intent = new Intent(Intent.ACTION_VIEW,
                         Uri.parse("http://www.qingbiji.cn/note/" + TNUtils.Hash17(mNote.noteId)));
-                TNUtilsDialog.startIntent(this, intent,
+                TNUtilsUi.startIntent(this, intent,
                         R.string.alert_About_CantOpenWeb);
                 break;
             }
@@ -1117,6 +1109,9 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
         dialog.show();
     }
 
+    /**
+     * 详情，保存文件
+     */
     private void saveAttDialog() {
         if (!TNUtilsAtt.hasExternalStorage()) {
             TNUtilsUi.alert(this, R.string.alert_NoSDCard);
@@ -1127,9 +1122,7 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
             return;
         }
 
-        String hint = String.format(
-                getString(R.string.alert_NoteView_SaveAttHint), "/ThinkerNote/"
-                        + mCurAtt.attName);
+        String hint = String.format(getString(R.string.alert_NoteView_SaveAttHint), "/ThinkerNote/" + mCurAtt.attName);
 
         dialog = new CommonDialog(this, hint,
                 "保存",

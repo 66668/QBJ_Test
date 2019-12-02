@@ -17,22 +17,21 @@ import android.widget.TextView;
 import com.thinkernote.ThinkerNote.Activity.TNBindPhoneAct;
 import com.thinkernote.ThinkerNote.Activity.TNCatListAct;
 import com.thinkernote.ThinkerNote.Activity.TNHtmlViewAct;
+import com.thinkernote.ThinkerNote.R;
+import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.localdata.TNCat;
 import com.thinkernote.ThinkerNote.bean.localdata.TNUser;
 import com.thinkernote.ThinkerNote.db.Database.TNDbUtils;
-import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
-import com.thinkernote.ThinkerNote.utils.TNUtils;
-import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsAtt;
-import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsDialog;
-import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsSkin;
-import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsUi;
-import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote.utils.MLog;
-import com.thinkernote.ThinkerNote.base.TNActBase;
-import com.thinkernote.ThinkerNote.views.dialog.CommonDialog;
-import com.thinkernote.ThinkerNote.views.dialog.InviteCodeDialog;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnSettingsListener;
 import com.thinkernote.ThinkerNote.mvp.p.SettingsPresenter;
+import com.thinkernote.ThinkerNote.utils.MLog;
+import com.thinkernote.ThinkerNote.utils.TNUtils;
+import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsAtt;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsSkin;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsUi;
+import com.thinkernote.ThinkerNote.views.dialog.CommonDialog;
+import com.thinkernote.ThinkerNote.views.dialog.InviteCodeDialog;
 
 /**
  * 共用设置界面：用户信息/个性化设置/空间信息/关于我们
@@ -527,28 +526,28 @@ public class TNCommonSettingsAct extends TNActBase implements OnClickListener, O
     public void comment() {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse("market://details?id=" + getPackageName()));
-        TNUtilsDialog.startIntent(this, intent,
+        TNUtilsUi.startIntent(this, intent,
                 R.string.alert_About_CantOpenComment);
     }
 
     public void homepage() {
         Intent intent = new Intent(Intent.ACTION_VIEW,
                 Uri.parse("http://" + getString(R.string.about_homepage_url)));
-        TNUtilsDialog.startIntent(this, intent,
+        TNUtilsUi.startIntent(this, intent,
                 R.string.alert_About_CantOpenWeb);
     }
 
     public void contact() {
         Intent intent = new Intent(Intent.ACTION_SENDTO,
                 Uri.parse("mailto:info@qingbiji.cn"));
-        TNUtilsDialog.startIntent(this, intent,
+        TNUtilsUi.startIntent(this, intent,
                 R.string.alert_About_CantSendEmail);
     }
 
     public void friends() {
         Intent intent = new Intent(Intent.ACTION_VIEW,
                 Uri.parse("http://shouji.360.cn/partner.and.php?id=101089"));
-        TNUtilsDialog.startIntent(this, intent,
+        TNUtilsUi.startIntent(this, intent,
                 R.string.alert_About_CantOpenWeb);
     }
 

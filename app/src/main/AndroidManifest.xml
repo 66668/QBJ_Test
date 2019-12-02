@@ -330,10 +330,6 @@
             android:name=".Activity.TNNoteDrawAct"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".Activity.TNRemindAct"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait" />
 
         <activity
             android:name=".Activity.settings.TNCommonSettingsAct"

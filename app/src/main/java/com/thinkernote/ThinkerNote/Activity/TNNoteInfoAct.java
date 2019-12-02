@@ -17,22 +17,21 @@ import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.thinkernote.ThinkerNote.R;
+import com.thinkernote.ThinkerNote.base.TNActBase;
 import com.thinkernote.ThinkerNote.bean.localdata.TNCat;
 import com.thinkernote.ThinkerNote.bean.localdata.TNNote;
 import com.thinkernote.ThinkerNote.db.Database.TNDb;
 import com.thinkernote.ThinkerNote.db.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.db.Database.TNSQLString;
-import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
+import com.thinkernote.ThinkerNote.utils.MLog;
 import com.thinkernote.ThinkerNote.utils.TNUtils;
-import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsDialog;
+import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
 import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsSkin;
 import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsUi;
-import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote.utils.MLog;
 import com.thinkernote.ThinkerNote.views.ArrayWheelAdapter;
 import com.thinkernote.ThinkerNote.views.OnWheelChangedListener;
 import com.thinkernote.ThinkerNote.views.WheelView;
-import com.thinkernote.ThinkerNote.base.TNActBase;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -175,14 +174,14 @@ public class TNNoteInfoAct extends TNActBase implements OnClickListener, OnGroup
                 String msg = getString(R.string.shareinfo_publicnote_url, mNote.title, TNUtils.Hash17(mNote.noteId));
                 String email = String.format("mailto:?subject=%s&body=%s", mNote.title, msg);
                 Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse(email));
-                TNUtilsDialog.startIntent(this, intent, R.string.alert_About_CantSendEmail);
+                TNUtilsUi.startIntent(this, intent, R.string.alert_About_CantSendEmail);
                 break;
             }
 
             case R.id.share_url_menu_open: {
                 Intent intent = new Intent(Intent.ACTION_VIEW,
                         Uri.parse("http://www.qingbiji.cn/note/" + TNUtils.Hash17(mNote.noteId)));
-                TNUtilsDialog.startIntent(this, intent, R.string.alert_About_CantOpenWeb);
+                TNUtilsUi.startIntent(this, intent, R.string.alert_About_CantOpenWeb);
                 break;
             }
 

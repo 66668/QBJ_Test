@@ -18,7 +18,6 @@ import android.text.Editable;
 import android.text.Selection;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -36,33 +35,32 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.thinkernote.ThinkerNote.BuildConfig;
-import com.thinkernote.ThinkerNote.db.NoteAttrDbHelper;
+import com.thinkernote.ThinkerNote.R;
+import com.thinkernote.ThinkerNote.base.TNActBase;
+import com.thinkernote.ThinkerNote.base.TNConst;
 import com.thinkernote.ThinkerNote.bean.localdata.TNNote;
 import com.thinkernote.ThinkerNote.bean.localdata.TNNoteAtt;
 import com.thinkernote.ThinkerNote.bean.localdata.TNUser;
 import com.thinkernote.ThinkerNote.db.Database.TNDb;
 import com.thinkernote.ThinkerNote.db.Database.TNDbUtils;
 import com.thinkernote.ThinkerNote.db.Database.TNSQLString;
-import com.thinkernote.ThinkerNote.base.TNConst;
-import com.thinkernote.ThinkerNote.utils.actfun.TNRecord;
-import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
-import com.thinkernote.ThinkerNote.utils.actfun.TNSpeek;
-import com.thinkernote.ThinkerNote.utils.TNUtils;
-import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsAtt;
-import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsDialog;
-import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsHtml;
-import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsSkin;
-import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsUi;
-import com.thinkernote.ThinkerNote.R;
-import com.thinkernote.ThinkerNote.service.LocationService;
-import com.thinkernote.ThinkerNote.utils.MLog;
-import com.thinkernote.ThinkerNote.base.TNActBase;
-import com.thinkernote.ThinkerNote.views.dialog.CommonDialog;
+import com.thinkernote.ThinkerNote.db.NoteAttrDbHelper;
 import com.thinkernote.ThinkerNote.mvp.MyRxManager;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnSyncListener;
 import com.thinkernote.ThinkerNote.mvp.p.SyncPresenter;
+import com.thinkernote.ThinkerNote.service.LocationService;
+import com.thinkernote.ThinkerNote.utils.MLog;
+import com.thinkernote.ThinkerNote.utils.TNUtils;
+import com.thinkernote.ThinkerNote.utils.actfun.TNRecord;
+import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
+import com.thinkernote.ThinkerNote.utils.actfun.TNSpeek;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsAtt;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsHtml;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsSkin;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsUi;
 import com.thinkernote.ThinkerNote.views.PoPuMenuView;
 import com.thinkernote.ThinkerNote.views.PoPuMenuView.OnPoPuMenuItemClickListener;
+import com.thinkernote.ThinkerNote.views.dialog.CommonDialog;
 
 import java.io.File;
 import java.io.Serializable;
@@ -530,7 +528,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
                 Intent intent = new Intent(action);
                 intent.setType("image/*");
                 intent.putExtra("return-data", true);
-                TNUtilsDialog.startIntentForResult(this, intent,
+                TNUtilsUi.startIntentForResult(this, intent,
                         R.string.alert_NoteEdit_NoImage, R.id.noteedit_picture);
                 break;
             }
@@ -589,7 +587,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
 //                  intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
                     intent.setDataAndType(contentUri, TNUtilsAtt.getMimeType(mCurrentAtt.type, mCurrentAtt.attName));
 
-                    TNUtilsDialog.startIntent(this, intent,
+                    TNUtilsUi.startIntent(this, intent,
                             R.string.alert_NoteView_CantOpenAttMsg);
                 }
                 break;
@@ -876,7 +874,7 @@ public class TNNoteEditAct extends TNActBase implements OnClickListener,
             mCameraUri = getContentResolver().insert(
                     Media.EXTERNAL_CONTENT_URI, values);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, mCameraUri);
-            TNUtilsDialog.startIntentForResult(this, intent,
+            TNUtilsUi.startIntentForResult(this, intent,
                     R.string.alert_NoteEdit_NoCamera, R.id.noteedit_camera);
         } catch (IllegalArgumentException e) {
             // 目前仅在1.6，HTC Magic发生过

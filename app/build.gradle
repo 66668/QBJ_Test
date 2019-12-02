@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.thinkernote.ThinkerNote"
-        minSdkVersion 23
+        minSdkVersion 22
         targetSdkVersion 28
         versionCode 58
         versionName "5.8.7"
