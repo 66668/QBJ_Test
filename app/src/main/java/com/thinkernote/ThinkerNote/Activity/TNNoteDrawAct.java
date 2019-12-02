@@ -1,11 +1,9 @@
 package com.thinkernote.ThinkerNote.Activity;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -27,11 +25,16 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import com.thinkernote.ThinkerNote.R;
+import com.thinkernote.ThinkerNote.base.TNActBase;
+import com.thinkernote.ThinkerNote.utils.MLog;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsAtt;
 import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsSkin;
-import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsView;
+import com.thinkernote.ThinkerNote.utils.actfun.TNUtilsUi;
 import com.thinkernote.ThinkerNote.views.TuyaView;
 import com.thinkernote.ThinkerNote.views.dialog.CommonDialog;
-import com.thinkernote.ThinkerNote.base.TNActBase;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * 写笔记--涂鸦主界面 sjy 0614
@@ -269,8 +272,9 @@ public class TNNoteDrawAct extends TNActBase implements OnClickListener,
                 break;
             }
             case R.id.tuya_save_btn: {
-                String path = TNUtilsView.saveViewToImage(mTuYa);
+                String path = saveViewToImage(mTuYa);
                 if (path == null) {
+                    TNUtilsUi.showToast("涂鸦太大，无法保存");
                     return;
                 }
                 Intent it = new Intent();
@@ -302,6 +306,19 @@ public class TNNoteDrawAct extends TNActBase implements OnClickListener,
         }
     }
 
+    public static String saveViewToImage(View view) {
+        view.setDrawingCacheEnabled(true);
+        Bitmap bmp = view.getDrawingCache();
+        if (bmp == null) {
+            MLog.e("SJY", "tuya bitmap is null");
+            return null;
+        }
+        String path = TNUtilsAtt.SaveBitmapToImage(bmp);
+        MLog.d("SJY", "view to image: " + path);
+        view.destroyDrawingCache();
+        return path;
+    }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
@@ -318,7 +335,7 @@ public class TNNoteDrawAct extends TNActBase implements OnClickListener,
                 new CommonDialog.DialogCallBack() {
                     @Override
                     public void sureBack() {
-                        String path = TNUtilsView.saveViewToImage(mTuYa);
+                        String path = saveViewToImage(mTuYa);
                         Intent it = new Intent();
                         it.putExtra("TuYa", path);
                         setResult(Activity.RESULT_OK, it);

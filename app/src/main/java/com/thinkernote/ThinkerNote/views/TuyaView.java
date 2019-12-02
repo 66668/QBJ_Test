@@ -16,6 +16,7 @@ import android.os.Environment;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.thinkernote.ThinkerNote.utils.FileUtils;
 import com.thinkernote.ThinkerNote.utils.MLog;
 
 public class TuyaView extends View {
@@ -129,7 +130,7 @@ public class TuyaView extends View {
 
     public String saveImage() {
         try {
-            String path = Environment.getExternalStorageDirectory().getPath() + "/Android/data/com.thinkernote.ThinkerNote/files/temp/" +
+            String path = FileUtils.ABS_PACKAGE_PRIV_PATH+FileUtils.FILE_DRAW_PATH+
                     System.currentTimeMillis() + ".jpg";
             File file = new File(path);
             if (!file.exists()) {

@@ -24,26 +24,88 @@ import android.os.StatFs;
  * 轻笔记所有文件路径
  * <p>
  * 说明：
- * 私有目录下，默认创建有cache和files两个目录，files下保存有
+ * 说明：
+ * 1. 私有目录会随apk卸载而删除
+ * 2. 私有目录下，默认创建有cache和files两个目录，files下保存有
  */
 public class FileUtils {
 
     private static final String TAG = "FileUtils";
+    //========================================================================================================================
+    //=========================================================手机正常有sd卡时，路径设置===============================================================
+    //========================================================================================================================
 
     /**
-     * 私有目录，根路径
+     * 外部存储根路径
+     * /storage/emulated/0
      */
-    public static final String DEFAULT_BASE_PIRV_PATH = "101399197";
+    public static final File DEFAULT_BASE_PIRV_FILE = Environment.getExternalStorageDirectory();
+    public static final String DEFAULT_BASE_PATH = Environment.getExternalStorageDirectory().getPath();
+    /**
+     * 私有目录的包路径
+     * /Android/data/com.thinkernote.ThinkerNote/files
+     */
+    public static final String PACKAGE_BASE_PATH = "/Android/data/com.thinkernote.ThinkerNote/files";
+    /**
+     * 私有目录绝对路径：
+     * /storage/emulated/0/Android/data/com.thinkernote.ThinkerNote/files
+     */
+    public static final String ABS_PACKAGE_PRIV_PATH = DEFAULT_BASE_PATH + PACKAGE_BASE_PATH;
 
     /**
-     * 外部存储，根目录（备份父目录）
+     * Temp文件路径
      */
-    public static final String DEFAULT_BASK_SD_PATH = "101399197";
+    public static final String FILE_TEMP_PATH = "/Temp/";
+
+    /**
+     * 涂鸦文件路径
+     */
+    public static final String FILE_DRAW_PATH = "/temp/";
+    /**
+     * Temp文件路径
+     */
+    public static final String FILE_CACHE_PATH = "/Cache/";
+    /**
+     * Record文件路径
+     */
+    public static final String FILE_RECORD_PATH = "/Record/";
+    /**
+     * Attachment文件路径
+     */
+    public static final String FILE_ATTAXHMENT_PATH = "/Attachment/";
+
+    /**
+     * Attachment文件路径
+     */
+    public static final String FILE_SKINS_PATH = "/Skins/";
+
+    /**
+     * sd卡文件路径
+     */
+    public static final String DOWNLOAD_FILE_PATH = DEFAULT_BASE_PATH + "/ThinkerNote/";
+
+
+    /**
+     * 外部存储，根目录（备份父目录）/storage/emulated/0
+     */
+//    public static final File DEFAULT_BASK_SD_PATH = null;
+//    public static final String DEFAULT_BASK_SD_PATH = "";
 
     /**
      * file 所有文件的目录统称
      */
     public static final String DEFAULT_FILE_NAME = "files";
+
+    //========================================================================================================================
+    //============================================================手机无sd卡时，内部存储的文件路径============================================================
+    //========================================================================================================================
+
+    /**
+     * 内部存储根目录
+     * 在/data/data/包名下
+     */
+    public static final String DEFAULT_INNER_PATH = TNUtils.getAppContext().getFilesDir().getPath();
+    public static final File DEFAULT_INNER_FILE = TNUtils.getAppContext().getFilesDir();
 
 
     /**

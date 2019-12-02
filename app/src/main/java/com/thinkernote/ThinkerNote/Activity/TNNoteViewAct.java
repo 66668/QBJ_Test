@@ -53,6 +53,7 @@ import com.thinkernote.ThinkerNote.mvp.MyRxManager;
 import com.thinkernote.ThinkerNote.mvp.listener.v.OnNoteViewListener;
 import com.thinkernote.ThinkerNote.mvp.p.NoteViewDownloadPresenter;
 import com.thinkernote.ThinkerNote.mvp.p.NoteViewPresenter;
+import com.thinkernote.ThinkerNote.utils.FileUtils;
 import com.thinkernote.ThinkerNote.utils.MLog;
 import com.thinkernote.ThinkerNote.utils.TNUtils;
 import com.thinkernote.ThinkerNote.utils.actfun.TNSettings;
@@ -1131,9 +1132,8 @@ public class TNNoteViewAct extends TNActBase implements OnClickListener,
                     @Override
                     public void sureBack() {
                         try {
-                            TNUtilsAtt.copyFile(mCurAtt.path, Environment
-                                    .getExternalStorageDirectory().getPath()
-                                    + "/ThinkerNote/" + mCurAtt.attName);
+                            //sdcard根路径/ThinkerNote/
+                            TNUtilsAtt.copyFile(mCurAtt.path, FileUtils.DOWNLOAD_FILE_PATH + mCurAtt.attName);
                             TNUtilsUi.showToast(R.string.alert_NoteView_AttSaved);
                         } catch (Exception e) {
                             e.printStackTrace();

@@ -591,6 +591,8 @@ public class TNNoteListAct extends TNActBase implements OnClickListener, OnItemL
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                mLoadingView.setVisibility(View.GONE);
+                mPullListview.onRefreshComplete();
                 MLog.d("SynchronizeEdit结束");
 //        mLoadingView.setVisibility(View.GONE);
 //        mPullListview.onRefreshComplete();

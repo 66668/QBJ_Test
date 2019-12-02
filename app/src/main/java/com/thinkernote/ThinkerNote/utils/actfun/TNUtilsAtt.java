@@ -9,6 +9,7 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.webkit.MimeTypeMap;
 
+import com.thinkernote.ThinkerNote.utils.FileUtils;
 import com.thinkernote.ThinkerNote.utils.MLog;
 import com.thinkernote.ThinkerNote.utils.TNUtils;
 
@@ -95,14 +96,15 @@ public class TNUtilsAtt {
         String path = null;
         if (disk.equals("sdcard")) {
             if (availableSpace(disk) > 10 * 1024 * 1024)
-                path = Environment.getExternalStorageDirectory().getPath()
-                        + "/Android/data/com.thinkernote.ThinkerNote/files/Attachment/"
-                        + aId / 1000 / 1000 + "/" + aId / 1000 + "/" + aId
+                //Android/data/com.thinkernote.ThinkerNote/files/Attachment/
+                path = FileUtils.ABS_PACKAGE_PRIV_PATH + FileUtils.FILE_ATTAXHMENT_PATH +
+                        +aId / 1000 / 1000 + "/" + aId / 1000 + "/" + aId
                         + getAttSuffix(type);
         } else if (disk.equals("data")) {
             if (availableSpace(disk) > 10 * 1024 * 1024)
-                path = TNUtils.getAppContext().getFilesDir().getPath()
-                        + "/Attachment/" + aId / 1000 / 1000 + "/" + aId / 1000
+                //data/data/包名下/Attachment/
+                path = FileUtils.DEFAULT_INNER_PATH + "/Attachment/"
+                        + aId / 1000 / 1000 + "/" + aId / 1000
                         + "/" + aId + getAttSuffix(type);
         }
         return path;
@@ -111,29 +113,27 @@ public class TNUtilsAtt {
     public static void deleteAllAtts() {
         MLog.d(TAG, "deleteAllAtts");
         if (hasExternalStorage()) {
-            recursionDeleteDir(new File(
-                    Environment.getExternalStorageDirectory().getPath()
-                            + "/Android/data/com.thinkernote.ThinkerNote/files/Attachment/"));
+            //Android/data/com.thinkernote.ThinkerNote/files/Attachment/
+            recursionDeleteDir(new File(FileUtils.ABS_PACKAGE_PRIV_PATH + FileUtils.FILE_ATTAXHMENT_PATH));
         }
-        recursionDeleteDir(new File(TNUtils.getAppContext().getFilesDir().getPath()
-                + "/Attachment/"));
+        //data/data/包名下/Attachment/
+        recursionDeleteDir(new File(FileUtils.DEFAULT_INNER_PATH + "/Attachment/"));
     }
 
     public static void createNomedia() {
         MLog.d(TAG, "createNomedia");
         try {
             if (hasExternalStorage()) {
-                File f = new File(
-                        Environment.getExternalStorageDirectory().getPath()
-                                + "/Android/data/com.thinkernote.ThinkerNote/files/.nomedia");
+                //Android/data/com.thinkernote.ThinkerNote/files/.nomedia
+                File f = new File(FileUtils.ABS_PACKAGE_PRIV_PATH + "/.nomedia");
                 if (!f.exists()) {
                     f.getParentFile().mkdirs();
                     if (!f.createNewFile())
                         MLog.i(TAG, "create .nomedia failed. " + f);
                 }
             }
-            File f2 = new File(TNUtils.getAppContext().getFilesDir().getPath()
-                    + "/.nomedia");
+            //data/data/包名下/.nomedia/
+            File f2 = new File(FileUtils.DEFAULT_INNER_PATH + "/.nomedia");
             if (!f2.exists()) {
                 f2.getParentFile().mkdirs();
                 if (!f2.createNewFile())
@@ -147,10 +147,11 @@ public class TNUtilsAtt {
     public static String getTempPath(String aName) {
         String path = null;
         if (hasExternalStorage()) {
-            path = Environment.getExternalStorageDirectory().getPath()
-                    + "/Android/data/com.thinkernote.ThinkerNote/files/Temp/";
+            //Android/data/com.thinkernote.ThinkerNote/files/Temp/
+            path = FileUtils.ABS_PACKAGE_PRIV_PATH + FileUtils.FILE_TEMP_PATH;
         } else {
-            path = TNUtils.getAppContext().getFilesDir().getPath() + "/Temp/";
+            //data/data/包名下/Temp/
+            path = FileUtils.DEFAULT_INNER_PATH + FileUtils.FILE_TEMP_PATH;
         }
         String filename = String.valueOf(System.currentTimeMillis());
         String suffix = aName.substring(aName.lastIndexOf(".") + 1,
@@ -162,10 +163,11 @@ public class TNUtilsAtt {
     public static String getRecordTempPath(String aName) {
         String path = null;
         if (hasExternalStorage()) {
-            path = Environment.getExternalStorageDirectory().getPath()
-                    + "/Android/data/com.thinkernote.ThinkerNote/files/Record/";
+            //Android/data/com.thinkernote.ThinkerNote/files/Record/
+            path = FileUtils.ABS_PACKAGE_PRIV_PATH + FileUtils.FILE_RECORD_PATH;
         } else {
-            path = TNUtils.getAppContext().getFilesDir().getPath() + "/Record/";
+            //data/data/包名下/Record/
+            path = FileUtils.DEFAULT_INNER_PATH + FileUtils.FILE_RECORD_PATH;
         }
         String filename = String.valueOf(System.currentTimeMillis());
         String suffix = aName.substring(aName.lastIndexOf(".") + 1,
@@ -176,10 +178,11 @@ public class TNUtilsAtt {
     public static String getSkinsPath() {
         String path = null;
         if (hasExternalStorage()) {
-            path = Environment.getExternalStorageDirectory().getPath()
-                    + "/Android/data/com.thinkernote.ThinkerNote/files/Skins/";
+            //Android/data/com.thinkernote.ThinkerNote/files/Skins/
+            path = FileUtils.ABS_PACKAGE_PRIV_PATH + FileUtils.FILE_SKINS_PATH;
         } else {
-            path = TNUtils.getAppContext().getFilesDir().getPath() + "/Skins/";
+            //data/data/包名下/Skins/
+            path = FileUtils.DEFAULT_INNER_PATH + FileUtils.FILE_SKINS_PATH;
         }
         return path;
     }
@@ -187,12 +190,11 @@ public class TNUtilsAtt {
     public static void deleteTempFiles() {
         MLog.d(TAG, "deleteTempFiles");
         if (hasExternalStorage()) {
-            recursionDeleteDir(new File(Environment.getExternalStorageDirectory()
-                    .getPath()
-                    + "/Android/data/com.thinkernote.ThinkerNote/files/Temp/"));
+            //Android/data/com.thinkernote.ThinkerNote/files/Temp/
+            recursionDeleteDir(new File(FileUtils.ABS_PACKAGE_PRIV_PATH + FileUtils.FILE_TEMP_PATH));
         }
-        recursionDeleteDir(new File(TNUtils.getAppContext().getFilesDir().getPath()
-                + "/Temp/"));
+        //data/data/包名下/Temp/
+        recursionDeleteDir(new File(FileUtils.DEFAULT_INNER_PATH + FileUtils.FILE_TEMP_PATH));
     }
 
     /**
@@ -216,7 +218,7 @@ public class TNUtilsAtt {
         File dir = null;
         if (type.equals("sdcard")) {
             if (hasExternalStorage()) {
-                dir = Environment.getExternalStorageDirectory();
+                dir = FileUtils.DEFAULT_BASE_PIRV_FILE;
             } else {
                 return 0;
             }
@@ -225,14 +227,14 @@ public class TNUtilsAtt {
         }
         MLog.d(TAG, "dir=" + dir);
         StatFs sf = new StatFs(dir.getPath());
-        return (long) sf.getBlockSize() * (long) sf.getAvailableBlocks();
+        return sf.getBlockSizeLong() * sf.getAvailableBlocksLong();
     }
 
     public static long totalSpace(String type) {
         File dir = null;
         if (type.equals("sdcard")) {
             if (hasExternalStorage()) {
-                dir = Environment.getExternalStorageDirectory();
+                dir = FileUtils.DEFAULT_BASE_PIRV_FILE;
             } else {
                 return 0;
             }
@@ -241,7 +243,7 @@ public class TNUtilsAtt {
         }
 
         StatFs sf = new StatFs(dir.getPath());
-        return (long) sf.getBlockSize() * (long) sf.getBlockCount();
+        return sf.getBlockSizeLong() * sf.getAvailableBlocksLong();
     }
 
     public static String fileToMd5(String sFile) {
@@ -603,10 +605,11 @@ public class TNUtilsAtt {
     public static String getShareNoteThumbnailPath(long thumbnailId) {
         String path = null;
         if (hasExternalStorage()) {
-            path = Environment.getExternalStorageDirectory().getPath()
-                    + "/Android/data/com.thinkernote.ThinkerNote/files/Cache/";
+            //Android/data/com.thinkernote.ThinkerNote/files/Cache/
+            path = FileUtils.ABS_PACKAGE_PRIV_PATH + FileUtils.FILE_CACHE_PATH;
         } else {
-            path = TNUtils.getAppContext().getFilesDir().getPath() + "/Cache/";
+            //data/data/包名/cache/
+            path = FileUtils.DEFAULT_INNER_PATH + FileUtils.FILE_CACHE_PATH;
         }
         return path + String.valueOf(thumbnailId) + ".jpg";
     }
