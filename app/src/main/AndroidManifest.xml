@@ -40,6 +40,7 @@
         android:name=".base.TNApplication"
         android:icon="@drawable/launcher"
         android:label="@string/app_name"
+        android:resizeableActivity="false"
         android:theme="@android:style/Theme.NoTitleBar">
         <!--===========================app小部件===================================== -->
         <!-- app小部件4*3布局-->

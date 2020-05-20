@@ -104,18 +104,18 @@ dependencies {
 
     //=============okhttp3相关==============
     //    //okhttp3: 网络请求log 拦截器
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.2'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.7.1'
 
     //=============retrofit相关==============
-    implementation('com.squareup.retrofit2:retrofit:2.6.2') {
+    implementation('com.squareup.retrofit2:retrofit:2.8.2') {
         //retrofit2之后，自动绑定了okhttp3和okio，所以不需要再添加
         exclude module: 'com.squareup.okhttp3:okhttp:4.0.1'
         exclude module: 'com.squareup.okio:okio:2.2.2'
     }
     //RxJava2 请求结果适配器
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.6.2'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.8.2'
     //RxJava2 请求结果gson格式转换
-    implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
+    implementation 'com.squareup.retrofit2:converter-gson:2.8.2'
 
     //=============rxjava相关==============
     implementation "io.reactivex.rxjava2:rxjava:2.2.12"
